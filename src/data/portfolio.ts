@@ -9,13 +9,13 @@ export const profileData = {
   ],
   instagramHandles: [
     {
-      name: "@ullunarvu.writes",
+      name: "ullunarvu.writes",
       description: "Just kavithai — by ullunarvu",
       url: "https://www.instagram.com/ullunarvu.writes/",
       icon: "Pen",
     },
     {
-      name: "@mari.fstop",
+      name: "mari.fstop",
       description: "Still moments from moving days",
       url: "https://www.instagram.com/mari.fstop/",
       icon: "Camera",
