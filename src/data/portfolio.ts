@@ -1,25 +1,23 @@
 export const profileData = {
   name: "Mariappan Subramanian",
   tagline: "Drifting beyond conventions",
-  bio: "Product Engineer passionate about creating intuitive and performant web applications. I specialize in modern JavaScript frameworks and love solving complex problems with elegant solutions.",
   social: [
     { name: "GitHub", url: "https://github.com/Marigameo", icon: "Github" },
     { name: "LinkedIn", url: "https://www.linkedin.com/in/marigameo/", icon: "Linkedin" },
     { name: "Twitter", url: "https://x.com/mariapp62431572m", icon: "Twitter" },
     { name: "Email", url: "mailto:mariappangameo@gmail.com", icon: "Mail" },
   ],
-  instagram: "https://www.instagram.com/ullunarvu.writes?igsh=MXFoMXptbGE0Yjh3dg%3D%3D&utm_source=qr",
   instagramHandles: [
     {
-      name: "ullunarvu.writes",
+      name: "@ullunarvu.writes",
       description: "Just kavithai — by ullunarvu",
-      url: "https://www.instagram.com/ullunarvu.writes?igsh=MXFoMXptbGE0Yjh3dg%3D%3D&utm_source=qr",
+      url: "https://www.instagram.com/ullunarvu.writes/",
       icon: "Pen",
     },
     {
-      name: "through_my_lens",
-      description: "Capturing moments through pixels",
-      url: "https://www.instagram.com/through_my_lens",
+      name: "@mari.fstop",
+      description: "Still moments from moving days",
+      url: "https://www.instagram.com/mari.fstop/",
       icon: "Camera",
     },
   ],
