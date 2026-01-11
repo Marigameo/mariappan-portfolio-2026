@@ -18,7 +18,7 @@ export function ProfileCard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="relative p-8 border-border/50 backdrop-blur-sm flex flex-col overflow-hidden">
+      <Card className="relative p-8 border-border/60 backdrop-blur-sm flex flex-col overflow-hidden shadow-md dark:shadow-sm">
         <BorderBeam size={200} duration={8} delay={0} />
         <div className="flex flex-col items-center text-center space-y-8 flex-1">
           {/* Profile Photo */}
@@ -26,7 +26,7 @@ export function ProfileCard() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative w-60 h-60 rounded-2xl overflow-hidden ring-2 ring-border/50 ring-offset-4 ring-offset-background"
+            className="relative w-60 h-60 rounded-2xl overflow-hidden ring-2 ring-black/5 dark:ring-border/70 ring-offset-4 ring-offset-background shadow-sm"
           >
             <img
               src="/images/profile.svg"
@@ -65,7 +65,7 @@ export function ProfileCard() {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-xl border border-border/50 flex items-center justify-center hover:border-foreground/50 hover:bg-accent transition-all duration-300"
+                  className="w-12 h-12 rounded-xl border border-border/70 flex items-center justify-center hover:border-foreground/30 hover:bg-accent hover:shadow-sm transition-all duration-300 bg-card/50 dark:bg-transparent dark:border-border/50"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 10 }}

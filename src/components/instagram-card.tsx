@@ -35,7 +35,7 @@ export function InstagramCard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Card className="relative p-6 border-border/50 backdrop-blur-sm overflow-hidden">
+      <Card className="relative p-6 border-border/60 backdrop-blur-sm overflow-hidden shadow-md dark:shadow-sm">
         <BorderBeam size={150} duration={10} delay={2} />
 
         <div className="space-y-4">
@@ -54,14 +54,14 @@ export function InstagramCard() {
                   href={handle.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-foreground/50 hover:bg-accent/50 transition-all duration-300 group"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-border/70 hover:border-foreground/30 hover:bg-accent/80 hover:shadow-sm transition-all duration-300 group bg-card/50 dark:bg-transparent dark:border-border/50"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
                   whileHover={{ scale: 1.02, x: 4 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center flex-shrink-0 text-white shadow-sm">
                     <InstagramIcon />
                   </div>
 

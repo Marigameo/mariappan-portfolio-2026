@@ -9,7 +9,7 @@ interface BentoGridProps extends ComponentPropsWithoutRef<"div"> {
   className?: string
 }
 
-interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
+interface BentoCardProps extends Omit<ComponentPropsWithoutRef<"a">, "href"> {
   name: string
   className: string
   background?: ReactNode
@@ -45,10 +45,13 @@ const BentoCard = ({
   cta,
   ...props
 }: BentoCardProps) => (
-  <div
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
     key={name}
     className={cn(
-      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
+      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl cursor-pointer",
       // Use theme card background with shadows
       "bg-card border border-border/50",
       "shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.08)]",
@@ -85,9 +88,8 @@ const BentoCard = ({
         <p className="max-w-lg text-muted-foreground">{description}</p>
       </div>
 
-      <div className="mt-4 flex items-center opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-        <a
-          href={href}
+      <div className="mt-4 flex items-center opacity-100 translate-y-0 md:opacity-0 md:translate-y-2 transition-all duration-300 md:group-hover:opacity-100 md:group-hover:translate-y-0">
+        <span
           className={cn(
             buttonVariants({ variant: "link", size: "sm" }),
             "p-0 inline-flex items-center whitespace-nowrap"
@@ -95,12 +97,12 @@ const BentoCard = ({
         >
           {cta}
           <ArrowRightIcon className="ms-2 h-4 w-4 rtl:rotate-180" />
-        </a>
+        </span>
       </div>
     </div>
 
     <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300 group-hover:bg-foreground/[.02] dark:group-hover:bg-foreground/[.05]" />
-  </div>
+  </a>
 )
 
 export { BentoCard, BentoGrid }
