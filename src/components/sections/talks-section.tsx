@@ -3,7 +3,7 @@ import { techTalksData } from "@/data/portfolio"
 import { Calendar, MicVocal, ExternalLink, Presentation } from "lucide-react"
 import { HeroVideoDialog } from "@/components/magicui/hero-video-dialog"
 
-export function TalksSection() {
+const TalksSection = () => {
   return (
     <motion.section
       id="talks"
@@ -42,6 +42,7 @@ export function TalksSection() {
                   <img
                     src={talk.thumbnailSrc}
                     alt={talk.title}
+                    loading="lazy"
                     className="w-full aspect-video object-cover"
                   />
                 ) : (
@@ -72,3 +73,5 @@ export function TalksSection() {
     </motion.section>
   )
 }
+
+export default TalksSection

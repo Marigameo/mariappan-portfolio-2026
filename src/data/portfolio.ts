@@ -4,7 +4,7 @@ export const profileData = {
   social: [
     { name: "GitHub", url: "https://github.com/Marigameo", icon: "Github" },
     { name: "LinkedIn", url: "https://www.linkedin.com/in/marigameo/", icon: "Linkedin" },
-    { name: "Twitter", url: "https://x.com/mariapp62431572m", icon: "Twitter" },
+    { name: "Twitter", url: "https://x.com/mariapp62431572", icon: "Twitter" },
     { name: "Email", url: "mailto:mariappangameo@gmail.com", icon: "Mail" },
   ],
   instagramHandles: [
@@ -63,7 +63,7 @@ export const experienceData = [
     company: "Freshworks",
     logo: "/images/logos/freshworks.svg",
     role: "Senior Product Engineer",
-    period: "2022 - Present",
+    period: "2020 - 2022",
     link: "https://freshworks.com",
   },
   {

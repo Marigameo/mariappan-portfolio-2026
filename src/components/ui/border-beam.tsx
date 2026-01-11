@@ -4,7 +4,7 @@ import { CSSProperties } from "react"
 import { cn } from "@/lib/utils"
 
 type MotionStyle = CSSProperties & {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface BorderBeamProps {

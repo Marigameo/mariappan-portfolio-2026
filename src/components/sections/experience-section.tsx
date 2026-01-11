@@ -38,6 +38,7 @@ export function ExperienceSection() {
                 <img
                   src={exp.logo}
                   alt={exp.company}
+                  loading="lazy"
                   className="w-16 h-16 object-contain"
                 />
               </a>

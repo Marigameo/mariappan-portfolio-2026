@@ -89,6 +89,7 @@ export function HeroVideoDialog({
                     <img
                         src={thumbnailSrc}
                         alt={thumbnailAlt}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-all duration-200 ease-out group-hover:brightness-[0.8]"
                     />
                 </div>

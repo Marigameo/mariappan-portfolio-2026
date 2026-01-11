@@ -1,12 +1,15 @@
+import { lazy, Suspense } from "react"
 import { ProfileCard } from "./components/profile-card"
 import { InstagramCard } from "./components/instagram-card"
 import { AboutSection } from "./components/sections/about-section"
 import { ExperienceSection } from "./components/sections/experience-section"
 import { ProjectsSection } from "./components/sections/projects-section"
-import { TalksSection } from "./components/sections/talks-section"
-import { ArticlesSection } from "./components/sections/articles-section"
 import { Navbar } from "./components/navbar"
 import { SEO } from "./components/seo"
+
+// Lazy load heavy sections for better initial load performance
+const TalksSection = lazy(() => import("./components/sections/talks-section"))
+const ArticlesSection = lazy(() => import("./components/sections/articles-section"))
 
 function App() {
   return (
@@ -34,8 +37,12 @@ function App() {
               <AboutSection />
               <ExperienceSection />
               <ProjectsSection />
-              <TalksSection />
-              <ArticlesSection />
+              <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                <TalksSection />
+              </Suspense>
+              <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
+                <ArticlesSection />
+              </Suspense>
 
               {/* Instagram Card - Mobile only */}
               <div className="block lg:hidden">

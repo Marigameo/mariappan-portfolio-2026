@@ -4,7 +4,7 @@ import { File, Folder, Tree } from "@/components/ui/file-tree"
 import { ExternalLink } from "lucide-react"
 import { BorderBeam } from "@/components/ui/border-beam"
 
-export function ArticlesSection() {
+const ArticlesSection = () => {
   return (
     <motion.section
       id="articles"
@@ -17,7 +17,7 @@ export function ArticlesSection() {
       <div className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Brain Dumps (Curated)</h2>
         <p className="text-muted-foreground">I meditate with words and untangle thoughts—
-sometimes about code, sometimes about life, often about both.</p>
+          sometimes about code, sometimes about life, often about both.</p>
       </div>
 
       <div className="rounded-lg border border-border/50 p-5">
@@ -93,3 +93,5 @@ sometimes about code, sometimes about life, often about both.</p>
     </motion.section>
   )
 }
+
+export default ArticlesSection

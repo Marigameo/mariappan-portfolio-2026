@@ -10,4 +10,25 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    // Code splitting for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-helmet-async'],
+          'animation': ['framer-motion'],
+          'ui-vendor': [
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-scroll-area',
+            '@radix-ui/react-icons',
+          ],
+          'icons': ['lucide-react'],
+        },
+      },
+    },
+    // Optimize chunk size warnings
+    chunkSizeWarningLimit: 1000,
+    // Use esbuild for minification (default, faster than terser)
+    minify: 'esbuild',
+  },
 })

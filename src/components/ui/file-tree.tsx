@@ -291,7 +291,6 @@ const File = forwardRef<
     {
       value,
       className,
-      handleSelect,
       isSelectable = true,
       isSelect,
       fileIcon,
@@ -334,7 +333,7 @@ const CollapseButton = forwardRef<
     elements: TreeViewElement[]
     expandAll?: boolean
   } & React.HTMLAttributes<HTMLButtonElement>
->(({ className, elements, expandAll = false, children, ...props }, ref) => {
+>(({ elements, expandAll = false, children, ...props }, ref) => {
   const { expandedItems, setExpandedItems } = useTree()
 
   const expendAllTree = useCallback((elements: TreeViewElement[]) => {
