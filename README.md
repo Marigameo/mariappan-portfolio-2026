@@ -49,7 +49,7 @@ sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 
 Icons inherit `color`, so `<svg class="doodle ink-coral">` recolours one. The
 `?v=2` on the sprite URL is a cache-buster: bump it in all pages whenever you
-change `assets/doodles.svg`, otherwise browsers may keep the old sprite for a day.
+change `assets/doodles.svg` (currently `?v=3`), otherwise browsers may keep the old sprite for a day.
 Sizes: `.doodle--lg`, `.doodle--xl`. Available ids: guitar, sparkles, plane, pen,
 camera, cooking, music, coffee, briefcase, folder, mic, book, heart, star, pin,
 lightbulb, github, linkedin, x, mail, instagram, medium, substack, sun, moon,

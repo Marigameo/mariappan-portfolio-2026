@@ -32,6 +32,9 @@
   --land-1: #b9c98f;                /* footer hills */
   --land-2: #94aa6b;
   --land-3: #6f8a4f;
+  --border: var(--ink);             /* card outlines; softer in dark mode */
+  --water: #a9c9d8;
+  --star: transparent;
   --shadow: 3px 3px 0 var(--ink);
   --tape: rgba(255, 218, 63, .55);
   --logo-chip: #ffffff;
@@ -52,22 +55,26 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --paper: #0a0a0f; --paper-2: #14192a; --sand: #111c36; --sand-2: #1c2846;
-  --ink: #fff9e9; --ink-soft: rgba(255, 249, 233, .74); --ink-faint: rgba(255, 249, 233, .5); --line: rgba(255, 249, 233, .14);
-  --coral: #fc9073; --coral-soft: #fc9073; --yellow: #ffda3f; --hl: rgba(255, 218, 63, .28);
-  --blue: #86a4ff; --teal: #45cdb3; --violet: #b19cff;
-  --land-1: #26402f; --land-2: #1c3125; --land-3: #14261c;
-  --tape: rgba(255, 218, 63, .4); --logo-chip: #fff9e9;
+  --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
+  --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .5); --line: rgba(242, 237, 227, .14);
+  --border: rgba(242, 237, 227, .55);
+  --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
+  --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+  --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
+  --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
+  --star: rgba(242, 237, 227, .55);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --paper: #0a0a0f; --paper-2: #14192a; --sand: #111c36; --sand-2: #1c2846;
-    --ink: #fff9e9; --ink-soft: rgba(255, 249, 233, .74); --ink-faint: rgba(255, 249, 233, .5); --line: rgba(255, 249, 233, .14);
-    --coral: #fc9073; --coral-soft: #fc9073; --yellow: #ffda3f; --hl: rgba(255, 218, 63, .28);
-    --blue: #86a4ff; --teal: #45cdb3; --violet: #b19cff;
-    --land-1: #26402f; --land-2: #1c3125; --land-3: #14261c;
-    --tape: rgba(255, 218, 63, .4); --logo-chip: #fff9e9;
+  color-scheme: dark;
+    --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
+    --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .5); --line: rgba(242, 237, 227, .14);
+    --border: rgba(242, 237, 227, .55);
+    --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
+    --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+    --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
+    --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
+    --star: rgba(242, 237, 227, .55);
   }
 }
 
@@ -112,7 +119,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* ---------- 4. Doodle primitives -------------------------------------- */
 .doodle { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; vertical-align: -.25em; display: inline-block; overflow: visible; }
 .doodle--thin { stroke-width: 1.4; }
-.wobbly { border: 1.5px solid var(--ink); border-radius: var(--radius-wobble); background: var(--paper-2); }
+.wobbly { border: 1.5px solid var(--border); border-radius: var(--radius-wobble); background: var(--paper-2); }
 .wobbly--2 { border-radius: var(--radius-wobble-2); }
 .wobbly--3 { border-radius: var(--radius-wobble-3); }
 mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.5%, var(--hl) 96%, transparent 98.5%); color: inherit; padding: .02em .2em; margin: 0 -.1em; border-radius: .2em .6em .3em .5em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
@@ -196,7 +203,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 
 .deck { position: relative; justify-self: center; width: 100%; max-width: 21rem; margin: 2.8rem 0 0; }
 .deck-stack { position: relative; aspect-ratio: 3 / 4; }
-.deck-card { position: absolute; inset: 0; margin: 0; padding: .5rem; border: 1.5px solid var(--ink); background: var(--paper-2); border-radius: var(--radius-wobble-2); box-shadow: var(--shadow); cursor: pointer; transition: transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease; will-change: transform; }
+.deck-card { position: absolute; inset: 0; margin: 0; padding: .5rem; border: 1.5px solid var(--border); background: var(--paper-2); border-radius: var(--radius-wobble-2); box-shadow: var(--shadow); cursor: pointer; transition: transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease; will-change: transform; }
 .deck-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px 60px 12px 40px / 40px 12px 60px 10px; display: block; }
 .deck-card:nth-child(1) { z-index: 3; transform: rotate(1.5deg); }
 .deck-card:nth-child(2) { z-index: 2; transform: rotate(-5deg) translate(-1.6rem, .6rem); box-shadow: 2px 2px 0 var(--ink); }
@@ -257,7 +264,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .talk h3 { font-size: 1.2rem; margin: 0; }
 .talk .meta { margin: 0; font-size: .85rem; }
 .talk-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: auto; }
-.video { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px 6px 14px 6px / 6px 14px 6px 14px; background: #000; border: 1.5px solid var(--ink); }
+.video { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px 6px 14px 6px / 6px 14px 6px 14px; background: #000; border: 1.5px solid var(--border); }
 .video img { width: 100%; height: 100%; object-fit: cover; }
 .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .video-btn { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; background: transparent; display: grid; place-items: center; }
@@ -301,7 +308,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .prose p { font-size: 1.05rem; line-height: 1.7; }
 .prose h2 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin-top: var(--space-4); }
 .prose h3 { margin-top: var(--space-3); }
-.prose img, .prose video { border: 1.5px solid var(--ink); border-radius: var(--radius-wobble-3); background: var(--paper-2); }
+.prose img, .prose video { border: 1.5px solid var(--border); border-radius: var(--radius-wobble-3); background: var(--paper-2); }
 .prose figure { margin: var(--space-3) 0; }
 .prose figcaption { font-size: .9rem; color: var(--ink-faint); margin-top: .5rem; text-align: center; }
 .prose blockquote { margin: var(--space-3) 0; padding: 1rem 1.2rem; border-left: 3px solid var(--yellow); background: var(--sand); border-radius: 0 var(--radius-wobble-2); font-family: var(--font-display); font-size: 1.35rem; line-height: 1.3; color: var(--ink); }
@@ -333,9 +340,10 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 /* the land: layered hills + a pond, planted illustrations that sway, and small
    hand-drawn bits (grass, flowers, birds, sun, stones) positioned in % of the land box.
    Plants use --w for width; .deco uses --s as a scale factor. */
-.footer-land { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 2; pointer-events: none; overflow: visible; --water: #a9c9d8; }  /* visible: plants grow past the land box; .site-footer clips the sideways bleed */
-[data-theme="dark"] .footer-land { --water: #1f3a52; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .footer-land { --water: #1f3a52; } }
+.footer-land { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 2; pointer-events: none; overflow: visible; }  /* visible: plants grow past the land box; .site-footer clips the sideways bleed */
+/* night sky: a scatter of stars, transparent in light mode via --star */
+.footer-land::before { content: ""; position: absolute; left: 0; right: 0; bottom: 45%; top: -18%; pointer-events: none;
+  background-image: radial-gradient(1.5px 1.5px at 8% 30%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 22% 12%, var(--star) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 35% 40%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 48% 18%, var(--star) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 57% 55%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 66% 8%, var(--star) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 74% 35%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 91% 22%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 96% 60%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 15% 65%, var(--star) 50%, transparent 51%); }
 .footer-land .hills { position: absolute; inset: auto 0 0 0; width: 100%; height: 100%; }
 .hills--narrow { display: none; }
 .plant { position: absolute; transform: translateX(-50%); transform-origin: bottom center; width: var(--w, 10rem); }
@@ -355,10 +363,21 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .deco--daisy svg, .deco--hibiscus svg { aspect-ratio: 24 / 40; width: 60%; margin-inline: auto; }
 .deco--bigsun svg { aspect-ratio: 1; }
 .deco--bigsun { color: var(--ink); opacity: .9; }
+.deco--bigmoon { display: none; color: var(--ink); opacity: .95; }
+.deco--bigmoon svg { aspect-ratio: 1; }
+[data-theme="dark"] .deco--bigsun { display: none; }
+[data-theme="dark"] .deco--bigmoon { display: block; }
+[data-theme="dark"] .plant img { filter: brightness(.86) saturate(.92) drop-shadow(0 6px 8px rgba(0,0,0,.45)); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .deco--bigsun { display: none; }
+  :root:not([data-theme="light"]) .deco--bigmoon { display: block; }
+  :root:not([data-theme="light"]) .plant img { filter: brightness(.86) saturate(.92) drop-shadow(0 6px 8px rgba(0,0,0,.45)); }
+}
 .deco--bird { color: var(--ink-faint); }
 .deco--stone, .deco--coconuts { color: var(--ink); }
 [data-theme="dark"] .deco { color: var(--land-1); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deco { color: var(--land-1); } }
+[data-theme="dark"] .hills path[stroke] { stroke-opacity: .25; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deco { color: var(--land-1); } :root:not([data-theme="light"]) .hills path[stroke] { stroke-opacity: .25; } }
 /* landscape positions */
 .deco-1 { left: 86%; bottom: 70%; --s: 2.4; }   /* sun */
 .deco-2 { left: 14%; bottom: 78%; --s: 1.1; }   /* birds */
