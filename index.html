@@ -1,20 +1,357 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-    <title>Mariappan Portfolio</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mariappan Subramanian | Design Engineer · UX for the AI era</title>
+  <meta name="description" content="Mariappan Subramanian is a design engineer at Strivelabs crafting interfaces for the AI era. Ex-Freshworks, Zoho. Guitar, travel, poetry, photography and cooking on the side.">
+  <meta name="author" content="Mariappan Subramanian">
+  <meta name="keywords" content="Mariappan Subramanian, Mariappan, Design Engineer, UX Engineer, UX for AI, AI interfaces, Frontend Engineer, JavaScript, React, Strivelabs, Freshworks, Zoho, ACGCET Karaikudi">
+  <link rel="canonical" href="https://mariappan.netlify.app/">
+  <meta name="robots" content="index, follow">
 
-    <!-- Preconnect for better performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- Theme colour follows the paper colour of each theme -->
+  <meta name="theme-color" content="#fbf7ef">
+  <meta name="theme-color" content="#fbf7ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171a21" media="(prefers-color-scheme: dark)">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mariappan.netlify.app/">
+  <meta property="og:title" content="Mariappan Subramanian | Design Engineer · UX for the AI era">
+  <meta property="og:description" content="Design engineer crafting interfaces for the AI era. Guitar, travel, poetry, photography and cooking on the side.">
+  <meta property="og:image" content="https://mariappan.netlify.app/og-image.png">
+  <meta property="og:image:width" content="1292">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Mariappan Subramanian">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@mariapp62431572">
+  <meta name="twitter:creator" content="@mariapp62431572">
+  <meta name="twitter:title" content="Mariappan Subramanian | Design Engineer · UX for the AI era">
+  <meta name="twitter:description" content="Design engineer crafting interfaces for the AI era. Guitar, travel, poetry, photography and cooking on the side.">
+  <meta name="twitter:image" content="https://mariappan.netlify.app/og-image.png">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+  <!-- Fonts: Caveat for handwriting, Nunito for reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Apply saved theme before first paint to avoid a flash -->
+  <script>
+    try { var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Mariappan Subramanian",
+    "jobTitle": "Design Engineer",
+    "worksFor": { "@type": "Organization", "name": "Strivelabs", "url": "https://strivelabs.ai" },
+    "url": "https://mariappan.netlify.app/",
+    "image": "https://mariappan.netlify.app/og-image.png",
+    "description": "Design engineer at Strivelabs crafting interfaces for the AI era. Previously Freshworks, Facilio, Zoho.",
+    "email": "mailto:mariappangameo@gmail.com",
+    "sameAs": [
+      "https://github.com/Marigameo",
+      "https://www.linkedin.com/in/marigameo/",
+      "https://x.com/mariapp62431572",
+      "https://medium.com/@mariappan",
+      "https://www.instagram.com/ullunarvu.writes/",
+      "https://www.instagram.com/mari.fstop/"
+    ],
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "Alagappa Chettiar College of Engineering and Technology, Karaikudi" },
+    "knowsAbout": ["Design Engineering", "UX for AI", "AI Interfaces", "JavaScript", "TypeScript", "React", "Next.js", "Frontend Architecture", "AI Agents", "Micro Frontends", "Monorepos"]
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <nav class="wrap nav" aria-label="Primary">
+    <a class="brand" href="/" aria-label="Mariappan, home">Mari<span class="dot">.</span></a>
+    <ul class="nav-links">
+      <li><a href="#into">About</a></li>
+      <li><a href="#projects">Work</a></li>
+      <li><a href="#talks">Talks</a></li>
+      <li><a href="#writing">Writing</a></li>
+    </ul>
+    <button class="theme-toggle" type="button" aria-label="Switch theme">
+      <svg class="doodle icon-sun" aria-hidden="true"><use href="/assets/doodles.svg#sun"/></svg>
+      <svg class="doodle icon-moon" aria-hidden="true"><use href="/assets/doodles.svg#moon"/></svg>
+    </button>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ Hero ============ -->
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div>
+      <p class="hero-kicker">Hi, I'm</p>
+      <h1 id="hero-title">
+        Mariappan Subramanian
+        <svg class="squiggle" aria-hidden="true" preserveAspectRatio="none"><use href="/assets/doodles.svg#squiggle"/></svg>
+      </h1>
+      <p class="hero-role">Design engineer crafting <mark class="hl">UX for the AI era</mark></p>
+      <p class="hero-lede">JavaScript engineer at heart. Breaks things, prompts better, calls it learning. Currently compiling curiosity at <a href="https://strivelabs.ai">Strivelabs</a>.</p>
+
+      <ul class="socials" aria-label="Find me elsewhere">
+        <li><a href="https://github.com/Marigameo" rel="me noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#github"/></svg>GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/marigameo/" rel="me noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#linkedin"/></svg>LinkedIn</a></li>
+        <li><a href="https://x.com/mariapp62431572" rel="me noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#x"/></svg>X</a></li>
+        <li><a href="mailto:mariappangameo@gmail.com"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#mail"/></svg>Email</a></li>
+      </ul>
+    </div>
+
+    <figure class="portrait">
+      <span class="annot-text" aria-hidden="true">that's me</span>
+      <svg class="doodle annot" aria-hidden="true"><use href="/assets/doodles.svg#arrow-curly"/></svg>
+      <div class="portrait-frame taped">
+        <img src="/images/profile.svg" width="936" height="792" alt="Ink sketch of Mariappan standing beside a gramophone on a stack of books" fetchpriority="high">
+      </div>
+      <figcaption class="sticky">Drifting beyond conventions</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ Things I'm into ============ -->
+  <section class="wrap section" id="into" aria-labelledby="into-title">
+    <div class="section-head">
+      <h2 id="into-title"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#heart"/></svg>Things I'm into</h2>
+      <p>A story in progress, written between commits and coffee.</p>
+    </div>
+    <ul class="loves">
+      <li class="love wobbly tilt-1 wiggle-on-hover">
+        <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#guitar"/></svg>
+        <h3>Guitar &amp; music</h3>
+        <p>Negotiating peace with six strings.</p>
+      </li>
+      <li class="love wobbly wobbly--2 tilt-2 wiggle-on-hover">
+        <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#sparkles"/></svg>
+        <h3>Designing interfaces for AI</h3>
+        <p>Making models feel less like terminals and more like good colleagues.</p>
+      </li>
+      <li class="love wobbly wobbly--3 tilt-3 wiggle-on-hover">
+        <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#plane"/></svg>
+        <h3>Travel</h3>
+        <p>Traveling when WiFi allows.</p>
+      </li>
+      <li class="love wobbly wobbly--2 tilt-2 wiggle-on-hover">
+        <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#pen"/></svg>
+        <h3>Poetry</h3>
+        <p>Just kavithai, in Tamil, by ullunarvu.</p>
+        <a class="love-link" href="https://www.instagram.com/ullunarvu.writes/" rel="noopener">@ullunarvu.writes <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#arrow-right"/></svg></a>
+      </li>
+      <li class="love wobbly tilt-1 wiggle-on-hover">
+        <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#camera"/></svg>
+        <h3>Photography</h3>
+        <p>Still moments from moving days.</p>
+        <a class="love-link" href="https://www.instagram.com/mari.fstop/" rel="noopener">@mari.fstop <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#arrow-right"/></svg></a>
+      </li>
+      <li class="love wobbly wobbly--3 tilt-3 wiggle-on-hover">
+        <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#cooking"/></svg>
+        <h3>Cooking</h3>
+        <p>Recipes that begin with “roughly” and end with seconds.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============ Experience ============ -->
+  <section class="wrap section" id="experience" aria-labelledby="exp-title">
+    <div class="section-head">
+      <h2 id="exp-title"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#briefcase"/></svg>Where I've worked</h2>
+      <p>Ten years of shipping product, mostly on the front end, lately with AI in the loop.</p>
+    </div>
+    <ol class="timeline">
+      <li class="job">
+        <span class="job-dot"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#star"/></svg></span>
+        <div class="job-card wobbly">
+          <span class="job-logo"><img src="/images/logos/strivelabs.svg" alt="" width="40" height="40" loading="lazy"></span>
+          <div class="job-body"><h3><a href="https://strivelabs.ai" rel="noopener">Strivelabs</a></h3><p>Senior Product Engineer</p></div>
+          <span class="job-period">2022 – present</span>
+        </div>
+      </li>
+      <li class="job">
+        <span class="job-dot"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#asterisk"/></svg></span>
+        <div class="job-card wobbly wobbly--2">
+          <span class="job-logo"><img src="/images/logos/freshworks.svg" alt="" width="40" height="40" loading="lazy"></span>
+          <div class="job-body"><h3><a href="https://freshworks.com" rel="noopener">Freshworks</a></h3><p>Senior Product Engineer</p></div>
+          <span class="job-period">2020 – 2022</span>
+        </div>
+      </li>
+      <li class="job">
+        <span class="job-dot"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#asterisk"/></svg></span>
+        <div class="job-card wobbly wobbly--3">
+          <span class="job-logo"><img src="/images/logos/facilio.svg" alt="" width="40" height="40" loading="lazy"></span>
+          <div class="job-body"><h3><a href="https://facilio.com" rel="noopener">Facilio</a></h3><p>Product Engineer</p></div>
+          <span class="job-period">2020 – 2022</span>
+        </div>
+      </li>
+      <li class="job">
+        <span class="job-dot"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#asterisk"/></svg></span>
+        <div class="job-card wobbly">
+          <span class="job-logo"><img src="/images/logos/zoho.svg" alt="" width="40" height="40" loading="lazy"></span>
+          <div class="job-body"><h3><a href="https://zoho.com" rel="noopener">Zoho</a></h3><p>Software Engineer</p></div>
+          <span class="job-period">2018 – 2020</span>
+        </div>
+      </li>
+      <li class="job">
+        <span class="job-dot"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#asterisk"/></svg></span>
+        <div class="job-card wobbly wobbly--2">
+          <span class="job-logo"><img src="/images/logos/msd.svg" alt="" width="40" height="40" loading="lazy"></span>
+          <div class="job-body"><h3><a href="https://www.madstreetden.com/" rel="noopener">Mad Street Den</a></h3><p>Software Engineer</p></div>
+          <span class="job-period">2017 – 2018</span>
+        </div>
+      </li>
+      <li class="job">
+        <span class="job-dot"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#asterisk"/></svg></span>
+        <div class="job-card wobbly wobbly--3">
+          <span class="job-logo"><img src="/images/logos/peppo.svg" alt="" width="40" height="40" loading="lazy"></span>
+          <div class="job-body"><h3><a href="https://www.peppo.co.in/" rel="noopener">Peppo</a></h3><p>Software Engineer</p></div>
+          <span class="job-period">2016 – 2017</span>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ Projects ============ -->
+  <section class="wrap section" id="projects" aria-labelledby="proj-title">
+    <div class="section-head">
+      <h2 id="proj-title"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#folder"/></svg>Things I've built</h2>
+      <p>Side quests and client work. Detail pages are being written one at a time.</p>
+    </div>
+    <div class="grid grid--3">
+      <article class="project project--internal wobbly tilt-1">
+        <svg class="doodle project-go" aria-hidden="true"><use href="/assets/doodles.svg#arrow-right"/></svg>
+        <h3 lang="ta"><a href="/work/thatpam/">தட்பம்</a></h3>
+        <p><span lang="ta">திறமைக்கு மொழி தடை இல்லை</span>. A solo ed-tech experiment to experience startup life and teach what I love. Owned everything from pixels to payments.</p>
+        <div class="cluster"><span class="tag">React</span><span class="tag">Storybook</span><span class="tag">Tailwind CSS</span><span class="tag">Radix UI</span></div>
+      </article>
+      <article class="project wobbly wobbly--2 tilt-2">
+        <svg class="doodle project-go" aria-hidden="true"><use href="/assets/doodles.svg#external"/></svg>
+        <h3><a href="https://dfordoubts.com/" rel="noopener">DforDoubts</a></h3>
+        <p>A live e-learning platform helping learners find experts (and answers). Took it from idea to pixels to production.</p>
+        <div class="cluster"><span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span></div>
+      </article>
+      <article class="project wobbly wobbly--3 tilt-3">
+        <svg class="doodle project-go" aria-hidden="true"><use href="/assets/doodles.svg#external"/></svg>
+        <h3><a href="https://c4scale.com/" rel="noopener">C4scale.com</a></h3>
+        <p>Crafted the web presence for a consulting firm that builds AI-first products, without the hype-deck fluff.</p>
+        <div class="cluster"><span class="tag">Next.js</span><span class="tag">GraphQL</span><span class="tag">Redis</span><span class="tag">Docker</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ Talks ============ -->
+  <section class="wrap section" id="talks" aria-labelledby="talks-title">
+    <div class="section-head">
+      <h2 id="talks-title"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#mic"/></svg>Talks</h2>
+      <p>Things I've said out loud, on stage, to rooms of front-end folks.</p>
+    </div>
+    <div class="grid grid--3">
+      <article class="talk wobbly">
+        <div class="video">
+          <img src="/previews/react-nexus.png" alt="" width="640" height="360" loading="lazy">
+          <button class="video-btn" type="button" data-video="Dh3WTd8os0k" aria-label="Play: Streaming SSR simplified with Next.js at React Nexus 2023"><span class="play"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#play"/></svg></span></button>
+        </div>
+        <h3>Streaming SSR simplified with Next.js</h3>
+        <p class="meta">React Nexus 2023, Bangalore · July 7–8, 2023</p>
+        <div class="talk-actions">
+          <a class="btn btn--ghost" href="https://drive.google.com/file/d/1XYKsAuleeNpGK913akIszkB4ex1oPOjg/view?usp=sharing" rel="noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#slides"/></svg>Slides</a>
+        </div>
+      </article>
+      <article class="talk wobbly wobbly--2">
+        <div class="video video--static">
+          <a href="https://drive.google.com/file/d/16rbqeU5RLaPZSHyYnZxx0HuMAkPvn7-l/view?usp=sharing" rel="noopener" aria-label="Slides: State of frontend tooling"><img src="/previews/state-of-frontend-tooling.png" alt="" width="640" height="360" loading="lazy"></a>
+        </div>
+        <h3>State of frontend tooling</h3>
+        <p class="meta">Flipkart, Bangalore · April 16, 2023</p>
+        <div class="talk-actions">
+          <a class="btn btn--ghost" href="https://drive.google.com/file/d/16rbqeU5RLaPZSHyYnZxx0HuMAkPvn7-l/view?usp=sharing" rel="noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#slides"/></svg>Slides</a>
+        </div>
+      </article>
+      <article class="talk wobbly wobbly--3">
+        <div class="video video--static">
+          <a href="https://drive.google.com/file/d/1c-fpdHe80CLvGozXLHm1kO8KrQjnD8Nj/view?usp=sharing" rel="noopener" aria-label="Slides: Streaming SSR simplified"><img src="/previews/streaming-ssr.png" alt="" width="640" height="360" loading="lazy"></a>
+        </div>
+        <h3>Streaming SSR simplified</h3>
+        <p class="meta">Chennai · March 18, 2023</p>
+        <div class="talk-actions">
+          <a class="btn btn--ghost" href="https://drive.google.com/file/d/1c-fpdHe80CLvGozXLHm1kO8KrQjnD8Nj/view?usp=sharing" rel="noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#slides"/></svg>Slides</a>
+        </div>
+      </article>
+      <article class="talk wobbly wobbly--2">
+        <div class="video">
+          <img src="/previews/monorepos-at-scale.jpeg" alt="" width="640" height="360" loading="lazy">
+          <button class="video-btn" type="button" data-video="Nb_i1uQKwkM" aria-label="Play: Monorepos at scale at React Bangalore"><span class="play"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#play"/></svg></span></button>
+        </div>
+        <h3>Monorepos at scale</h3>
+        <p class="meta">React Bangalore · February 18, 2023</p>
+        <div class="talk-actions">
+          <a class="btn btn--ghost" href="https://drive.google.com/file/d/19S3oFmjXD27ukoQcVp3hcRlh9j3UW0ML/view?usp=sharing" rel="noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#slides"/></svg>Slides</a>
+        </div>
+      </article>
+      <article class="talk wobbly">
+        <div class="video">
+          <img src="/previews/react-meetup-atlassian.jpeg" alt="" width="640" height="360" loading="lazy">
+          <button class="video-btn" type="button" data-video="1wn9Ox7Fa0I" aria-label="Play: CSS Wrapped 2023 at React Bangalore, Atlassian"><span class="play"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#play"/></svg></span></button>
+        </div>
+        <h3>CSS Wrapped: 2023</h3>
+        <p class="meta">React Bangalore, Atlassian · July 7–8, 2023</p>
+        <div class="talk-actions">
+          <a class="btn btn--ghost" href="https://www.canva.com/design/DAF4Ej-tEFE/28i751FSo8hodKp37Muy9g/edit?utm_content=DAF4Ej-tEFE&amp;utm_campaign=designshare&amp;utm_medium=link2&amp;utm_source=sharebutton" rel="noopener"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#slides"/></svg>Slides</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ Writing ============ -->
+  <section class="wrap section" id="writing" aria-labelledby="writing-title">
+    <div class="section-head">
+      <h2 id="writing-title"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#book"/></svg>Writing</h2>
+      <p>Things that make sense only after coffee.</p>
+    </div>
+    <div class="grid grid--3">
+      <div class="writing-col">
+        <h3><svg class="doodle ink-blue" aria-hidden="true"><use href="/assets/doodles.svg#lightbulb"/></svg>Tech</h3>
+        <ul class="doodle-list">
+          <li><a href="https://thefours.substack.com/p/micro-frontend-scaling-frontend-in" rel="noopener">Micro frontend: scaling frontend in the micro-services era</a></li>
+          <li><a href="https://medium.com/front-end-weekly/whats-new-with-vue3-5b6562d3898b" rel="noopener">What's new in Vue 3, a roundup</a></li>
+          <li><a href="https://medium.com/geekculture/vite-witnessing-the-next-gen-frontend-tooling-part-1-a157f4033c33" rel="noopener">Vite: witnessing the next-gen frontend tooling</a></li>
+          <li><a href="https://medium.com/@mariappan/monorepos-at-scale-4cbfd221f352" rel="noopener">Monorepos at scale</a></li>
+        </ul>
+      </div>
+      <div class="writing-col">
+        <h3><svg class="doodle ink-coral" aria-hidden="true"><use href="/assets/doodles.svg#coffee"/></svg>Life</h3>
+        <ul class="doodle-list">
+          <li><a href="https://medium.com/@mariappan/thrissur-pooram-how-a-crowd-hater-accidentally-found-the-experience-of-a-lifetime-794e7f06cc70" rel="noopener">Thrissur Pooram: how a crowd-hater accidentally found the experience of a lifetime</a></li>
+          <li><a href="https://medium.com/@mariappan/art-of-curating-confusions-and-dissatisfaction-f8815da69822" rel="noopener">Art of curating confusions and dissatisfaction</a></li>
+          <li><a href="https://medium.com/@mariappan/hovering-news-being-an-amateur-reader-2fd88442ce80" rel="noopener">Hovering news being an amateur reader</a></li>
+        </ul>
+      </div>
+      <div class="writing-col">
+        <h3><svg class="doodle ink-teal" aria-hidden="true"><use href="/assets/doodles.svg#pin"/></svg>Product</h3>
+        <ul class="doodle-list">
+          <li><a href="https://medium.com/@mariappan/thinking-through-linkedins-endorsement-feature-189cfb39c214" rel="noopener">Thinking through LinkedIn's Endorsement feature</a></li>
+          <li><a href="https://medium.com/@mariappan/the-hey-fever-61d45b640f56" rel="noopener">The {hey} fever</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer wrap">
+  <svg class="doodle line" aria-hidden="true" preserveAspectRatio="none"><use href="/assets/doodles.svg#line"/></svg>
+  <p class="hand">Crafted with care (and caffeine) in India 🇮🇳</p>
+  <p class="meta">© <span id="year">2026</span> Mariappan Subramanian · Plain HTML &amp; CSS, no framework, doodles drawn in SVG <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#heart"/></svg></p>
+</footer>
+
+<script src="/js/main.js" defer></script>
+</body>
 </html>
