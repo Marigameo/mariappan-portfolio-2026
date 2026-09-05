@@ -47,7 +47,9 @@ sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#guitar"/></svg>
 ```
 
-Icons inherit `color`, so `<svg class="doodle ink-coral">` recolours one.
+Icons inherit `color`, so `<svg class="doodle ink-coral">` recolours one. The
+`?v=2` on the sprite URL is a cache-buster: bump it in all pages whenever you
+change `assets/doodles.svg`, otherwise browsers may keep the old sprite for a day.
 Sizes: `.doodle--lg`, `.doodle--xl`. Available ids: guitar, sparkles, plane, pen,
 camera, cooking, music, coffee, briefcase, folder, mic, book, heart, star, pin,
 lightbulb, github, linkedin, x, mail, instagram, medium, substack, sun, moon,

@@ -324,18 +324,39 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; list-style: none; padding: 0; margin: 0 0 var(--space-4); }
 .footer-credit { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin: 0; max-width: none; }
 .footer-credit .doodle { color: var(--coral); width: .9rem; height: .9rem; }
-/* the land: layered hills + planted illustrations that sway */
-.footer-land { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(11rem, 30vw, 20rem); z-index: 2; pointer-events: none; overflow: clip; }
+/* the land: layered hills + a pond, planted illustrations that sway, and small
+   hand-drawn bits (grass, flowers, birds, sun, stones) positioned in % of the land box.
+   Plants use --w for width; .deco uses --s as a scale factor. */
+.footer-land { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 2; pointer-events: none; overflow: clip; --water: #a9c9d8; }
+[data-theme="dark"] .footer-land { --water: #1f3a52; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .footer-land { --water: #1f3a52; } }
 .footer-land .hills { position: absolute; inset: auto 0 0 0; width: 100%; height: 100%; }
-.plant { position: absolute; bottom: 8%; transform: translateX(-50%); transform-origin: bottom center; width: var(--w, 10rem); }
+.plant { position: absolute; transform: translateX(-50%); transform-origin: bottom center; width: var(--w, 10rem); }
 .plant img { width: 100%; height: auto; display: block; transform-origin: bottom center; animation: sway var(--sway, 6s) ease-in-out infinite alternate; animation-delay: var(--sway-d, 0s); filter: drop-shadow(0 6px 6px rgba(0,0,0,.18)); }
 @keyframes sway { from { transform: rotate(calc(var(--swayA, 2deg) * -1)); } to { transform: rotate(var(--swayA, 2deg)); } }
-.plant--palm { left: 7%; --w: clamp(6.5rem, 17vw, 14rem); --sway: 5.5s; --swayA: 2.4deg; bottom: 10%; }
-.plant--chai { left: 24%; --w: clamp(5rem, 13vw, 10rem); --sway: 7s; --swayA: .6deg; --sway-d: -2s; bottom: 12%; }
-.plant--dancers { left: 50%; --w: clamp(7rem, 19vw, 15rem); --sway: 8s; --swayA: .8deg; --sway-d: -1s; bottom: 9%; }
-.plant--kathakali { left: 74%; --w: clamp(4rem, 10vw, 7.5rem); --sway: 6.5s; --swayA: 1.4deg; --sway-d: -3s; bottom: 12%; }
-.plant--banana { left: 91%; --w: clamp(6rem, 15vw, 12rem); --sway: 6s; --swayA: 2deg; --sway-d: -4s; bottom: 10%; }
-@media (max-width: 639px) { .plant--dancers { display: none; } .plant--chai { left: 30%; } .plant--kathakali { left: 68%; } }
+@keyframes bob { from { transform: translateY(0) rotate(-.6deg); } to { transform: translateY(-4px) rotate(.6deg); } }
+.plant--palm { left: 12%; bottom: 34%; --w: clamp(6rem, 15vw, 12.5rem); --sway: 5.5s; --swayA: 2.2deg; }
+.plant--chai { left: 26%; bottom: 25%; --w: clamp(4.6rem, 11vw, 8.5rem); --sway: 7s; --swayA: .5deg; --sway-d: -2s; }
+.plant--boat { left: 53%; bottom: 14%; --w: clamp(9rem, 26vw, 21rem); }
+.plant--boat img { animation-name: bob; --sway: 3.2s; filter: drop-shadow(0 4px 4px rgba(0,0,0,.2)); }
+.plant--kdancer { left: 74%; bottom: 12%; --w: clamp(5.5rem, 13vw, 10rem); --sway: 6.5s; --swayA: 1deg; --sway-d: -3s; }
+.plant--banana { left: 89%; bottom: 33%; --w: clamp(5rem, 13vw, 10.5rem); --sway: 6s; --swayA: 2deg; --sway-d: -4s; }
+.deco { position: absolute; width: calc(2.4rem * var(--s, 1)); transform: translateX(-50%); color: var(--land-3); }
+.deco svg { width: 100%; height: auto; aspect-ratio: 40 / 24; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; display: block; }
+.deco--daisy svg, .deco--hibiscus svg { aspect-ratio: 24 / 40; width: 60%; margin-inline: auto; }
+.deco--sun svg { aspect-ratio: 1; }
+.deco--sun { color: var(--ink); opacity: .9; }
+.deco--bird { color: var(--ink-faint); }
+.deco--stone, .deco--coconuts { color: var(--ink); }
+.deco--daisy, .deco--hibiscus { color: var(--land-3); }
+[data-theme="dark"] .deco { color: var(--land-1); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deco { color: var(--land-1); } }
+@media (max-width: 639px) {
+  .plant--palm { left: 15%; --w: 5.5rem; } .plant--chai { left: 32%; --w: 4rem; bottom: 27%; }
+  .plant--boat { left: 48%; --w: 8.5rem; bottom: 16%; } .plant--kdancer { left: 79%; --w: 4.6rem; bottom: 10%; } .plant--banana { left: 90%; --w: 4.4rem; bottom: 36%; }
+  .deco--sun { --s: 1.4 !important; left: 70% !important; bottom: 76% !important; } .deco--bird { display: none; }
+  .deco--stone, .deco--coconuts { --s: .8 !important; }
+}
 
 /* ---------- 15. Motion / print ------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
