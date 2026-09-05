@@ -1,268 +1,144 @@
-# 🎨 Fully Vibe-Coded Portfolio (yes, even this README—LLM did it)
+# Mariappan's doodle portfolio
 
-[![Netlify Status](https://img.shields.io/badge/netlify-deployed-00C7B7?logo=netlify)](https://mariappan.netlify.app/)
-[![Built with Vite](https://img.shields.io/badge/built%20with-vite-646CFF?logo=vite)](https://vitejs.dev/)
-[![React](https://img.shields.io/badge/react-18.3-61DAFB?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/typescript-strict-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+A hand-drawn, plain **HTML + CSS** portfolio. No framework, no build step, no
+dependencies. Open `index.html` in a browser or push to Netlify and it works.
 
-> A blazingly fast, SEO-optimized portfolio built with pure vibes, zero compromises. Powered by [Magic UI](https://magicui.design/), Tailwind CSS, and an unhealthy amount of caffeine.
+**Live:** https://mariappan.netlify.app/
 
-**[View Live Site →](https://mariappan.netlify.app/)**
+## Layout
 
----
-
-## ✨ What Makes This Special?
-
-This isn't your average portfolio template. It's **fully vibe-coded** with a focus on:
-- 🚀 **Performance** - Total gzipped bundle: ~360KB
-- 🔍 **SEO** - Structured data, Open Graph, Twitter Cards, sitemap
-- 🎭 **Aesthetics** - Magic UI components + Tailwind CSS v4
-- ⚡ **Speed** - Vite build system, lazy loading, code splitting
-- 🧩 **Simplicity** - Self-configured, no bloat, just vibes
-
----
-
-## 🎯 Tech Stack
-
-### Core
-- **[React 18](https://react.dev/)** - With Suspense & lazy loading
-- **[TypeScript](https://www.typescriptlang.org/)** - Strict mode enabled
-- **[Vite](https://vitejs.dev/)** - Lightning-fast builds
-- **[Tailwind CSS v4](https://tailwindcss.com/)** - Latest version
-
-### UI & Animation
-- **[Magic UI](https://magicui.design/)** - Pre-built beautiful components
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible primitives (Accordion, ScrollArea)
-- **[Framer Motion](https://www.framer.com/motion/)** - Buttery smooth animations
-- **[Lucide React](https://lucide.dev/)** - Icon system
-- **[next-themes](https://github.com/pacocoursey/next-themes)** - Dark mode support
-
-### SEO & Meta
-- **[React Helmet Async](https://github.com/staylor/react-helmet-async)** - Dynamic meta tags
-- **JSON-LD Structured Data** - Schema.org Person markup
-- **Open Graph & Twitter Cards** - Social sharing optimization
-
----
-
-## 🚀 Performance Optimizations
-
-### 1. Smart Code Splitting
-Strategic vendor chunking to maximize browser caching:
-
-```javascript
-// vite.config.ts
-manualChunks: {
-  'react-vendor': ['react', 'react-dom', 'react-helmet-async'],   // 329KB → 102KB gzipped
-  'animation': ['framer-motion'],                                   // 137KB → 46KB gzipped
-  'ui-vendor': ['@radix-ui/*'],                                     // 26KB → 8KB gzipped
-  'icons': ['lucide-react'],                                        // 873KB → 161KB gzipped
-}
+```
+index.html              homepage (hero deck, logo marquee, work, talks, writing, footer)
+about/index.html        the personal side: music, AI interfaces, travel, poetry, photography, cooking
+work/<slug>/index.html  one folder per project write-up  →  /work/<slug>/
+404.html                Netlify picks this up automatically
+css/style.css           the whole design system: tokens, doodle primitives, components
+js/main.js              theme toggle + click-to-load YouTube (site works without it)
+assets/doodles.svg      every doodle icon as an SVG <symbol>
+images/portraits/       the three hero deck illustrations (WebP, 900x1200)
+images/footer/          transparent WebP cut-outs planted in the footer garden
+images/logos/           company logos; project media goes in images/work/<slug>/
+previews/               talk thumbnails
+sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 ```
 
-**Result:** Heavy dependencies cached separately, main app code only 105KB (27KB gzipped)
+## Design system in one minute
 
-### 2. Lazy Loading
-Non-critical sections loaded on-demand:
+- **Fonts.** `DM Serif Display` for display headings, `Space Grotesk` for body
+  copy, `Inter` Light for subtitles, `JetBrains Mono` for eyebrows and `Caveat`
+  only for the tiny hand-written notes. All from Google Fonts.
+- **Colours** are CSS custom properties in `:root`. Light is warm paper, dark
+  is a chalkboard. Dark mode follows the system, and the toggle stores an
+  override in `localStorage` under `theme`.
+- **Doodle primitives** (all in `css/style.css`):
+  - `.wobbly`, `.wobbly--2`, `.wobbly--3` hand-drawn card borders, add `.wobbly--shadow` for an offset ink shadow
+  - `mark.hl` highlighter swipe behind a word
+  - `.sticky` yellow sticky note; `.taped` adds a tape strip to any positioned box
+  - `.doodle-list` hand-drawn bullets
+  - `.tilt-1/2/3` tiny rotations so cards look hand-placed
+  - `.eyebrow` mono section label, `.sub` Inter Light subtitle, `.pill` outline button
+  - `.wave` curvy fold separator: put it as the first child of the lower section
+    and give that section `.has-wave` plus `.section--sand` or `.section--paper`
+  - `.btn`, `.btn--primary`, `.btn--ghost`, `.tag`, `.callout`, `.facts`, `.prose`
 
-```tsx
-// App.tsx
-const TalksSection = lazy(() => import("./components/sections/talks-section"))
-const ArticlesSection = lazy(() => import("./components/sections/articles-section"))
+### Using a doodle icon
 
-<Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-lg" />}>
-  <TalksSection />
-</Suspense>
-```
-
-### 3. Build Optimizations
-- **esbuild minification** - Faster than Terser, excellent compression
-- **Path aliases** - `@/` imports for cleaner code and better tree-shaking
-- **ES2020 target** - Modern JS for smaller bundles
-- **CSS purging** - Tailwind removes unused styles automatically
-
-### 4. React Best Practices
-- Conditional rendering based on breakpoints (avoid unnecessary DOM)
-- Sticky positioning (CSS-only, no scroll listeners)
-- Suspense boundaries for granular loading states
-- No prop drilling - flat component structure
-
----
-
-## 🔍 SEO Optimizations
-
-### Comprehensive Meta Tags
-- **Standard SEO** - Title, description, keywords, author, canonical URL
-- **Open Graph** - Facebook/LinkedIn sharing with custom OG image
-- **Twitter Cards** - Optimized for Twitter/X sharing
-- **Theme colors** - For browser UI tinting (light/dark mode aware)
-
-### Structured Data (JSON-LD)
-```javascript
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Mariappan Subramanian",
-  "jobTitle": "Founding Engineer",
-  "worksFor": { "@type": "Organization", "name": "Strivelabs" },
-  // ... knowsAbout, alumniOf, sameAs links
-}
-```
-
-Helps search engines understand:
-- Who you are (Person entity)
-- Your job & organization
-- Skills & expertise
-- Social profiles & alumni networks
-
-### Static Assets
-- `robots.txt` - Search engine directives
-- `sitemap.xml` - URL discovery
-- `og-image.png` - 1200x630 social sharing image
-- `favicon.ico` - Browser tab icon
-
-### Performance Hints
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg#guitar"/></svg>
 ```
 
----
+Icons inherit `color`, so `<svg class="doodle ink-coral">` recolours one. The
+`?v=2` on the sprite URL is a cache-buster: bump it in all pages whenever you
+change `assets/doodles.svg` (currently `?v=3`), otherwise browsers may keep the old sprite for a day.
+Sizes: `.doodle--lg`, `.doodle--xl`. Available ids: guitar, sparkles, plane, pen,
+camera, cooking, music, coffee, briefcase, folder, mic, book, heart, star, pin,
+lightbulb, github, linkedin, x, mail, instagram, medium, substack, sun, moon,
+external, play, slides, arrow-right, arrow-down, menu, close, check, squiggle,
+line, circle-scribble, arrow-curly, dashes, asterisk.
 
-## 📦 Build Size Breakdown
+**Add a new doodle:** open `assets/doodles.svg`, copy any `<symbol>`, give it a
+new `id`, and draw with stroke paths in a 24×24 box. Slightly uneven curves and
+overshooting line ends are what make it read as hand-drawn. Don't set colours
+inside the symbol; the page CSS supplies `stroke: currentColor`.
 
+## Adding a project page
+
+1. Copy `work/thatpam/` to `work/<new-slug>/`.
+2. Edit the `<title>`, meta description, canonical URL, Open Graph tags and the
+   JSON-LD block at the top of `index.html`.
+3. Write the content inside `<article class="prose">`. Images and videos go in
+   `images/work/<new-slug>/`; there are commented examples for `<figure>` with
+   `<img>` and `<video>` in the template. Always set `width`/`height` and
+   `loading="lazy"` on images.
+4. Add a card in the **Things I've built** section of the homepage, using the
+   `project--internal` variant so it gets the dashed outline and arrow.
+5. Add the URL to `sitemap.xml`.
+
+## The hero deck
+
+The hero shows three illustrated cards stacked like a deck. Clicking the front
+card sends it to the back; the arrow caption and the sticky note change with it.
+Each card is a `<button class="deck-card">` in `index.html`:
+
+```html
+<button class="deck-card" type="button" data-label="hand me a mic" data-note="Happiest with a mic and a room" aria-label="...">
+  <img src="/images/portraits/mic.webp" width="900" height="1200" alt="..." loading="lazy">
+</button>
 ```
-dist/index.html                          1.20 kB │ gzip:   0.50 kB
-dist/assets/index-[hash].css            42.66 kB │ gzip:   8.14 kB
-dist/assets/talks-section-[hash].js     11.70 kB │ gzip:   2.22 kB
-dist/assets/articles-section-[hash].js  14.47 kB │ gzip:   3.04 kB
-dist/assets/ui-vendor-[hash].js         26.24 kB │ gzip:   8.61 kB
-dist/assets/index-[hash].js            105.31 kB │ gzip:  27.64 kB
-dist/assets/animation-[hash].js        137.37 kB │ gzip:  46.52 kB
-dist/assets/react-vendor-[hash].js     329.27 kB │ gzip: 102.19 kB
-dist/assets/icons-[hash].js            873.40 kB │ gzip: 161.72 kB
+
+- `data-label` is the handwritten arrow text, `data-note` the sticky note.
+- Add a card by adding another button; CSS positions `.pos-0` to `.pos-2`, so
+  add a `.pos-3` rule in `css/style.css` if you go beyond three.
+- Export new illustrations at 900x1200 WebP:
+  `magick in.png -resize 900x -strip -quality 82 images/portraits/name.webp`
+
+## Hero rotating line
+
+The second half of "Design engineer crafting …" cycles through the spans inside
+`.rotator` in `index.html` every 2.8 s. Add or edit spans there; the first one
+is the default and what search engines read.
+
+## Footer garden
+
+The footer is a sand block with a wavy crest, layered hills (inline SVG) and
+illustrations planted on them. Each plant is:
+
+```html
+<div class="plant plant--banana"><img src="/images/footer/banana.webp" alt="" width="379" height="560" loading="lazy"></div>
 ```
 
-**Total:** ~1.5MB raw → **~360KB gzipped** 🎉
+with a matching `.plant--banana { left: 89%; --w: …; --sway: 6s; --swayA: 2deg; }`
+rule in `css/style.css`. Small bits (`.deco-1` … `.deco-20`) are positioned the
+same way. Phones get their own scene: a taller land, the `.hills--narrow`
+drawing and a `@media (max-width: 639px)` block that repositions everything,
+so add a phone rule for anything new. To add a new one, cut it out of its background
+(`magick in.jpg -fuzz 10% -fill none -draw "alpha 0,0 floodfill" -trim out.png`),
+export as WebP into `images/footer/`, add the element and the rule.
 
----
+## Editing content
 
-## 🛠️ Getting Started
+Everything is in the HTML, in reading order. The nav and footer are repeated in each page; edit them in all four files. Search for the section comment
+(`<!-- ============ Talks ============ -->`) and edit in place. For a talk with
+a YouTube video, set `data-video` on the play button to the video id; talks
+without a video use the `.video--static` variant that links to the slides.
 
-### Prerequisites
-- Node.js 18+ (or 20+ recommended)
-- pnpm (or npm/yarn)
+## Local preview
 
-### Installation
+Any static server works:
 
 ```bash
-# Clone the repo
-git clone https://github.com/yourusername/mariappan-portfolio-v4.git
-cd mariappan-portfolio-v4
-
-# Install dependencies
-pnpm install
-
-# Start dev server
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
+python3 -m http.server 8765
 ```
 
-### Project Structure
+then open http://localhost:8765. (Opening `index.html` directly also works,
+but the `/assets/doodles.svg` sprite needs a server because of absolute paths.)
 
-```
-mariappan-portfolio-v4/
-├── src/
-│   ├── components/
-│   │   ├── magicui/          # Magic UI components
-│   │   ├── sections/         # Main content sections
-│   │   ├── ui/               # Radix UI + custom components
-│   │   ├── navbar.tsx
-│   │   ├── profile-card.tsx
-│   │   └── seo.tsx           # SEO component
-│   ├── data/
-│   │   ├── portfolio.ts      # Content data
-│   │   └── seo.ts            # SEO config & structured data
-│   ├── lib/
-│   │   └── utils.ts          # Utility functions (cn, etc.)
-│   ├── App.tsx
-│   └── main.tsx
-├── public/
-│   ├── favicon.ico
-│   ├── og-image.png
-│   ├── robots.txt
-│   └── sitemap.xml
-├── vite.config.ts            # Build config with optimizations
-└── tailwind.config.js
-```
+## Deploy
 
----
+Netlify serves the repo root (`netlify.toml` sets `publish = "."`). Headers
+for caching and basic security are in the same file. No build command.
 
-## 🎨 Customization
+## History
 
-### 1. Update Content
-Edit [src/data/portfolio.ts](src/data/portfolio.ts) with your information:
-- Profile details
-- Experience & projects
-- Talks & articles
-- Social links
-
-### 2. Update SEO
-Edit [src/data/seo.ts](src/data/seo.ts):
-- Meta titles & descriptions
-- Keywords & structured data
-- Social handles
-- Site URL
-
-### 3. Customize Styling
-All styling uses Tailwind CSS. Edit `tailwind.config.js` for:
-- Color themes
-- Typography
-- Spacing scale
-- Custom animations
-
-### 4. Add/Remove Sections
-Simply edit [src/App.tsx](src/App.tsx) - add/remove section components as needed.
-
----
-
-## 🤝 Fork & Share
-
-**Feel free to fork this repo and make it your own!**
-
-If you create something cool, I'd love to see it:
-- 🐦 Tag me on Twitter/X: [@mariapp62431572](https://x.com/mariapp62431572)
-- 💼 Connect on LinkedIn: [marigameo](https://www.linkedin.com/in/marigameo/)
-- 📧 Or drop me an email (check the portfolio for contact info)
-
-I appreciate creativity and would be stoked to see your unique spin on this design.
-
----
-
-## 📝 License
-
-MIT License - Use it however you want. Credit appreciated but not required.
-
----
-
-## 🙏 Credits
-
-- **[Magic UI](https://magicui.design/)** - For the beautiful component library
-- **[Radix UI](https://www.radix-ui.com/)** - For accessible primitives
-- **[Tailwind CSS](https://tailwindcss.com/)** - For the utility-first CSS framework
-- **[Vite](https://vitejs.dev/)** - For the blazingly fast build tool
-- **You** - For checking out this repo!
-
----
-
-<div align="center">
-
-**Crafted with care (and caffeine) in India 🇮🇳**
-
-[View Live](https://mariappan.netlify.app/) • [Report Bug](https://github.com/Marigameo/mariappan-portfolio-2026/issues) • [Request Feature](https://github.com/Marigameo/mariappan-portfolio-2026/issues)
-
-</div>
+The previous React + Vite + Tailwind version lives on the
+`backup/react-portfolio-v4` branch.
