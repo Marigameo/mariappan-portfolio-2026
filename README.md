@@ -14,7 +14,8 @@ work/<slug>/index.html  one folder per project write-up  →  /work/<slug>/
 css/style.css           the whole design system: tokens, doodle primitives, components
 js/main.js              theme toggle + click-to-load YouTube (site works without it)
 assets/doodles.svg      every doodle icon as an SVG <symbol>
-images/                 portrait, company logos, project media (images/work/<slug>/)
+images/portraits/       the three hero deck illustrations (WebP, 900x1200)
+images/logos/           company logos; project media goes in images/work/<slug>/
 previews/               talk thumbnails
 sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 ```
@@ -64,6 +65,24 @@ inside the symbol; the page CSS supplies `stroke: currentColor`.
 4. Add a card in the **Things I've built** section of the homepage, using the
    `project--internal` variant so it gets the dashed outline and arrow.
 5. Add the URL to `sitemap.xml`.
+
+## The hero deck
+
+The hero shows three illustrated cards stacked like a deck. Clicking the front
+card sends it to the back; the arrow caption and the sticky note change with it.
+Each card is a `<button class="deck-card">` in `index.html`:
+
+```html
+<button class="deck-card" type="button" data-label="hand me a mic" data-note="Happiest with a mic and a room" aria-label="...">
+  <img src="/images/portraits/mic.webp" width="900" height="1200" alt="..." loading="lazy">
+</button>
+```
+
+- `data-label` is the handwritten arrow text, `data-note` the sticky note.
+- Add a card by adding another button; CSS positions `.pos-0` to `.pos-2`, so
+  add a `.pos-3` rule in `css/style.css` if you go beyond three.
+- Export new illustrations at 900x1200 WebP:
+  `magick in.png -resize 900x -strip -quality 82 images/portraits/name.webp`
 
 ## Editing content
 

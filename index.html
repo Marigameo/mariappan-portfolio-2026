@@ -109,13 +109,25 @@
       </ul>
     </div>
 
-    <figure class="portrait">
-      <span class="annot-text" aria-hidden="true">that's me</span>
-      <svg class="doodle annot" aria-hidden="true"><use href="/assets/doodles.svg#arrow-curly"/></svg>
-      <div class="portrait-frame taped">
-        <img src="/images/profile.svg" width="936" height="792" alt="Ink sketch of Mariappan standing beside a gramophone on a stack of books" fetchpriority="high">
+    <figure class="deck" id="deck">
+      <p class="deck-annot" aria-hidden="true">
+        <span class="annot-text" data-deck-label>that's me</span>
+        <svg class="doodle annot" aria-hidden="true"><use href="/assets/doodles.svg#arrow-curly"/></svg>
+      </p>
+      <div class="deck-stack">
+        <!-- Cards: first in DOM is on top. data-label feeds the arrow text, data-note the sticky note. -->
+        <button class="deck-card taped" type="button" data-label="that's me" data-note="Drifting beyond conventions" aria-label="Portrait of Mariappan. Show next card">
+          <img src="/images/portraits/me.webp" width="900" height="1200" alt="Illustrated portrait of Mariappan in a red plaid shirt, curly hair, slight smile" fetchpriority="high">
+        </button>
+        <button class="deck-card" type="button" data-label="and the guitar" data-note="Negotiating peace with six strings" aria-label="Mariappan playing guitar. Show next card">
+          <img src="/images/portraits/guitar.webp" width="900" height="1200" alt="Illustration of Mariappan playing an acoustic guitar on a bench" loading="lazy">
+        </button>
+        <button class="deck-card" type="button" data-label="hand me a mic" data-note="Happiest with a mic and a room" aria-label="Mariappan speaking on a mic. Show next card">
+          <img src="/images/portraits/mic.webp" width="900" height="1200" alt="Illustration of Mariappan speaking into a microphone, mid-sentence" loading="lazy">
+        </button>
       </div>
-      <figcaption class="sticky">Drifting beyond conventions</figcaption>
+      <figcaption class="sticky" data-deck-note aria-live="polite">Drifting beyond conventions</figcaption>
+      <p class="deck-hint" aria-hidden="true">tap the card to shuffle</p>
     </figure>
   </section>
 

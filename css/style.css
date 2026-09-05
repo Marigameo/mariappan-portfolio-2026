@@ -312,16 +312,39 @@ mark.hl, .hl {
 .hero-lede { font-size: 1.15rem; color: var(--ink-soft); max-width: 40ch; }
 .hero-actions { margin-top: var(--space-3); }
 
-.portrait { position: relative; justify-self: center; max-width: 24rem; width: 100%; }
-.portrait-frame {
-  padding: .6rem; background: var(--paper-2); border: 2px solid var(--ink);
-  border-radius: var(--radius-wobble-2); box-shadow: var(--shadow); transform: rotate(1.5deg);
+/* Portrait deck: three illustrated cards, click to send the front one to the back */
+.deck { position: relative; justify-self: center; width: 100%; max-width: 22rem; margin: 2.6rem 0 0; }
+.deck-stack { position: relative; aspect-ratio: 3 / 4; }
+.deck-card {
+  position: absolute; inset: 0; margin: 0; padding: .55rem; border: 2px solid var(--ink); background: var(--paper-2);
+  border-radius: var(--radius-wobble-2); box-shadow: var(--shadow); cursor: pointer;
+  transition: transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, opacity .3s ease;
+  will-change: transform;
 }
-.portrait-frame img { width: 100%; aspect-ratio: 936 / 792; object-fit: cover; border-radius: 10px 60px 12px 40px / 40px 12px 60px 10px; }
-.portrait .sticky { position: absolute; right: -.5rem; bottom: -1.4rem; }
-.portrait .annot { position: absolute; left: -1.2rem; top: -1.6rem; width: 4.5rem; height: 3.5rem; color: var(--coral); transform: scaleX(-1) rotate(15deg); stroke-width: 2; }
-.portrait .annot-text { position: absolute; left: -1rem; top: -3.2rem; font-family: var(--font-hand); font-size: 1.25rem; color: var(--coral); transform: rotate(-6deg); white-space: nowrap; }
-@media (max-width: 799px) { .portrait { max-width: 20rem; margin-top: var(--space-2); } .portrait .annot, .portrait .annot-text { display: none; } }
+.deck-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px 60px 12px 40px / 40px 12px 60px 10px; display: block; }
+.deck-card:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+/* stacking positions, assigned by JS (or DOM order without JS) */
+.deck-card:nth-child(1) { z-index: 3; transform: rotate(1.5deg); }
+.deck-card:nth-child(2) { z-index: 2; transform: rotate(-5deg) translate(-1.6rem, .6rem); box-shadow: 2px 2px 0 var(--ink); }
+.deck-card:nth-child(3) { z-index: 1; transform: rotate(6deg) translate(1.7rem, .3rem); box-shadow: 1px 1px 0 var(--ink); }
+.deck-card.pos-0 { z-index: 3; transform: rotate(1.5deg); box-shadow: var(--shadow); }
+.deck-card.pos-1 { z-index: 2; transform: rotate(-5deg) translate(-1.6rem, .6rem); box-shadow: 2px 2px 0 var(--ink); }
+.deck-card.pos-2 { z-index: 1; transform: rotate(6deg) translate(1.7rem, .3rem); box-shadow: 1px 1px 0 var(--ink); }
+.deck-card.pos-0:hover { transform: rotate(0deg) translateY(-4px); }
+/* the front card flying out before it tucks in behind */
+.deck-card.is-flying { z-index: 4; transform: rotate(14deg) translate(58%, -6%) scale(.92); box-shadow: 6px 8px 0 var(--ink); }
+/* only the front card shows the tape strip */
+.deck-card.taped::before { opacity: 1; transition: opacity .3s ease; }
+.deck-card:not(.pos-0)::before { opacity: 0; }
+
+.deck .sticky { position: absolute; right: -.6rem; bottom: -1.2rem; z-index: 5; transition: transform .35s ease; }
+.deck .sticky.is-swapping { transform: rotate(-2deg) scale(.85); opacity: 0; }
+.deck-annot { position: absolute; left: -1rem; top: -2.8rem; margin: 0; z-index: 5; display: flex; align-items: flex-start; gap: .1rem; pointer-events: none; }
+.deck-annot .annot-text { font-family: var(--font-hand); font-size: 1.3rem; font-weight: 700; color: var(--coral); transform: rotate(-6deg); white-space: nowrap; transition: opacity .25s ease, transform .25s ease; display: inline-block; }
+.deck-annot .annot-text.is-swapping { opacity: 0; transform: rotate(-6deg) translateY(-6px); }
+.deck-annot .annot { width: 3.6rem; height: 2.8rem; color: var(--coral); transform: scaleX(-1) rotate(20deg) translateY(.6rem); stroke-width: 2; }
+.deck-hint { margin: 2rem 0 0; text-align: center; font-family: var(--font-hand); font-size: 1.15rem; color: var(--ink-faint); }
+@media (max-width: 799px) { .deck { max-width: 18rem; margin-top: 3.2rem; } .deck-annot { left: -.4rem; } }
 
 /* social row */
 .socials { display: flex; flex-wrap: wrap; gap: .55rem; list-style: none; padding: 0; margin: 0; }
