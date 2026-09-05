@@ -155,6 +155,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .section--sand .wave { --wave-fill: var(--sand); }
 .section--paper .wave { --wave-fill: var(--paper); }
 .has-wave { padding-top: calc(var(--space-5) + var(--wave-h) * .35); }
+.before-wave { padding-bottom: calc(var(--space-5) + var(--wave-h)) !important; }
 
 /* ---------- 6. Nav ------------------------------------------------------ */
 .site-header { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--paper) 82%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
@@ -228,14 +229,15 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .logos .eyebrow { justify-content: center; margin-bottom: 1.4rem; }
 .logos .eyebrow::before { display: none; }
 .marquee { overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
-.marquee-track { display: flex; gap: 1rem; width: max-content; animation: marquee 38s linear infinite; }
+.marquee-track { display: flex; gap: 2.2rem; align-items: center; width: max-content; animation: marquee 32s linear infinite; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 @keyframes marquee { to { transform: translateX(-50%); } }
-.logo-chip { display: flex; align-items: center; gap: .8rem; padding: .7rem 1.1rem .7rem .8rem; border: 1.5px solid var(--line); border-radius: 999px; background: var(--paper-2); color: var(--ink); text-decoration: none; white-space: nowrap; transition: border-color .15s ease, transform .15s ease; }
-.logo-chip:hover { border-color: var(--ink); transform: translateY(-2px); color: var(--ink); }
-.logo-chip img { width: 2rem; height: 2rem; object-fit: contain; background: var(--logo-chip); border-radius: 50%; padding: .25rem; }
-.logo-chip b { font-weight: 500; font-size: .95rem; }
-.logo-chip small { color: var(--ink-faint); font-size: .8rem; }
+.logo { display: flex; align-items: center; justify-content: center; height: 3.4rem; padding: 0 1.4rem; color: var(--ink); text-decoration: none; opacity: .72; filter: grayscale(1); transition: opacity .2s ease, filter .2s ease, transform .2s ease; }
+.logo:hover { opacity: 1; filter: none; transform: translateY(-2px); }
+.logo img { height: 2.1rem; width: auto; max-width: 9.5rem; object-fit: contain; }
+[data-theme="dark"] .logo img { filter: invert(1) hue-rotate(180deg); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo img { filter: invert(1) hue-rotate(180deg); } }
+[data-theme="dark"] .logo:hover img { filter: invert(1) hue-rotate(180deg); }
 .logos-note { text-align: center; margin: 1.2rem auto 0; font-size: .88rem; }
 
 /* ---------- 9. Projects -------------------------------------------------- */
