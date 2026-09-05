@@ -337,6 +337,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 [data-theme="dark"] .footer-land { --water: #1f3a52; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .footer-land { --water: #1f3a52; } }
 .footer-land .hills { position: absolute; inset: auto 0 0 0; width: 100%; height: 100%; }
+.hills--narrow { display: none; }
 .plant { position: absolute; transform: translateX(-50%); transform-origin: bottom center; width: var(--w, 10rem); }
 .plant img { width: 100%; height: auto; display: block; transform-origin: bottom center; animation: sway var(--sway, 6s) ease-in-out infinite alternate; animation-delay: var(--sway-d, 0s); filter: drop-shadow(0 6px 6px rgba(0,0,0,.18)); }
 @keyframes sway { from { transform: rotate(calc(var(--swayA, 2deg) * -1)); } to { transform: rotate(var(--swayA, 2deg)); } }
@@ -347,21 +348,69 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .plant--boat img { animation-name: bob; --sway: 3.2s; filter: drop-shadow(0 4px 4px rgba(0,0,0,.2)); }
 .plant--kdancer { left: 74%; bottom: 12%; --w: clamp(5.5rem, 13vw, 10rem); --sway: 6.5s; --swayA: 1deg; --sway-d: -3s; }
 .plant--banana { left: 89%; bottom: 33%; --w: clamp(5rem, 13vw, 10.5rem); --sway: 6s; --swayA: 2deg; --sway-d: -4s; }
+
+/* small hand-drawn bits: --s scales, left/bottom are % of the land box */
 .deco { position: absolute; width: calc(2.4rem * var(--s, 1)); transform: translateX(-50%); color: var(--land-3); }
 .deco svg { width: 100%; height: auto; aspect-ratio: 40 / 24; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; display: block; }
 .deco--daisy svg, .deco--hibiscus svg { aspect-ratio: 24 / 40; width: 60%; margin-inline: auto; }
-.deco--sun svg { aspect-ratio: 1; }
-.deco--sun { color: var(--ink); opacity: .9; }
+.deco--bigsun svg { aspect-ratio: 1; }
+.deco--bigsun { color: var(--ink); opacity: .9; }
 .deco--bird { color: var(--ink-faint); }
 .deco--stone, .deco--coconuts { color: var(--ink); }
-.deco--daisy, .deco--hibiscus { color: var(--land-3); }
 [data-theme="dark"] .deco { color: var(--land-1); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .deco { color: var(--land-1); } }
+/* landscape positions */
+.deco-1 { left: 86%; bottom: 70%; --s: 2.4; }   /* sun */
+.deco-2 { left: 14%; bottom: 78%; --s: 1.1; }   /* birds */
+.deco-3 { left: 19%; bottom: 84%; --s: .8; }
+.deco-4 { left: 60%; bottom: 80%; --s: .9; }
+.deco-5 { left: 16%; bottom: 31%; --s: 1; }     /* coconuts by the palm */
+.deco-6 { left: 4%; bottom: 36%; --s: 1.2; }
+.deco-7 { left: 8%; bottom: 38%; --s: 1; }
+.deco-8 { left: 21%; bottom: 30%; --s: 1; }
+.deco-9 { left: 33%; bottom: 26%; --s: 1; }
+.deco-10 { left: 36%; bottom: 24%; --s: 1.1; }
+.deco-11 { left: 44%; bottom: 10%; --s: 1.1; }
+.deco-12 { left: 47%; bottom: 12%; --s: .9; }
+.deco-13 { left: 62%; bottom: 13%; --s: .9; }
+.deco-14 { left: 65%; bottom: 11%; --s: 1; }
+.deco-15 { left: 80%; bottom: 28%; --s: 1.2; }
+.deco-16 { left: 83%; bottom: 29%; --s: .9; }
+.deco-17 { left: 96%; bottom: 34%; --s: .9; }
+.deco-18 { left: 97%; bottom: 12%; --s: 1; }
+.deco-19 { left: 27%; bottom: 9%; --s: .8; }
+.deco-20 { left: 12%; bottom: 8%; --s: 1; }
+
+/* ---- Phone scene: taller land, portrait hills, three depth tiers ----
+   back hill: palm + banana frame the edges · middle: boat on the pond · front: chai wala + dancer */
 @media (max-width: 639px) {
-  .plant--palm { left: 15%; --w: 5.5rem; } .plant--chai { left: 32%; --w: 4rem; bottom: 27%; }
-  .plant--boat { left: 48%; --w: 8.5rem; bottom: 16%; } .plant--kdancer { left: 79%; --w: 4.6rem; bottom: 10%; } .plant--banana { left: 90%; --w: 4.4rem; bottom: 36%; }
-  .deco--sun { --s: 1.4 !important; left: 70% !important; bottom: 76% !important; } .deco--bird { display: none; }
-  .deco--stone, .deco--coconuts { --s: .8 !important; }
+  .footer-land { height: 19rem; }
+  .footer-inner { padding-bottom: 22rem; }
+  .hills--wide { display: none; }
+  .hills--narrow { display: block; }
+  .plant--palm { left: 13%; bottom: 58%; --w: 6.2rem; }
+  .plant--banana { left: 87%; bottom: 60%; --w: 5.4rem; }
+  .plant--boat { left: 50%; bottom: 27%; --w: 11.5rem; }
+  .plant--chai { left: 19%; bottom: 3%; --w: 4.4rem; }
+  .plant--kdancer { left: 81%; bottom: 2%; --w: 4.6rem; }
+  .deco-1 { left: 60%; bottom: 82%; --s: 1.6; }            /* sun */
+  .deco-2 { left: 34%; bottom: 88%; --s: .9; }             /* one bird */
+  .deco-3, .deco-4 { display: none; }
+  .deco-5 { left: 19%; bottom: 57%; --s: .8; }             /* coconuts */
+  .deco-6 { left: 4%; bottom: 60%; --s: 1; }               /* back-hill grass */
+  .deco-7 { left: 30%; bottom: 60%; --s: .8; }             /* daisy */
+  .deco-8 { left: 72%; bottom: 62%; --s: 1; }
+  .deco-9 { left: 95%; bottom: 58%; --s: .8; }             /* hibiscus */
+  .deco-10 { left: 8%; bottom: 42%; --s: 1; }              /* mid-hill grass */
+  .deco-11 { left: 90%; bottom: 42%; --s: .9; }            /* stone */
+  .deco-12 { left: 94%; bottom: 44%; --s: .9; }
+  .deco-13 { left: 38%; bottom: 17%; --s: .8; }            /* front daisy */
+  .deco-14 { left: 43%; bottom: 15%; --s: 1; }
+  .deco-15 { left: 60%; bottom: 16%; --s: 1; }
+  .deco-16 { left: 65%; bottom: 17%; --s: .8; }            /* front hibiscus */
+  .deco-17 { left: 50%; bottom: 3%; --s: .9; }             /* front stone */
+  .deco-18 { left: 34%; bottom: 3%; --s: .9; }
+  .deco-19, .deco-20 { display: none; }
 }
 
 /* ---------- 15. Motion / print ------------------------------------------------ */

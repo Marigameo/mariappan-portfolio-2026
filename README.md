@@ -107,8 +107,11 @@ illustrations planted on them. Each plant is:
 <div class="plant plant--banana"><img src="/images/footer/banana.webp" alt="" width="379" height="560" loading="lazy"></div>
 ```
 
-with a matching `.plant--banana { left: 91%; --w: …; --sway: 6s; --swayA: 2deg; }`
-rule in `css/style.css`. To add a new one, cut it out of its background
+with a matching `.plant--banana { left: 89%; --w: …; --sway: 6s; --swayA: 2deg; }`
+rule in `css/style.css`. Small bits (`.deco-1` … `.deco-20`) are positioned the
+same way. Phones get their own scene: a taller land, the `.hills--narrow`
+drawing and a `@media (max-width: 639px)` block that repositions everything,
+so add a phone rule for anything new. To add a new one, cut it out of its background
 (`magick in.jpg -fuzz 10% -fill none -draw "alpha 0,0 floodfill" -trim out.png`),
 export as WebP into `images/footer/`, add the element and the rule.
 

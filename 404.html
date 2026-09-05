@@ -87,8 +87,9 @@
     <p class="footer-credit">© <span data-year>2026</span> Mariappan Subramanian · Crafted with care (and caffeine) in India <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg?v=2#heart"/></svg></p>
   </div>
   <div class="footer-land" aria-hidden="true">
-    <!-- Layered hills, a pond and pale ridge lines. viewBox is stretched to the width, so keep shapes soft. -->
-    <svg class="hills" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Two hill drawings: .hills--wide for landscape screens, .hills--narrow for phones (swapped in CSS).
+         Every plant and decoration is positioned by its class in css/style.css, with a phone override. -->
+    <svg class="hills hills--wide" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
       <path fill="var(--land-1)" d="M0 150C160 110 300 90 480 118C660 146 760 190 940 160C1120 130 1260 96 1440 120V320H0Z"/>
       <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="3" d="M0 150C160 110 300 90 480 118C660 146 760 190 940 160C1120 130 1260 96 1440 120"/>
       <path fill="var(--land-2)" d="M0 210C200 176 360 172 540 196C720 220 880 236 1060 214C1240 192 1340 186 1440 194V320H0Z"/>
@@ -98,37 +99,47 @@
       <path fill="var(--land-3)" d="M0 276C240 262 480 258 720 270C960 282 1200 280 1440 268V320H0Z"/>
       <path fill="none" stroke="var(--paper)" stroke-opacity=".55" stroke-width="3" d="M0 276C240 262 480 258 720 270C960 282 1200 280 1440 268"/>
     </svg>
+    <svg class="hills hills--narrow" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="var(--land-1)" d="M0 122C80 98 160 94 240 108C300 118 350 124 400 114V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="2.5" d="M0 122C80 98 160 94 240 108C300 118 350 124 400 114"/>
+      <path fill="var(--land-2)" d="M0 190C100 174 200 178 300 186C350 190 380 188 400 184V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".6" stroke-width="2.5" d="M0 190C100 174 200 178 300 186C350 190 380 188 400 184"/>
+      <path fill="var(--water)" d="M96 228C150 212 250 212 306 226C276 246 140 248 96 228Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="2" d="M140 232q14-5 28 0M210 238q14-5 28 0M250 226q14-5 28 0"/>
+      <path fill="var(--land-3)" d="M0 270C130 260 270 262 400 268V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".55" stroke-width="2.5" d="M0 270C130 260 270 262 400 268"/>
+    </svg>
 
-    <!-- sky bits -->
-    <i class="deco deco--sun" style="left:86%; bottom:70%; --s:2.4"><svg><use href="/assets/doodles.svg?v=2#bigsun"/></svg></i>
-    <i class="deco deco--bird" style="left:14%; bottom:78%; --s:1.1"><svg><use href="/assets/doodles.svg?v=2#bird"/></svg></i>
-    <i class="deco deco--bird" style="left:19%; bottom:84%; --s:.8"><svg><use href="/assets/doodles.svg?v=2#bird"/></svg></i>
-    <i class="deco deco--bird" style="left:60%; bottom:80%; --s:.9"><svg><use href="/assets/doodles.svg?v=2#bird"/></svg></i>
+    <!-- sky -->
+    <i class="deco deco-1 deco--bigsun"><svg><use href="/assets/doodles.svg?v=2#bigsun"/></svg></i>
+    <i class="deco deco-2 deco--bird"><svg><use href="/assets/doodles.svg?v=2#bird"/></svg></i>
+    <i class="deco deco-3 deco--bird"><svg><use href="/assets/doodles.svg?v=2#bird"/></svg></i>
+    <i class="deco deco-4 deco--bird"><svg><use href="/assets/doodles.svg?v=2#bird"/></svg></i>
 
-    <!-- plants: bottom % is where the roots meet the ground -->
+    <!-- plants -->
     <div class="plant plant--palm"><img src="/images/footer/palm.webp" alt="" width="387" height="560" loading="lazy"></div>
-    <i class="deco deco--coconuts" style="left:16%; bottom:31%; --s:1"><svg><use href="/assets/doodles.svg?v=2#coconuts"/></svg></i>
+    <i class="deco deco-5 deco--coconuts"><svg><use href="/assets/doodles.svg?v=2#coconuts"/></svg></i>
     <div class="plant plant--chai"><img src="/images/footer/chai.webp" alt="" width="380" height="560" loading="lazy"></div>
     <div class="plant plant--boat"><img src="/images/footer/boat.webp" alt="" width="640" height="493" loading="lazy"></div>
     <div class="plant plant--kdancer"><img src="/images/footer/kdancer.webp" alt="" width="560" height="633" loading="lazy"></div>
     <div class="plant plant--banana"><img src="/images/footer/banana.webp" alt="" width="379" height="560" loading="lazy"></div>
 
-    <!-- ground bits along the ridges -->
-    <i class="deco deco--grass" style="left:4%; bottom:36%; --s:1.2"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--daisy" style="left:8%; bottom:38%; --s:1"><svg><use href="/assets/doodles.svg?v=2#daisy"/></svg></i>
-    <i class="deco deco--grass" style="left:21%; bottom:30%; --s:1"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--hibiscus" style="left:33%; bottom:26%; --s:1"><svg><use href="/assets/doodles.svg?v=2#hibiscus"/></svg></i>
-    <i class="deco deco--grass" style="left:36%; bottom:24%; --s:1.1"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--stone" style="left:44%; bottom:10%; --s:1.1"><svg><use href="/assets/doodles.svg?v=2#stone"/></svg></i>
-    <i class="deco deco--grass" style="left:47%; bottom:12%; --s:.9"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--daisy" style="left:62%; bottom:13%; --s:.9"><svg><use href="/assets/doodles.svg?v=2#daisy"/></svg></i>
-    <i class="deco deco--grass" style="left:65%; bottom:11%; --s:1"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--grass" style="left:80%; bottom:28%; --s:1.2"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--hibiscus" style="left:83%; bottom:29%; --s:.9"><svg><use href="/assets/doodles.svg?v=2#hibiscus"/></svg></i>
-    <i class="deco deco--stone" style="left:96%; bottom:34%; --s:.9"><svg><use href="/assets/doodles.svg?v=2#stone"/></svg></i>
-    <i class="deco deco--grass" style="left:97%; bottom:12%; --s:1"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
-    <i class="deco deco--daisy" style="left:27%; bottom:9%; --s:.8"><svg><use href="/assets/doodles.svg?v=2#daisy"/></svg></i>
-    <i class="deco deco--grass" style="left:12%; bottom:8%; --s:1"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <!-- ground bits -->
+    <i class="deco deco-6 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-7 deco--daisy"><svg><use href="/assets/doodles.svg?v=2#daisy"/></svg></i>
+    <i class="deco deco-8 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-9 deco--hibiscus"><svg><use href="/assets/doodles.svg?v=2#hibiscus"/></svg></i>
+    <i class="deco deco-10 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-11 deco--stone"><svg><use href="/assets/doodles.svg?v=2#stone"/></svg></i>
+    <i class="deco deco-12 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-13 deco--daisy"><svg><use href="/assets/doodles.svg?v=2#daisy"/></svg></i>
+    <i class="deco deco-14 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-15 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-16 deco--hibiscus"><svg><use href="/assets/doodles.svg?v=2#hibiscus"/></svg></i>
+    <i class="deco deco-17 deco--stone"><svg><use href="/assets/doodles.svg?v=2#stone"/></svg></i>
+    <i class="deco deco-18 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
+    <i class="deco deco-19 deco--daisy"><svg><use href="/assets/doodles.svg?v=2#daisy"/></svg></i>
+    <i class="deco deco-20 deco--grass"><svg><use href="/assets/doodles.svg?v=2#grass"/></svg></i>
   </div>
 </footer>
 
