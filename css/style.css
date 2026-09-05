@@ -316,7 +316,11 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .facts a { white-space: nowrap; }
 
 /* ---------- 14. Footer ------------------------------------------------------- */
-.site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink); }
+.site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink);
+  /* Clip only sideways: the edge plants and grass bleed past the viewport and
+     would add horizontal scroll. overflow-y stays visible so the wave crest,
+     which sits above the footer's top edge, is not cut off. */
+  overflow-x: clip; overflow-y: visible; }
 .site-footer .wave { --wave-fill: var(--sand); }
 .footer-inner { position: relative; z-index: 4; text-align: center; padding-bottom: clamp(14rem, 34vw, 22rem); }
 .footer-inner .eyebrow { justify-content: center; }
@@ -329,7 +333,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 /* the land: layered hills + a pond, planted illustrations that sway, and small
    hand-drawn bits (grass, flowers, birds, sun, stones) positioned in % of the land box.
    Plants use --w for width; .deco uses --s as a scale factor. */
-.footer-land { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 2; pointer-events: none; overflow: clip; --water: #a9c9d8; }
+.footer-land { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 2; pointer-events: none; overflow: visible; --water: #a9c9d8; }  /* visible: plants grow past the land box; .site-footer clips the sideways bleed */
 [data-theme="dark"] .footer-land { --water: #1f3a52; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .footer-land { --water: #1f3a52; } }
 .footer-land .hills { position: absolute; inset: auto 0 0 0; width: 100%; height: 100%; }
