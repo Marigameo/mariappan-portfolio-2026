@@ -8,13 +8,15 @@ dependencies. Open `index.html` in a browser or push to Netlify and it works.
 ## Layout
 
 ```
-index.html              homepage (hero, things I'm into, experience, work, talks, writing, elsewhere)
+index.html              homepage (hero deck, logo marquee, work, talks, writing, footer)
+about/index.html        the personal side: music, AI interfaces, travel, poetry, photography, cooking
 work/<slug>/index.html  one folder per project write-up  →  /work/<slug>/
 404.html                Netlify picks this up automatically
 css/style.css           the whole design system: tokens, doodle primitives, components
 js/main.js              theme toggle + click-to-load YouTube (site works without it)
 assets/doodles.svg      every doodle icon as an SVG <symbol>
 images/portraits/       the three hero deck illustrations (WebP, 900x1200)
+images/footer/          transparent WebP cut-outs planted in the footer garden
 images/logos/           company logos; project media goes in images/work/<slug>/
 previews/               talk thumbnails
 sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
@@ -22,8 +24,9 @@ sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 
 ## Design system in one minute
 
-- **Fonts.** `Caveat` for anything handwritten (headings, labels, tags). `Nunito`
-  for body copy so long text stays easy to read. Both from Google Fonts.
+- **Fonts.** `DM Serif Display` for display headings, `Space Grotesk` for body
+  copy, `Inter` Light for subtitles, `JetBrains Mono` for eyebrows and `Caveat`
+  only for the tiny hand-written notes. All from Google Fonts.
 - **Colours** are CSS custom properties in `:root`. Light is warm paper, dark
   is a chalkboard. Dark mode follows the system, and the toggle stores an
   override in `localStorage` under `theme`.
@@ -33,6 +36,9 @@ sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
   - `.sticky` yellow sticky note; `.taped` adds a tape strip to any positioned box
   - `.doodle-list` hand-drawn bullets
   - `.tilt-1/2/3` tiny rotations so cards look hand-placed
+  - `.eyebrow` mono section label, `.sub` Inter Light subtitle, `.pill` outline button
+  - `.wave` curvy fold separator: put it as the first child of the lower section
+    and give that section `.has-wave` plus `.section--sand` or `.section--paper`
   - `.btn`, `.btn--primary`, `.btn--ghost`, `.tag`, `.callout`, `.facts`, `.prose`
 
 ### Using a doodle icon
@@ -84,9 +90,29 @@ Each card is a `<button class="deck-card">` in `index.html`:
 - Export new illustrations at 900x1200 WebP:
   `magick in.png -resize 900x -strip -quality 82 images/portraits/name.webp`
 
+## Hero rotating line
+
+The second half of "Design engineer crafting …" cycles through the spans inside
+`.rotator` in `index.html` every 2.8 s. Add or edit spans there; the first one
+is the default and what search engines read.
+
+## Footer garden
+
+The footer is a sand block with a wavy crest, layered hills (inline SVG) and
+illustrations planted on them. Each plant is:
+
+```html
+<div class="plant plant--banana"><img src="/images/footer/banana.webp" alt="" width="379" height="560" loading="lazy"></div>
+```
+
+with a matching `.plant--banana { left: 91%; --w: …; --sway: 6s; --swayA: 2deg; }`
+rule in `css/style.css`. To add a new one, cut it out of its background
+(`magick in.jpg -fuzz 10% -fill none -draw "alpha 0,0 floodfill" -trim out.png`),
+export as WebP into `images/footer/`, add the element and the rule.
+
 ## Editing content
 
-Everything is in the HTML, in reading order. Search for the section comment
+Everything is in the HTML, in reading order. The nav and footer are repeated in each page; edit them in all four files. Search for the section comment
 (`<!-- ============ Talks ============ -->`) and edit in place. For a talk with
 a YouTube video, set `data-video` on the play button to the video id; talks
 without a video use the `.video--static` variant that links to the slides.
