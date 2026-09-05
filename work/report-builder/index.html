@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Page not found | Mariappan Subramanian</title>
-  <meta name="description" content="That page wandered off.">
+  <title>Report builder — agent-written live reports | Work | Mariappan Subramanian</title>
+  <meta name="description" content="Strive's report builder: an AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe. Built by Mariappan Subramanian.">
   <meta name="author" content="Mariappan Subramanian">
-  <link rel="canonical" href="https://mariappan.netlify.app/404.html">
-  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://mariappan.netlify.app/work/report-builder/">
+  <meta name="robots" content="index, follow">
 
   <meta name="theme-color" content="#fff9f1">
   <meta name="theme-color" content="#fff9f1" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0a0a0f" media="(prefers-color-scheme: dark)">
 
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://mariappan.netlify.app/404.html">
-  <meta property="og:title" content="Page not found | Mariappan Subramanian">
-  <meta property="og:description" content="That page wandered off.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://mariappan.netlify.app/work/report-builder/">
+  <meta property="og:title" content="Report builder — agent-written live reports | Work | Mariappan Subramanian">
+  <meta property="og:description" content="An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe.">
   <meta property="og:image" content="https://mariappan.netlify.app/og-image.png">
   <meta property="og:image:width" content="1292">
   <meta property="og:image:height" content="630">
@@ -24,8 +24,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@mariapp62431572">
   <meta name="twitter:creator" content="@mariapp62431572">
-  <meta name="twitter:title" content="Page not found | Mariappan Subramanian">
-  <meta name="twitter:description" content="That page wandered off.">
+  <meta name="twitter:title" content="Report builder — agent-written live reports | Work | Mariappan Subramanian">
+  <meta name="twitter:description" content="An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe.">
   <meta name="twitter:image" content="https://mariappan.netlify.app/og-image.png">
 
   <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -41,6 +41,18 @@
   <script>
     try { var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Strive report builder",
+    "url": "https://strivelabs.ai/",
+    "description": "An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe.",
+    "author": { "@type": "Person", "name": "Mariappan Subramanian", "url": "https://mariappan.netlify.app/" },
+    "inLanguage": "en",
+    "keywords": "generative UI, AI reports, sandboxed iframe, postMessage, live data, BigQuery, brand theming, design engineering"
+  }
+  </script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -49,7 +61,7 @@
   <nav class="wrap nav" aria-label="Primary">
     <a class="brand" href="/" aria-label="Mariappan, home">Mari<span class="dot">.</span></a>
     <ul class="nav-links">
-      <li><a href="/#work">Work</a></li>
+      <li><a href="/#work" aria-current="page">Work</a></li>
       <li><a href="/#talks">Talks</a></li>
       <li><a href="/#writing">Writing</a></li>
       <li><a href="/about/">About</a></li>
@@ -61,11 +73,112 @@
   </nav>
 </header>
 
-<main id="main" class="wrap wrap--narrow section" style="text-align:center; padding-top: var(--space-6); padding-bottom: var(--space-6)">
-  <p class="sticky" style="transform: rotate(2.5deg)">404, a page wandered off</p>
-  <h1 style="margin-top: var(--space-3)">Drifted a little too far beyond conventions.</h1>
-  <p style="margin: 0 auto var(--space-3)">The page you're after isn't here. It may have moved, or it may never have existed. Either way, home is one click away.</p>
-  <a class="pill pill--solid" href="/">Take me home <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg?v=4#arrow-right"/></svg></a>
+<main id="main" class="wrap wrap--narrow">
+  <header class="page-hero">
+    <a class="breadcrumb" href="/#work"><svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg?v=4#arrow-right"/></svg>All work</a>
+    <p class="eyebrow">Strive Labs</p>
+    <h1>Report builder</h1>
+    <p class="lede">Lovable for marketing reports — except the artifact is <mark class="hl">wired to live data</mark>. The agent writes the whole document; you describe changes and own the result.</p>
+    <dl class="facts">
+      <div><dt>Role</dt><dd>Design engineer, primary author</dd></div>
+      <div><dt>Scope</dt><dd>Every file in the module</dd></div>
+      <div><dt>Status</dt><dd>In production, still shipping</dd></div>
+      <div><dt>Link</dt><dd><a href="https://strivelabs.ai/" rel="noopener">strivelabs.ai <svg class="doodle doodle--thin" aria-hidden="true"><use href="/assets/doodles.svg?v=4#external"/></svg></a></dd></div>
+    </dl>
+  </header>
+
+  <article class="prose">
+    <h2>The short version</h2>
+    <ul class="doodle-list">
+      <li>Most analytics products hand you a fixed dashboard and a date picker. Strive's reports are the opposite.</li>
+      <li>An agent writes the report itself — a complete HTML document with its own layout, its own charts, its own SQL.</li>
+      <li>That document then fetches live data from the tenant's warehouse every time someone opens it. Not a snapshot. Not a template with slots. <strong>Actual generated software.</strong></li>
+    </ul>
+
+    <h2>The conversation is the builder</h2>
+    <ul class="doodle-list">
+      <li>You describe the report in chat. It materialises in a canvas beside the conversation.</li>
+      <li>Say <em>"make the CPL card a trend line instead"</em> — the agent rewrites the file while you watch.</li>
+      <li>No separate report studio. No builder UI to learn. Nothing to drag.</li>
+      <li>It renders in the tenant's own brand — colours, fonts, radii pulled from their actual website — so the report looks like their team made it, not ours.</li>
+    </ul>
+
+    <h2>The hard parts</h2>
+    <h3>Running code you didn't write</h3>
+    <ul class="doodle-list">
+      <li>Reports execute arbitrary agent-authored JavaScript, so they load in an <code>allow-scripts</code>-only iframe: an opaque origin that can't reach parent cookies, storage or DOM.</li>
+      <li>Everything the report needs crosses a narrow <code>postMessage</code> bridge — data requests in, results out, nothing else.</li>
+      <li>The host stays the only thing holding credentials. The sandbox just asks.</li>
+    </ul>
+
+    <div class="flow" role="img" aria-label="Data path: the sandboxed report asks the host over postMessage, the host queries the Cube semantic layer over BigQuery, and results travel back into the sandbox to render.">
+<b class="bad">SANDBOX</b>   agent-written HTML ─▶ asks over postMessage
+<b class="blue">HOST</b>      TanStack Query ─▶ Cube ─▶ BigQuery
+<b class="good">BACK</b>      results ─▶ through the bridge ─▶ charts render</div>
+
+    <h3>Brand theming, automatically</h3>
+    <ul class="doodle-list">
+      <li>A design system is extracted from the customer's domain during onboarding, then handed to the agent as generation context.</li>
+      <li>Every report inherits it by default — no per-report styling, no brand review queue.</li>
+    </ul>
+
+    <h3>PDF export</h3>
+    <ul class="doodle-list">
+      <li>The sandbox self-snapshots its own DOM, a headless-Chromium Lambda renders it, and the result lands as a signed S3 URL.</li>
+      <li>Making that paginate cleanly across multi-page reports is a story of its own.</li>
+    </ul>
+
+    <h2>Under the hood</h2>
+    <dl class="kv">
+      <div><dt>Core</dt><dd>React 19, TypeScript, Vite, Tailwind</dd></div>
+      <div><dt>State</dt><dd>TanStack Query (cache invalidation drives the live refresh), Zustand</dd></div>
+      <div><dt>Isolation</dt><dd><code>allow-scripts</code>-only iframe, opaque-origin postMessage protocol</dd></div>
+      <div><dt>Report runtime</dt><dd>Agent-authored HTML — Tailwind CDN + Chart.js inside the sandbox</dd></div>
+      <div><dt>Data</dt><dd>BigQuery + Cube semantic layer, brokered through the bridge</dd></div>
+      <div><dt>Export</dt><dd>DOM self-snapshot → headless-Chromium Lambda → S3 signed URL</dd></div>
+      <div><dt>Native reports</dt><dd>Block renderers, Recharts, TanStack Table</dd></div>
+      <div><dt>Platform</dt><dd>Clerk auth, PostHog analytics, Vitest + Playwright</dd></div>
+    </dl>
+
+    <!--
+      Adding media: drop files into /images/work/report-builder/ and use one of these.
+
+      <figure>
+        <img src="/images/work/report-builder/canvas.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
+        <figcaption>A report being rewritten from the conversation beside it</figcaption>
+      </figure>
+
+      <figure>
+        <video src="/images/work/report-builder/build.mp4" poster="/images/work/report-builder/build-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
+        <figcaption>From a sentence to a branded, live report</figcaption>
+      </figure>
+    -->
+
+    <h2>Why it matters</h2>
+    <p>Reports are where the platform's work becomes visible. Agents run, data lands in the warehouse, and this is the surface where a marketer actually sees it — branded like their own product, live rather than stale, and one click from a conversation about what to do next.</p>
+
+    <blockquote>A dashboard shows you the numbers someone else chose. This writes the report you asked for.</blockquote>
+
+    <aside class="next-up callout wobbly wobbly--2" aria-label="Upcoming write-up">
+      <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg?v=4#pen"/></svg>
+      <div>
+        <strong>Deep dive: multi-page PDF export from a sandboxed report</strong>
+        <p>Self-snapshotting the DOM, pagination that respects charts, and the Lambda pipeline behind it. <span class="soon">Blog landing here soon.</span></p>
+      </div>
+    </aside>
+
+    <aside class="next-up callout wobbly wobbly--3" aria-label="Upcoming write-up">
+      <svg class="doodle" aria-hidden="true"><use href="/assets/doodles.svg?v=4#pen"/></svg>
+      <div>
+        <strong>Deep dive: extracting a design system from a domain</strong>
+        <p>How brand tokens get pulled at onboarding and fed to the agent as generation context. <span class="soon">Blog landing here soon.</span></p>
+      </div>
+    </aside>
+  </article>
+
+  <p style="margin-top: var(--space-4)">
+    <a class="pill" href="/#work"><svg class="doodle" style="transform:scaleX(-1)" aria-hidden="true"><use href="/assets/doodles.svg?v=4#arrow-right"/></svg>Back to all work</a>
+  </p>
 </main>
 
 <!-- ============ Footer: cream block with a wavy crest, a headline, and a Kerala-flavoured

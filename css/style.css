@@ -6,7 +6,7 @@
    JetBrains Mono for eyebrows, Caveat only for tiny hand annotations.
    Sections: 1 tokens · 2 base · 3 type helpers · 4 doodle primitives
              5 layout + waves · 6 nav · 7 hero + deck · 8 logo marquee
-             9 projects · 10 talks · 11 writing · 12 about · 13 prose
+             9 work rails · 10 talk tickets · 11 library · 12 about · 13 prose
              14 footer · 15 motion/print
    ===================================================================== */
 
@@ -38,6 +38,8 @@
   --shadow: 3px 3px 0 var(--ink);
   --tape: rgba(255, 218, 63, .55);
   --logo-chip: #ffffff;
+  --shadow-ink: var(--ink);          /* hard offset shadows */
+  --book-ink: #ffffff;              /* text on library book spines */
 
   --font-display: "DM Serif Display", "Iowan Old Style", Georgia, serif;
   --font-body: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
@@ -50,6 +52,7 @@
   --radius-wobble-2: 15px 225px 15px 255px / 255px 15px 225px 15px;
   --radius-wobble-3: 225px 20px 240px 20px / 20px 240px 20px 225px;
   --wrap: 72rem;
+  --gutter: max(1.25rem, calc((100vw - var(--wrap)) / 2));   /* viewport edge → .wrap content edge */
   --wave-h: clamp(2.5rem, 7vw, 6.5rem);
 }
 
@@ -63,6 +66,7 @@
   --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
   --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
   --star: rgba(242, 237, 227, .55);
+    --shadow-ink: #07080b; --book-ink: #14161c;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -75,6 +79,7 @@
     --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
     --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
     --star: rgba(242, 237, 227, .55);
+    --shadow-ink: #07080b; --book-ink: #14161c;
   }
 }
 
@@ -231,10 +236,30 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .deck.is-used .deck-cta { animation: none; opacity: 0; transition: opacity .4s ease; }
 @media (max-width: 839px) { .deck { max-width: 17rem; margin-top: 3.4rem; } }
 
+/* Hover preview for the Strivelabs link: a tiny browser window pops up over the word.
+   Pointer-only; phones just get the plain link. Swap the image in /previews/. */
+.peek { position: relative; }
+.peek-card { position: absolute; left: -.6rem; bottom: calc(100% + .55rem); width: 17.5rem; display: block; z-index: 20; opacity: 0; transform-origin: bottom left; transform: translateY(.6rem) rotate(-1.5deg) scale(.96); transition: opacity .2s ease, transform .3s cubic-bezier(.2,.8,.2,1); pointer-events: none; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 12px 6px 12px 6px / 6px 12px 6px 12px; box-shadow: 4px 4px 0 var(--shadow-ink); overflow: hidden; font-family: var(--font-body); font-weight: 400; line-height: 1.3; }
+.peek:hover .peek-card, .peek:focus-visible .peek-card { opacity: 1; transform: translateY(0) rotate(-1.5deg) scale(1); }
+.peek-chrome { display: flex; align-items: center; gap: .3rem; padding: .42rem .6rem; border-bottom: 1.5px solid var(--line); background: var(--sand); }
+.peek-chrome i { width: .5rem; height: .5rem; border-radius: 50%; border: 1.25px solid var(--ink); }
+.peek-chrome i:nth-child(1) { background: var(--coral-soft); }
+.peek-chrome i:nth-child(2) { background: var(--yellow); }
+.peek-chrome i:nth-child(3) { background: var(--teal); }
+.peek-url { margin-left: .45rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; color: var(--ink-faint); }
+.peek-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; }
+.peek-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .65rem; font-size: .78rem; color: var(--ink-soft); }
+.peek-foot .doodle { width: .9rem; height: .9rem; color: var(--coral); }
+@media (hover: none), (max-width: 639px) { .peek-card { display: none; } }
+
 /* ---------- 8. Logo marquee -------------------------------------------- */
 .logos { padding-block: var(--space-3) var(--space-5); }
-.logos .eyebrow { justify-content: center; margin-bottom: 1.4rem; }
-.logos .eyebrow::before { display: none; }
+.logos-head { text-align: center; margin-bottom: 1.4rem; }
+.logos-head .eyebrow { justify-content: center; margin-bottom: .7rem; }
+.logos-head .eyebrow::before { display: none; }
+.logos-title { font-size: clamp(1.6rem, 3.3vw, 2.4rem); margin: 0 auto; max-width: 28ch; }
+.logos-note { display: inline-flex; align-items: center; gap: .1rem; margin: .5rem auto 0; max-width: none; font-size: 1.25rem; color: var(--coral); transform: rotate(-2deg); }
+.logos-note .doodle { width: 1.3rem; height: 1.3rem; stroke-width: 2; transform: rotate(-20deg) translateY(.15rem); }
 .marquee { overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
 .marquee-track { display: flex; gap: 2.2rem; align-items: center; width: max-content; animation: marquee 32s linear infinite; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
@@ -245,38 +270,133 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 [data-theme="dark"] .logo img { filter: invert(1) hue-rotate(180deg); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .logo img { filter: invert(1) hue-rotate(180deg); } }
 [data-theme="dark"] .logo:hover img { filter: invert(1) hue-rotate(180deg); }
-.logos-note { text-align: center; margin: 1.2rem auto 0; font-size: .88rem; }
 
-/* ---------- 9. Projects -------------------------------------------------- */
-.project { display: flex; flex-direction: column; gap: .7rem; padding: 1.4rem 1.4rem 1.3rem; position: relative; transition: transform .2s ease, box-shadow .2s ease; }
-.project:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-.project h3 { margin: 0; }
-.project h3 a { color: inherit; text-decoration: none; }
-.project h3 a::after { content: ""; position: absolute; inset: 0; }
-.project p { font-size: .98rem; }
-.project .cluster { margin-top: auto; padding-top: .5rem; }
-.project-go { position: absolute; right: 1.1rem; top: 1.1rem; color: var(--ink-faint); width: 1.3rem; height: 1.3rem; }
-.project--internal .project-go { color: var(--coral); }
-.project--internal { outline: 1.5px dashed var(--coral); outline-offset: -8px; }
+/* ---------- 9. Work rails ---------------------------------------------------
+   .rail = one chapter: a header (badge, title, arrows + progress line) and a
+   sideways scroller of .card items. The scroller bleeds to the viewport edges
+   while its content stays aligned with .wrap, so the next card peeks in from
+   the right. js/main.js drives the arrows and the progress thumb. */
+.rail { margin-top: var(--space-4); }
+.rail + .rail { margin-top: var(--space-5); }
+.rail-head { display: flex; align-items: center; justify-content: space-between; gap: .8rem 1rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.rail-title { display: flex; align-items: center; gap: .9rem; min-width: 0; }
+.rail-title h3 { margin: 0; font-size: clamp(1.45rem, 2.6vw, 1.85rem); }
+.rail-title .meta { margin: .15rem 0 0; font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
+.rail-badge { display: grid; place-items: center; width: 2.9rem; height: 2.9rem; flex: none; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-4deg); }
+.rail-badge .doodle { width: 1.45rem; height: 1.45rem; color: var(--coral); stroke-width: 1.6; }
+.rail + .rail .rail-badge .doodle { color: var(--teal); }
+.live { width: .55rem; height: .55rem; border-radius: 50%; background: var(--teal); flex: none; animation: live 2.2s ease-out infinite; }
+@keyframes live { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--teal) 55%, transparent); } 100% { box-shadow: 0 0 0 .55rem transparent; } }
+.rail-controls { display: flex; align-items: center; gap: .7rem; flex: none; margin-left: auto; }
+.rail-btn { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; padding: 0; border: 1.5px solid var(--ink); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper-2); color: var(--ink); transition: transform .15s ease, background .15s ease, color .15s ease, opacity .15s ease; }
+.rail-btn:hover { background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+.rail-btn[disabled] { opacity: .3; cursor: default; pointer-events: none; }
+.rail-btn .doodle { width: 1.1rem; height: 1.1rem; stroke-width: 2; }
+.rail-btn[data-prev] .doodle { transform: scaleX(-1); }
+.rail-progress { position: relative; width: clamp(4rem, 9vw, 6.5rem); height: 3px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.rail-progress i { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; border-radius: 999px; background: var(--ink); transition: left .12s linear, width .2s ease; }
+.rail--static .rail-controls { display: none; }
+.rail-track { list-style: none; margin: 0 calc(-1 * var(--gutter)); padding: .9rem var(--gutter) 1.2rem; display: flex; gap: 1.5rem; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.rail-track::-webkit-scrollbar { display: none; }
 
-/* ---------- 10. Talks ------------------------------------------------------ */
-.talk { display: flex; flex-direction: column; gap: .7rem; padding: .7rem .7rem 1rem; }
-.talk h3 { font-size: 1.2rem; margin: 0; }
-.talk .meta { margin: 0; font-size: .85rem; }
-.talk-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: auto; }
+/* the card: drawn twice (a second, tinted outline sits a little askew behind it),
+   a taped-on thumbnail, then date / title / blurb / capability tags. */
+.card { --accent: var(--coral); flex: 0 0 min(44rem, 84vw); scroll-snap-align: start; position: relative; display: flex; }
+.card-link { position: relative; display: flex; flex-direction: column; width: 100%; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble); box-shadow: 4px 4px 0 var(--shadow-ink); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+.card:nth-child(2n) .card-link { border-radius: var(--radius-wobble-2); }
+.card:nth-child(3n) .card-link { border-radius: var(--radius-wobble-3); }
+.card-link::before { content: ""; position: absolute; inset: -6px; border: 1.5px solid var(--accent); border-radius: inherit; transform: rotate(-.7deg); opacity: .55; pointer-events: none; transition: transform .25s ease, opacity .25s ease; }
+.card:nth-child(2n) .card-link::before { transform: rotate(.6deg); }
+.card-link:hover { transform: translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); color: var(--ink); }
+.card-link:hover::before { transform: rotate(.5deg); opacity: .9; }
+.card:nth-child(2n) .card-link:hover::before { transform: rotate(-.5deg); }
+.shot { position: relative; margin: .65rem .65rem 0; aspect-ratio: 16 / 9; overflow: hidden; border: 1.5px solid var(--border); border-radius: 14px 6px 14px 6px / 6px 14px 6px 14px; background: var(--sand); flex: none; }
+.shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shot-empty { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: .35rem; color: var(--ink-faint); background: repeating-linear-gradient(135deg, transparent 0 9px, var(--line) 9px 10px); }
+.shot-empty .doodle { width: 2.6rem; height: 2.6rem; stroke-width: 1.4; color: var(--accent); }
+.shot-empty .hand { font-size: 1.2rem; transform: rotate(-3deg); }
+.shot.taped::before { top: -.75rem; left: 18%; width: 5rem; height: 1.3rem; transform: rotate(-4deg); z-index: 1; }
+.card:nth-child(2n) .shot.taped::before { left: auto; right: 14%; transform: rotate(3deg); }
+.card-body { display: flex; flex-direction: column; gap: .55rem; padding: 1.1rem 1.3rem 1.2rem; flex: 1; min-width: 0; }
+.card-when { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin: 0; display: flex; align-items: center; gap: .6rem; }
+.card-when::before { content: ""; width: 1.2rem; height: 1.5px; background: var(--accent); flex: none; }
+.card-body h4 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); margin: 0; }
+.card-body p { font-size: .97rem; margin: 0; }
+.card-foot { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: auto; padding-top: .7rem; }
+.tag--cap { background: transparent; border: 1.5px solid var(--accent); color: var(--accent); }
+.card-go { margin-left: auto; display: inline-flex; align-items: center; gap: .3rem; font-size: .9rem; font-weight: 500; color: var(--coral); white-space: nowrap; }
+.card-go .doodle { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+.card-link:hover .card-go .doodle { transform: translateX(4px); }
+@media (min-width: 760px) {
+  .card-link { flex-direction: row; align-items: stretch; }
+  .shot { flex: 0 0 46%; aspect-ratio: auto; min-height: 15rem; margin: .65rem 0 .65rem .65rem; }
+  .card-body { padding: 1.3rem 1.5rem 1.3rem 1.4rem; }
+}
+@media (max-width: 639px) {
+  .card { flex-basis: 84vw; }
+  .card-body { padding: .95rem 1rem 1rem; }
+  .rail-progress { width: 3.2rem; }
+}
+
+/* ---------- 10. Talks: ticket stubs -------------------------------------------
+   Main part holds the video + title with an "admit one" strip down the side;
+   the tear-off stub below carries venue, a stamped date and the slides link.
+   Notches on the perforation are two paper-coloured circles clipped by the card. */
+.tickets { align-items: start; }
+/* the video frame is shared by any talk card: 16:9 box, poster, click-to-load iframe, doodle play button */
 .video { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px 6px 14px 6px / 6px 14px 6px 14px; background: #000; border: 1.5px solid var(--border); }
-.video img { width: 100%; height: 100%; object-fit: cover; }
+.video img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .video-btn { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; background: transparent; display: grid; place-items: center; }
 .video-btn .play { width: 3.2rem; height: 3.2rem; display: grid; place-items: center; background: var(--yellow); color: var(--sticky-ink); border: 1.5px solid var(--ink); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: var(--shadow); transition: transform .15s ease; }
 .video-btn .play .doodle { width: 1.5rem; height: 1.5rem; stroke: none; fill: currentColor; margin-left: .15rem; }
 .video-btn:hover .play { transform: scale(1.08) rotate(-4deg); }
+.ticket { --accent: var(--coral); position: relative; display: flex; flex-direction: column; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 18px 10px 16px 12px / 12px 16px 10px 18px; overflow: hidden; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+.ticket:hover { transform: translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+.ticket-main { display: grid; grid-template-columns: 1fr 1.5rem; grid-template-rows: auto auto; gap: .7rem .55rem; padding: .7rem .55rem .95rem .7rem; }
+.ticket-main .video { grid-column: 1; grid-row: 1; }
+.ticket-main h3 { grid-column: 1; grid-row: 2; font-size: 1.2rem; margin: 0; padding: 0 2.8rem 0 .25rem; }
+.ticket-admit { grid-column: 2; grid-row: 1 / span 2; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-faint); border-left: 1.5px dashed var(--line); padding-left: .3rem; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.ticket-stub { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: .75rem; row-gap: .3rem; padding: .85rem 1rem .9rem .9rem; border-top: 1.5px dashed var(--border); background: color-mix(in srgb, var(--accent) 11%, var(--paper-2)); }
+.ticket-stub::before, .ticket-stub::after { content: ""; position: absolute; top: -.72rem; width: 1.35rem; height: 1.35rem; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--border); }
+.ticket-stub::before { left: -.75rem; }
+.ticket-stub::after { right: -.75rem; }
+.stub-icon { grid-row: 1 / span 2; width: 1.7rem; height: 1.7rem; color: var(--accent); stroke-width: 1.6; }
+.stub-where { grid-column: 2; margin: 0; font-size: .84rem; line-height: 1.3; color: var(--ink-soft); display: flex; flex-direction: column; min-width: 0; }
+.stub-where b { color: var(--ink); font-weight: 500; }
+.stub-when { grid-column: 2; margin: 0; justify-self: start; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+.stamp { position: relative; display: inline-block; padding: .3rem .55rem; }
+.stamp-ring { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--accent); stroke-width: 2.2; opacity: .9; }
+.ticket-stub .pill { grid-column: 3; grid-row: 1 / span 2; padding: .45rem .75rem; font-size: .85rem; }
+.ticket-confetti { position: absolute; right: 2.1rem; top: -2.35rem; width: 2.4rem; height: 2.4rem; color: var(--accent); stroke-width: 1.8; pointer-events: none; }
 
-/* ---------- 11. Writing ----------------------------------------------------- */
-.writing-col h3 { display: flex; align-items: center; gap: .5rem; font-size: 1.3rem; }
-.writing-col h3 .doodle { width: 1.25rem; height: 1.25rem; }
-.writing-col a { color: var(--ink); }
-.writing-col .doodle-list li { font-size: .98rem; }
+/* ---------- 11. Writing: the library -------------------------------------------
+   Three shelves; every article is a book standing on a plank. --bh / --bw size a
+   spine, .book--lean tips one against its neighbour, .shelf-deco is a prop. */
+.section-head--row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; max-width: none; }
+.section-head--row > div { max-width: 44rem; }
+.section-head--row .pill { margin-bottom: .35rem; }
+.library { display: grid; gap: var(--space-4) var(--space-3); }
+@media (min-width: 900px) { .library { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); } }
+.shelf { position: relative; padding-bottom: 1.7rem; }
+.shelf-books { display: flex; align-items: flex-end; gap: .35rem; padding: 1rem 1.2rem 0; min-height: 15.5rem; }
+.book { --c: var(--coral); position: relative; display: flex; align-items: center; justify-content: center; width: var(--bw, 2.8rem); height: var(--bh, 12.5rem); flex: none; background: var(--c); color: var(--book-ink); border: 1.5px solid var(--ink); border-radius: 3px 5px 5px 3px; text-decoration: none; writing-mode: vertical-rl; font-family: var(--font-body); font-weight: 500; font-size: .84rem; letter-spacing: .01em; line-height: 1.1; padding: 1.15rem .3rem; text-align: center; box-shadow: inset -4px 0 0 rgba(0, 0, 0, .14), inset 3px 0 0 rgba(255, 255, 255, .22); transform-origin: bottom center; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+.book span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-height: 100%; }
+.book::before, .book::after { content: ""; position: absolute; left: .4rem; right: .5rem; height: 0; border-top: 1.5px solid currentColor; opacity: .5; }
+.book::before { top: .55rem; }
+.book::after { bottom: .55rem; }
+.book:hover { transform: translateY(-.6rem) rotate(-2deg); color: var(--book-ink); z-index: 3; box-shadow: inset -4px 0 0 rgba(0, 0, 0, .14), inset 3px 0 0 rgba(255, 255, 255, .22), 0 16px 18px -12px rgba(0, 0, 0, .5); }
+.book--lean { transform: rotate(7deg); transform-origin: bottom left; margin-right: .55rem; z-index: 1; }
+.book--lean:hover { transform: rotate(7deg) translateY(-.5rem); }
+.book--coral { --c: var(--coral); } .book--blue { --c: var(--blue); } .book--teal { --c: var(--teal); } .book--violet { --c: var(--violet); }
+.book--yellow { --c: var(--yellow); color: var(--sticky-ink); } .book--yellow:hover { color: var(--sticky-ink); }
+.book--sand { --c: var(--sand-2); color: var(--ink); } .book--sand:hover { color: var(--ink); }
+.shelf-deco { flex: none; margin-left: .55rem; color: var(--ink-soft); display: block; line-height: 0; }
+.shelf-deco .doodle { width: 2.3rem; height: 2.3rem; stroke-width: 1.5; }
+.plank { position: relative; height: .9rem; margin: 0 -.2rem; background: var(--sand-2); border: 1.5px solid var(--ink); border-radius: 6px 14px 6px 14px / 14px 6px 14px 6px; box-shadow: 3px 3px 0 var(--shadow-ink); }
+.plank::after { content: ""; position: absolute; left: 1rem; right: 1rem; top: calc(100% + 3px); height: .7rem; background: linear-gradient(var(--line), transparent); pointer-events: none; }
+.shelf-label { position: absolute; left: 1.1rem; bottom: .25rem; margin: 0; display: inline-flex; align-items: center; gap: .35rem; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); padding: .3rem .55rem; border-radius: 4px 8px 4px 8px / 8px 4px 8px 4px; transform: rotate(-1.5deg); z-index: 2; max-width: none; }
+.shelf-label .doodle { width: .95rem; height: .95rem; }
 .rule { border: 0; height: 1px; background: var(--line); margin: 0; }
 
 /* ---------- 12. About page -------------------------------------------------- */
@@ -321,6 +441,22 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .facts dt { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .2rem; }
 .facts dd { margin: 0; color: var(--ink); }
 .facts a { white-space: nowrap; }
+
+/* Project-page extras: a mono flow diagram, a label/value stack grid, and the
+   card that points at the (upcoming) long-form write-up. */
+.flow { font-family: var(--font-mono); font-size: .8rem; line-height: 1.9; letter-spacing: 0; color: var(--ink-soft); background: var(--sand); border: 1.5px solid var(--border); border-radius: var(--radius-wobble-2); padding: 1rem 1.1rem; margin: var(--space-3) 0; overflow-x: auto; white-space: pre; }
+.flow b { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0; color: var(--ink); }
+.flow .blue { color: var(--blue); }
+.flow .bad { color: var(--coral); }
+.flow .good { color: var(--teal); }
+.kv { display: grid; gap: .8rem 1.5rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: var(--space-3) 0 0; }
+.kv div { border-top: 1px solid var(--line); padding-top: .6rem; }
+.kv dt { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .25rem; }
+.kv dd { margin: 0; color: var(--ink); font-size: .95rem; line-height: 1.5; }
+.next-up { padding: 1.2rem 1.3rem; margin-top: var(--space-3); }
+.next-up strong { display: block; font-size: 1.02rem; color: var(--ink); }
+.next-up p { margin: .3rem 0 0; font-size: .95rem; color: var(--ink-soft); }
+.next-up .soon { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); }
 
 /* ---------- 14. Footer ------------------------------------------------------- */
 .site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink);
@@ -439,5 +575,5 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 }
 @media print {
   body { background: #fff; color: #000; }
-  .site-header, .theme-toggle, .video-btn, .skip-link, .footer-land, .deck-cta { display: none !important; }
+  .site-header, .theme-toggle, .video-btn, .skip-link, .footer-land, .deck-cta, .rail-controls, .peek-card { display: none !important; }
 }

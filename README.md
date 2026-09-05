@@ -8,7 +8,7 @@ dependencies. Open `index.html` in a browser or push to Netlify and it works.
 ## Layout
 
 ```
-index.html              homepage (hero deck, logo marquee, work, talks, writing, footer)
+index.html              homepage (hero deck, logo marquee, work rails, talk tickets, library, footer)
 about/index.html        the personal side: music, AI interfaces, travel, poetry, photography, cooking
 work/<slug>/index.html  one folder per project write-up  →  /work/<slug>/
 404.html                Netlify picks this up automatically
@@ -18,7 +18,7 @@ assets/doodles.svg      every doodle icon as an SVG <symbol>
 images/portraits/       the three hero deck illustrations (WebP, 900x1200)
 images/footer/          transparent WebP cut-outs planted in the footer garden
 images/logos/           company logos; project media goes in images/work/<slug>/
-previews/               talk thumbnails
+previews/               talk thumbnails + the Strivelabs hover preview (strivelabs.webp)
 sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 ```
 
@@ -49,12 +49,13 @@ sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
 
 Icons inherit `color`, so `<svg class="doodle ink-coral">` recolours one. The
 `?v=2` on the sprite URL is a cache-buster: bump it in all pages whenever you
-change `assets/doodles.svg` (currently `?v=3`), otherwise browsers may keep the old sprite for a day.
+change `assets/doodles.svg` (currently `?v=4`), otherwise browsers may keep the old sprite for a day.
 Sizes: `.doodle--lg`, `.doodle--xl`. Available ids: guitar, sparkles, plane, pen,
 camera, cooking, music, coffee, briefcase, folder, mic, book, heart, star, pin,
 lightbulb, github, linkedin, x, mail, instagram, medium, substack, sun, moon,
 external, play, slides, arrow-right, arrow-down, menu, close, check, squiggle,
-line, circle-scribble, arrow-curly, dashes, asterisk.
+line, circle-scribble, arrow-curly, dashes, asterisk, grass, daisy, hibiscus, bird,
+bigsun, stone, coconuts, bigmoon, confetti, plant.
 
 **Add a new doodle:** open `assets/doodles.svg`, copy any `<symbol>`, give it a
 new `id`, and draw with stroke paths in a 24×24 box. Slightly uneven curves and
@@ -70,8 +71,13 @@ inside the symbol; the page CSS supplies `stroke: currentColor`.
    `images/work/<new-slug>/`; there are commented examples for `<figure>` with
    `<img>` and `<video>` in the template. Always set `width`/`height` and
    `loading="lazy"` on images.
-4. Add a card in the **Things I've built** section of the homepage, using the
-   `project--internal` variant so it gets the dashed outline and arrow.
+4. Add a card on the homepage. The **Things I've built** section is a set of
+   `.rail`s (one per company, plus Indie builds), each a sideways scroller of
+   `<li class="card">` items. Copy a card into the right rail, set its
+   `--accent` (coral, blue, teal, violet), the date line, one or two capability
+   tags, and a thumbnail: drop an `<img>` inside `.shot` and delete the
+   `.shot-empty` placeholder. Arrows and the progress line only appear once a
+   rail has more cards than fit on screen.
 5. Add the URL to `sitemap.xml`.
 
 ## The hero deck

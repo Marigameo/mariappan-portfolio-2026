@@ -103,6 +103,37 @@
     document.querySelectorAll(".footer-land, .marquee").forEach(function (el) { io.observe(el); });
   }
 
+  // --- Work rails: sideways card scrollers with arrows + a progress line ---------
+  // <div data-rail> [data-prev] [data-next] [data-thumb] <ul data-track>…</ul> </div>
+  document.querySelectorAll("[data-rail]").forEach(function (rail) {
+    var track = rail.querySelector("[data-track]");
+    if (!track) return;
+    var prev = rail.querySelector("[data-prev]");
+    var next = rail.querySelector("[data-next]");
+    var thumb = rail.querySelector("[data-thumb]");
+    function step() {
+      var card = track.firstElementChild;
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+    }
+    function update() {
+      var max = track.scrollWidth - track.clientWidth;
+      rail.classList.toggle("rail--static", max < 4);
+      if (thumb) {
+        thumb.style.width = (track.clientWidth / track.scrollWidth * 100) + "%";
+        thumb.style.left = (track.scrollLeft / track.scrollWidth * 100) + "%";
+      }
+      if (prev) prev.disabled = track.scrollLeft < 2;
+      if (next) next.disabled = track.scrollLeft > max - 2;
+    }
+    function go(dir) { track.scrollBy({ left: dir * step(), behavior: reduceMotion ? "auto" : "smooth" }); }
+    if (prev) prev.addEventListener("click", function () { go(-1); });
+    if (next) next.addEventListener("click", function () { go(1); });
+    track.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  });
+
   // --- Footer year ---------------------------------------------------------------
   document.querySelectorAll("[data-year]").forEach(function (y) { y.textContent = new Date().getFullYear(); });
 })();

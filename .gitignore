@@ -4,3 +4,4 @@
 !.vscode/extensions.json
 .idea
 node_modules
+dist

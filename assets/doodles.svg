@@ -265,4 +265,19 @@
     <path d="M46 10c-14 2-24 14-23 29 1 16 14 28 30 28 6 0 12-2 17-5-16 1-29-11-30-26-1-10 3-19 10-26z" fill="var(--yellow)" stroke-width="2"/>
     <path d="M62 16v.1M70 30v.1M58 26v.1" stroke-width="2.4"/>
   </symbol>
+  <!-- confetti: a few scattered strokes and dots, for the talk tickets -->
+  <symbol id="confetti" viewBox="0 0 24 24">
+    <path d="M4.2 6.4l2.6-1.6M18.4 4.2l1.8 2.3M9.6 3.4l.6 2.8M13.8 8.2l2.6-.9M6.2 12.4l1.9 2.1M17.6 13.2l2.4 1.4M11.2 18.6l2.6-1.2M4.6 18.2l.4 2.6M19.6 19.4l-1.4 1.8"/>
+    <path d="M12.4 12.6v.1M7.8 8.6v.1M16.4 17.8v.1M10.2 21.2v.1M20.8 9.6v.1" stroke-width="2.6"/>
+  </symbol>
+
+  <!-- plant: a small pot with three leaves, a prop for the bookshelf -->
+  <symbol id="plant" viewBox="0 0 24 24">
+    <path d="M7.4 15.2h9.2l-.9 5.4H8.3z"/>
+    <path d="M6.8 15.2h10.4"/>
+    <path d="M12 15V9.4"/>
+    <path d="M12 10.6c-.4-2.9-2.4-4.6-5.4-4.2.4 2.9 2.4 4.5 5.4 4.2z"/>
+    <path d="M12 12.4c.3-2.7 2.2-4.3 5.2-4-.4 2.7-2.3 4.3-5.2 4z"/>
+    <path d="M12 9.4c-.1-2.3.9-4 2.8-5.2"/>
+  </symbol>
 </svg>
