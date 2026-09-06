@@ -3,16 +3,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 
-const description = 'Beyond the job title: guitar, designing interfaces for AI, travel, Tamil poetry, photography and cooking. The other sides of Mariappan Subramanian.';
+const description = 'Beyond the job title: guitar covers, slow travel, home cooking, Tamil poetry and photographs. The other sides of Mariappan Subramanian, plus the journey so far.';
 
-// The six things. `link` adds a small handle underneath.
-const loves = [
-  { icon: 'guitar', title: 'Guitar & music', text: 'Negotiating peace with six strings.', wobbly: '', tilt: 1 },
-  { icon: 'sparkles', title: 'Designing interfaces for AI', text: 'Making models feel less like terminals and more like good colleagues.', wobbly: 'wobbly--2', tilt: 2 },
-  { icon: 'plane', title: 'Travel', text: 'Traveling when WiFi allows.', wobbly: 'wobbly--3', tilt: 3 },
-  { icon: 'pen', title: 'Poetry', text: 'Just kavithai, in Tamil, by ullunarvu.', wobbly: 'wobbly--2', tilt: 2, link: { href: site.links.poetry, label: '@ullunarvu.writes' } },
-  { icon: 'camera', title: 'Photography', text: 'Still moments from moving days.', wobbly: '', tilt: 1, link: { href: site.links.instagram, label: '@mari.fstop' } },
-  { icon: 'cooking', title: 'Cooking', text: 'Recipes that begin with “roughly” and end with seconds.', wobbly: 'wobbly--3', tilt: 3 },
+// Off the clock. `link` is an Instagram handle; `accent` tints the badge.
+const into = [
+  { icon: 'guitar', accent: 'coral', title: 'Music, mostly on six strings', text: "I'm into music and love to play guitar. Covers land on Instagram now and then.", link: { href: site.links.guitar, label: '@mari.strings' } },
+  { icon: 'plane', accent: 'blue', title: 'Slow travel', text: 'Not the rush-to-destinations kind. I stay until a place sinks in — no plans, just vibes, people, culture, and a lot of photographs to carry home.', link: { href: site.links.travel, label: '@mari.gameo' } },
+  { icon: 'cooking', accent: 'violet', title: 'Cooking, almost every day', text: 'I love home-cooked food, so I cook most days — and keep trying new dishes.' },
+  { icon: 'pen', accent: 'teal', title: 'Poetry, in Tamil', text: 'I pen down kavithai, mostly in Tamil.', link: { href: site.links.poetry, label: '@ullunarvu.writes' } },
+  { icon: 'camera', accent: 'coral', title: 'Photographs that get to live', text: 'I hate letting travel photographs die on my phone, so the keepers get curated here.', link: { href: site.links.instagram, label: '@mari.fstop' } },
+];
+
+// The journey, newest first. `roles` with two entries renders as "A → B". Dates per LinkedIn.
+const journey = [
+  { year: "'24", company: 'Strivelabs', logo: '/images/logos/strivelabs.svg', roles: ['Founding Engineer'], when: 'Nov 2024 – now', note: 'Now: building the thing this site keeps talking about.', wobbly: 'wobbly--3', tilt: 3, now: true },
+  { year: "'21", company: 'Freshworks', logo: '/images/logos/freshworks.svg', roles: ['Software Engineer', 'Senior Software Engineer'], when: 'Aug 2021 – Oct 2024', note: 'Owned the monorepo behind the Freshworks Marketplace — untangled years of tech debt and pushed it to 100% accessible.', wobbly: '', tilt: 2 },
+  { year: "'20", company: 'Peppo', logo: '/images/logos/peppo.svg', roles: ['Software Engineer'], when: 'Sep 2020 – Aug 2021', note: 'Joined early enough to build things from scratch: location services, a Next.js PWA, even a POS console.', wobbly: 'wobbly--2', tilt: 1 },
+  { year: "'19", company: 'Facilio', logo: '/images/logos/facilio.svg', roles: ['Engineering Intern', 'Member of Technical Staff, Frontend'], when: 'Dec 2019 – Aug 2020', note: 'SSO, an Autodesk BIM integration, and a full site revamp — my first taste of shipping full-time.', wobbly: 'wobbly--3', tilt: 3 },
+  { year: "'19", company: 'Mad Street Den (vue.ai)', logo: '/images/logos/msd.svg', roles: ['Frontend Engineer'], when: 'Jul – Oct 2019', note: 'Speed-ran performance fixes on an AI recommendation engine, then built its dashboard in React.', wobbly: 'wobbly--2', tilt: 2 },
+  { year: "'18", company: 'Zoho', logo: '/images/logos/zoho.svg', roles: ['Marketplace Apps Developer'], when: 'Dec 2018 – Feb 2019', note: 'Cut my teeth building marketplace extensions for LinkedIn, Wrike & GrooveHQ — in Zoho Deluge, of all things.', wobbly: '', tilt: 1 },
+];
+
+// The wins worth a laptop sticker, newest first. `photos` fan out above the text.
+const wins = [
+  {
+    icon: 'pen', accent: 'coral', when: 'Freshworks · 2022', title: 'Blog-a-thon champion',
+    text: "Won Freshworks' Developer Platform Blog-a-thon with a post on localising marketplace apps with Crayons.",
+    photos: [{ src: '/images/wins/blogathon-2022.jpg', alt: 'Winners poster for the Freshworks Developer Platform Blog-a-thon, naming Mariappan Subramanian as champion', w: 960, h: 960 }],
+    links: [{ href: 'https://medium.com/@mariappan/localiz-s-ing-your-marketplace-apps-with-crayons-32761e282320', label: 'Read the winning post' }],
+    wobbly: '', tilt: 1,
+  },
+  {
+    icon: 'star', accent: 'blue', when: 'Zoho Cliq · 2018 & 2019', title: 'Two-time Cliqtrix hacker',
+    text: "Honorable mention in '18 — the contest's very first year — then winner in '19.",
+    photos: [
+      { src: '/images/wins/cliqtrix-team-1.jpg', alt: 'Cliqtrix finalists in Trixster t-shirts posing with certificates and a prize cheque', w: 960, h: 639 },
+      { src: '/images/wins/cliqtrix-solo.jpg', alt: "Mariappan holding a Cliqtrix '18 certificate, prize cheque and trophy", w: 432, h: 720 },
+      { src: '/images/wins/cliqtrix-team-2.jpg', alt: 'Cliqtrix winners group photo with prize cheques', w: 770, h: 513 },
+    ],
+    links: [
+      { href: 'https://www.cliqtrix.com/archives/2018/?src=cliqtrix-header#winners', label: "'18 winners" },
+      { href: 'https://www.cliqtrix.com/archives/2019/?src=cliqtrix-header#winners', label: "'19 winners" },
+    ],
+    wobbly: 'wobbly--2', tilt: 2,
+  },
 ];
 ---
 <BaseLayout title={`About | ${site.name}`} description={description} ogType="profile" current="about">
@@ -20,37 +54,85 @@ const loves = [
     <header class="wrap page-hero">
       <p class="eyebrow">About</p>
       <h1>A story in progress, written between commits and coffee.</h1>
-      <p class="lede">By day I design and build interfaces for AI products at <a href={site.links.strivelabs}>Strivelabs</a>. The rest of the time goes to the six things below. <span class="hand ink-coral">Currently compiling curiosity…</span></p>
+      <p class="lede">By day I design and build interfaces for AI products at <a href={site.links.strivelabs}>Strivelabs</a>. Off the clock, it looks something like this. <span class="hand ink-coral">Currently compiling curiosity…</span></p>
     </header>
 
-    <section class="wrap section" style="padding-top: var(--space-3)" aria-labelledby="into-title">
-      <h2 id="into-title" class="visually-hidden">Things I'm into</h2>
-      <ul class="loves">
-        {loves.map((l) => (
-          <li class:list={['love', 'wobbly', l.wobbly, `tilt-${l.tilt}`]}>
-            <Icon name={l.icon} />
-            <h3>{l.title}</h3>
-            <p>{l.text}</p>
-            {l.link && <a class="love-link" href={l.link.href} rel="noopener">{l.link.label} <Icon name="arrow-right" /></a>}
-          </li>
-        ))}
-      </ul>
+    <section class="section before-wave" style="padding-top: var(--space-2)" id="into" aria-labelledby="into-title">
+      <div class="wrap">
+        <h2 id="into-title" class="visually-hidden">Off the clock</h2>
+        <ul class="into">
+          {into.map((i) => (
+            <li class="into-item" style={`--accent: var(--${i.accent})`}>
+              <span class="into-badge"><Icon name={i.icon} /></span>
+              <div class="into-body">
+                <h3>{i.title}</h3>
+                <p>{i.text}</p>
+                {i.link && <a class="pill pill--soft into-link" href={i.link.href} rel="noopener"><Icon name="instagram" />{i.link.label}</a>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
 
-    <section class="wrap section" style="padding-top: 0" aria-labelledby="else-title">
-      <div class="section-head">
-        <p class="eyebrow">Elsewhere</p>
-        <h2 id="else-title">Two small corners of the internet I keep tidy</h2>
+    <section class="section section--sand has-wave before-wave" id="journey" aria-labelledby="journey-title">
+      <div class="wave" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">The journey so far</p>
+          <h2 id="journey-title">Six stops, <mark class="hl">one very long commit log.</mark></h2>
+          <p class="journey-note hand">newest first, like git log<Icon name="arrow-down" /></p>
+        </div>
+        <ol class="journey">
+          {journey.map((j) => (
+            <li class:list={['stop', j.now && 'stop--now']}>
+              <span class="stop-year" aria-hidden="true">{j.year}</span>
+              <article class:list={['stop-card', 'wobbly', j.wobbly, `tilt-${j.tilt}`]}>
+                <div class="stop-head">
+                  <p class="stop-when">{j.now && <span class="live" aria-hidden="true"></span>}{j.when}</p>
+                  <img class="stop-logo" src={j.logo} alt={j.company} height="24" loading="lazy">
+                </div>
+                <h3>
+                  <span class="visually-hidden">{j.company}: </span>
+                  {j.roles.map((r, i) => (<>{i > 0 && <Icon name="arrow-right" class="stop-arrow" />}<span>{r}</span></>))}
+                </h3>
+                <p class="stop-note">{j.note}</p>
+              </article>
+            </li>
+          ))}
+        </ol>
       </div>
-      <div class="grid grid--2">
-        <a class="polaroid wobbly tilt-1" href={site.links.poetry} rel="noopener">
-          <Icon name="pen" />
-          <span><strong>@ullunarvu.writes</strong><span>Just kavithai, by ullunarvu</span></span>
-        </a>
-        <a class="polaroid wobbly wobbly--2 tilt-2" href={site.links.instagram} rel="noopener">
-          <Icon name="camera" />
-          <span><strong>@mari.fstop</strong><span>Still moments from moving days</span></span>
-        </a>
+    </section>
+
+    <section class="section section--paper has-wave" id="wins" aria-labelledby="wins-title">
+      <div class="wave wave--flip" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Little wins</p>
+          <h2 id="wins-title">The bits I'd put on a laptop sticker.</h2>
+        </div>
+        <ul class="wins">
+          {wins.map((w) => (
+            <li class:list={['win', 'wobbly', w.wobbly, `tilt-${w.tilt}`]} style={`--accent: var(--${w.accent})`}>
+              <div class:list={['win-photos', w.photos.length > 1 && 'win-photos--fan']}>
+                {w.photos.map((p) => (
+                  <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy">
+                ))}
+              </div>
+              <div class="win-body">
+                <span class="win-badge"><Icon name={w.icon} /></span>
+                <p class="win-when">{w.when}</p>
+                <h3>{w.title}</h3>
+                <p>{w.text}</p>
+                <div class="cluster win-links">
+                  {w.links.map((l) => (
+                    <a class="pill pill--soft" href={l.href} rel="noopener">{l.label}<Icon name="external" /></a>
+                  ))}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   </main>

@@ -11,6 +11,8 @@ export const site = {
     linkedin: 'https://www.linkedin.com/in/marigameo/',
     x: 'https://x.com/mariapp62431572',
     instagram: 'https://www.instagram.com/mari.fstop/',
+    guitar: 'https://www.instagram.com/mari.strings/',
+    travel: 'https://www.instagram.com/mari.gameo/',
     poetry: 'https://www.instagram.com/ullunarvu.writes/',
     medium: 'https://medium.com/@mariappan',
     strivelabs: 'https://strivelabs.ai',
