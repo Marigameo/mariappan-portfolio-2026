@@ -155,6 +155,20 @@
     lightbox.addEventListener("close", function () { lbImg.removeAttribute("src"); });
   }
 
+  // --- Footer pin: toggles the sticky note about the landscape --------------------
+  var pinBtn = document.querySelector("[data-pin]");
+  if (pinBtn) {
+    var pinNote = document.getElementById(pinBtn.getAttribute("aria-controls"));
+    function setPin(open) {
+      pinBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      if (pinNote) pinNote.hidden = !open;
+      pinBtn.closest(".pin").classList.toggle("is-open", open);
+    }
+    pinBtn.addEventListener("click", function () { setPin(pinBtn.getAttribute("aria-expanded") !== "true"); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setPin(false); });
+    document.addEventListener("click", function (e) { if (!e.target.closest(".pin")) setPin(false); });
+  }
+
   // --- Footer year ---------------------------------------------------------------
   document.querySelectorAll("[data-year]").forEach(function (y) { y.textContent = new Date().getFullYear(); });
 })();
