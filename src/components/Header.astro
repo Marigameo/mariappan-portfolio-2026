@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+import { nav, type NavKey } from '../data/site';
+
+interface Props {
+  /** Which nav item gets aria-current="page". */
+  current?: NavKey;
+}
+
+const { current } = Astro.props;
+---
+<header class="site-header">
+  <nav class="wrap nav" aria-label="Primary">
+    <a class="brand" href="/" aria-label="Mariappan, home">Mari<span class="dot">.</span></a>
+    <ul class="nav-links">
+      {nav.map((item) => (
+        <li><a href={item.href} aria-current={current === item.key ? 'page' : undefined}>{item.label}</a></li>
+      ))}
+    </ul>
+    <button class="theme-toggle" type="button" aria-label="Switch theme">
+      <Icon name="sun" class="icon-sun" />
+      <Icon name="moon" class="icon-moon" />
+    </button>
+  </nav>
+</header>

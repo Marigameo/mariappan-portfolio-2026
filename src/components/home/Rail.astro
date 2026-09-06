@@ -1,0 +1,38 @@
+---
+/* One chapter of work (a company, or the indie pile): a header with prev/next arrows and a
+   progress line, then a sideways scroller of <WorkCard>s in the slot. Arrows and the line
+   only appear once the rail has more cards than fit on screen (src/scripts/main.js). */
+import Icon from '../Icon.astro';
+
+interface Props {
+  id: string;      // e.g. "rail-strive"; the track becomes "<id>-track"
+  icon: string;    // doodle id for the badge
+  title: string;
+  meta: string;
+  live?: boolean;  // show the pulsing "live" dot before the meta line
+}
+
+const { id, icon, title, meta, live = false } = Astro.props;
+const trackId = `${id}-track`;
+---
+<div class="rail" data-rail>
+  <div class="wrap">
+    <div class="rail-head">
+      <div class="rail-title">
+        <span class="rail-badge"><Icon name={icon} /></span>
+        <div>
+          <h3 id={id}>{title}</h3>
+          <p class="meta">{live && <span class="live" aria-hidden="true"></span>}{meta}</p>
+        </div>
+      </div>
+      <div class="rail-controls">
+        <button class="rail-btn" type="button" data-prev aria-label="Previous project" aria-controls={trackId}><Icon name="arrow-right" /></button>
+        <span class="rail-progress" aria-hidden="true"><i data-thumb></i></span>
+        <button class="rail-btn" type="button" data-next aria-label="Next project" aria-controls={trackId}><Icon name="arrow-right" /></button>
+      </div>
+    </div>
+    <ul class="rail-track" id={trackId} data-track aria-labelledby={id}>
+      <slot />
+    </ul>
+  </div>
+</div>

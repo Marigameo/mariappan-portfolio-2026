@@ -1,0 +1,85 @@
+---
+/* Footer: cream block with a wavy crest, a headline, and a Kerala-flavoured garden of
+   illustrations planted on the hills. Swap or add a plant by adding an entry to `plants`
+   and a matching .plant--name position rule in src/styles/style.css (plus a phone rule). */
+import Icon from './Icon.astro';
+import { spriteUrl } from '../lib/sprite';
+import { site } from '../data/site';
+
+const plants = [
+  { name: 'palm', width: 387, height: 560 },
+  { name: 'chai', width: 380, height: 560 },
+  { name: 'boat', width: 640, height: 493 },
+  { name: 'kdancer', width: 560, height: 633 },
+  { name: 'banana', width: 380, height: 560 },
+];
+
+// Small hand-drawn bits: [position class, doodle id]. Positions live in the CSS.
+const sky: [string, string][] = [
+  ['deco-1', 'bigsun'], ['deco-1', 'bigmoon'], ['deco-2', 'bird'], ['deco-3', 'bird'], ['deco-4', 'bird'],
+];
+const ground: [string, string][] = [
+  ['deco-6', 'grass'], ['deco-7', 'daisy'], ['deco-8', 'grass'], ['deco-9', 'hibiscus'], ['deco-10', 'grass'],
+  ['deco-11', 'stone'], ['deco-12', 'grass'], ['deco-13', 'daisy'], ['deco-14', 'grass'], ['deco-15', 'grass'],
+  ['deco-16', 'hibiscus'], ['deco-17', 'stone'], ['deco-18', 'grass'], ['deco-19', 'daisy'], ['deco-20', 'grass'],
+];
+
+const year = new Date().getFullYear();
+---
+<footer class="site-footer" id="contact">
+  <div class="wave wave--flip" aria-hidden="true"></div>
+  <div class="footer-inner wrap">
+    <p class="eyebrow">Say hello</p>
+    <h2>Let's build something people feel.</h2>
+    <p class="sub">Open for work, talks, and good product tangents. Human in the loop, always.</p>
+    <ul class="footer-links" aria-label="Contact and profiles">
+      <li><a class="pill pill--solid" href={`mailto:${site.email}`}><Icon name="mail" />Email me</a></li>
+      <li><a class="pill" href={site.links.linkedin} rel="me noopener"><Icon name="linkedin" />LinkedIn</a></li>
+      <li><a class="pill" href={site.links.github} rel="me noopener"><Icon name="github" />GitHub</a></li>
+      <li><a class="pill" href={site.links.x} rel="me noopener"><Icon name="x" />X</a></li>
+      <li><a class="pill" href={site.links.instagram} rel="me noopener"><Icon name="instagram" />Instagram</a></li>
+    </ul>
+    <p class="footer-credit">© <span data-year>{year}</span> {site.name} · Crafted with care (and caffeine) in India <Icon name="heart" /></p>
+  </div>
+  <div class="footer-land" aria-hidden="true">
+    <!-- Two hill drawings: .hills--wide for landscape screens, .hills--narrow for phones (swapped in CSS). -->
+    <svg class="hills hills--wide" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="var(--land-1)" d="M0 150C160 110 300 90 480 118C660 146 760 190 940 160C1120 130 1260 96 1440 120V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="3" d="M0 150C160 110 300 90 480 118C660 146 760 190 940 160C1120 130 1260 96 1440 120"/>
+      <path fill="var(--land-2)" d="M0 210C200 176 360 172 540 196C720 220 880 236 1060 214C1240 192 1340 186 1440 194V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".6" stroke-width="3" d="M0 210C200 176 360 172 540 196C720 220 880 236 1060 214C1240 192 1340 186 1440 194"/>
+      <path fill="var(--water)" d="M400 252C520 236 660 232 800 240C940 248 1040 254 1090 262C1010 280 860 288 700 284C560 280 460 270 400 252Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="2.5" d="M500 262q22-7 44 0M700 270q22-7 44 0M900 262q22-7 44 0M600 278q18-5 36 0M820 280q18-5 36 0"/>
+      <path fill="var(--land-3)" d="M0 276C240 262 480 258 720 270C960 282 1200 280 1440 268V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".55" stroke-width="3" d="M0 276C240 262 480 258 720 270C960 282 1200 280 1440 268"/>
+    </svg>
+    <svg class="hills hills--narrow" viewBox="0 0 400 320" preserveAspectRatio="none" aria-hidden="true">
+      <path fill="var(--land-1)" d="M0 122C80 98 160 94 240 108C300 118 350 124 400 114V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="2.5" d="M0 122C80 98 160 94 240 108C300 118 350 124 400 114"/>
+      <path fill="var(--land-2)" d="M0 190C100 174 200 178 300 186C350 190 380 188 400 184V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".6" stroke-width="2.5" d="M0 190C100 174 200 178 300 186C350 190 380 188 400 184"/>
+      <path fill="var(--water)" d="M96 228C150 212 250 212 306 226C276 246 140 248 96 228Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".7" stroke-width="2" d="M140 232q14-5 28 0M210 238q14-5 28 0M250 226q14-5 28 0"/>
+      <path fill="var(--land-3)" d="M0 270C130 260 270 262 400 268V320H0Z"/>
+      <path fill="none" stroke="var(--paper)" stroke-opacity=".55" stroke-width="2.5" d="M0 270C130 260 270 262 400 268"/>
+    </svg>
+
+    <!-- sky -->
+    {sky.map(([pos, id]) => (
+      <i class={`deco ${pos} deco--${id}`}><svg><use href={`${spriteUrl}#${id}`}/></svg></i>
+    ))}
+
+    <!-- plants -->
+    {plants.map((p, i) => (
+      <>
+        <div class={`plant plant--${p.name}`}><img src={`/images/footer/${p.name}.webp`} alt="" width={p.width} height={p.height} loading="lazy"></div>
+        {i === 0 && <i class="deco deco-5 deco--coconuts"><svg><use href={`${spriteUrl}#coconuts`}/></svg></i>}
+      </>
+    ))}
+
+    <!-- ground bits -->
+    {ground.map(([pos, id]) => (
+      <i class={`deco ${pos} deco--${id}`}><svg><use href={`${spriteUrl}#${id}`}/></svg></i>
+    ))}
+  </div>
+</footer>

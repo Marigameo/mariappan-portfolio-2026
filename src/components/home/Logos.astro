@@ -1,0 +1,19 @@
+---
+/* Where I've worked: a logo marquee. The list is rendered twice so the loop is seamless. */
+import Icon from '../Icon.astro';
+import { logos } from '../../data/logos';
+---
+<section class="logos before-wave" id="experience" aria-labelledby="exp-title">
+  <div class="wrap logos-head">
+    <p class="eyebrow">Experience</p>
+    <h2 id="exp-title" class="logos-title">Pretrained on these teams. <mark class="hl">Fine-tuning ever since.</mark></h2>
+    <p class="logos-note hand">context window: 6+ years. feed me tokens.<Icon name="arrow-down" /></p>
+  </div>
+  <div class="marquee">
+    <div class="marquee-track">
+      {[...logos, ...logos].map((l) => (
+        <a class="logo" href={l.href} rel="noopener" aria-label={l.name}><img src={l.src} alt={l.name} height="40" loading="lazy"></a>
+      ))}
+    </div>
+  </div>
+</section>

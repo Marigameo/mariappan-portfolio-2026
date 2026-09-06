@@ -1,0 +1,102 @@
+---
+/* The one <head> + header + footer every page shares. Pages pass their SEO facts
+   as props and render their own <main> in the slot. */
+import '../styles/style.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site, type NavKey } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Shorter text for social cards. Defaults to `description`. */
+  ogDescription?: string;
+  /** Open Graph type. Defaults to "website". */
+  ogType?: 'website' | 'profile' | 'article';
+  /** Robots directive. Defaults to "index, follow". */
+  robots?: string;
+  /** Path used for the canonical + og:url. Defaults to the current page's path. */
+  path?: string;
+  /** Nav item to mark as the current page. */
+  current?: NavKey;
+  /** Optional JSON-LD object printed as structured data. */
+  jsonLd?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description,
+  ogDescription = description,
+  ogType = 'website',
+  robots = 'index, follow',
+  path = Astro.url.pathname,
+  current,
+  jsonLd,
+} = Astro.props;
+
+const canonical = new URL(path, site.url).href;
+const ogImage = new URL(site.ogImage, site.url).href;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="author" content={site.name}>
+  <link rel="canonical" href={canonical}>
+  <meta name="robots" content={robots}>
+  <meta name="generator" content={Astro.generator}>
+
+  <meta name="theme-color" content={site.themeColor.light}>
+  <meta name="theme-color" content={site.themeColor.light} media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content={site.themeColor.dark} media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content={ogType}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={ogDescription}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content={site.name}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content={site.twitter}>
+  <meta name="twitter:creator" content={site.twitter}>
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={ogDescription}>
+  <meta name="twitter:image" content={ogImage}>
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+  <!-- Fonts: DM Serif Display (display), Space Grotesk (body), Inter Light (subtitles), JetBrains Mono (eyebrows), Caveat (hand notes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=swap">
+
+  <!-- Apply saved theme before first paint to avoid a flash. Must stay inline and blocking. -->
+  <script is:inline>
+    try { var t = localStorage.getItem("theme"); if (t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  </script>
+  {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd, null, 2)} />}
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<Header current={current} />
+
+<slot />
+
+<Footer />
+
+<!-- Progressive enhancement only: theme toggle, hero rotator, portrait deck, click-to-load
+     videos, work rails, footer year. Bundled + hashed by Astro; the site reads fine without it. -->
+<script>
+  import '../scripts/main.js';
+</script>
+</body>
+</html>

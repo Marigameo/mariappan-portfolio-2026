@@ -1,0 +1,69 @@
+---
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+
+const description = 'DforDoubts: a live e-learning platform by Mariappan Subramanian that helps learners find experts, and answers. Taken from idea to pixels to production.';
+---
+<WorkLayout
+  title="DforDoubts"
+  description={description}
+  heading="DforDoubts"
+  facts={[
+    { label: 'Role', value: 'Founder, designer, full-stack engineer' },
+    { label: 'Stack', value: 'React, Node.js, PostgreSQL, WhatsApp API' },
+    { label: 'Status', value: 'Live' },
+  ]}
+  link={{ href: 'https://dfordoubts.com/', label: 'dfordoubts.com' }}
+  schema={{
+    name: 'DforDoubts',
+    url: 'https://dfordoubts.com/',
+    description: 'A live e-learning platform that helps learners find experts, and answers. Taken from idea to pixels to production.',
+    inLanguage: 'en',
+    keywords: 'e-learning, live classes, full-stack, React, Node.js',
+  }}
+>
+  <Fragment slot="lede">A live e-learning platform that helps learners find experts, and answers. Taken from an idea on a napkin to <mark class="hl">pixels to production</mark>, solo.</Fragment>
+
+  <!-- Placeholder write-up: every paragraph below is dummy copy to be replaced. -->
+  <h2>The idea</h2>
+  <p>Every learner has a doubt that never made it to the teacher. DforDoubts started as a simple promise: put a real expert one message away, then grow into a place where highly personalised courses are shaped by the people who actually work in the field.</p>
+
+  <h2>What I owned</h2>
+  <ul class="doodle-list">
+    <li>Brand, marketing site and the course catalogue, from Figma to shipped code.</li>
+    <li>The learner journey: search, free demos, sign-up, live sessions and the "Ask your doubts" loop on WhatsApp.</li>
+    <li>Educator onboarding, payments, GST-aware pricing and the operations behind live classes.</li>
+  </ul>
+
+  <h2>How it works</h2>
+  <p>Learners search by course or instructor, sit through a free demo, then join a live cohort in the language they are most comfortable in. Educators get a profile, a schedule and a payout, and nothing else to worry about.</p>
+
+  <dl class="facts">
+    <div><dt>Courses</dt><dd>Music, science, school subjects, communication and more</dd></div>
+    <div><dt>Format</dt><dd>Live, small groups, English and regional languages</dd></div>
+    <div><dt>Support</dt><dd>Doubts answered over WhatsApp, any time</dd></div>
+  </dl>
+
+  <!--
+    Adding media: drop files into public/images/work/dfordoubts/ and use one of these.
+
+    <figure>
+      <img src="/images/work/dfordoubts/catalogue.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
+      <figcaption>The course catalogue with search and live tags</figcaption>
+    </figure>
+
+    <figure>
+      <video src="/images/work/dfordoubts/demo.mp4" poster="/images/work/dfordoubts/demo-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
+      <figcaption>Booking a free demo, end to end</figcaption>
+    </figure>
+  -->
+
+  <h2>What stayed with me</h2>
+  <blockquote>The best feature was a phone number. People trust a human before they trust a platform.</blockquote>
+  <p>Shipping the whole stack alone taught me where polish matters and where speed matters more. Numbers, screenshots and a proper retrospective will replace this placeholder soon.</p>
+
+  <aside class="callout wobbly wobbly--2" aria-label="Note">
+    <Icon name="lightbulb" />
+    <p>This page is a living write-up with placeholder copy. The real story, with screenshots and numbers, lands here soon.</p>
+  </aside>
+</WorkLayout>

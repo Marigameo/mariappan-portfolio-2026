@@ -1,0 +1,116 @@
+---
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+
+const description = "Strive's report builder: an AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe. Built by Mariappan Subramanian.";
+---
+<WorkLayout
+  title="Report builder — agent-written live reports"
+  description={description}
+  ogDescription="An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe."
+  eyebrow="Strive Labs"
+  heading="Report builder"
+  facts={[
+    { label: 'Role', value: 'Design engineer, primary author' },
+    { label: 'Scope', value: 'Every file in the module' },
+    { label: 'Status', value: 'In production, still shipping' },
+  ]}
+  link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
+  schema={{
+    name: 'Strive report builder',
+    url: 'https://strivelabs.ai/',
+    description: "An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe.",
+    inLanguage: 'en',
+    keywords: 'generative UI, AI reports, sandboxed iframe, postMessage, live data, BigQuery, brand theming, design engineering',
+  }}
+>
+  <Fragment slot="lede">Lovable for marketing reports — except the artifact is <mark class="hl">wired to live data</mark>. The agent writes the whole document; you describe changes and own the result.</Fragment>
+
+  <h2>The short version</h2>
+  <ul class="doodle-list">
+    <li>Most analytics products hand you a fixed dashboard and a date picker. Strive's reports are the opposite.</li>
+    <li>An agent writes the report itself — a complete HTML document with its own layout, its own charts, its own SQL.</li>
+    <li>That document then fetches live data from the tenant's warehouse every time someone opens it. Not a snapshot. Not a template with slots. <strong>Actual generated software.</strong></li>
+  </ul>
+
+  <h2>The conversation is the builder</h2>
+  <ul class="doodle-list">
+    <li>You describe the report in chat. It materialises in a canvas beside the conversation.</li>
+    <li>Say <em>"make the CPL card a trend line instead"</em> — the agent rewrites the file while you watch.</li>
+    <li>No separate report studio. No builder UI to learn. Nothing to drag.</li>
+    <li>It renders in the tenant's own brand — colours, fonts, radii pulled from their actual website — so the report looks like their team made it, not ours.</li>
+  </ul>
+
+  <h2>The hard parts</h2>
+  <h3>Running code you didn't write</h3>
+  <ul class="doodle-list">
+    <li>Reports execute arbitrary agent-authored JavaScript, so they load in an <code>allow-scripts</code>-only iframe: an opaque origin that can't reach parent cookies, storage or DOM.</li>
+    <li>Everything the report needs crosses a narrow <code>postMessage</code> bridge — data requests in, results out, nothing else.</li>
+    <li>The host stays the only thing holding credentials. The sandbox just asks.</li>
+  </ul>
+
+  <!-- .flow is white-space: pre, so the line breaks below are the layout. -->
+  <div class="flow" role="img" aria-label="Data path: the sandboxed report asks the host over postMessage, the host queries the Cube semantic layer over BigQuery, and results travel back into the sandbox to render.">
+<b class="bad">SANDBOX</b>   agent-written HTML ─▶ asks over postMessage
+<b class="blue">HOST</b>      TanStack Query ─▶ Cube ─▶ BigQuery
+<b class="good">BACK</b>      results ─▶ through the bridge ─▶ charts render</div>
+
+  <h3>Brand theming, automatically</h3>
+  <ul class="doodle-list">
+    <li>A design system is extracted from the customer's domain during onboarding, then handed to the agent as generation context.</li>
+    <li>Every report inherits it by default — no per-report styling, no brand review queue.</li>
+  </ul>
+
+  <h3>PDF export</h3>
+  <ul class="doodle-list">
+    <li>The sandbox self-snapshots its own DOM, a headless-Chromium Lambda renders it, and the result lands as a signed S3 URL.</li>
+    <li>Making that paginate cleanly across multi-page reports is a story of its own.</li>
+  </ul>
+
+  <h2>Under the hood</h2>
+  <dl class="kv">
+    <div><dt>Core</dt><dd>React 19, TypeScript, Vite, Tailwind</dd></div>
+    <div><dt>State</dt><dd>TanStack Query (cache invalidation drives the live refresh), Zustand</dd></div>
+    <div><dt>Isolation</dt><dd><code>allow-scripts</code>-only iframe, opaque-origin postMessage protocol</dd></div>
+    <div><dt>Report runtime</dt><dd>Agent-authored HTML — Tailwind CDN + Chart.js inside the sandbox</dd></div>
+    <div><dt>Data</dt><dd>BigQuery + Cube semantic layer, brokered through the bridge</dd></div>
+    <div><dt>Export</dt><dd>DOM self-snapshot → headless-Chromium Lambda → S3 signed URL</dd></div>
+    <div><dt>Native reports</dt><dd>Block renderers, Recharts, TanStack Table</dd></div>
+    <div><dt>Platform</dt><dd>Clerk auth, PostHog analytics, Vitest + Playwright</dd></div>
+  </dl>
+
+  <!--
+    Adding media: drop files into public/images/work/report-builder/ and use one of these.
+
+    <figure>
+      <img src="/images/work/report-builder/canvas.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
+      <figcaption>A report being rewritten from the conversation beside it</figcaption>
+    </figure>
+
+    <figure>
+      <video src="/images/work/report-builder/build.mp4" poster="/images/work/report-builder/build-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
+      <figcaption>From a sentence to a branded, live report</figcaption>
+    </figure>
+  -->
+
+  <h2>Why it matters</h2>
+  <p>Reports are where the platform's work becomes visible. Agents run, data lands in the warehouse, and this is the surface where a marketer actually sees it — branded like their own product, live rather than stale, and one click from a conversation about what to do next.</p>
+
+  <blockquote>A dashboard shows you the numbers someone else chose. This writes the report you asked for.</blockquote>
+
+  <aside class="next-up callout wobbly wobbly--2" aria-label="Upcoming write-up">
+    <Icon name="pen" />
+    <div>
+      <strong>Deep dive: multi-page PDF export from a sandboxed report</strong>
+      <p>Self-snapshotting the DOM, pagination that respects charts, and the Lambda pipeline behind it. <span class="soon">Blog landing here soon.</span></p>
+    </div>
+  </aside>
+
+  <aside class="next-up callout wobbly wobbly--3" aria-label="Upcoming write-up">
+    <Icon name="pen" />
+    <div>
+      <strong>Deep dive: extracting a design system from a domain</strong>
+      <p>How brand tokens get pulled at onboarding and fed to the agent as generation context. <span class="soon">Blog landing here soon.</span></p>
+    </div>
+  </aside>
+</WorkLayout>
