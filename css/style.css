@@ -514,16 +514,18 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
   background-image: radial-gradient(1.5px 1.5px at 8% 30%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 22% 12%, var(--star) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 35% 40%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 48% 18%, var(--star) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 57% 55%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 66% 8%, var(--star) 50%, transparent 51%), radial-gradient(1.5px 1.5px at 74% 35%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 91% 22%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 96% 60%, var(--star) 50%, transparent 51%), radial-gradient(1px 1px at 15% 65%, var(--star) 50%, transparent 51%); }
 .footer-land .hills { position: absolute; inset: auto 0 0 0; width: 100%; height: 100%; }
 .hills--narrow { display: none; }
-.plant { position: absolute; transform: translateX(-50%); transform-origin: bottom center; width: var(--w, 10rem); }
+.plant { position: absolute; transform: translateX(-50%); transform-origin: bottom center; width: var(--w, 10rem);
+  animation: float var(--float, 9s) ease-in-out infinite alternate; animation-delay: var(--float-d, 0s); }
+@keyframes float { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(calc(var(--floatY, 7px) * -1)); } }
 .plant img { width: 100%; height: auto; display: block; transform-origin: bottom center; animation: sway var(--sway, 6s) ease-in-out infinite alternate; animation-delay: var(--sway-d, 0s); filter: drop-shadow(0 6px 6px rgba(0,0,0,.18)); }
 @keyframes sway { from { transform: rotate(calc(var(--swayA, 2deg) * -1)); } to { transform: rotate(var(--swayA, 2deg)); } }
 @keyframes bob { from { transform: translateY(0) rotate(-.6deg); } to { transform: translateY(-4px) rotate(.6deg); } }
-.plant--palm { left: 12%; bottom: 34%; --w: clamp(6rem, 15vw, 12.5rem); --sway: 5.5s; --swayA: 2.2deg; }
-.plant--chai { left: 26%; bottom: 25%; --w: clamp(4.6rem, 11vw, 8.5rem); --sway: 7s; --swayA: .5deg; --sway-d: -2s; }
-.plant--boat { left: 53%; bottom: 14%; --w: clamp(9rem, 26vw, 21rem); }
+.plant--palm { left: 12%; bottom: 34%; --w: clamp(6rem, 15vw, 12.5rem); --sway: 5.5s; --swayA: 3.2deg; --float: 8s; --floatY: 9px; }
+.plant--chai { left: 26%; bottom: 25%; --w: clamp(4.6rem, 11vw, 8.5rem); --sway: 7s; --swayA: 1.2deg; --sway-d: -2s; --float: 10.5s; --floatY: 5px; --float-d: -3s; }
+.plant--boat { left: 53%; bottom: 14%; --w: clamp(9rem, 26vw, 21rem); --float: 6.5s; --floatY: 6px; }
 .plant--boat img { animation-name: bob; --sway: 3.2s; filter: drop-shadow(0 4px 4px rgba(0,0,0,.2)); }
-.plant--kdancer { left: 74%; bottom: 12%; --w: clamp(5.5rem, 13vw, 10rem); --sway: 6.5s; --swayA: 1deg; --sway-d: -3s; }
-.plant--banana { left: 89%; bottom: 33%; --w: clamp(5rem, 13vw, 10.5rem); --sway: 6s; --swayA: 2deg; --sway-d: -4s; }
+.plant--kdancer { left: 74%; bottom: 12%; --w: clamp(5.5rem, 13vw, 10rem); --sway: 6.5s; --swayA: 2deg; --sway-d: -3s; --float: 9.5s; --floatY: 7px; --float-d: -5s; }
+.plant--banana { left: 89%; bottom: 33%; --w: clamp(5rem, 13vw, 10.5rem); --sway: 6s; --swayA: 3deg; --sway-d: -4s; --float: 11s; --floatY: 8px; --float-d: -2s; }
 
 /* small hand-drawn bits: --s scales, left/bottom are % of the land box */
 .deco { position: absolute; width: calc(2.4rem * var(--s, 1)); transform: translateX(-50%); color: var(--land-3); }

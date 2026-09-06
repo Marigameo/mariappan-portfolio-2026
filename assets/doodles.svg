@@ -4,7 +4,9 @@
     strokes only. Stroke colour/width come from the page CSS (.doodle) because
     inherited properties flow into the <use> shadow tree; styles inside this
     file would not.
-    Use:  <svg class="doodle"><use href="/assets/doodles.svg#guitar"/></svg>
+    Use:  an inline svg.doodle wrapping <use href="/assets/doodles.svg#guitar"/>
+    (a literal closing svg tag must not appear in this comment - VS Code Live
+    Server injects its reload script before the first one it finds.)
     Add a new doodle: copy a <symbol>, give it a new id, draw with stroke paths.
   -->
   <!-- ===== Interests ===== -->
