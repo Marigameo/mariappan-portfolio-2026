@@ -1,0 +1,33 @@
+---
+/* The library: a bookshelf. Each article is a book spine; click to read. Data in src/data/writing.ts. */
+import Icon from '../Icon.astro';
+import { shelves } from '../../data/writing';
+import { site } from '../../data/site';
+---
+<section class="section" id="writing" aria-labelledby="writing-title">
+  <div class="wrap">
+    <hr class="rule" style="margin-bottom: var(--space-5)">
+    <div class="section-head section-head--row">
+      <div>
+        <p class="eyebrow">The library</p>
+        <h2 id="writing-title">Writing</h2>
+        <p>Pull a book off the shelf. Things that make sense only after coffee.</p>
+      </div>
+      <a class="pill" href={site.links.medium} rel="me noopener"><Icon name="medium" />Explore my library</a>
+    </div>
+    <div class="library">
+      {shelves.map((shelf) => (
+        <div class="shelf">
+          <div class="shelf-books">
+            {shelf.books.map((b) => (
+              <a class:list={['book', `book--${b.colour}`, b.lean && 'book--lean']} style={`--bh: ${b.bh}${b.bw ? `; --bw: ${b.bw}` : ''}`} href={b.href} rel="noopener" title={b.title} aria-label={b.title}><span>{b.spine}</span></a>
+            ))}
+            <i class="shelf-deco" aria-hidden="true"><Icon name={shelf.deco} /></i>
+          </div>
+          <div class="plank" aria-hidden="true"></div>
+          <p class="shelf-label"><Icon name={shelf.icon} class={shelf.iconInk} />{shelf.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

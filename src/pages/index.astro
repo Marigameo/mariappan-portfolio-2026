@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Logos from '../components/home/Logos.astro';
+import Work from '../components/home/Work.astro';
+import Talks from '../components/home/Talks.astro';
+import Writing from '../components/home/Writing.astro';
+import { site } from '../data/site';
+
+const title = `${site.name} | Design Engineer · UX for the AI era`;
+const description = 'Mariappan Subramanian is a design engineer at Strivelabs crafting interfaces for the AI era. Ex-Freshworks, Zoho. Talks, writing and side projects.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: 'Design Engineer',
+  worksFor: { '@type': 'Organization', name: 'Strivelabs', url: site.links.strivelabs },
+  url: `${site.url}/`,
+  image: `${site.url}${site.ogImage}`,
+  description: 'Design engineer at Strivelabs crafting interfaces for the AI era. Previously Freshworks, Facilio, Zoho.',
+  email: `mailto:${site.email}`,
+  sameAs: [site.links.github, site.links.linkedin, site.links.x, site.links.medium, site.links.poetry, site.links.instagram],
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Alagappa Chettiar College of Engineering and Technology, Karaikudi' },
+  knowsAbout: ['Design Engineering', 'UX for AI', 'AI Interfaces', 'JavaScript', 'TypeScript', 'React', 'Next.js', 'Frontend Architecture', 'AI Agents', 'Micro Frontends', 'Monorepos'],
+};
+---
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <main id="main">
+    <Hero />
+    <Logos />
+    <Work />
+    <Talks />
+    <Writing />
+  </main>
+</BaseLayout>

@@ -1,0 +1,34 @@
+---
+/* A project card inside a <Rail>. Put the thumbnail in the "sketch" slot: an inline
+   <svg class="sk"> drawing (see src/components/sketches/) or a real screenshot
+   <img width height alt loading="lazy">. The description goes in the default slot. */
+import Icon from '../Icon.astro';
+import type { Accent } from '../../data/talks';
+
+interface Props {
+  href: string;
+  accent: Accent;
+  when: string;
+  title: string;
+  titleLang?: string;
+  tags: string[];
+}
+
+const { href, accent, when, title, titleLang, tags } = Astro.props;
+---
+<li class="card" style={`--accent: var(--${accent})`}>
+  <a class="card-link" href={href}>
+    <figure class="shot taped">
+      <slot name="sketch" />
+    </figure>
+    <div class="card-body">
+      <p class="card-when">{when}</p>
+      <h4 lang={titleLang}>{title}</h4>
+      <p><slot /></p>
+      <div class="card-foot">
+        {tags.map((t) => <span class="tag tag--cap">{t}</span>)}
+        <span class="card-go">Read the story<Icon name="arrow-right" /></span>
+      </div>
+    </div>
+  </a>
+</li>

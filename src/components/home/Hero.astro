@@ -1,0 +1,59 @@
+---
+/* Hero: name, the rotating role line, the lede with the Strivelabs hover peek,
+   social pills, and the three-card portrait deck. */
+import Icon from '../Icon.astro';
+import StrivePeek from '../sketches/StrivePeek.astro';
+import { site } from '../../data/site';
+
+// The second half of "Design engineer crafting …" cycles through these every 2.8 s.
+// The first one is the default and what search engines read.
+const roles = [
+  'UX for the AI era.',
+  'interfaces that feel human.',
+  'products that ship, not decks.',
+  'AI that behaves like a colleague.',
+  'pixels, prompts and pipelines.',
+];
+
+// Deck cards, front to back. `label` is the handwritten arrow text, `note` the sticky note.
+const deck = [
+  { src: '/images/portraits/me.webp', alt: 'Illustrated portrait of Mariappan in a red plaid shirt, curly hair, slight smile', aria: 'Portrait of Mariappan. Show next card', label: "that's me", note: 'Drifting beyond conventions' },
+  { src: '/images/portraits/guitar.webp', alt: 'Illustration of Mariappan playing an acoustic guitar on a bench', aria: 'Mariappan playing guitar. Show next card', label: 'and the guitar', note: 'Negotiating peace with six strings' },
+  { src: '/images/portraits/mic.webp', alt: 'Illustration of Mariappan speaking into a microphone, mid-sentence', aria: 'Mariappan speaking on a mic. Show next card', label: 'hand me a mic', note: 'Happiest with a mic and caffeine' },
+];
+---
+<section class="wrap hero" aria-labelledby="hero-title">
+  <div>
+    <p class="hero-kicker">Hi, I'm</p>
+    <h1 id="hero-title">{site.name}</h1>
+    <p class="hero-role sub">Design engineer crafting
+      <span class="rotator">
+        {roles.map((r, i) => <span class={i === 0 ? 'is-on' : undefined}>{r}</span>)}
+      </span>
+    </p>
+    <p class="hero-lede">Breaks things, prompts better, calls it learning. Currently compiling curiosity at <a class="peek" href={site.links.strivelabs} rel="noopener">Strivelabs<span class="peek-card" aria-hidden="true"><span class="peek-chrome"><i></i><i></i><i></i><span class="peek-url">strivelabs.ai</span></span><StrivePeek /><span class="peek-foot">The agentic marketing engine<Icon name="external" /></span></span></a>.</p>
+    <ul class="socials" aria-label="Find me elsewhere">
+      <li><a class="pill pill--solid" href={`mailto:${site.email}`}><Icon name="mail" />Say hello</a></li>
+      <li><a class="pill" href={site.links.github} rel="me noopener"><Icon name="github" />GitHub</a></li>
+      <li><a class="pill" href={site.links.linkedin} rel="me noopener"><Icon name="linkedin" />LinkedIn</a></li>
+      <li><a class="pill" href={site.links.x} rel="me noopener"><Icon name="x" />X</a></li>
+    </ul>
+  </div>
+
+  <figure class="deck" id="deck">
+    <p class="deck-annot" aria-hidden="true">
+      <span class="annot-text" data-deck-label>{deck[0].label}</span>
+      <Icon name="arrow-curly" class="annot" />
+    </p>
+    <div class="deck-stack">
+      <!-- First card in DOM is on top. The front card is eager + high priority; the rest lazy. -->
+      {deck.map((c, i) => (
+        <button class:list={['deck-card', i === 0 && 'taped']} type="button" data-label={c.label} data-note={c.note} aria-label={c.aria}>
+          <img src={c.src} width="900" height="1200" alt={c.alt} fetchpriority={i === 0 ? 'high' : undefined} loading={i === 0 ? undefined : 'lazy'}>
+        </button>
+      ))}
+    </div>
+    <span class="deck-cta" aria-hidden="true"><Icon name="arrow-right" />click to flip</span>
+    <figcaption class="sticky" data-deck-note aria-live="polite">{deck[0].note}</figcaption>
+  </figure>
+</section>

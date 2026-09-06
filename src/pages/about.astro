@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+const description = 'Beyond the job title: guitar, designing interfaces for AI, travel, Tamil poetry, photography and cooking. The other sides of Mariappan Subramanian.';
+
+// The six things. `link` adds a small handle underneath.
+const loves = [
+  { icon: 'guitar', title: 'Guitar & music', text: 'Negotiating peace with six strings.', wobbly: '', tilt: 1 },
+  { icon: 'sparkles', title: 'Designing interfaces for AI', text: 'Making models feel less like terminals and more like good colleagues.', wobbly: 'wobbly--2', tilt: 2 },
+  { icon: 'plane', title: 'Travel', text: 'Traveling when WiFi allows.', wobbly: 'wobbly--3', tilt: 3 },
+  { icon: 'pen', title: 'Poetry', text: 'Just kavithai, in Tamil, by ullunarvu.', wobbly: 'wobbly--2', tilt: 2, link: { href: site.links.poetry, label: '@ullunarvu.writes' } },
+  { icon: 'camera', title: 'Photography', text: 'Still moments from moving days.', wobbly: '', tilt: 1, link: { href: site.links.instagram, label: '@mari.fstop' } },
+  { icon: 'cooking', title: 'Cooking', text: 'Recipes that begin with “roughly” and end with seconds.', wobbly: 'wobbly--3', tilt: 3 },
+];
+---
+<BaseLayout title={`About | ${site.name}`} description={description} ogType="profile" current="about">
+  <main id="main">
+    <header class="wrap page-hero">
+      <p class="eyebrow">About</p>
+      <h1>A story in progress, written between commits and coffee.</h1>
+      <p class="lede">By day I design and build interfaces for AI products at <a href={site.links.strivelabs}>Strivelabs</a>. The rest of the time goes to the six things below. <span class="hand ink-coral">Currently compiling curiosity…</span></p>
+    </header>
+
+    <section class="wrap section" style="padding-top: var(--space-3)" aria-labelledby="into-title">
+      <h2 id="into-title" class="visually-hidden">Things I'm into</h2>
+      <ul class="loves">
+        {loves.map((l) => (
+          <li class:list={['love', 'wobbly', l.wobbly, `tilt-${l.tilt}`]}>
+            <Icon name={l.icon} />
+            <h3>{l.title}</h3>
+            <p>{l.text}</p>
+            {l.link && <a class="love-link" href={l.link.href} rel="noopener">{l.link.label} <Icon name="arrow-right" /></a>}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="wrap section" style="padding-top: 0" aria-labelledby="else-title">
+      <div class="section-head">
+        <p class="eyebrow">Elsewhere</p>
+        <h2 id="else-title">Two small corners of the internet I keep tidy</h2>
+      </div>
+      <div class="grid grid--2">
+        <a class="polaroid wobbly tilt-1" href={site.links.poetry} rel="noopener">
+          <Icon name="pen" />
+          <span><strong>@ullunarvu.writes</strong><span>Just kavithai, by ullunarvu</span></span>
+        </a>
+        <a class="polaroid wobbly wobbly--2 tilt-2" href={site.links.instagram} rel="noopener">
+          <Icon name="camera" />
+          <span><strong>@mari.fstop</strong><span>Still moments from moving days</span></span>
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

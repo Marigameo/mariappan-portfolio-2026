@@ -1,0 +1,31 @@
+---
+/* A talk as a ticket stub. --accent tints the stub. */
+import Icon from '../Icon.astro';
+import type { Talk } from '../../data/talks';
+
+type Props = Talk;
+const { title, year, venue, city, date, image, slides, video, accent, tilt } = Astro.props;
+---
+<article class={`ticket tilt-${tilt}`} style={`--accent: var(--${accent})`}>
+  <div class="ticket-main">
+    {video ? (
+      <div class="video">
+        <img src={image} alt="" width="640" height="360" loading="lazy">
+        <button class="video-btn" type="button" data-video={video} aria-label={`Play: ${title}`}><span class="play"><Icon name="play" /></span></button>
+      </div>
+    ) : (
+      <div class="video video--static">
+        <a href={slides} rel="noopener" aria-label={`Slides: ${title}`}><img src={image} alt="" width="640" height="360" loading="lazy"></a>
+      </div>
+    )}
+    <h3>{title}</h3>
+    <span class="ticket-admit" aria-hidden="true">Admit one · {year}</span>
+  </div>
+  <div class="ticket-stub">
+    <Icon name="confetti" class="ticket-confetti" />
+    <Icon name="mic" class="stub-icon" />
+    <p class="stub-where"><b>{venue}</b><span>{city}</span></p>
+    <p class="stub-when"><span class="stamp"><Icon name="circle-scribble" class="stamp-ring" />{date}</span></p>
+    <a class="pill pill--soft" href={slides} rel="noopener"><Icon name="slides" />Slides</a>
+  </div>
+</article>

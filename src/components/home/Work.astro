@@ -1,0 +1,43 @@
+---
+/* Things I've built. One <Rail> per chapter, one <WorkCard> per project.
+   To add a project: add a <WorkCard> to the right rail (and a page in src/pages/work/).
+   To add a chapter: add another <Rail>. */
+import Rail from './Rail.astro';
+import WorkCard from './WorkCard.astro';
+import StriveChat from '../sketches/StriveChat.astro';
+import ReportBuilder from '../sketches/ReportBuilder.astro';
+import Thatpam from '../sketches/Thatpam.astro';
+import DforDoubts from '../sketches/DforDoubts.astro';
+---
+<section class="section section--sand has-wave before-wave" id="work" aria-labelledby="proj-title">
+  <div class="wave" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Selected work</p>
+      <h2 id="proj-title">Inference time.</h2>
+      <p>What's shipped, out in the open. A few more are still running in the background — can't say much yet, but the stories will stream in.</p>
+    </div>
+  </div>
+
+  <Rail id="rail-strive" icon="briefcase" title="Strivelabs" meta="Design engineer · 2024 → now" live>
+    <WorkCard href="/work/strive-gen-ui-chat/" accent="coral" when="2024 → now" title="Strive AI" tags={['Gen UI', 'Streaming']}>
+      <StriveChat slot="sketch" />
+      A marketing OS that answers in live interfaces, not paragraphs. I built the streaming engine and the frontend every agent team ships on.
+    </WorkCard>
+    <WorkCard href="/work/report-builder/" accent="blue" when="2025 → now" title="Strive Studio" tags={['Gen UI', 'Agentic']}>
+      <ReportBuilder slot="sketch" />
+      Lovable for marketing reports, wired to live warehouse data. The agent writes the whole document; you describe changes and own the result.
+    </WorkCard>
+  </Rail>
+
+  <Rail id="rail-indie" icon="lightbulb" title="Indie builds" meta="Side quests, solo. Idea → pixels → payments.">
+    <WorkCard href="/work/thatpam/" accent="teal" when="Solo build · cohorts paused" title="தட்பம்" titleLang="ta" tags={['Ed-tech', '0 → 1']}>
+      <Thatpam slot="sketch" />
+      <span lang="ta">திறமைக்கு மொழி தடை இல்லை</span>. A solo ed-tech experiment to taste startup life and teach what I love, from pixels to payments.
+    </WorkCard>
+    <WorkCard href="/work/dfordoubts/" accent="violet" when="Live" title="DforDoubts" tags={['E-learning', 'Full-stack']}>
+      <DforDoubts slot="sketch" />
+      A live e-learning platform that helps learners find experts, and answers. Took it from idea to pixels to production.
+    </WorkCard>
+  </Rail>
+</section>

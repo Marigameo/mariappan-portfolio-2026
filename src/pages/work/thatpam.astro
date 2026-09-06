@@ -1,0 +1,61 @@
+---
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+
+const description = 'தட்பம் (Thatpam): a solo ed-tech experiment by Mariappan Subramanian to experience startup life and teach what he loves. Owned everything from pixels to payments.';
+---
+<WorkLayout
+  title="தட்பம் (Thatpam)"
+  description={description}
+  heading="தட்பம்"
+  headingLang="ta"
+  facts={[
+    { label: 'Role', value: 'Founder, designer, engineer' },
+    { label: 'Stack', value: 'React, Storybook, Tailwind CSS, Radix UI' },
+    { label: 'Status', value: 'Cohorts paused' },
+  ]}
+  link={{ href: 'https://thatpam.netlify.app/', label: 'thatpam.netlify.app' }}
+  schema={{
+    name: 'தட்பம் (Thatpam)',
+    alternateName: 'Thatpam',
+    url: 'https://thatpam.netlify.app/',
+    description: 'A solo ed-tech experiment to experience startup life and teach what I love. Owned everything from pixels to payments.',
+    inLanguage: ['ta', 'en'],
+    keywords: 'ed-tech, React, Storybook, Tailwind CSS, Radix UI',
+  }}
+>
+  <Fragment slot="lede"><span lang="ta">திறமைக்கு மொழி தடை இல்லை</span>. A solo ed-tech experiment to experience startup life and teach what I love. Owned everything from <mark class="hl">pixels to payments</mark>.</Fragment>
+
+  <h2>The idea</h2>
+  <p>Talent shouldn't be gated by the language a course happens to be taught in. தட்பம் set out to teach front-end craft in Tamil, live, in small cohorts, by someone who actually ships it for a living.</p>
+
+  <h2>What I owned</h2>
+  <ul class="doodle-list">
+    <li>Brand, landing page and course design, in Figma and in code.</li>
+    <li>The learning experience: cohort structure, live sessions, assignments and feedback loops.</li>
+    <li>Payments, onboarding emails and the boring-but-essential operations around them.</li>
+  </ul>
+
+  <!--
+    Adding media: drop files into public/images/work/thatpam/ and use one of these.
+
+    <figure>
+      <img src="/images/work/thatpam/landing.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
+      <figcaption>Landing page, first cohort</figcaption>
+    </figure>
+
+    <figure>
+      <video src="/images/work/thatpam/demo.mp4" poster="/images/work/thatpam/demo-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
+      <figcaption>Walkthrough of the cohort dashboard</figcaption>
+    </figure>
+  -->
+
+  <h2>What stayed with me</h2>
+  <blockquote>Cohorts are paused, but the learnings are permanent.</blockquote>
+  <p>Running everything solo is the fastest way to learn which parts of a product people actually feel. More detailed notes are on the way.</p>
+
+  <aside class="callout wobbly wobbly--2" aria-label="Note">
+    <Icon name="lightbulb" />
+    <p>This page is a living write-up. Screenshots, numbers and a proper retrospective will land here soon.</p>
+  </aside>
+</WorkLayout>

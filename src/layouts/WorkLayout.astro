@@ -1,0 +1,68 @@
+---
+/* A project write-up: breadcrumb, title, lede, facts, the article, and a back link.
+   Pages pass the facts as props, the lede in the "lede" slot, and the write-up as children. */
+import BaseLayout from './BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  /** Browser/OG title, e.g. "Report builder | Work | Mariappan Subramanian" (suffix added here). */
+  title: string;
+  description: string;
+  /** Shorter text for social cards. Defaults to `description`. */
+  ogDescription?: string;
+  /** The visible <h1>. */
+  heading: string;
+  /** BCP-47 language of the heading when it is not English (e.g. "ta"). */
+  headingLang?: string;
+  /** Small mono label above the heading, e.g. "Strive Labs · 2024 → now". */
+  eyebrow?: string;
+  facts: { label: string; value: string }[];
+  link: { href: string; label: string };
+  /** Feeds the schema.org CreativeWork block. */
+  schema: {
+    name: string;
+    alternateName?: string;
+    url: string;
+    description: string;
+    inLanguage: string | string[];
+    keywords: string;
+  };
+}
+
+const { title, description, ogDescription, heading, headingLang, eyebrow, facts, link, schema } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: schema.name,
+  ...(schema.alternateName ? { alternateName: schema.alternateName } : {}),
+  url: schema.url,
+  description: schema.description,
+  author: { '@type': 'Person', name: site.name, url: `${site.url}/` },
+  inLanguage: schema.inLanguage,
+  keywords: schema.keywords,
+};
+---
+<BaseLayout title={`${title} | Work | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="work" jsonLd={jsonLd}>
+  <main id="main" class="wrap wrap--narrow">
+    <header class="page-hero">
+      <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 lang={headingLang}>{heading}</h1>
+      <p class="lede"><slot name="lede" /></p>
+      <dl class="facts">
+        {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+        <div><dt>Link</dt><dd><a href={link.href} rel="noopener">{link.label} <Icon name="external" class="doodle--thin" /></a></dd></div>
+      </dl>
+    </header>
+
+    <article class="prose">
+      <slot />
+    </article>
+
+    <p style="margin-top: var(--space-4)">
+      <a class="pill" href="/#work"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
+    </p>
+  </main>
+</BaseLayout>

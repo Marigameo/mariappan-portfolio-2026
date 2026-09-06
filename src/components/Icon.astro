@@ -1,0 +1,14 @@
+---
+/* A doodle icon from the sprite. Inherits `color`, so `<Icon name="pen" class="ink-coral" />`
+   recolours one. Any extra attribute (style, etc.) is passed to the <svg>. */
+import { spriteUrl } from '../lib/sprite';
+
+interface Props {
+  name: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { name, class: className, ...rest } = Astro.props;
+---
+<svg class:list={['doodle', className]} aria-hidden="true" {...rest}><use href={`${spriteUrl}#${name}`}/></svg>

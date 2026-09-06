@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+<BaseLayout title={`Page not found | ${site.name}`} description="That page wandered off." robots="noindex" path="/404.html">
+  <main id="main" class="wrap wrap--narrow section" style="text-align:center; padding-top: var(--space-6); padding-bottom: var(--space-6)">
+    <p class="sticky" style="transform: rotate(2.5deg)">404, a page wandered off</p>
+    <h1 style="margin-top: var(--space-3)">Drifted a little too far beyond conventions.</h1>
+    <p style="margin: 0 auto var(--space-3)">The page you're after isn't here. It may have moved, or it may never have existed. Either way, home is one click away.</p>
+    <a class="pill pill--solid" href="/">Take me home <Icon name="arrow-right" /></a>
+  </main>
+</BaseLayout>
