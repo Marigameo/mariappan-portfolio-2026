@@ -1,57 +1,56 @@
 ---
 import WorkLayout from '../../layouts/WorkLayout.astro';
 import Icon from '../../components/Icon.astro';
+import StriveChat from '../../components/sketches/StriveChat.astro';
 
-const description = "Strive's chat agent renders answers as live, interactive UI. Mariappan Subramanian owns the frontend infrastructure behind it: a from-scratch streaming engine, a block and slot vocabulary, and the design system every agent team builds against.";
+const description = "Strive's chat agent renders answers as live, interactive UI. The frontend behind it — a from-scratch streaming engine, a block and slot vocabulary, and the design system it runs on — is work I've helped build from day zero.";
 ---
 <WorkLayout
-  title="Strive — generative UI chat"
+  title="Strive AI — generative UI chat"
   description={description}
-  ogDescription="Strive's chat agent renders answers as live, interactive UI. The frontend infrastructure behind it: a from-scratch streaming engine, a block and slot vocabulary, and the design system every agent team builds against."
-  eyebrow="Strive Labs · 2024 → now"
-  heading="Strive — generative UI chat"
+  ogDescription="Strive's chat agent renders answers as live, interactive UI. The frontend behind it: a from-scratch streaming engine, a block and slot vocabulary, and the design system it runs on."
+  eyebrow="Strivelabs · Founding engineer · 2024 → now"
+  heading="Strive AI"
   facts={[
-    { label: 'Role', value: 'Design engineer, frontend owner' },
-    { label: 'Scope', value: '~85% of commits on the module' },
+    { label: 'Role', value: 'Founding engineer · frontend owner' },
+    { label: 'Scope', value: 'Gen-UI engine, end to end' },
     { label: 'Status', value: 'In production, still shipping' },
   ]}
   link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
   schema={{
-    name: 'Strive — generative UI chat',
+    name: 'Strive AI — generative UI chat',
     url: 'https://strivelabs.ai/',
-    description: 'The chat surface every Strive agent reaches the user through: a from-scratch streaming engine, a block and slot vocabulary, and rich generative interfaces rendered live.',
+    description: 'The chat surface Strive agents reach the user through: a from-scratch streaming engine, a block and slot vocabulary, and rich generative interfaces rendered live.',
     inLanguage: 'en',
     keywords: 'generative UI, AI chat, streaming, React 19, TypeScript, design systems, design engineering',
   }}
 >
-  <Fragment slot="lede">A marketing OS that answers in <mark class="hl">live interfaces, not paragraphs</mark>. I own the frontend infrastructure behind it — streaming engine, block vocabulary, design system, the lot.</Fragment>
+  <StriveChat slot="sketch" />
 
-  <h2>The short version</h2>
+  <Fragment slot="lede">Marketing engine that answers in <mark class="hl">live interfaces, not paragraphs</mark>. I've been on the frontend since day zero — building the streaming engine, the block vocabulary, and the gen-UI foundation the platform runs on.</Fragment>
+
+  <h2>The setup</h2>
   <ul class="doodle-list">
-    <li>Strive's core product <em>is</em> the chat. The agent knows a customer's marketing context in and out, and replies in rich generative UI — charts, tables, forms, whole interactive surfaces.</li>
-    <li>Nothing off the shelf. Data model, interface contract, streaming, validation layer — all built from scratch.</li>
-    <li>One component, one streaming contract, one block vocabulary. Every agent team in the company writes against it instead of building their own UI.</li>
+    <li>Marketing used to run on pre-built dashboards, spreadsheets, and slide decks — each one kept alive by hand, and collaborating meant chasing whoever "owned" the file.</li>
+    <li>The agentic era handed us a better primitive: just <em>ask</em>. So we bet the platform on chat — but chat that answers in rich, generative UI, not walls of text.</li>
   </ul>
 
-  <h2>The vocabulary I designed</h2>
+  <h2>The bet we made</h2>
   <ul class="doodle-list">
-    <li><strong>Blocks</strong> — the singular unit. Interactive controls, presentation elements, rich charts, tables. The model composes an answer out of them.</li>
-    <li><strong>Slots</strong> — a canvas beside the thread for things too big to inline: artifacts, editors, full agent interfaces that behave like standalone products. We shipped this before the industry settled on calling it a canvas or artifact panel.</li>
-    <li><strong>Contracts</strong> — every streamed block is Zod-validated at the boundary, so a confused model degrades gracefully instead of blanking the screen.</li>
+    <li>Gen UI wasn't really a category yet. None of us were AI experts — we learned it hands-on: benchmark, borrow, break, repeat.</li>
+    <li>We test-drove the shortcuts — Vercel AI SDK, Thesys, a few others. Promising, but not quite there yet for what we needed.</li>
+    <li>So we chose to build the engine in-house. It's the core of the platform, and owning it outright gave us the flexibility to shape it around marketing — more responsibility, but worth it.</li>
   </ul>
 
-  <h2>Worth calling out</h2>
+  <h2>What's under the chat</h2>
   <ul class="doodle-list">
-    <li>Block-by-block streaming — the UI assembles itself as the model thinks.</li>
-    <li>A composer that does real work: file attachments, slash commands, skills, response modes, dictation.</li>
-    <li>Multiple concurrent conversations with centralised abort control.</li>
-    <li>Human-in-the-loop tools — the agent can stop and ask before it acts.</li>
-    <li>Reasoning traces, agent presence, edit-and-resend, grounding citations with source favicons, a conversation minimap, next-step suggestions after every turn.</li>
-    <li>Sidebar history with search, date bucketing, infinite scroll, rename and delete; in-thread pagination that loads older messages on scroll-to-top without losing scroll position.</li>
+    <li><strong>Blocks</strong> — the atom. Charts, tables, forms, controls, whole interactive surfaces the model composes an answer from.</li>
+    <li><strong>A canvas beside the thread</strong> — a workspace for things too big to inline. We landed on it early, and tuned it for agentic, marketing-specific work rather than a generic doc pane.</li>
+    <li><strong>Contracts</strong> — every streamed block is validated at the boundary, so a confused model degrades gracefully instead of blanking the screen.</li>
   </ul>
 
-  <h2>The rebuild that fixed reliability</h2>
-  <p>The first design asked the model for one big JSON payload holding every block. It worked until answers got complex — several charts, tables, interactive elements — and then it didn't: malformed JSON, truncated responses, silent retry loops.</p>
+  <h2>Where it got interesting</h2>
+  <p>The first cut asked the model for one giant JSON payload holding every block. Fine — until answers got complex, and then malformed JSON, truncations, silent retries.</p>
   <!-- .flow is white-space: pre, so the line breaks below are the layout. -->
   <div class="flow" role="img" aria-label="Before: the model returns a single JSON blob that is parsed into progressive blocks. After: the model emits individual tool calls, each parsed on its own, with plain text streaming alongside.">
 <b class="bad">BEFORE</b>
@@ -62,28 +61,14 @@ LLM ─▶ individual tool calls ─▶ TOOL_STREAM_START/CONTENT
     ─▶ per-tool parsing ─▶ blocks
     (plain text keeps streaming alongside)</div>
   <ul class="doodle-list">
-    <li>Each tool call parses on its own, so one bad block can't take the answer down with it.</li>
-    <li>Smaller units mean the model stops trying to hold a whole document in its head — fewer truncations, fewer retries.</li>
-    <li>Complexity became additive: richer answers just mean more tool calls, not a bigger blob.</li>
+    <li>Rebuilt around individual tool calls: each block parses on its own, so one bad block can't sink the whole answer.</li>
+    <li>Richer answers just mean <em>more</em> tool calls, not a bigger blob — complexity became additive.</li>
   </ul>
 
-  <h2>Where it shows up</h2>
-  <p>Mounted at the product's home route, embedded as a side panel in agent workspaces, and shipped as a sheet inside individual agent screens. Routines get created in it, reports get built in it, agent output gets reviewed and acted on in it.</p>
+  <blockquote>Chat is the easy part. The harness underneath it is the product.</blockquote>
 
   <h2>Under the hood</h2>
-  <dl class="kv">
-    <div><dt>Core</dt><dd>React 19, TypeScript, Vite 6</dd></div>
-    <div><dt>State</dt><dd>Zustand, TanStack Query, Context for live sessions</dd></div>
-    <div><dt>Streaming</dt><dd>Fetch + SSE, custom incremental JSON parser</dd></div>
-    <div><dt>UI</dt><dd>Tailwind, Radix, in-house <code>ui-core</code> / <code>ui-blocks</code>, Storybook</dd></div>
-    <div><dt>Rendering</dt><dd>streamdown + react-markdown, Recharts, TanStack Table</dd></div>
-    <div><dt>Validation</dt><dd>Zod schemas on every streamed block</dd></div>
-    <div><dt>Models</dt><dd>Claude and OpenAI, configurable per deployment</dd></div>
-    <div><dt>Backend</dt><dd>Fastify (Node)</dd></div>
-    <div><dt>Platform</dt><dd>Clerk auth, PostHog analytics</dd></div>
-    <div><dt>Testing</dt><dd>Vitest, Testing Library, MSW, Playwright E2E</dd></div>
-    <div><dt>Design system</dt><dd>Storybook, an internal doc site, and Figma, kept in sync</dd></div>
-  </dl>
+  <p>React 19 · TypeScript · custom SSE streaming · Zod contracts · an in-house block &amp; canvas library. Full teardown coming to the blog.</p>
 
   <!--
     Adding media: drop files into public/images/work/strive-gen-ui-chat/ and use one of these.
@@ -98,8 +83,6 @@ LLM ─▶ individual tool calls ─▶ TOOL_STREAM_START/CONTENT
       <figcaption>Blocks streaming in, one at a time</figcaption>
     </figure>
   -->
-
-  <blockquote>Chat is the easy part. The contract underneath it is the product.</blockquote>
 
   <aside class="next-up callout wobbly wobbly--2" aria-label="Upcoming write-up">
     <Icon name="pen" />

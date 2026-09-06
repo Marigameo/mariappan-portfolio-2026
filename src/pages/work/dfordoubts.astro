@@ -1,69 +1,125 @@
 ---
 import WorkLayout from '../../layouts/WorkLayout.astro';
 import Icon from '../../components/Icon.astro';
+import DforDoubts from '../../components/sketches/DforDoubts.astro';
 
-const description = 'DforDoubts: a live e-learning platform by Mariappan Subramanian that helps learners find experts, and answers. Taken from idea to pixels to production.';
+const description = 'DforDoubts: an e-learning marketplace where educators sell courses and learners buy and learn online. Mariappan Subramanian was the solo developer who took it from a vague idea to a live, operational product.';
 ---
 <WorkLayout
-  title="DforDoubts"
+  title="DforDoubts — an e-learning marketplace, 0 to live"
   description={description}
+  ogDescription="An e-learning marketplace where educators sell courses and learners learn online. The solo developer's story of taking it from a vague idea to a live, operational product."
+  eyebrow="Indie · E-learning marketplace · 2020 → 2022"
   heading="DforDoubts"
   facts={[
-    { label: 'Role', value: 'Founder, designer, full-stack engineer' },
-    { label: 'Stack', value: 'React, Node.js, PostgreSQL, WhatsApp API' },
+    { label: 'Role', value: 'Solo developer · contract' },
+    { label: 'Build', value: '2020 → 2022 (advisor since)' },
     { label: 'Status', value: 'Live' },
   ]}
   link={{ href: 'https://dfordoubts.com/', label: 'dfordoubts.com' }}
   schema={{
     name: 'DforDoubts',
     url: 'https://dfordoubts.com/',
-    description: 'A live e-learning platform that helps learners find experts, and answers. Taken from idea to pixels to production.',
+    description: 'An e-learning marketplace where educators sell courses and learners buy and learn online. Taken from a vague idea to a live, operational product by its solo developer.',
     inLanguage: 'en',
-    keywords: 'e-learning, live classes, full-stack, React, Node.js',
+    keywords: 'e-learning, marketplace, full-stack, Next.js, React, Firebase, Razorpay, 0 to 1',
   }}
 >
-  <Fragment slot="lede">A live e-learning platform that helps learners find experts, and answers. Taken from an idea on a napkin to <mark class="hl">pixels to production</mark>, solo.</Fragment>
+  <DforDoubts slot="sketch" />
 
-  <!-- Placeholder write-up: every paragraph below is dummy copy to be replaced. -->
-  <h2>The idea</h2>
-  <p>Every learner has a doubt that never made it to the teacher. DforDoubts started as a simple promise: put a real expert one message away, then grow into a place where highly personalised courses are shaped by the people who actually work in the field.</p>
+  <Fragment slot="lede">An e-learning marketplace where educators create and sell courses and learners buy and learn — coding, design, music, anything. I was the solo developer who took it from a <mark class="hl">vague idea to a live, operational product</mark>.</Fragment>
+
+  <h2>The brief was one line</h2>
+  <ul class="doodle-list">
+    <li>The ask was fuzzy: help educators and learners meet on one platform. No spec, no designs — just a direction.</li>
+    <li>Fresh out of college, ~23, I came on as the contract developer — the technical engine to carry it from zero to market. There's a founder; I owned the entire app and engineering side, end to end.</li>
+  </ul>
+
+  <h2>Zero to one is mostly pivots</h2>
+  <p>The build was never the hard part. Finding the shape that stuck — two names and a scrapped app later — was. The trail, roughly:</p>
+
+  <ol class="trail">
+    <li>
+      <p class="stage">The pitch</p>
+      <h3>It started as <em>learnwen</em></h3>
+      <p>A vague brief became a plan — user research first, then a deck to pitch the concept.</p>
+      <p class="links"><a href="https://docs.google.com/presentation/d/1ogmz382m_CQCDI7Nvs7sNl9kx7MfKC-rRZJEyPqEhGM/edit" rel="noopener">Pitch deck <Icon name="external" class="doodle--thin" /></a></p>
+    </li>
+    <li>
+      <p class="stage">The pilot</p>
+      <h3>A pre-launch landing</h3>
+      <p>The first page out in the world, to test the pitch before building the platform.</p>
+      <p class="links"><a href="https://launching-learnwen.netlify.app/" rel="noopener">Pilot site <Icon name="external" class="doodle--thin" /></a></p>
+    </li>
+    <li>
+      <p class="stage">v1</p>
+      <h3>Four tutors, mostly us</h3>
+      <p>A real landing with the first courses — the tutors were largely the team; no outside educators had signed up yet.</p>
+      <p class="links"><a href="https://learnwen-landing.netlify.app/" rel="noopener">v1 landing <Icon name="external" class="doodle--thin" /></a></p>
+    </li>
+    <li>
+      <p class="stage">The mobile bet</p>
+      <h3>A PWA that didn't stick</h3>
+      <p>I pitched mobile as a PWA — wireframes, then a working app. It didn't shape up, so we pivoted back to the web.</p>
+      <p class="links"><a href="https://drive.google.com/file/d/17Bi6A4CYOSeWP_sHXDZDWSYqdc3V9q46/view" rel="noopener">Wireframe <Icon name="external" class="doodle--thin" /></a><a href="https://app-learnwen.netlify.app/" rel="noopener">The PWA <Icon name="external" class="doodle--thin" /></a></p>
+    </li>
+    <li>
+      <p class="stage">The rebrand</p>
+      <h3>learnwen → DforDoubts</h3>
+      <p>A full rebrand meant rebuilding the app under a new identity — the one that went operational and is live today.</p>
+      <p class="links"><a href="https://dfordoubts.com/" rel="noopener">dfordoubts.com <Icon name="external" class="doodle--thin" /></a></p>
+    </li>
+  </ol>
 
   <h2>What I owned</h2>
   <ul class="doodle-list">
-    <li>Brand, marketing site and the course catalogue, from Figma to shipped code.</li>
-    <li>The learner journey: search, free demos, sign-up, live sessions and the "Ask your doubts" loop on WhatsApp.</li>
-    <li>Educator onboarding, payments, GST-aware pricing and the operations behind live classes.</li>
+    <li>A full-stack marketplace: educators publish and sell courses; learners discover, pay, and learn online.</li>
+    <li><strong>Self-serve payments</strong>, end to end — the module I'm proudest of. From applying for and setting up Razorpay to powering checkout and creator payouts with no one in the loop.</li>
+    <li>Everything around it: emails, scheduling, dashboards, the course catalogue.</li>
   </ul>
 
-  <h2>How it works</h2>
-  <p>Learners search by course or instructor, sit through a free demo, then join a live cohort in the language they are most comfortable in. Educators get a profile, a schedule and a payout, and nothing else to worry about.</p>
-
+  <h2>Where it got to</h2>
+  <p>From that zero, it grew into a registered company out of Chennai — live today:</p>
   <dl class="facts">
-    <div><dt>Courses</dt><dd>Music, science, school subjects, communication and more</dd></div>
-    <div><dt>Format</dt><dd>Live, small groups, English and regional languages</dd></div>
-    <div><dt>Support</dt><dd>Doubts answered over WhatsApp, any time</dd></div>
+    <div><dt>Educators</dt><dd>885</dd></div>
+    <div><dt>Courses</dt><dd>214</dd></div>
+    <div><dt>Subject categories</dt><dd>29</dd></div>
+  </dl>
+  <p><a href="https://dfordoubts.com/" rel="noopener">Live numbers on dfordoubts.com <Icon name="external" class="doodle--thin" /></a></p>
+  <p><em>Honest note: the UI on the live site now isn't mine — it evolved a lot after I handed the platform over. What I owned was taking it from nothing to something real.</em></p>
+
+  <h2>Under the hood</h2>
+  <dl class="kv">
+    <div><dt>Frontend</dt><dd>Next.js, React, Tailwind CSS</dd></div>
+    <div><dt>Backend</dt><dd>Node.js, as Next.js API routes</dd></div>
+    <div><dt>Data</dt><dd>Firebase</dd></div>
+    <div><dt>Payments</dt><dd>Razorpay — set up and integrated ground up</dd></div>
+    <div><dt>Also</dt><dd>Nodemailer, react-calendly, react-chartjs-2, react-slick, Lottie, Headway</dd></div>
   </dl>
 
-  <!--
-    Adding media: drop files into public/images/work/dfordoubts/ and use one of these.
-
-    <figure>
-      <img src="/images/work/dfordoubts/catalogue.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
-      <figcaption>The course catalogue with search and live tags</figcaption>
-    </figure>
-
-    <figure>
-      <video src="/images/work/dfordoubts/demo.mp4" poster="/images/work/dfordoubts/demo-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
-      <figcaption>Booking a free demo, end to end</figcaption>
-    </figure>
-  -->
-
   <h2>What stayed with me</h2>
-  <blockquote>The best feature was a phone number. People trust a human before they trust a platform.</blockquote>
-  <p>Shipping the whole stack alone taught me where polish matters and where speed matters more. Numbers, screenshots and a proper retrospective will replace this placeholder soon.</p>
+  <blockquote>Straight out of college, this taught me to take a one-line idea, research it, pitch it, and ship it — then be ready to throw it away and rebuild.</blockquote>
+  <p>Zero to market rewards range and stubbornness more than clean code. My contract's long done and the platform's fully transferred; I still help now and then as a technical advisor.</p>
 
-  <aside class="callout wobbly wobbly--2" aria-label="Note">
+  <aside class="callout wobbly wobbly--2" aria-label="Visit DforDoubts">
     <Icon name="lightbulb" />
-    <p>This page is a living write-up with placeholder copy. The real story, with screenshots and numbers, lands here soon.</p>
+    <div>
+      <strong>See it live</strong>
+      <p>The platform runs today as a registered company out of Chennai — with real educators, courses and learners.</p>
+      <p><a class="pill" href="https://dfordoubts.com/" rel="noopener">Visit dfordoubts.com <Icon name="external" /></a></p>
+    </div>
   </aside>
 </WorkLayout>
+
+<style>
+  /* Journey timeline — one <li> per stage, a violet node on a vertical thread. */
+  .trail { list-style: none; margin: var(--space-3) 0 var(--space-4); padding: 0; position: relative; }
+  .trail::before { content: ""; position: absolute; left: 8px; top: 8px; bottom: 10px; width: 2px; background: var(--border); }
+  .trail > li { position: relative; padding: 0 0 var(--space-3) calc(var(--space-3) + .5rem); }
+  .trail > li:last-child { padding-bottom: 0; }
+  .trail > li::before { content: ""; position: absolute; left: 0; top: 2px; width: 18px; height: 18px; border-radius: 60% 40% 55% 45% / 55% 45% 55% 45%; background: var(--sand); border: 2.5px solid var(--violet); }
+  .trail h3 { margin: .1rem 0 .2rem; font-size: 1.1rem; }
+  .trail p { margin: .15rem 0; }
+  .trail .stage { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-faint); }
+  .trail .links { display: flex; gap: .4rem 1rem; flex-wrap: wrap; margin-top: .4rem; font-size: .92rem; }
+</style>

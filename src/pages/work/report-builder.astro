@@ -1,83 +1,73 @@
 ---
 import WorkLayout from '../../layouts/WorkLayout.astro';
 import Icon from '../../components/Icon.astro';
+import ReportBuilder from '../../components/sketches/ReportBuilder.astro';
 
-const description = "Strive's report builder: an AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe. Built by Mariappan Subramanian.";
+const description = "Strive Studio: vibe-coding for live marketing dashboards. An agent that knows your business, your data, and your brand writes the whole report as live software, keeps it in sync, and renders it in the browser. Frontend built by Mariappan Subramanian.";
 ---
 <WorkLayout
-  title="Report builder — agent-written live reports"
+  title="Strive Studio — agent-written live reports"
   description={description}
-  ogDescription="An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe."
-  eyebrow="Strive Labs"
-  heading="Report builder"
+  ogDescription="Vibe-coding for live marketing dashboards. An agent writes the whole report as live software that pulls warehouse data, renders in your brand, and stays in sync."
+  eyebrow="Strivelabs · Founding engineer · 2025 → now"
+  heading="Strive Studio"
   facts={[
-    { label: 'Role', value: 'Design engineer, primary author' },
-    { label: 'Scope', value: 'Every file in the module' },
+    { label: 'Role', value: 'Founding engineer · frontend + prompts' },
+    { label: 'Scope', value: 'Frontend from zero' },
     { label: 'Status', value: 'In production, still shipping' },
   ]}
   link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
   schema={{
-    name: 'Strive report builder',
+    name: 'Strive Studio — report builder',
     url: 'https://strivelabs.ai/',
-    description: "An AI agent writes the whole report as a real HTML document that pulls live warehouse data, renders in the customer's own brand, and runs safely in a sandboxed iframe.",
+    description: "Vibe-coding for live marketing dashboards: an agent writes the whole report as live software that pulls warehouse data, renders in the customer's brand, and stays in sync.",
     inLanguage: 'en',
-    keywords: 'generative UI, AI reports, sandboxed iframe, postMessage, live data, BigQuery, brand theming, design engineering',
+    keywords: 'generative UI, AI reports, live dashboards, sandboxed iframe, postMessage, BigQuery, brand theming, design engineering',
   }}
 >
-  <Fragment slot="lede">Lovable for marketing reports — except the artifact is <mark class="hl">wired to live data</mark>. The agent writes the whole document; you describe changes and own the result.</Fragment>
+  <ReportBuilder slot="sketch" />
 
-  <h2>The short version</h2>
+  <Fragment slot="lede">Vibe-coding for live dashboards — <mark class="hl">Lovable for marketing</mark>. Describe the report you want; an agent that knows your business, your data, and your brand writes it, keeps it live, and holds it in sync.</Fragment>
+
+  <h2>The setup</h2>
   <ul class="doodle-list">
-    <li>Most analytics products hand you a fixed dashboard and a date picker. Strive's reports are the opposite.</li>
-    <li>An agent writes the report itself — a complete HTML document with its own layout, its own charts, its own SQL.</li>
-    <li>That document then fetches live data from the tenant's warehouse every time someone opens it. Not a snapshot. Not a template with slots. <strong>Actual generated software.</strong></li>
+    <li>Building reports and dashboards is one of a marketer's most constant jobs — and it's still done the hard way, stitched across fragmented tools.</li>
+    <li>Vibe-code a deck in Claude today and it looks great for a week — then the data's stale, and keeping it current is manual work all over again.</li>
   </ul>
 
-  <h2>The conversation is the builder</h2>
+  <h2>What we built</h2>
   <ul class="doodle-list">
-    <li>You describe the report in chat. It materialises in a canvas beside the conversation.</li>
-    <li>Say <em>"make the CPL card a trend line instead"</em> — the agent rewrites the file while you watch.</li>
-    <li>No separate report studio. No builder UI to learn. Nothing to drag.</li>
-    <li>It renders in the tenant's own brand — colours, fonts, radii pulled from their actual website — so the report looks like their team made it, not ours.</li>
+    <li>Connect your data sources, ask for what you want, and get a rich, live dashboard — shareable, collaborative, always in sync.</li>
+    <li>It's personal, not generic vibe-coding: it reads your business context, runs against your data, and renders in your brand — so a report looks like your team made it, not ours.</li>
   </ul>
 
-  <h2>The hard parts</h2>
-  <h3>Running code you didn't write</h3>
+  <h2>The bet we made</h2>
   <ul class="doodle-list">
-    <li>Reports execute arbitrary agent-authored JavaScript, so they load in an <code>allow-scripts</code>-only iframe: an opaque origin that can't reach parent cookies, storage or DOM.</li>
-    <li>Everything the report needs crosses a narrow <code>postMessage</code> bridge — data requests in, results out, nothing else.</li>
-    <li>The host stays the only thing holding credentials. The sandbox just asks.</li>
+    <li>We could've kept a JSON-contract UI — strict schemas, tight control, every component defined by us.</li>
+    <li>Instead we bet the agent could be trained on our design system: write its own code and components, stay true to our design principles, and skip the schema wrangling. More trust in the model, far more flexibility.</li>
   </ul>
 
+  <h2>Live artifacts, early</h2>
+  <ul class="doodle-list">
+    <li>The building block is a <em>slot</em> — an analysis you can render, schedule, and export.</li>
+    <li>When Claude shipped static artifacts, we already had live ones in production with clients: full-stack dashboards they could vibe-code against their own data.</li>
+  </ul>
+
+  <h2>Where it got hard</h2>
+  <ul class="doodle-list">
+    <li>Reports render live in the browser, against big datasets and live external sources. Done naively, that's a frozen tab — we saw our share of crashes early on.</li>
+    <li>So we trained the agent to fetch data <em>lazily</em>, only when it's needed, and to compose dashboards that stay smooth: efficient reads and writes, caching that also keeps token use in check.</li>
+    <li>Sensitive data never reaches the browser in the clear — queries run through a secured sandboxed bridge, so a report can <em>ask</em> for data without ever holding the keys.</li>
+  </ul>
   <!-- .flow is white-space: pre, so the line breaks below are the layout. -->
   <div class="flow" role="img" aria-label="Data path: the sandboxed report asks the host over postMessage, the host queries the Cube semantic layer over BigQuery, and results travel back into the sandbox to render.">
 <b class="bad">SANDBOX</b>   agent-written HTML ─▶ asks over postMessage
 <b class="blue">HOST</b>      TanStack Query ─▶ Cube ─▶ BigQuery
 <b class="good">BACK</b>      results ─▶ through the bridge ─▶ charts render</div>
-
-  <h3>Brand theming, automatically</h3>
-  <ul class="doodle-list">
-    <li>A design system is extracted from the customer's domain during onboarding, then handed to the agent as generation context.</li>
-    <li>Every report inherits it by default — no per-report styling, no brand review queue.</li>
-  </ul>
-
-  <h3>PDF export</h3>
-  <ul class="doodle-list">
-    <li>The sandbox self-snapshots its own DOM, a headless-Chromium Lambda renders it, and the result lands as a signed S3 URL.</li>
-    <li>Making that paginate cleanly across multi-page reports is a story of its own.</li>
-  </ul>
+  <p>It's a coordinated effort — the team holds the secured bridge on the backend, and I built and maintain the frontend side of the loop: auth, retries, loading, and keeping the sandbox in sync on every read and write.</p>
 
   <h2>Under the hood</h2>
-  <dl class="kv">
-    <div><dt>Core</dt><dd>React 19, TypeScript, Vite, Tailwind</dd></div>
-    <div><dt>State</dt><dd>TanStack Query (cache invalidation drives the live refresh), Zustand</dd></div>
-    <div><dt>Isolation</dt><dd><code>allow-scripts</code>-only iframe, opaque-origin postMessage protocol</dd></div>
-    <div><dt>Report runtime</dt><dd>Agent-authored HTML — Tailwind CDN + Chart.js inside the sandbox</dd></div>
-    <div><dt>Data</dt><dd>BigQuery + Cube semantic layer, brokered through the bridge</dd></div>
-    <div><dt>Export</dt><dd>DOM self-snapshot → headless-Chromium Lambda → S3 signed URL</dd></div>
-    <div><dt>Native reports</dt><dd>Block renderers, Recharts, TanStack Table</dd></div>
-    <div><dt>Platform</dt><dd>Clerk auth, PostHog analytics, Vitest + Playwright</dd></div>
-  </dl>
+  <p>React 19 · TypeScript · TanStack Query · agent-authored HTML in a sandboxed iframe · Cube + BigQuery · lazy, cached live data. Full teardown coming to the blog.</p>
 
   <!--
     Adding media: drop files into public/images/work/report-builder/ and use one of these.
@@ -93,10 +83,12 @@ const description = "Strive's report builder: an AI agent writes the whole repor
     </figure>
   -->
 
-  <h2>Why it matters</h2>
-  <p>Reports are where the platform's work becomes visible. Agents run, data lands in the warehouse, and this is the surface where a marketer actually sees it — branded like their own product, live rather than stale, and one click from a conversation about what to do next.</p>
+  <h2>What stuck with me</h2>
+  <ul class="doodle-list">
+    <li>Trained well on a design system, an agent writing its own components beat us hand-authoring UI contracts.</li>
+  </ul>
 
-  <blockquote>A dashboard shows you the numbers someone else chose. This writes the report you asked for.</blockquote>
+  <blockquote>A dashboard shows you numbers someone else chose. This builds the report you asked for — and keeps it alive.</blockquote>
 
   <aside class="next-up callout wobbly wobbly--2" aria-label="Upcoming write-up">
     <Icon name="pen" />

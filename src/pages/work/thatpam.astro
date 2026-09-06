@@ -1,39 +1,65 @@
 ---
 import WorkLayout from '../../layouts/WorkLayout.astro';
 import Icon from '../../components/Icon.astro';
+import Thatpam from '../../components/sketches/Thatpam.astro';
 
-const description = 'தட்பம் (Thatpam): a solo ed-tech experiment by Mariappan Subramanian to experience startup life and teach what he loves. Owned everything from pixels to payments.';
+const description = 'தட்பம் (Thatpam): a solo ed-tech experiment by Mariappan Subramanian — teaching frontend in Tamil, in tiny cohorts, and learning the business of teaching by running all of it alone, from pixels to payments.';
 ---
 <WorkLayout
   title="தட்பம் (Thatpam)"
   description={description}
+  eyebrow="Indie · Solo ed-tech experiment · 2021"
   heading="தட்பம்"
   headingLang="ta"
   facts={[
-    { label: 'Role', value: 'Founder, designer, engineer' },
-    { label: 'Stack', value: 'React, Storybook, Tailwind CSS, Radix UI' },
-    { label: 'Status', value: 'Cohorts paused' },
+    { label: 'Role', value: 'Founder · teacher · designer · engineer' },
+    { label: 'Cohorts', value: 'Small by design (~10 learners)' },
+    { label: 'Status', value: 'Paused, not closed' },
   ]}
   link={{ href: 'https://thatpam.netlify.app/', label: 'thatpam.netlify.app' }}
   schema={{
     name: 'தட்பம் (Thatpam)',
     alternateName: 'Thatpam',
     url: 'https://thatpam.netlify.app/',
-    description: 'A solo ed-tech experiment to experience startup life and teach what I love. Owned everything from pixels to payments.',
+    description: 'A solo ed-tech experiment to teach frontend in Tamil, in tiny cohorts, and to learn the business of teaching by running all of it alone — from pixels to payments.',
     inLanguage: ['ta', 'en'],
-    keywords: 'ed-tech, React, Storybook, Tailwind CSS, Radix UI',
+    keywords: 'ed-tech, Tamil, frontend, teaching, indie, solo founder',
   }}
 >
-  <Fragment slot="lede"><span lang="ta">திறமைக்கு மொழி தடை இல்லை</span>. A solo ed-tech experiment to experience startup life and teach what I love. Owned everything from <mark class="hl">pixels to payments</mark>.</Fragment>
+  <Thatpam slot="sketch" />
 
-  <h2>The idea</h2>
-  <p>Talent shouldn't be gated by the language a course happens to be taught in. தட்பம் set out to teach front-end craft in Tamil, live, in small cohorts, by someone who actually ships it for a living.</p>
+  <Fragment slot="lede"><span lang="ta">திறமைக்கு மொழி தடை இல்லை</span> — talent has no language barrier. A solo experiment to teach frontend in Tamil, in tiny cohorts, and to learn the business of teaching by doing all of it myself — <mark class="hl">pixels to payments</mark>.</Fragment>
 
-  <h2>What I owned</h2>
+  <h2>The name</h2>
+  <p><span lang="ta">தட்பம்</span> (<em>thatpam</em>) means coolness — a cool, breezy climate. I wanted learning to feel exactly like that: fresh, light, a little fun.</p>
+
+  <h2>Why it existed</h2>
   <ul class="doodle-list">
-    <li>Brand, landing page and course design, in Figma and in code.</li>
-    <li>The learning experience: cohort structure, live sessions, assignments and feedback loops.</li>
-    <li>Payments, onboarding emails and the boring-but-essential operations around them.</li>
+    <li>Job-switchers kept hitting the same wall: course syllabi that were generic and already out of date — college, repackaged.</li>
+    <li>I was already teaching on other platforms and it never quite satisfied me. The real gap was current, in-trend frontend from someone who ships it daily.</li>
+    <li>So when a couple of people asked for my time, I turned it into a thing.</li>
+  </ul>
+
+  <h2>The bet: stay small on purpose</h2>
+  <ul class="doodle-list">
+    <li>I kept cohorts deliberately tiny. No plan to grow the student base, hire tutors, or franchise it.</li>
+    <li>The USP <em>was</em> the focus — a few serious people, my full attention, one goal: help them win their switch.</li>
+    <li>It was never really about revenue. It was passion, and a taste of running something end to end.</li>
+  </ul>
+
+  <h2>Marketing, my way</h2>
+  <ul class="doodle-list">
+    <li>No brand, no ad spend, no funnel. Just word of mouth and trust I'd earned — free guidance, YouTube lessons, hours spent with people before any money changed hands.</li>
+    <li>Only once that trust existed did I put up a site and switch on payments.</li>
+    <li>The lesson that stuck: find your own strength and write your own playbook; there's no fixed one.</li>
+  </ul>
+
+  <blockquote>I was the product — so I never needed a funnel.</blockquote>
+
+  <h2>Where they are now</h2>
+  <ul class="doodle-list">
+    <li>Out of that small group, a few are close friends I still talk to — now in frontend roles, a couple at names like <strong>Pickyourtrail</strong> and <strong>Eduseek AI</strong>.</li>
+    <li>Their wins are their own; I'm just glad I was somewhere in the story. Their projects and words live on the <a href="https://thatpam.netlify.app/student-chapters" rel="noopener">student chapters <Icon name="external" class="doodle--thin" /></a> page.</li>
   </ul>
 
   <!--
@@ -51,11 +77,20 @@ const description = 'தட்பம் (Thatpam): a solo ed-tech experiment by 
   -->
 
   <h2>What stayed with me</h2>
-  <blockquote>Cohorts are paused, but the learnings are permanent.</blockquote>
-  <p>Running everything solo is the fastest way to learn which parts of a product people actually feel. More detailed notes are on the way.</p>
+  <ul class="doodle-list">
+    <li>You don't need a slick, fully automated, self-serve product to start in education. Teaching runs on personal touch, taste and passion — that's what people feel, not your feature list.</li>
+    <li>I made real money too (never the point), and at ~23 I got a close-up on the unglamorous parts: retention, and handling money young.</li>
+  </ul>
 
-  <aside class="callout wobbly wobbly--2" aria-label="Note">
-    <Icon name="lightbulb" />
-    <p>This page is a living write-up. Screenshots, numbers and a proper retrospective will land here soon.</p>
+  <blockquote>Cohorts are paused, but the learnings are permanent.</blockquote>
+  <p>A pause, not a full stop — if someone reaches out tomorrow, I'd happily teach again under the same banner.</p>
+
+  <aside class="callout wobbly wobbly--2" aria-label="Visit தட்பம்">
+    <Icon name="pen" />
+    <div>
+      <strong>Read it in the wild</strong>
+      <p>I wrote every word of this site myself back in 2021 — before LLMs were a thing. I was obsessed with copywriting and had a lot of fun with it. If you're comfortable in Tamil, give the copy a read and tell me what you think.</p>
+      <p><a class="pill" href="https://thatpam.netlify.app/" rel="noopener">Visit thatpam.netlify.app <Icon name="external" /></a></p>
+    </div>
   </aside>
 </WorkLayout>

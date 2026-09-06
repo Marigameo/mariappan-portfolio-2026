@@ -43,6 +43,7 @@ export const shelves: Shelf[] = [
       { href: 'https://medium.com/@mariappan/thrissur-pooram-how-a-crowd-hater-accidentally-found-the-experience-of-a-lifetime-794e7f06cc70', title: 'Thrissur Pooram: how a crowd-hater accidentally found the experience of a lifetime', spine: 'Thrissur Pooram', colour: 'teal', bh: '14rem', bw: '3.1rem' },
       { href: 'https://medium.com/@mariappan/art-of-curating-confusions-and-dissatisfaction-f8815da69822', title: 'Art of curating confusions and dissatisfaction', spine: 'Curating confusions', colour: 'violet', bh: '12rem', lean: true },
       { href: 'https://medium.com/@mariappan/hovering-news-being-an-amateur-reader-2fd88442ce80', title: 'Hovering news being an amateur reader', spine: 'Hovering news', colour: 'coral', bh: '13rem', bw: '2.6rem' },
+      { href: 'https://medium.com/@mariappan/thinking-the-right-way-8dcb66d648ed', title: 'Thinking — the right way', spine: 'Thinking the right way', colour: 'blue', bh: '13.5rem', bw: '2.8rem' },
     ],
   },
   {
@@ -53,6 +54,7 @@ export const shelves: Shelf[] = [
     books: [
       { href: 'https://medium.com/@mariappan/thinking-through-linkedins-endorsement-feature-189cfb39c214', title: "Thinking through LinkedIn's Endorsement feature", spine: 'LinkedIn endorsements', colour: 'violet', bh: '13rem', bw: '3rem' },
       { href: 'https://medium.com/@mariappan/the-hey-fever-61d45b640f56', title: 'The {hey} fever', spine: 'The {hey} fever', colour: 'yellow', bh: '11.5rem', bw: '2.6rem', lean: true },
+      { href: 'https://medium.com/@mariappan/arts-and-culture-journey-with-google-b9f45dccc19b', title: 'Arts and culture journey with Google', spine: 'Arts & culture, Google', colour: 'teal', bh: '14rem', bw: '3rem' },
     ],
   },
 ];
