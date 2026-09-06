@@ -658,6 +658,11 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .pin-btn:hover, .pin-btn:focus-visible, .pin.is-open .pin-btn { background: var(--coral); color: var(--paper-2); transform: rotate(0) scale(1.08); }
 .pin-btn:hover::after, .pin.is-open .pin-btn::after { animation: none; opacity: 0; }
 @keyframes pin-pulse { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(2); opacity: 0; } }
+/* "locate me" nudge, same voice as the hero's "that's me"; gone while the note is open */
+.pin-hint { position: absolute; left: calc(100% + .1rem); top: -1.1rem; display: flex; align-items: flex-start; gap: 0; pointer-events: none; color: var(--coral); white-space: nowrap; transition: opacity .25s ease; }
+.pin-hint-arrow { width: 2.5rem; height: 1.9rem; stroke-width: 2; transform: scaleX(-1) rotate(-20deg) translateY(.55rem); flex: none; }
+.pin-hint .hand { font-size: 1.1rem; display: inline-block; transform: rotate(-6deg); margin-top: -.15rem; }
+.pin.is-open .pin-hint { opacity: 0; }
 .pin-note { position: absolute; bottom: calc(100% + .75rem); left: 50%; width: max-content; max-width: min(15rem, 80vw); transform: translateX(-50%); animation: pin-pop .35s cubic-bezier(.2,.8,.2,1) both; }
 .pin-note .sticky { margin: 0; max-width: none; font-size: 1.08rem; line-height: 1.2; padding: .65rem .85rem .75rem; color: var(--sticky-ink); }
 .pin-note .doodle { width: 1rem; height: 1rem; color: var(--coral); stroke-width: 2.2; }
@@ -675,7 +680,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
    back hill: palm + banana frame the edges · middle: boat on the pond · front: chai wala + dancer */
 @media (max-width: 639px) {
   .footer-land, .footer-secret { height: 19rem; }
-  .footer-inner { padding-bottom: 22.8rem; }
+  .footer-inner { padding-bottom: 23.5rem; }
   .hills--wide { display: none; }
   .hills--narrow { display: block; }
   .plant--palm { left: 13%; bottom: 58%; --w: 6.2rem; }
