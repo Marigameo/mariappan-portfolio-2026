@@ -18,8 +18,9 @@ assets/doodles.svg      every doodle icon as an SVG <symbol>
 images/portraits/       the three hero deck illustrations (WebP, 900x1200)
 images/footer/          transparent WebP cut-outs planted in the footer garden
 images/logos/           company logos; project media goes in images/work/<slug>/
-previews/               talk thumbnails + the Strivelabs hover preview (strivelabs.webp)
-sitemap.xml, robots.txt, netlify.toml, og-image.png, favicon.ico
+previews/               talk thumbnails (the Strivelabs hover peek draws an inline .sk sketch)
+favicon.svg, favicon.ico, apple-touch-icon.png   the M mark (SVG is the source; see below)
+sitemap.xml, robots.txt, netlify.toml, og-image.png
 ```
 
 ## Design system in one minute
@@ -75,9 +76,12 @@ inside the symbol; the page CSS supplies `stroke: currentColor`.
    `.rail`s (one per company, plus Indie builds), each a sideways scroller of
    `<li class="card">` items. Copy a card into the right rail, set its
    `--accent` (coral, blue, teal, violet), the date line, one or two capability
-   tags, and a thumbnail: drop an `<img>` inside `.shot` and delete the
-   `.shot-empty` placeholder. Arrows and the progress line only appear once a
-   rail has more cards than fit on screen.
+   tags, and a thumbnail. The current cards carry inline SVG sketches of each
+   product (`<svg class="sk">`, a 600x440 drawing that uses `.f-card`, `.f-bar`,
+   `.s-soft` and friends so it follows the theme); a real screenshot works too:
+   drop an `<img>` inside `.shot` instead, or use the `.shot-empty` placeholder
+   while one is brewing. Arrows and the progress line only appear once a rail
+   has more cards than fit on screen.
 5. Add the URL to `sitemap.xml`.
 
 ## The hero deck
@@ -127,6 +131,23 @@ Everything is in the HTML, in reading order. The nav and footer are repeated in 
 (`<!-- ============ Talks ============ -->`) and edit in place. For a talk with
 a YouTube video, set `data-video` on the play button to the video id; talks
 without a video use the `.video--static` variant that links to the slides.
+
+## Favicon and social image
+
+`favicon.svg` is the source of the M mark. After editing it, regenerate the
+raster copies (needs `rsvg-convert` and ImageMagick from Homebrew):
+
+```bash
+rsvg-convert -w 180 -h 180 favicon.svg -o apple-touch-icon.png && for s in 16 32 48; do rsvg-convert -w $s -h $s favicon.svg -o /tmp/fav$s.png; done && magick /tmp/fav16.png /tmp/fav32.png /tmp/fav48.png favicon.ico
+```
+
+`og-image.png` (1200x630) is a capture of the homepage hero. With the local
+server running, headless Chrome takes the shot and ImageMagick trims the next
+section off the bottom:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --hide-scrollbars --force-device-scale-factor=1 --window-size=1500,788 --timeout=12000 --user-data-dir=/tmp/og-profile --screenshot=/tmp/hero.png http://127.0.0.1:8765/ && magick /tmp/hero.png -crop 1500x722+0+0 +repage -background "#fff9f1" -gravity north -extent 1500x788 -resize "1200x630!" -strip og-image.png
+```
 
 ## Local preview
 

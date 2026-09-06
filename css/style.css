@@ -248,6 +248,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .peek-chrome i:nth-child(3) { background: var(--teal); }
 .peek-url { margin-left: .45rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; color: var(--ink-faint); }
 .peek-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; }
+.peek-card .sk { width: 100%; aspect-ratio: 16 / 10; display: block; }
 .peek-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .65rem; font-size: .78rem; color: var(--ink-soft); }
 .peek-foot .doodle { width: .9rem; height: .9rem; color: var(--coral); }
 @media (hover: none), (max-width: 639px) { .peek-card { display: none; } }
@@ -255,7 +256,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 /* ---------- 8. Logo marquee -------------------------------------------- */
 .logos { padding-block: var(--space-3) var(--space-5); }
 .logos-head { text-align: center; margin-bottom: 1.4rem; }
-.logos-head .eyebrow { justify-content: center; margin-bottom: .7rem; }
+.logos-head .eyebrow { justify-content: center; margin-bottom: .7rem; max-width: none; }
 .logos-head .eyebrow::before { display: none; }
 .logos-title { font-size: clamp(1.6rem, 3.3vw, 2.4rem); margin: 0 auto; max-width: 28ch; }
 .logos-note { display: inline-flex; align-items: center; gap: .1rem; margin: .5rem auto 0; max-width: none; font-size: 1.25rem; color: var(--coral); transform: rotate(-2deg); }
@@ -310,11 +311,42 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .card-link:hover { transform: translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); color: var(--ink); }
 .card-link:hover::before { transform: rotate(.5deg); opacity: .9; }
 .card:nth-child(2n) .card-link:hover::before { transform: rotate(-.5deg); }
-.shot { position: relative; margin: .65rem .65rem 0; aspect-ratio: 16 / 9; overflow: hidden; border: 1.5px solid var(--border); border-radius: 14px 6px 14px 6px / 6px 14px 6px 14px; background: var(--sand); flex: none; }
+/* the thumbnail is a photo pasted into the card: breathing room on every side, a
+   slight tilt (alternating per card) and a hard shadow, so its edge never runs
+   parallel to the card border. Cards straighten the photo on hover. */
+.shot { position: relative; margin: 1.25rem 1.25rem .3rem; aspect-ratio: 16 / 9; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); flex: none; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-1.4deg); transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease; }
+.card:nth-child(2n) .shot { transform: rotate(1.2deg); }
+.card-link:hover .shot { transform: rotate(0); box-shadow: 5px 6px 0 var(--shadow-ink); }
 .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .shot-empty { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: .35rem; color: var(--ink-faint); background: repeating-linear-gradient(135deg, transparent 0 9px, var(--line) 9px 10px); }
 .shot-empty .doodle { width: 2.6rem; height: 2.6rem; stroke-width: 1.4; color: var(--accent); }
 .shot-empty .hand { font-size: 1.2rem; transform: rotate(-3deg); }
+/* skeleton screenshots: each card thumbnail is an inline SVG sketch of the product
+   (600x440 viewBox, slice-cropped like object-fit: cover). Surfaces, bars and text
+   use the page tokens so they follow light/dark; only brand colours are literal. */
+.shot .sk { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sk text { font-family: var(--font-body); fill: var(--ink); }
+.sk .t-display { font-family: var(--font-display); }
+.sk .t-soft { fill: var(--ink-soft); }
+.sk .f-page { fill: var(--paper); }
+.sk .f-card, .sk .f-paper { fill: var(--paper-2); }
+.sk .f-ink { fill: var(--ink); }
+.sk .f-bar { fill: var(--ink); fill-opacity: .18; }
+.sk .f-bar-2 { fill: var(--ink); fill-opacity: .09; }
+.sk .f-tint { fill: var(--ink); fill-opacity: .045; }
+.sk .s-soft { stroke: var(--ink); stroke-opacity: .14; }
+.sk .s-line { stroke: var(--ink); stroke-opacity: .1; stroke-width: 1.5; }
+.sk .s-ink { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.sk .sk-lift { transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.card-link:hover .sk-lift { transform: translateY(-4px); }
+.sk-warm-a { stop-color: #fff5dc; }
+.sk-warm-b { stop-color: #f5c96a; }
+[data-theme="dark"] .sk-warm-a { stop-color: #2b2416; }
+[data-theme="dark"] .sk-warm-b { stop-color: #5b4322; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .sk-warm-a { stop-color: #2b2416; }
+  :root:not([data-theme="light"]) .sk-warm-b { stop-color: #5b4322; }
+}
 .shot.taped::before { top: -.75rem; left: 18%; width: 5rem; height: 1.3rem; transform: rotate(-4deg); z-index: 1; }
 .card:nth-child(2n) .shot.taped::before { left: auto; right: 14%; transform: rotate(3deg); }
 .card-body { display: flex; flex-direction: column; gap: .55rem; padding: 1.1rem 1.3rem 1.2rem; flex: 1; min-width: 0; }
@@ -329,7 +361,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .card-link:hover .card-go .doodle { transform: translateX(4px); }
 @media (min-width: 760px) {
   .card-link { flex-direction: row; align-items: stretch; }
-  .shot { flex: 0 0 46%; aspect-ratio: auto; min-height: 15rem; margin: .65rem 0 .65rem .65rem; }
+  .shot { flex: 0 0 44%; aspect-ratio: auto; min-height: 15rem; margin: 1.3rem .5rem 1.3rem 1.3rem; }
   .card-body { padding: 1.3rem 1.5rem 1.3rem 1.4rem; }
 }
 @media (max-width: 639px) {
