@@ -134,6 +134,27 @@
     update();
   });
 
+  // --- Photo lightbox: any [data-full] opens its image in the page's <dialog data-lightbox> ---
+  var lightbox = document.querySelector("[data-lightbox]");
+  if (lightbox && typeof lightbox.showModal === "function") {
+    var lbImg = lightbox.querySelector("[data-lightbox-img]");
+    var lbCap = lightbox.querySelector("[data-lightbox-caption]");
+    document.querySelectorAll("[data-full]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var thumb = btn.querySelector("img");
+        lbImg.src = btn.getAttribute("data-full");
+        lbImg.alt = thumb ? thumb.alt : "";
+        if (lbCap) lbCap.textContent = thumb ? thumb.alt : "";
+        lightbox.showModal();
+      });
+    });
+    lightbox.querySelectorAll("[data-lightbox-close]").forEach(function (b) { b.addEventListener("click", function () { lightbox.close(); }); });
+    // backdrop click: the dialog itself is the target only when clicking outside its content
+    lightbox.addEventListener("click", function (e) { if (e.target === lightbox) lightbox.close(); });
+    lightbox.addEventListener("keydown", function (e) { if (e.key === "Escape") { e.preventDefault(); lightbox.close(); } });
+    lightbox.addEventListener("close", function () { lbImg.removeAttribute("src"); });
+  }
+
   // --- Footer year ---------------------------------------------------------------
   document.querySelectorAll("[data-year]").forEach(function (y) { y.textContent = new Date().getFullYear(); });
 })();

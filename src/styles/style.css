@@ -493,12 +493,26 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 /* The photo block grows to fill the card so side-by-side cards share a height; a lone photo
    keeps 4:3, the mosaic fills whatever height it is given. */
 .win-photos { flex: 1; min-height: 0; display: grid; gap: .6rem; padding: .35rem .2rem 0; }
-.win-photos img { width: 100%; height: 100%; min-height: 0; aspect-ratio: 4 / 3; object-fit: cover; object-position: top; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-1.2deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.win-shot { position: relative; display: block; width: 100%; height: 100%; min-height: 0; aspect-ratio: 4 / 3; padding: 0; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); box-shadow: 3px 3px 0 var(--shadow-ink); overflow: hidden; cursor: zoom-in; transform: rotate(-1.2deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.win-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.win-shot-hint { position: absolute; right: .5rem; bottom: .5rem; padding: .28rem .55rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--paper); background: rgba(6, 6, 6, .72); border-radius: 999px; opacity: 0; transition: opacity .2s ease; }
+.win-shot:hover .win-shot-hint, .win-shot:focus-visible .win-shot-hint { opacity: 1; }
+@media (hover: none) { .win-shot-hint { opacity: .9; } }
 .win-photos--fan { aspect-ratio: 4 / 3; grid-template-columns: 1.5fr 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
-.win-photos--fan img { aspect-ratio: auto; object-position: center 35%; transform: rotate(-.8deg); }
-.win-photos--fan img:first-child { grid-row: 1 / span 2; transform: rotate(-1.2deg); }
-.win-photos--fan img:nth-child(2) { transform: rotate(1.4deg); object-position: center 30%; }
-.win:hover .win-photos img { transform: rotate(0); }
+.win-photos--fan .win-shot { aspect-ratio: auto; transform: rotate(-.8deg); }
+.win-photos--fan .win-shot img { object-position: center 35%; }
+.win-photos--fan .win-shot:first-child { grid-row: 1 / span 2; transform: rotate(-1.2deg); }
+.win-photos--fan .win-shot:nth-child(2) { transform: rotate(1.4deg); }
+.win-photos--fan .win-shot:nth-child(2) img { object-position: center 30%; }
+.win:hover .win-shot { transform: rotate(0); }
+/* Lightbox: the full photo on a dimmed page, close button top-right, caption below */
+.lightbox { border: 0; padding: 0; background: transparent; max-width: min(96vw, 80rem); max-height: 96vh; overflow: visible; }
+.lightbox::backdrop { background: rgba(6, 6, 6, .82); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.lightbox figure { margin: 0; display: grid; justify-items: center; gap: .7rem; }
+.lightbox img { max-width: 92vw; max-height: 82vh; width: auto; height: auto; border: 1.5px solid var(--border); border-radius: 12px 6px 14px 6px / 6px 14px 6px 12px; background: var(--paper-2); box-shadow: 4px 4px 0 var(--shadow-ink); }
+.lightbox figcaption { font-size: .9rem; color: var(--paper); text-align: center; max-width: 60ch; opacity: .85; }
+.lightbox-close { position: absolute; top: -.6rem; right: -.6rem; background: var(--paper-2); z-index: 1; }
+.lightbox-close .doodle { width: 1.1rem; height: 1.1rem; }
 .win-body { display: flex; flex-direction: column; gap: .45rem; align-items: flex-start; }
 .win-badge { width: 2.7rem; height: 2.7rem; display: grid; place-items: center; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: color-mix(in srgb, var(--accent) 16%, var(--paper-2)); color: var(--accent); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-5deg); margin-bottom: .2rem; }
 .win-badge .doodle { width: 1.45rem; height: 1.45rem; stroke-width: 1.8; }

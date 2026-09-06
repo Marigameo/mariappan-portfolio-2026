@@ -116,7 +116,10 @@ const wins = [
             <li class:list={['win', 'wobbly', w.wobbly, `tilt-${w.tilt}`]} style={`--accent: var(--${w.accent})`}>
               <div class:list={['win-photos', w.photos.length > 1 && 'win-photos--fan']}>
                 {w.photos.map((p) => (
-                  <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy">
+                  <button class="win-shot" type="button" data-full={p.src} aria-label={`View full size: ${p.alt}`}>
+                    <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy">
+                    <span class="win-shot-hint" aria-hidden="true">view</span>
+                  </button>
                 ))}
               </div>
               <div class="win-body">
@@ -135,5 +138,13 @@ const wins = [
         </ul>
       </div>
     </section>
+
+    <dialog class="lightbox" data-lightbox aria-label="Photo">
+      <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+      <figure>
+        <img alt="" data-lightbox-img>
+        <figcaption data-lightbox-caption></figcaption>
+      </figure>
+    </dialog>
   </main>
 </BaseLayout>
