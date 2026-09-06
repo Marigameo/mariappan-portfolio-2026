@@ -432,22 +432,86 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .rule { border: 0; height: 1px; background: var(--line); margin: 0; }
 
 /* ---------- 12. About page -------------------------------------------------- */
-.loves { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
-.love { position: relative; padding: 1.3rem 1.3rem 1.2rem; min-height: 9rem; display: flex; flex-direction: column; gap: .5rem; transition: transform .2s ease, box-shadow .2s ease; }
-.love:hover { transform: translateY(-3px) rotate(-.4deg); box-shadow: var(--shadow); }
-.love .doodle { width: 2.3rem; height: 2.3rem; stroke-width: 1.5; }
-.love h3 { margin: 0; font-size: 1.35rem; }
-.love p { font-size: .98rem; margin: 0; }
-.love .love-link { font-size: .9rem; font-weight: 500; color: var(--coral); text-decoration: none; display: inline-flex; gap: .3rem; align-items: center; margin-top: auto; }
-.love .love-link:hover { text-decoration: underline; }
-.love:nth-child(1) .doodle { color: var(--coral); } .love:nth-child(2) .doodle { color: var(--violet); } .love:nth-child(3) .doodle { color: var(--blue); }
-.love:nth-child(4) .doodle { color: var(--teal); } .love:nth-child(5) .doodle { color: var(--coral); } .love:nth-child(6) .doodle { color: var(--violet); }
-.polaroid { display: flex; gap: 1rem; align-items: center; padding: 1rem 1.1rem; text-decoration: none; color: var(--ink); transition: transform .2s ease, box-shadow .2s ease; }
-.polaroid:hover { transform: rotate(-1deg) translateY(-2px); box-shadow: var(--shadow); color: var(--ink); }
-.polaroid .doodle { width: 2.2rem; height: 2.2rem; stroke-width: 1.5; color: var(--coral); }
-.polaroid:nth-child(2) .doodle { color: var(--teal); }
-.polaroid strong { font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; display: block; line-height: 1.1; }
-.polaroid span span { color: var(--ink-soft); font-size: .95rem; }
+/* Off the clock: a list of big tinted doodle badges with a line each and an Instagram handle. */
+.into { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3) var(--space-4); max-width: 46rem; }
+.into-item { --accent: var(--coral); display: grid; grid-template-columns: 4rem 1fr; gap: 1.1rem; align-items: start; }
+.into-badge { width: 4rem; height: 4rem; display: grid; place-items: center; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: color-mix(in srgb, var(--accent) 16%, var(--paper-2)); color: var(--accent); box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-5deg); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+.into-item:nth-child(2n) .into-badge { transform: rotate(4deg); border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%; }
+.into-item:hover .into-badge { transform: rotate(0) scale(1.06); }
+.into-badge .doodle { width: 2.1rem; height: 2.1rem; stroke-width: 1.5; }
+.into-body { display: grid; gap: .35rem; justify-items: start; padding-top: .3rem; }
+.into-body h3 { margin: 0; font-size: 1.35rem; }
+.into-body p { margin: 0; font-size: 1rem; }
+.into-link { margin-top: .35rem; font-size: .88rem; padding: .45rem .8rem; }
+.into-link .doodle { color: var(--accent); width: 1.05rem; height: 1.05rem; }
+@media (min-width: 720px) {
+  .into { max-width: none; grid-template-columns: repeat(2, 1fr); }
+  .into-item:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 46rem; }
+}
+
+/* Journey: a dashed spine on the left, a hand-lettered year stamp per stop, and
+   a wobbly card to its right. Single column at every width so it stays scannable. */
+.journey-note { display: inline-flex; align-items: center; gap: .1rem; margin: .2rem 0 0; max-width: none; font-size: 1.2rem; color: var(--coral); transform: rotate(-1.5deg); }
+.journey { list-style: none; margin: 0; padding: 0; position: relative; max-width: 46rem; }
+.journey::before { content: ""; position: absolute; left: 1.45rem; top: 1.5rem; bottom: 1.5rem; border-left: 2px dashed var(--ink-faint); opacity: .6; }
+.stop { position: relative; display: grid; grid-template-columns: 2.9rem 1fr; gap: 1rem; padding-bottom: var(--space-3); }
+.stop:last-child { padding-bottom: 0; }
+.stop-year { position: relative; z-index: 1; width: 2.9rem; height: 2.9rem; margin-top: .85rem; display: grid; place-items: center; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-4deg); font-family: var(--font-hand); font-weight: 700; font-size: 1.2rem; line-height: 1; color: var(--coral); }
+.stop:nth-child(2n) .stop-year { color: var(--blue); transform: rotate(3deg); }
+.stop:nth-child(3n) .stop-year { color: var(--teal); }
+.stop-card { min-width: 0; padding: 1.05rem 1.25rem 1.15rem; display: grid; gap: .45rem; transition: transform .2s ease, box-shadow .2s ease; }
+.stop-card:hover { transform: translateY(-3px) rotate(-.3deg); box-shadow: var(--shadow); }
+.stop--now .stop-card { background: color-mix(in srgb, var(--teal) 12%, var(--paper-2)); }
+.stop-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem 1rem; }
+.stop-when { display: inline-flex; align-items: center; gap: .55rem; margin: 0; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); max-width: none; }
+.stop-logo { height: 1.4rem; width: auto; max-width: 7rem; object-fit: contain; object-position: right; opacity: .75; filter: grayscale(1); transition: opacity .2s ease, filter .2s ease; }
+.stop-card:hover .stop-logo { opacity: 1; filter: none; }
+[data-theme="dark"] .stop-logo { filter: invert(1) hue-rotate(180deg) grayscale(1); }
+[data-theme="dark"] .stop-card:hover .stop-logo { filter: invert(1) hue-rotate(180deg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .stop-logo { filter: invert(1) hue-rotate(180deg) grayscale(1); }
+  :root:not([data-theme="light"]) .stop-card:hover .stop-logo { filter: invert(1) hue-rotate(180deg); }
+}
+.stop h3 { margin: 0; font-size: 1.3rem; display: flex; align-items: center; flex-wrap: wrap; gap: .2rem .45rem; }
+.stop-arrow { width: 1rem; height: 1rem; color: var(--coral); stroke-width: 2; }
+.stop-note { margin: 0; font-size: .98rem; }
+/* Wide: spine down the middle, cards alternate sides and interleave so it reads as one path */
+@media (min-width: 900px) {
+  .journey { max-width: none; }
+  .journey::before { left: 50%; transform: translateX(-50%); }
+  .stop { grid-template-columns: 1fr 2.9rem 1fr; column-gap: 1.75rem; padding-bottom: 0; }
+  .stop + .stop { margin-top: -2.6rem; }
+  .stop-year { grid-column: 2; grid-row: 1; justify-self: center; }
+  .stop-card { grid-column: 3; grid-row: 1; }
+  .stop:nth-child(even) .stop-card { grid-column: 1; }
+}
+
+/* Wins: photo(s) taped on top, a tinted badge and links below. Three photos fan out side by side. */
+.wins { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-4) var(--space-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+.win { --accent: var(--coral); position: relative; padding: 1.1rem 1.25rem 1.25rem; display: flex; flex-direction: column; gap: .9rem; box-shadow: 4px 4px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+.win:hover { transform: translateY(-3px) rotate(-.3deg); box-shadow: var(--shadow); }
+/* The photo block grows to fill the card so side-by-side cards share a height; a lone photo
+   keeps 4:3, the mosaic fills whatever height it is given. */
+.win-photos { flex: 1; min-height: 0; display: grid; gap: .6rem; padding: .35rem .2rem 0; }
+.win-photos img { width: 100%; height: 100%; min-height: 0; aspect-ratio: 4 / 3; object-fit: cover; object-position: top; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-1.2deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.win-photos--fan { aspect-ratio: 4 / 3; grid-template-columns: 1.5fr 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+.win-photos--fan img { aspect-ratio: auto; object-position: center 35%; transform: rotate(-.8deg); }
+.win-photos--fan img:first-child { grid-row: 1 / span 2; transform: rotate(-1.2deg); }
+.win-photos--fan img:nth-child(2) { transform: rotate(1.4deg); object-position: center 30%; }
+.win:hover .win-photos img { transform: rotate(0); }
+.win-body { display: flex; flex-direction: column; gap: .45rem; align-items: flex-start; }
+.win-badge { width: 2.7rem; height: 2.7rem; display: grid; place-items: center; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: color-mix(in srgb, var(--accent) 16%, var(--paper-2)); color: var(--accent); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-5deg); margin-bottom: .2rem; }
+.win-badge .doodle { width: 1.45rem; height: 1.45rem; stroke-width: 1.8; }
+.win-when { margin: 0; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+.win h3 { margin: 0; font-size: 1.35rem; }
+.win-body > p:not(.win-when) { font-size: .98rem; margin: 0; }
+.win-links { margin-top: .4rem; }
+.win-links .pill { font-size: .88rem; padding: .45rem .8rem; }
+.win-links .doodle { width: .95rem; height: .95rem; color: var(--accent); }
+@media (max-width: 479px) {
+  .stop-head { flex-wrap: wrap; }
+  .stop-logo { order: -1; }
+}
 
 /* ---------- 13. Prose (project pages) ---------------------------------------- */
 .page-hero { padding-block: var(--space-4) var(--space-3); }
