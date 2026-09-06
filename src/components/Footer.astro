@@ -83,15 +83,17 @@ const year = new Date().getFullYear();
     ))}
   </div>
 
-  <!-- The one interactive bit of the land lives outside the aria-hidden layer: a pin, and a
-       sticky note about the scene. Positioned in the same % box as .footer-land. -->
+  <!-- The one interactive bit of the land lives outside the aria-hidden layer: a floating,
+       pulsing pin that toggles a sticky note about the scene. Positioned in the same % box
+       as .footer-land. -->
   <div class="footer-secret">
     <div class="pin">
       <button class="pin-btn" type="button" data-pin aria-expanded="false" aria-controls="land-note" aria-label="About this landscape"><Icon name="pin" /></button>
-      <span class="pin-psst hand" aria-hidden="true">psst</span>
       <div class="pin-note" id="land-note" hidden>
-        <p class="sticky">Not a stock photo. Hand-drawn SVG, coconut by coconut — because Kerala has my heart. <Icon name="heart" /></p>
+        <p class="sticky">Hand-drawn — okay, agent-drawn — coconut by coconut, because Kerala has my heart <Icon name="heart" /></p>
+        <span class="pin-sound" aria-hidden="true"><Icon name="music" />birds &amp; backwaters, on</span>
       </div>
+      <audio data-pin-audio src="/audio/kerala-ambience.mp3" loop preload="none"></audio>
     </div>
   </div>
 </footer>

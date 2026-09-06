@@ -155,18 +155,26 @@
     lightbox.addEventListener("close", function () { lbImg.removeAttribute("src"); });
   }
 
-  // --- Footer pin: toggles the sticky note about the landscape --------------------
+  // --- Footer pin: toggles the sticky note about the landscape, with birdsong while open ---
   var pinBtn = document.querySelector("[data-pin]");
   if (pinBtn) {
     var pinNote = document.getElementById(pinBtn.getAttribute("aria-controls"));
-    function setPin(open) {
+    var pinAudio = document.querySelector("[data-pin-audio]");
+    pinBtn.addEventListener("click", function () {
+      var open = pinBtn.getAttribute("aria-expanded") !== "true";
       pinBtn.setAttribute("aria-expanded", open ? "true" : "false");
       if (pinNote) pinNote.hidden = !open;
       pinBtn.closest(".pin").classList.toggle("is-open", open);
-    }
-    pinBtn.addEventListener("click", function () { setPin(pinBtn.getAttribute("aria-expanded") !== "true"); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setPin(false); });
-    document.addEventListener("click", function (e) { if (!e.target.closest(".pin")) setPin(false); });
+      if (!pinAudio) return;
+      if (open) {
+        pinAudio.volume = 0.55;
+        var p = pinAudio.play();
+        if (p && p.catch) p.catch(function () {});
+      } else {
+        pinAudio.pause();
+        pinAudio.currentTime = 0;
+      }
+    });
   }
 
   // --- Footer year ---------------------------------------------------------------

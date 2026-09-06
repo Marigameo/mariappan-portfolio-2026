@@ -649,26 +649,33 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .deco-20 { left: 12%; bottom: 8%; --s: 1; }
 
 /* The pin: same % box as .footer-land so it sits on the hills; only the pin itself takes clicks. */
-.footer-secret { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 3; pointer-events: none; }
-.pin { position: absolute; left: 45%; bottom: 31%; transform: translateX(-50%); pointer-events: auto; display: flex; flex-direction: column; align-items: center; }
-.pin-btn { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; padding: 0; border: 1.5px solid var(--ink); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper-2); color: var(--coral); box-shadow: 2px 2px 0 var(--shadow-ink); transition: transform .2s ease, background .2s ease, color .2s ease; animation: bob 2.6s ease-in-out infinite alternate; }
-.pin-btn .doodle { width: 1.25rem; height: 1.25rem; stroke-width: 2; }
-.pin-btn:hover, .pin-btn:focus-visible, .pin.is-open .pin-btn { background: var(--coral); color: var(--paper-2); animation-play-state: paused; transform: rotate(-6deg) scale(1.08); }
-.pin-psst { position: absolute; left: calc(100% + .35rem); top: 0; font-size: 1.05rem; color: var(--coral); white-space: nowrap; transform: rotate(-6deg); transition: opacity .2s ease; }
-.pin.is-open .pin-psst { opacity: 0; }
-.pin-note { position: absolute; bottom: calc(100% + .9rem); left: 50%; width: max-content; max-width: min(15.5rem, 80vw); transform: translateX(-50%); animation: pin-pop .35s cubic-bezier(.2,.8,.2,1) both; }
-.pin-note .sticky { margin: 0; max-width: none; font-size: 1.15rem; padding: .7rem .9rem .8rem; color: var(--sticky-ink); }
-.pin-note .doodle { width: 1.05rem; height: 1.05rem; color: var(--coral); stroke-width: 2.2; }
+.footer-secret { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(12rem, 30vw, 21rem); z-index: 5; pointer-events: none; }  /* above .footer-inner (4) so the pin is clickable */
+/* Wide: the pin drifts in the empty sky left of centre and pulses until clicked; the note pops above it. */
+.pin { position: absolute; left: 33%; bottom: 60%; transform: translateX(-50%); pointer-events: auto; display: flex; flex-direction: column; align-items: center; animation: float 9s ease-in-out infinite alternate; --floatY: 6px; }
+.pin-btn { position: relative; width: 2.2rem; height: 2.2rem; display: grid; place-items: center; padding: 0; border: 1.5px solid var(--ink); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper-2); color: var(--coral); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-6deg); transition: transform .2s ease, background .2s ease, color .2s ease; }
+.pin-btn::after { content: ""; position: absolute; inset: -3px; border-radius: inherit; border: 1.5px solid var(--coral); pointer-events: none; animation: pin-pulse 2.2s ease-out infinite; }
+.pin-btn .doodle { width: 1.15rem; height: 1.15rem; stroke-width: 2; }
+.pin-btn:hover, .pin-btn:focus-visible, .pin.is-open .pin-btn { background: var(--coral); color: var(--paper-2); transform: rotate(0) scale(1.08); }
+.pin-btn:hover::after, .pin.is-open .pin-btn::after { animation: none; opacity: 0; }
+@keyframes pin-pulse { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(2); opacity: 0; } }
+.pin-note { position: absolute; bottom: calc(100% + .75rem); left: 50%; width: max-content; max-width: min(15rem, 80vw); transform: translateX(-50%); animation: pin-pop .35s cubic-bezier(.2,.8,.2,1) both; }
+.pin-note .sticky { margin: 0; max-width: none; font-size: 1.08rem; line-height: 1.2; padding: .65rem .85rem .75rem; color: var(--sticky-ink); }
+.pin-note .doodle { width: 1rem; height: 1rem; color: var(--coral); stroke-width: 2.2; }
+.pin-sound { display: flex; align-items: center; gap: .3rem; width: max-content; margin: .5rem auto 0; padding: .28rem .6rem; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 999px; }
+.pin-sound .doodle { width: .8rem; height: .8rem; color: var(--teal); }
 @keyframes pin-pop { from { opacity: 0; transform: translateX(-50%) translateY(.6rem) scale(.9); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+/* Narrower than the zigzag sky allows: the pin sits at the left edge just above the land, note pops above it */
+@media (max-width: 899px) {
+  .footer-inner { padding-bottom: calc(clamp(12rem, 30vw, 21rem) + 3.6rem); }
+  .pin { left: 40%; bottom: calc(100% + .7rem); margin-left: -1.1rem; transform: none; animation-name: float-y; }
+}
+@keyframes float-y { from { transform: translateY(0); } to { transform: translateY(-5px); } }
 
 /* ---- Phone scene: taller land, portrait hills, three depth tiers ----
    back hill: palm + banana frame the edges · middle: boat on the pond · front: chai wala + dancer */
 @media (max-width: 639px) {
   .footer-land, .footer-secret { height: 19rem; }
-  .footer-inner { padding-bottom: 22rem; }
-  .pin { left: 71%; bottom: 53%; }
-  .pin-note { left: auto; right: -1rem; transform: none; }
-  @keyframes pin-pop { from { opacity: 0; transform: translateY(.6rem) scale(.9); } to { opacity: 1; transform: none; } }
+  .footer-inner { padding-bottom: 22.8rem; }
   .hills--wide { display: none; }
   .hills--narrow { display: block; }
   .plant--palm { left: 13%; bottom: 58%; --w: 6.2rem; }
