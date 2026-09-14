@@ -1,0 +1,88 @@
+---
+/* A long-form article hosted here rather than on Medium: breadcrumb back to the
+   shelf, title, lede, facts, the piece, and a back link. Same bones as
+   WorkLayout, but it points at #writing and emits BlogPosting structured data. */
+import BaseLayout from './BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  /** Browser/OG title; the "| Writing | <name>" suffix is added here. */
+  title: string;
+  description: string;
+  /** Shorter text for social cards. Defaults to `description`. */
+  ogDescription?: string;
+  /** The visible <h1>. */
+  heading: string;
+  /** Small mono label above the heading, e.g. "Freshworks engineering · 2023". */
+  eyebrow?: string;
+  facts: { label: string; value: string }[];
+  /** Where else this piece lives. Rendered as pills under the article. */
+  elsewhere?: { href: string; label: string; icon?: string }[];
+  /** ISO date the piece was first published, for <time> and structured data. */
+  published: string;
+  /** Human form of the same date, e.g. "March 2023". */
+  publishedLabel: string;
+  keywords: string;
+}
+
+const { title, description, ogDescription, heading, eyebrow, facts, elsewhere = [], published, publishedLabel, keywords } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: heading,
+  url: new URL(Astro.url.pathname, site.url).href,
+  description,
+  datePublished: published,
+  author: { '@type': 'Person', name: site.name, url: `${site.url}/` },
+  publisher: { '@type': 'Person', name: site.name },
+  inLanguage: 'en',
+  keywords,
+  ...(elsewhere.length ? { sameAs: elsewhere.map((e) => e.href) } : {}),
+};
+---
+<BaseLayout title={`${title} | Writing | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="writing" jsonLd={jsonLd}>
+  <main id="main" class="wrap wrap--narrow">
+    <header class="page-hero">
+      <a class="breadcrumb" href="/#writing"><Icon name="arrow-right" />All writing</a>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{heading}</h1>
+      <p class="lede"><slot name="lede" /></p>
+      <dl class="facts">
+        <div><dt>Published</dt><dd><time datetime={published}>{publishedLabel}</time></dd></div>
+        {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+      </dl>
+    </header>
+
+    <article class="prose">
+      <slot />
+    </article>
+
+    {elsewhere.length > 0 && (
+      <aside class="elsewhere callout wobbly wobbly--2" aria-label="This piece elsewhere">
+        <Icon name="book" />
+        <div>
+          <strong>Also published at</strong>
+          <p class="elsewhere-links">
+            {elsewhere.map((e) => (
+              <a class="pill" href={e.href} rel="noopener"><Icon name={e.icon ?? 'external'} />{e.label}</a>
+            ))}
+          </p>
+        </div>
+      </aside>
+    )}
+
+    <p style="margin-top: var(--space-4)">
+      <a class="pill" href="/#writing"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to the shelf</a>
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+  .elsewhere { margin-top: var(--space-4); padding: 1.2rem 1.3rem; }
+  .elsewhere strong { display: block; font-size: 1.02rem; color: var(--ink); }
+  .elsewhere-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem !important; }
+  .elsewhere-links :global(.pill) { font-size: .88rem; padding: .45rem .8rem; }
+  .elsewhere-links :global(.doodle) { width: .95rem; height: .95rem; color: var(--coral); }
+</style>

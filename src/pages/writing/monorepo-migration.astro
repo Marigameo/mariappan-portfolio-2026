@@ -1,0 +1,214 @@
+---
+import PostLayout from '../../layouts/PostLayout.astro';
+import MigrationPhases from '../../components/sketches/MigrationPhases.astro';
+
+const description = 'At Freshworks Marketplace, we have leveraged a single codebase to power two distinct experiences: a unified in-product gallery and a public website. Despite their differing natures, we have designed them in a manner that ensures a consistent UI across both experiences.';
+---
+<PostLayout
+  title="How we migrated Freshworks’ critical monorepo tackling tech debts"
+  description={description}
+  ogDescription="One monorepo, two experiences, and a quarter to move both to Vue 3, Nuxt 3, Vite and Pinia — the plan, the POC, the staged rollout, and the numbers that came out of it."
+  heading="How we migrated Freshworks’ critical monorepo tackling tech debts"
+  eyebrow="Freshworks engineering · Tech debt"
+  published="2026-09-14"
+  publishedLabel="September 2026"
+  keywords="tech debt, monorepo, Vue 3, Nuxt 3, Vite, Pinia, migration, frontend architecture, Freshworks Marketplace"
+  facts={[
+    { label: 'Originally', value: 'Freshworks engineering blog' },
+    { label: 'Stack', value: 'Vue 3 · Nuxt 3 · Vite · Pinia · Vitest' },
+    { label: 'Read', value: '~10 minutes' },
+  ]}
+  elsewhere={[
+    /* The Freshworks engineering blog no longer hosts this post, so there is no link to it.
+       When the Medium cross-post is live, uncomment the line below and drop the URL in.
+       { href: 'https://medium.com/@mariappan/...', label: 'Medium', icon: 'medium' }, */
+  ]}
+>
+  <Fragment slot="lede">One codebase, two very different experiences, and a quarter to move both onto Vue 3 — while <mark class="hl">shipping a revamp on top of it</mark>. Here is the plan we made, the proof of concept that de-risked it, and the numbers that came out the other side.</Fragment>
+
+  <p>At <a href="https://www.freshworks.com/apps/" rel="noopener">Freshworks Marketplace</a>, we have leveraged a single codebase to power two distinct experiences: a unified in-product gallery and a public website. Despite their differing natures, we have designed them in a manner that ensures a consistent UI across both experiences.</p>
+
+  <p>Our gallery experience is developed as a single-page application using <a href="https://vuejs.org/" rel="noopener">Vue.js</a> powered with <a href="https://cli.vuejs.org/" rel="noopener">Vue CLI</a>, <a href="https://router.vuejs.org/" rel="noopener">Vue Router</a>, <a href="https://vuex.vuejs.org/" rel="noopener">Vuex</a>, and deployed to <a href="https://aws.amazon.com/s3/" rel="noopener">AWS S3</a>. On the other hand, our website is a server-side rendered application powered by <a href="https://nuxt.com/" rel="noopener">Nuxt.js</a> and deployed to S3.</p>
+
+  <p>You can read the full story behind our decision to use a single codebase <a href="https://codeburst.io/one-codebase-two-experiences-5e4a42dcdb46" rel="noopener">here</a>.</p>
+
+  <p>While we have enjoyed the benefits of using a monorepo to help with this unique problem, it has also presented its own set of tradeoffs. One such challenge we encountered was migrating our entire codebase to the latest versions of the components in our tech stack. To make things more interesting, around the same time we recognized the need to improve the user experience through a major revamp. Our latest revamp features prominent filters, upgraded search capabilities, eye-catching colors, better use of available real estate, and a streamlined user interface that’s intuitive and easy to use. With these enhancements, our platform now provides an even more user-friendly experience than ever before. This post summarizes our learnings and the approaches that worked for us during this journey.</p>
+
+  <h2>Getting started</h2>
+  <p>On February 7, 2022, <a href="https://blog.vuejs.org/posts/vue-3-as-the-new-default" rel="noopener">Vue 3 was announced</a> as the new major version for Vue.js. Having heavily invested in Vue.js since 2018, we were eager to learn about the new upgrades and advancements from this community-led project.</p>
+  <p>Prior to this launch, back in February 2021, the first stable release of Vite JS caused a stir on Twitter. On one of the regular knowledge-sharing sessions we hold internally, we covered Vite and studied its potential very closely. This session prompted a proposal from one of our engineering managers to explore its use for our platform.</p>
+  <p>Since then, we have actively sought opportunities to integrate Vite into our workflow. It was a pleasant surprise to discover that Vite has been adopted as the official build toolchain for Vue 3. Meanwhile, we noticed that other important tools like <a href="https://pinia.vuejs.org/" rel="noopener">Pinia</a> for state management and <a href="https://vitest.dev/" rel="noopener">Vitest</a> for testing paired up with Vue 3 after gaining popularity as the defaults in many developer toolchains. This momentum presents a promising opportunity for us to become early adopters of Vue 3 and grow together with the community.</p>
+  <p>We wasted no time and began our experimentation immediately.</p>
+
+  <h2>What made this upgrade critical to us?</h2>
+  <blockquote>Vue 3 is faster, smaller, more maintainable and it’s easier to target native.<cite>— Evan You</cite></blockquote>
+  <p>As stated earlier, Vue 3 was set to become the new default version, and it is expected that support for Vue 2 will end by December 31, 2023. Vue 3 introduces several unforeseen modifications to its fundamental principles and APIs, diverging from previous updates. This necessitates progress in all other areas of the framework, which would soon push our current toolset into maintenance mode. This, in turn, could result in a growing number of security issues that are challenging to handle. Additionally, the latest upgrade pledges significant performance enhancements and a complete shift in API methodology, further emphasizing its significance.</p>
+  <p>Additionally, Vue 3 offers the following advantages that we particularly cared about:</p>
+  <ul class="doodle-list">
+    <li><strong>Smaller Vue core:</strong> Size improvement reached by the combination of greater code modularity, a smaller core runtime, and a tree-shaking-friendly compiler. Thus the new core would be reduced from about 20KB to 10KB gzipped.</li>
+    <li><strong>Better rendering performance:</strong> The Vue 3 renderer improves the performance of the rendering process by using <a href="https://youtu.be/3COrQGxnPv0?t=1485" rel="noopener">optimizations</a> such as the hoisting and inlining of static parts and implementing <a href="https://www.infoq.com/news/2020/07/vue3-reactivity-internals/" rel="noopener">Vue 3’s reactivity with ES6 proxies</a>.</li>
+    <li>Blazing fast, <a href="https://vite.dev/" rel="noopener">Vite</a>-powered build toolchain.</li>
+    <li>More <strong>ergonomic Composition API syntax</strong> via <code>&lt;script setup&gt;</code>.</li>
+    <li>Improved <strong>TypeScript IDE support</strong> for Single File Components (SFCs) via <a href="https://marketplace.visualstudio.com/items?itemName=Vue.volar" rel="noopener">Volar</a>.</li>
+    <li><strong>Command-line type checking</strong> for SFCs via <a href="https://github.com/vuejs/language-tools/tree/master/packages/tsc" rel="noopener">vue-tsc</a>.</li>
+    <li><strong>Simpler state management</strong> via <a href="https://pinia.vuejs.org/" rel="noopener">Pinia</a>.</li>
+    <li><strong>New dev tools extension</strong> with simultaneous Vue 2 / Vue 3 support and a <a href="https://devtools.vuejs.org/" rel="noopener">plugin system</a> that allows community libraries to hook into the dev tools panels.</li>
+  </ul>
+  <p>You can read more about what’s new in Vue 3 <a href="https://medium.com/front-end-weekly/whats-new-with-vue3-5b6562d3898b" rel="noopener">here</a>.</p>
+  <p>All the above factors provided enough persuasion to take on the challenge of being an early adopter for Vue 3. As an early adopter, with few proven examples to benchmark against, we also recognized the responsibility with which we must undertake this exercise.</p>
+  <p>It is important to keep in mind that there are likely to be some compatibility issues with existing code and third-party libraries during any major upgrade. It is therefore essential to conduct thorough research and take gradual steps. Also, staying current with the latest framework updates and changes is vital, as they are subject to frequent modifications from early feedback.</p>
+
+  <h2>Planning the migration</h2>
+  <blockquote>By failing to prepare, you are preparing to fail.</blockquote>
+  <p>Before embarking on this large-scale migration, it was important to have a plan. We needed to get down to the level of tasks and their estimated timelines because we had planned marketing activity around the revamped design. The plan is particularly crucial in our case, as our repository is a monorepo that supports two distinct user experiences and therefore requires due consideration of how different components interplay across the stack.</p>
+  <p>We eventually came up with the following list of high-level items as part of the migration plan:</p>
+  <ul class="doodle-list">
+    <li>Upgrading from Vue version 2 to Vue version 3 (first for the in-product experience).</li>
+    <li>Upgrading from Nuxt version 2 to Nuxt version 3 (for the website).</li>
+    <li>Upgrading the build tooling from <a href="https://cli.vuejs.org/" rel="noopener">Vue CLI</a> to <a href="https://vite.dev/" rel="noopener">Vite</a>.</li>
+    <li>Migrating from the <a href="https://vuejs.org/api/options-state.html" rel="noopener">Options API</a> to the <a href="https://vuejs.org/guide/extras/composition-api-faq.html" rel="noopener">Vue Composition API</a>.</li>
+    <li>Switching from <a href="https://vuex.vuejs.org/" rel="noopener">Vuex</a> to <a href="https://pinia.vuejs.org/" rel="noopener">Pinia</a> for state management.</li>
+    <li>Eliminating the use of <a href="https://element-plus.org/en-US/" rel="noopener">Element UI</a> in several places on the UI in favor of Freshworks’ own design library <a href="https://crayons.freshworks.com/" rel="noopener">Crayons</a>.</li>
+  </ul>
+  <p>As many of the above-listed items are relatively new to the community, the learning curve will undoubtedly be steep. Therefore, meticulous planning and prior experimentation were deemed to be necessary.</p>
+  <p>Consequently, we opted to begin with a comprehensive analysis of the migration and its impact on the existing codebase. Through this process, we were able to provide an approximate estimation of the required efforts and timelines.</p>
+
+  <h3>Analysis</h3>
+  <p>Although we have compiled a list of the action items, it is crucial to examine and comprehend the following points:</p>
+  <ul class="doodle-list">
+    <li>How would each item benefit us?</li>
+    <li>Why is it necessary to take each of these items into account, and are there any items that we can do without?</li>
+    <li>The level of effort required for each item, and whether we can accommodate it in terms of timelines.</li>
+  </ul>
+  <p>In order to address these questions, we conducted a comprehensive analysis of each topic and documented our findings in a clear and concise manner on our internal wiki. This served as a learning center for future developers who would work on this upgraded codebase and facilitated a comprehensive peer review.</p>
+  <p>We also created a comprehensive checklist, which included a table estimating each task, and shared it with the team for initial feedback. This exercise allowed us to visualize the resources required and potential challenges and opportunities at the outset. As a result of this exercise, we made some helpful discoveries.</p>
+  <ul class="doodle-list">
+    <li>We identified noncritical UI updates that could wait for subsequent releases, allowing us to better allocate our time.</li>
+    <li>We compiled a list of backend requirements in advance, providing clarity on each item and enabling our backend team to work on the list in parallel.</li>
+    <li>This also provided an opportunity for our team to suggest some long-standing tech debt items that could potentially be paired if deemed relevant and beneficial.</li>
+  </ul>
+
+  <h2>The experimentation</h2>
+  <blockquote>A journey of a thousand miles begins with a single step.<cite>— Chinese proverb</cite></blockquote>
+  <p>Now that we had completed the analysis phase, the next step was to experiment with the code. Our Marketplace boasts over a thousand apps built by developers from around the globe. Before we rocked this boat, we decided to conduct a proof of concept (POC) prior to committing to a switch.</p>
+  <p>As part of the POC, we evaluated the following factors:</p>
+  <ul class="doodle-list">
+    <li>The overall development experience with the new APIs.</li>
+    <li>The ease of transition between the <a href="https://vuejs.org/api/options-state.html" rel="noopener">Options</a> and <a href="https://vuejs.org/guide/extras/composition-api-faq.html" rel="noopener">Composition APIs</a>.</li>
+    <li>Any blockers related to the current bundling mechanism, <a href="https://nuxt.com/docs/getting-started/introduction#server-side-rendering" rel="noopener">SSR</a>, etc.</li>
+    <li>Would <a href="https://www.typescriptlang.org/" rel="noopener">TypeScript</a> be beneficial at this scale?</li>
+    <li>Potential pitfalls in migrating from <a href="https://cli.vuejs.org/" rel="noopener">Vue CLI</a> to <a href="https://vite.dev/" rel="noopener">Vite</a>.</li>
+    <li>How Crayons fits in with SSR, and any potential blockers.</li>
+    <li>How the new state-management library works with our current data model.</li>
+  </ul>
+  <p>While we were experimenting with the changes, the state of Nuxt was not entirely stable. Nuxt 3 was in the <a href="https://nuxt.com/blog/nuxt3-rc" rel="noopener">Release Candidate</a> stage, and as a result, we found ourselves in a position to decide whether to adopt Nuxt 3 immediately or wait for the stable release.</p>
+  <p>The problem with not updating the Nuxt version is that we would lose the flexibility of having components in common between our in-app and website experiences. The monorepo architecture is intended to reuse components as much as possible, but if our website continues to use Nuxt 2, it will not be able to understand the Vue 3 APIs that are part of our reusable components.</p>
+  <p>We had two options:</p>
+  <ul class="doodle-list">
+    <li>Experiment with the <a href="https://nuxt.com/blog/nuxt3-rc" rel="noopener">Nuxt Release Candidate</a> and proceed with the migration.</li>
+    <li>Create a duplicate of common components that will remain in Vue 2 to be consumed by the website service.</li>
+  </ul>
+  <p>The second option is clearly not scalable in the long term and will result in unnecessary rework in the future.</p>
+  <p>We engaged three committed engineers who would travel with us through this release journey. One of these engineers, who had previously presented a Vite experiment in our internal knowledge-sharing session, would be responsible for conducting the POC, which would be supported and reviewed by two of our leads. The POC was carried out in stages.</p>
+  <ul class="doodle-list">
+    <li><strong>Phase 1:</strong> We experimented with Vue 3 APIs, focusing solely on the in-product experience. We migrated only the homepage as a standalone app to better evaluate the DX and identify any potential issues.</li>
+    <li><strong>Phase 2:</strong> This involved experimenting with <a href="https://nuxt.com/blog/nuxt3-rc" rel="noopener">Nuxt 3 RC</a> to determine its suitability. Since the framework was not yet fully stable, conducting an in-depth experiment was crucial.</li>
+  </ul>
+  <p>We created a separate clone for this POC in a private repository, and our lead and architects thoroughly examined the code. We also included it as a demo item in our weekly sprint demo and collected feedback from the entire team.</p>
+
+  <h3>Outcomes of the POC</h3>
+  <p><strong>Phase 1</strong></p>
+  <ul class="doodle-list">
+    <li><strong>APIs and store:</strong> Our homepage successfully utilized multiple API calls and a significant portion of our data store, covering almost all new APIs including <a href="https://vuejs.org/guide/extras/composition-api-faq.html" rel="noopener">Composition API</a>, <a href="https://pinia.vuejs.org/" rel="noopener">Pinia</a> store, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function" rel="noopener">async API calls</a>, etc. No blockers or disparities were encountered with existing features.</li>
+    <li><strong>Third-party dependencies:</strong> Certain unnecessary third-party dependencies were identified and removed, reducing our node-modules burden. Essential dependencies such as <a href="https://www.fusejs.io/" rel="noopener">Fuse.js</a> and <a href="https://kazupon.github.io/vue-i18n/" rel="noopener">Vue I18n</a> were fitting in as expected. Deprecated dependencies such as <a href="https://www.npmjs.com/package/node-sass" rel="noopener">Node Sass</a> were also identified and replaced with alternatives such as <a href="https://sass-lang.com/dart-sass/" rel="noopener">Dart Sass</a>.</li>
+  </ul>
+  <p><strong>Phase 2</strong></p>
+  <ul class="doodle-list">
+    <li><strong>Nuxt 3:</strong> The experiment of using <a href="https://nuxt.com/blog/nuxt3-rc" rel="noopener">Nuxt 3 RC</a> with Vue 3 APIs under the hood was relatively simple and encountered no major issues.</li>
+    <li><strong>Fetch API:</strong> We identified an opportunity to replace Axios with simple HTTP fetch APIs as our calls mainly involve reading data from simple static JSON files.</li>
+    <li><strong>Third-party dependencies:</strong> We evaluated critical third-party dependencies being used in the Nuxt project, and most of those turned out to be working as expected.</li>
+    <li><strong>Nuxt Bridge:</strong> <a href="https://nuxt.com/docs/bridge/overview" rel="noopener">Nuxt Bridge</a> (a forward-compatibility layer that allows you to experience many of the new Nuxt 3 features by simply installing and enabling a Nuxt module) was also evaluated but found to be unsuitable for our purpose, as it caused issues in the build process.</li>
+  </ul>
+
+  <h2>Stages of migration</h2>
+  <p>Although we were now quite confident about the migration thanks to the learnings from the POC, it was crucial to plan the stages in which the migration would occur. As a team, we try to avoid big-bang changes and deployments unless there is no alternative available.</p>
+  <p>The idea was to gradually ship the migration in stages to ensure a smooth transition without any breakage in production. The stages we came up with are laid out below.</p>
+  <MigrationPhases />
+  <p><strong>Phase 1:</strong> The first stage involves migrating the code to Vue 3 without affecting the UI. This can be done separately from the UI revamp, which takes longer and requires a separate release.</p>
+  <p><strong>Phase 2:</strong> After implementing the Vue 3 code, we had the option of gradually upgrading the UI, but we ultimately decided to release the updated in-product experience all at once. We made this decision based on the quick completion of the earlier phase, which allowed us to save bandwidth and avoid inconveniencing users with inconsistent UI differences.</p>
+  <p><strong>Phases 3 and 4:</strong> The website experience remains unchanged until this phase, where the migration from Nuxt 2 to Nuxt 3 is carried out, similar to the in-product migration in Phase 1.</p>
+  <p>Phases 3 and 4 were eventually done in parallel, building on the knowledge gained in the earlier stages to fast-track progress. The refreshed website experience can be viewed at <a href="https://www.freshworks.com/apps/" rel="noopener">freshworks.com/apps</a>.</p>
+
+  <h2>Tech debts</h2>
+  <p>In addition to the aforementioned steps, we recognized the potential for improvement in other areas such as productivity, performance, and build times.</p>
+  <ul class="doodle-list">
+    <li><strong>Build setup:</strong> To optimize our build pipeline and accommodate our growing scale, we transitioned from a multi-branch to a single-branch repo structure, adopting the proven trunk-based development methodology for <a href="https://monorepo.tools/" rel="noopener">monorepos</a>. Our repo now consists of a single master branch, with tags created for each environment. This allows us to leverage trunk-based development and deploy changes incrementally across different environments.</li>
+    <li><strong>IDE setup:</strong> We upgraded our IDE setup to align with the new set of tools introduced. Previously, we relied on <a href="https://github.com/vuejs/vetur" rel="noopener">vetur</a> in conjunction with VSCode. The recommended IDE setup now is VSCode with the <a href="https://marketplace.visualstudio.com/items?itemName=Vue.volar" rel="noopener">Volar</a> extension. This extension supports syntax highlighting, TypeScript, and IntelliSense for template expressions and component props. Additionally, Volar’s VSCode extension provides out-of-the-box formatting for Vue Single File Components, which made it an ideal choice for our setup.</li>
+    <li><strong>Security:</strong> Also as a result of this upgrade, the number of security vulnerabilities decreased significantly, with critical vulnerabilities virtually eliminated.</li>
+  </ul>
+
+  <h2>Metrics on DX improvements</h2>
+  <p>From a developer productivity perspective, we noticed significant gains from this upgrade, which are shared below for reference.</p>
+
+  <figure class="table-wrap">
+    <table>
+      <caption>Comparison: in-product</caption>
+      <thead>
+        <tr><th scope="col">Version</th><th scope="col">Dev server start time</th><th scope="col">Build time</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Old gallery (Vue 2, Vue CLI)</th><td>~8609 ms</td><td>~36.70 s</td></tr>
+        <tr><th scope="row">New gallery (Vue 3, Vite)</th><td>~807 ms</td><td>~9.5 s</td></tr>
+      </tbody>
+    </table>
+  </figure>
+
+  <figure class="table-wrap">
+    <table>
+      <caption>Comparison: website</caption>
+      <thead>
+        <tr><th scope="col">Version</th><th scope="col">Dev server start time</th><th scope="col">Build time</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Old website (Nuxt 2)</th><td>~40.41 s</td><td>~80 s</td></tr>
+        <tr><th scope="row">New website (Nuxt 3)</th><td>~5010 ms (Vite + nuxi)</td><td>~74.42 s</td></tr>
+      </tbody>
+    </table>
+  </figure>
+
+  <figure class="table-wrap">
+    <table>
+      <caption>Vulnerability audit: in-product + website monorepo</caption>
+      <thead>
+        <tr><th scope="col">&nbsp;</th><th scope="col">Before upgrade</th><th scope="col">After upgrade</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Packages audited</th><td>2445</td><td>1645</td></tr>
+        <tr><th scope="row">Total vulnerabilities</th><td>90</td><td>5</td></tr>
+        <tr><th scope="row">Severity: Low</th><td>2</td><td>0</td></tr>
+        <tr><th scope="row">Severity: Moderate</th><td>11</td><td>4</td></tr>
+        <tr><th scope="row">Severity: High</th><td>67</td><td>0</td></tr>
+        <tr><th scope="row">Severity: Critical</th><td>10</td><td>1</td></tr>
+      </tbody>
+    </table>
+  </figure>
+
+  <h2>Learnings and takeaways</h2>
+  <p>Our team managed to accomplish all of these improvements within a quarter by planning and experimenting beforehand. Despite facing a steep learning curve, we succeeded in delivering by remaining focused on our goal, sticking to the plan, learning quickly together, and staying aligned as a team.</p>
+  <p>For anyone planning a similarly major codebase migration, we recommend considering the following major takeaways from our experience.</p>
+  <ul class="doodle-list">
+    <li>We suggest analyzing each task item to determine priorities and understand the return on investment.</li>
+    <li>We also recommend conducting the migration in stages to avoid disrupting the pipeline and user experience.</li>
+    <li>Experiment with proofs of concept in areas that are unclear to minimize surprises.</li>
+    <li>Document and audit each stage to make the learning process easier for others on the team.</li>
+  </ul>
+  <p>Good luck with your major migration!</p>
+
+  <h2>References</h2>
+  <ul class="doodle-list">
+    <li><a href="https://vuejs.org/guide/introduction.html" rel="noopener">Vue.js — Introduction</a></li>
+    <li><a href="https://www.youtube.com/watch?v=3COrQGxnPv0&feature=youtu.be" rel="noopener">Evan You — State of the Vuenion 2020, Vue.js Amsterdam 2020</a></li>
+    <li><a href="https://www.infoq.com/news/2020/07/state-vuenion-2020-vue3/" rel="noopener">InfoQ — State of the Vuenion 2020</a></li>
+    <li><a href="https://www.infoq.com/news/2019/01/vue-3-preview/" rel="noopener">InfoQ — Vue 3 preview</a></li>
+  </ul>
+</PostLayout>

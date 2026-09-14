@@ -32,6 +32,7 @@ export const shelves: Shelf[] = [
       { href: 'https://medium.com/front-end-weekly/whats-new-with-vue3-5b6562d3898b', title: "What's new in Vue 3, a roundup", spine: "What's new in Vue 3", colour: 'sand', bh: '11.5rem', bw: '2.5rem' },
       { href: 'https://medium.com/geekculture/vite-witnessing-the-next-gen-frontend-tooling-part-1-a157f4033c33', title: 'Vite: witnessing the next-gen frontend tooling', spine: 'Vite: next-gen tooling', colour: 'yellow', bh: '12.5rem', lean: true },
       { href: 'https://medium.com/@mariappan/monorepos-at-scale-4cbfd221f352', title: 'Monorepos at scale', spine: 'Monorepos at scale', colour: 'coral', bh: '14.5rem', bw: '3.1rem' },
+      { href: '/writing/monorepo-migration/', title: 'How we migrated Freshworks’ critical monorepo tackling tech debts', spine: 'Migrating a monorepo', colour: 'teal', bh: '12rem', bw: '2.7rem' },
     ],
   },
   {

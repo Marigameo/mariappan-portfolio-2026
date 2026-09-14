@@ -1,0 +1,110 @@
+---
+/* The four-stage migration chain from the original post's diagram, redrawn in the
+   site's hand-drawn style: a dashed frame around four wobbly boxes joined by arrows.
+   Grid columns are assigned in CSS by nth-of-type, so the phone media query can
+   collapse the whole thing to one column without fighting inline styles. */
+import Icon from '../Icon.astro';
+
+const phases = [
+  { label: 'Phase 1', title: 'Vue3 upgrade', scope: 'gallery', ink: 'blue' },
+  { label: 'Phase 2', title: 'UI changes', scope: 'gallery & common', ink: 'blue' },
+  { label: 'Phase 3', title: 'Nuxt upgrade', scope: 'website', ink: 'teal' },
+  { label: 'Phase 4', title: 'UI changes', scope: 'website', ink: 'teal' },
+];
+
+const alt = `The migration ran as four phases in sequence: ${phases
+  .map((p) => `${p.label}, ${p.title} for the ${p.scope}`)
+  .join('; ')}.`;
+---
+<figure class="phases" role="img" aria-label={alt}>
+  <div class="phases-row">
+    {phases.map((p, i) => (
+      <>
+        <p class="phase-n">{p.label}</p>
+        <div class:list={['phase-box', `phase-box--${p.ink}`]}>
+          <strong>{p.title}</strong>
+          <span>({p.scope})</span>
+        </div>
+        {i < phases.length - 1 && (
+          <i class="phase-arrow" aria-hidden="true"><Icon name="arrow-right" /></i>
+        )}
+      </>
+    ))}
+  </div>
+</figure>
+
+<style>
+  /* The dashed container the original diagram sat in. */
+  .phases {
+    margin: var(--space-3) 0;
+    padding: 1.3rem 1.1rem 1.5rem;
+    border: 2px dashed var(--ink-faint);
+    border-radius: var(--radius-wobble-3);
+    background: color-mix(in srgb, var(--sand) 60%, transparent);
+  }
+  .phases-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    column-gap: .4rem;
+    row-gap: .45rem;
+    align-items: stretch;
+  }
+  .phase-n {
+    grid-row: 1;
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: .6rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    max-width: none;
+  }
+  .phase-box {
+    --c: var(--blue);
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .1rem;
+    padding: .75rem .5rem .85rem;
+    text-align: center;
+    border: 1.5px solid var(--ink);
+    background: var(--paper-2);
+    box-shadow: 3px 3px 0 var(--shadow-ink);
+  }
+  .phase-box--blue { --c: var(--blue); }
+  .phase-box--teal { --c: var(--teal); }
+  .phase-box strong { font-size: .95rem; font-weight: 500; line-height: 1.25; color: var(--ink); }
+  .phase-box span { font-family: var(--font-hand); font-size: 1.05rem; line-height: 1.15; color: var(--c); }
+
+  /* Each box leans a slightly different way, like four boxes drawn by hand. */
+  .phase-box:nth-of-type(1) { border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; transform: rotate(-1.4deg); }
+  .phase-box:nth-of-type(2) { border-radius: 6px 12px 5px 10px / 10px 5px 12px 6px; transform: rotate(1.1deg); }
+  .phase-box:nth-of-type(3) { border-radius: 12px 6px 10px 5px / 5px 10px 6px 12px; transform: rotate(-.9deg); }
+  .phase-box:nth-of-type(4) { border-radius: 5px 10px 6px 12px / 12px 6px 10px 5px; transform: rotate(1.3deg); }
+
+  .phase-arrow { grid-row: 2; align-self: center; display: block; line-height: 0; color: var(--ink-faint); }
+  .phase-arrow :global(.doodle) { width: 1.7rem; height: 1.7rem; stroke-width: 1.6; }
+
+  /* Column placement, so the phone rules below can undo it without !important. */
+  .phases-row > p:nth-of-type(1), .phases-row > div:nth-of-type(1) { grid-column: 1; }
+  .phases-row > i:nth-of-type(1) { grid-column: 2; }
+  .phases-row > p:nth-of-type(2), .phases-row > div:nth-of-type(2) { grid-column: 3; }
+  .phases-row > i:nth-of-type(2) { grid-column: 4; }
+  .phases-row > p:nth-of-type(3), .phases-row > div:nth-of-type(3) { grid-column: 5; }
+  .phases-row > i:nth-of-type(3) { grid-column: 6; }
+  .phases-row > p:nth-of-type(4), .phases-row > div:nth-of-type(4) { grid-column: 7; }
+
+  /* Too narrow for four across: stack them and turn the arrows to point down. */
+  @media (max-width: 640px) {
+    .phases-row { grid-template-columns: 1fr; row-gap: .3rem; }
+    /* :nth-of-type(n) matches everything and keeps the specificity of the column
+       rules above, which a bare `.phases-row > p` would lose to. */
+    .phases-row > p:nth-of-type(n),
+    .phases-row > div:nth-of-type(n),
+    .phases-row > i:nth-of-type(n) { grid-column: 1; grid-row: auto; }
+    .phase-n { margin-top: .5rem; }
+    .phase-arrow { justify-self: center; transform: rotate(90deg); margin: .15rem 0; }
+  }
+</style>
