@@ -1,0 +1,24 @@
+---
+/* A table whose cells are sentences. Three such columns do not fit a reading
+   column on a phone, so the table box scrolls sideways and says so: edge shadows
+   from CSS, plus a handwritten nudge that main.js reveals only when the content
+   really is wider than the frame. The nudge sits outside the scrolling box, or it
+   would slide away exactly when it is needed. */
+import Icon from '../../Icon.astro';
+
+interface Props {
+  /** The small mono label above the table. */
+  caption: string;
+}
+
+const { caption } = Astro.props;
+---
+<figure class="table-fig">
+  <div class="table-wrap table-wrap--prose" data-scrollable>
+    <table>
+      <caption>{caption}</caption>
+      <slot />
+    </table>
+  </div>
+  <p class="scroll-note" aria-hidden="true">scroll<Icon name="arrow-right" /></p>
+</figure>

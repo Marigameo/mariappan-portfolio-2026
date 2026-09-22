@@ -1,0 +1,74 @@
+---
+/* Fragments in, two kinds of thing out. Drawn top to bottom rather than left to
+   right like the original, because the split at the end needs the width more
+   than the chain does. */
+import Icon from '../../Icon.astro';
+
+const alt =
+  'Raw JSON fragments enter the streaming parser and leave as two things: text deltas appended ' +
+  'word by word, and non-text blocks held until complete and then emitted whole.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet" role="img" aria-label={alt}>
+    <p class="sk-hdr">Bytes in</p>
+    <div class="par-track">
+      <span class="frag">{'{"blocks":[{"type"'}</span>
+      <span class="frag">{':"text","content"'}</span>
+      <span class="frag">{':"Spend is up 1'}</span>
+    </div>
+    <p class="par-note">Raw JSON fragments, split wherever the network happens to split them.</p>
+
+    <i class="sk-arrow par-arrow" aria-hidden="true"><Icon name="arrow-down" /></i>
+
+    <div class="par-box sk-lean-2">
+      <strong>streaming parser</strong>
+      <span>tracks braces and strings</span>
+      <span>never waits for the whole payload</span>
+    </div>
+
+    <i class="sk-arrow par-arrow" aria-hidden="true"><Icon name="arrow-down" /></i>
+
+    <div class="par-out">
+      <div>
+        <p class="sk-hdr">Text deltas</p>
+        <div class="par-track par-track--flat">
+          <span class="frag">Spend</span><span class="frag">is</span><span class="frag">up</span><span class="frag">12%</span><span class="par-ell">…</span>
+        </div>
+        <p class="par-note">Appended to the text block as they land.</p>
+      </div>
+      <div>
+        <p class="sk-hdr">Complete blocks</p>
+        <div class="par-track par-track--flat">
+          <span class="frag frag--held">metrics_grid …</span>
+          <i class="sk-arrow par-arrow--inline" aria-hidden="true"><Icon name="arrow-right" /></i>
+          <span class="frag frag--done">metrics_grid <Icon name="check" /></span>
+        </div>
+        <p class="par-note">Held while incomplete, emitted whole when the closing brace lands.</p>
+      </div>
+    </div>
+  </div>
+  <figcaption>Fragments in, two kinds of thing out. Text deltas append as they land. A non-text block is held back until its closing brace arrives.</figcaption>
+</figure>
+
+<style>
+  .par-track { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; padding: .5rem .55rem; border: 1.5px solid var(--line); border-radius: 999px 18px 999px 18px / 18px 999px 18px 999px; background: var(--paper-2); }
+  .par-track--flat { border-radius: 12px 6px 14px 6px / 6px 14px 6px 12px; }
+  .frag { font-family: var(--font-mono); font-size: .62rem; line-height: 1; padding: .35rem .4rem; border: 1px solid var(--line); border-radius: 6px 3px 7px 3px / 3px 7px 3px 6px; background: var(--paper); color: var(--ink-soft); }
+  /* A block still being held back, vs the same block once it is whole. */
+  .frag--held { border: 1.5px dashed var(--coral); color: var(--coral); background: transparent; }
+  .frag--done { display: inline-flex; align-items: center; gap: .25rem; border: 1.5px solid var(--coral); color: var(--coral); }
+  .frag--done :global(.doodle) { width: .7rem; height: .7rem; stroke-width: 2.2; }
+  .par-ell { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); }
+
+  .par-arrow { margin: .55rem auto; width: max-content; }
+  .par-arrow--inline { display: inline-flex; color: var(--ink-faint); }
+  .par-arrow--inline :global(.doodle) { width: 1rem; height: 1rem; }
+
+  /* The parser itself: the one solid, inked box in the chain. */
+  .par-box { display: grid; gap: .1rem; justify-items: center; padding: .8rem .9rem .9rem; border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper); box-shadow: 3px 3px 0 var(--shadow-ink); text-align: center; }
+  .par-box strong { font-size: 1rem; font-weight: 500; }
+  .par-box span { font-family: var(--font-mono); font-size: .64rem; opacity: .72; }
+
+  .par-out { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1.1rem; }
+  .par-note { margin: .5rem 0 0 !important; max-width: none; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1.25; color: var(--ink-soft); }
+</style>

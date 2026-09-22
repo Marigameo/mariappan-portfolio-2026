@@ -1,0 +1,398 @@
+---
+/* The Strive AI gen-UI engine write-up, first published on the Strivelabs
+   engineering blog and kept here too. The original's figures are redrawn as
+   components in ../../components/sketches/genui/ so they take the site's ink,
+   fonts and dark mode; the code samples keep their original captions. */
+import PostLayout from '../../layouts/PostLayout.astro';
+import Icon from '../../components/Icon.astro';
+import OneTurnOneStream from '../../components/sketches/genui/OneTurnOneStream.astro';
+import BlockAnatomy from '../../components/sketches/genui/BlockAnatomy.astro';
+import RendererMapping from '../../components/sketches/genui/RendererMapping.astro';
+import StreamingParser from '../../components/sketches/genui/StreamingParser.astro';
+import BehaviourSlot from '../../components/sketches/genui/BehaviourSlot.astro';
+import Whiteboard from '../../components/sketches/genui/Whiteboard.astro';
+import Snippet from '../../components/sketches/genui/Snippet.astro';
+import ProseTable from '../../components/sketches/genui/ProseTable.astro';
+import SdkTimeline from '../../components/sketches/genui/SdkTimeline.astro';
+import HybridSplit from '../../components/sketches/genui/HybridSplit.astro';
+import GroupingDiagram from '../../components/sketches/genui/GroupingDiagram.astro';
+import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
+import StatGrid from '../../components/sketches/genui/StatGrid.astro';
+
+const description =
+  'A year of building a chat where every non-text element is an LLM tool call. Why we started by asking the model for one big JSON document, why that ceiling was structural rather than fixable, and what changed when we pivoted to one tool call per component.';
+
+const origin = 'https://strivelabs.ai/blog/engineering/generative-ui-chat-engine/';
+
+/* Code samples. Written as escaped HTML so the comments and strings can carry a
+   colour without fighting `<pre>` whitespace in the template. */
+const oneTurn = `{
+  <span class="k">"version"</span>: <span class="s">"1.0"</span>,
+  <span class="k">"blocks"</span>: [
+    {
+      <span class="k">"type"</span>: <span class="s">"metrics_grid"</span>,  <span class="c">// picks the renderer</span>
+      <span class="k">"version"</span>: <span class="s">"v1"</span>,         <span class="c">// so old messages keep rendering</span>
+      <span class="k">"content"</span>: {},           <span class="c">// the component's props</span>
+      <span class="k">"behaviours"</span>: []         <span class="c">// optional</span>
+    },
+    { <span class="k">"type"</span>: <span class="s">"line_chart"</span>, <span class="k">"version"</span>: <span class="s">"v1"</span>, <span class="k">"content"</span>: {} },
+    { <span class="k">"type"</span>: <span class="s">"text"</span>,       <span class="k">"version"</span>: <span class="s">"v1"</span>, <span class="k">"content"</span>: {} }
+  ]
+}`;
+
+const defensiveClauses = `content is a JSON object. Output it as a native JSON
+object, NOT as a JSON-escaped string…
+
+CRITICAL: If a block has no behaviours, omit this field
+entirely. NEVER set behaviours to null…
+
+Never double-escape or produce deeply nested escape
+sequences like \\". If a field is already inside a
+stringified parent, write content as native JSON objects,
+not as another layer of stringified JSON.`;
+
+const sameTurnNow = `<span class="c">// prose streams as markdown, no longer a block type</span>
+<span class="k">ui_metrics_grid</span>({})  <span class="c">// renders the moment its arguments close</span>
+<span class="k">ui_line_chart</span>({})    <span class="c">// independently</span>
+<span class="k">ui_table</span>({})         <span class="c">// independently</span>`;
+
+const threeJobs = `const metricsGrid = z.object({
+  header: z.<span class="k">string</span>(),
+  columns: z.<span class="k">number</span>().int().min(1).max(4),
+  cells: z.<span class="k">array</span>(cell),
+});
+
+<span class="c">// 1 · the JSON Schema the model writes against</span>
+tool({ name: <span class="s">"ui_metrics_grid"</span>, parameters: metricsGrid });
+
+<span class="c">// 2 · the runtime validator on the way in</span>
+const content = metricsGrid.parse(args);
+
+<span class="c">// 3 · the React renderer's prop type</span>
+type MetricsGridProps = z.infer&lt;typeof metricsGrid&gt;;`;
+---
+<PostLayout
+  title="From answers to UI: how we built Strive’s generative UI engine"
+  description={description}
+  ogDescription="A year of building a chat where every non-text element is an LLM tool call — from one big JSON document per turn to one tool call per component, and everything that broke in between."
+  heading="From answers to UI: how we built Strive’s generative UI engine"
+  eyebrow="Strivelabs engineering · Generative UI"
+  published="2026-09-20"
+  publishedLabel="September 2026"
+  keywords="generative UI, LLM tool calling, streaming, SSE, Zod, React, design engineering, AI chat, server-driven UI, Strive AI"
+  facts={[
+    { label: 'Originally', value: 'Strivelabs engineering blog' },
+    { label: 'Stack', value: 'React 19 · TypeScript · SSE · Zod' },
+    { label: 'Read', value: '~15 minutes' },
+  ]}
+  elsewhere={[{ href: origin, label: 'Strivelabs engineering blog', icon: 'external' }]}
+>
+  <Fragment slot="lede">A year of building a chat where every non-text element is an <mark class="hl">LLM tool call</mark>. Why we started by asking the model for one big JSON document, why that ceiling turned out to be structural rather than fixable, and what changed when we pivoted to one tool call per component.</Fragment>
+
+  <p><strong>Strive AI</strong> is our generative UI chat engine, the gateway to the agentic marketing OS we’ve built at <a href="https://strivelabs.ai/" rel="noopener">Strivelabs</a>. I’ve been on the frontend of it since day zero.</p>
+
+  <blockquote>A chat that answers in UI, not just text.</blockquote>
+
+  <p>It’s been a year now. This post is a reflection on the full ride: how it started, why we built it from the ground up, the challenges we faced, the lessons we learned, where we stand today, and what’s next.</p>
+
+  <h2>The one-liner</h2>
+  <p>The user brings the intent. The agent turns it into an interface.</p>
+  <p>Every non-text element in a response is an individual <strong>LLM tool call</strong>. The tool’s Zod schema <em>is</em> the React component’s prop type. Arguments stream over SSE and render progressively.</p>
+
+  <OneTurnOneStream />
+
+  <h2>The fundamental pieces</h2>
+  <p>Under the hood, these are the pieces that make the engine tick. Everything else in chat sits on top of them.</p>
+
+  <h3>Blocks: the unit of a reply</h3>
+  <p>A block is one renderable unit in an assistant response. It has a <strong>type</strong>, a <strong>version</strong>, a <strong>content</strong> payload, and optionally a list of <strong>behaviours</strong>.</p>
+
+  <BlockAnatomy />
+
+  <h3>Renderers: dumb on purpose</h3>
+  <p>Each block type has a React renderer that takes the block’s content as its props and draws it. Renderers know nothing about the model, streaming, or the conversation. Hand one a block and it renders. That strictness is what makes replaying history trivial: the same renderer draws a live block and a two-week-old one.</p>
+
+  <RendererMapping />
+
+  <h3>The streaming parser: bytes are not blocks</h3>
+  <p>The model’s output arrives as a byte stream. Something has to sit in between and decide, continuously, whether a complete block has arrived yet. The parser watches the buffer, detects block boundaries before the surrounding JSON is valid, emits text deltas character by character, and signals when a block is complete enough to hand to a renderer.</p>
+
+  <StreamingParser />
+
+  <h3>The event vocabulary: one stream, one handler</h3>
+  <p>Everything travels over a single SSE stream with a small set of event types: streaming content, streaming reasoning, tool calls, tool-argument streaming (start and content), conversation metadata, and citations. One handler in the client switches on these.</p>
+  <blockquote>The entire chat is that handler plus state.</blockquote>
+
+  <h3>Behaviours and slots: messages that stay alive</h3>
+  <p>A block can carry a <strong>behaviour</strong>: an attached action, triggered either by a click or automatically on render. A click behaviour usually starts a new chat turn. An automatic one mounts a live agent view inside the message, a component that fetches its own data, polls, holds editable state, and writes back. We call those <strong>slots</strong>. They are the reason a chat message can be a task queue that is still updating while you scroll past it.</p>
+
+  <BehaviourSlot />
+
+  <h3>The session context: a stream that outlives the view</h3>
+  <p>Underneath all of it sits a session that outlives the view: messages, parser, streaming indices, pending interactions and abort controller, keyed per conversation. Navigate away mid-response and the stream keeps running. Come back and it’s complete.</p>
+
+  <h2>A little bit of backstory</h2>
+  <p>We built this system from the ground up. That was a conscious, tough call, and one we kept revisiting along the way. Starting small with our own layer, on top of what we already had, was the cheapest option that kept every door open.</p>
+  <p>It all started in <strong>September 2025</strong>. Generative UI was still new, with few proven implementations at scale, but chat was quickly becoming the interface for agents.</p>
+  <blockquote>Thanks to our co-founders for spotting the bet early, backing us to go all in, and never letting us stop poking at what’s next.</blockquote>
+  <p>Before any of it existed, it looked like this.</p>
+
+  <Whiteboard
+    src="/images/writing/generative-ui-chat-engine/sketch-chat-engine.png"
+    width={2400}
+    height={1419}
+    alt="Hand-drawn whiteboard sketch of the chat engine: a workflow with its system instruction, model, context window and tools, the UI and backend exchanging trigger, chat and chat-history calls, the prompt and response loop between the client and the model with a tool-calling variant, and an action item carrying a trigger."
+    caption="The engine on a whiteboard, September 2025. Workflow versions, the chat endpoints, the tool-calling loop, and action items, which grew up into behaviours."
+  />
+
+  <Whiteboard
+    src="/images/writing/generative-ui-chat-engine/sketch-layout-model.png"
+    width={2400}
+    height={1821}
+    alt="Hand-drawn sketch of the layout model: a JSON object holding rows of blocks, a second version nesting those rows under named views, and the rendered result showing grouped charts and text panels reflowing into a narrow column."
+    caption="The layout model from the same session. Rows of blocks, groups inside them, and the same content reflowing into a narrow view. The rows became blocks and the groups became group ids."
+  />
+
+  <h3>Vercel AI SDK: the obvious first stop</h3>
+  <p>Anything frontend, Vercel is at the forefront, undeniably. Their links topped every search we’ve made and the community was buzzing. The <a href="https://ai-sdk.dev/" rel="noopener">AI SDK</a> was already mature for <strong>streaming text and tool calling</strong>. Its <strong>Generative UI</strong> story was still evolving, and a bit fragmented.</p>
+  <p>The rough timeline:</p>
+
+  <SdkTimeline />
+
+  <p>So by September, Vercel was already mainstream in the agentic interfaces space. But the pieces we wanted most, like <code>streamUI</code>, lived in the RSC package and were marked experimental. That is where the hesitation to adopt immediately came from.</p>
+
+  <h3>SPA or Next.js?</h3>
+  <p>Our platform is an SPA, and the AI SDK’s story leaned towards Next.js at that point. We did consider migrating. We never found convincing enough reasons :)</p>
+  <p>Glad we didn’t take the server components detour.</p>
+
+  <h3>AI Elements: the piece we took</h3>
+  <p><a href="https://elements.ai-sdk.dev/" rel="noopener">AI Elements</a>, on the other hand, was already super mature and the standard for AI interfaces even at that point. Obviously we didn’t miss it. We have our own custom registry of AI Elements, built on top of the original primitives, tuned to a marketer’s taste and personalised for our arena.</p>
+  <p>We weren’t rejecting Vercel’s SDK. We adopted the stable-ish primitives we needed and deliberately avoided an architectural dependency on the foundation we were setting up.</p>
+  <p>We knew chat was going to be our core, so having utmost flexibility didn’t hurt.</p>
+
+  <h3>The rest of the field</h3>
+  <p>Beyond the mainstream players, we also experimented with <a href="https://www.thesys.dev/" rel="noopener">Thesys</a>, Google’s GenUI and <a href="https://a2ui.org/" rel="noopener">A2UI</a>, <a href="https://www.copilotkit.ai/builder" rel="noopener">CopilotKit</a> and a few others. They were either too early or not a natural fit for our use cases at that point.</p>
+  <p>A small fork from that evaluation is still up: <a href="https://github.com/Marigameo/thesys-exp" rel="noopener">Marigameo/thesys-exp</a>.</p>
+  <p>Building from scratch as a startup has a real cost. This was not a one-day decision. We looked hard at what already existed first, and we still keep our ears open to what’s moving in this space.</p>
+
+  <h2>The first design: ask the model for a document</h2>
+  <p>The original contract was the obvious one. The model returns <strong>one JSON object per turn</strong>: a version, and an array of blocks.</p>
+
+  <Snippet caption="One assistant turn" code={oneTurn} />
+
+  <p>One payload, one parse, one render. Clean.</p>
+  <p>To make that possible, the model needed the full context of our component registry on every request. Every supported component, its fields, and how each one could be used, all written into the system prompt.</p>
+  <p>It worked. It demoed beautifully. We shipped it in September 2025, and it carried the product for seven months through progressive rendering, chat history, replay, slash commands, skills, error boundaries, and the first behaviour slots.</p>
+  <p>The prompt grew to <strong>~584+ lines</strong>, with the majority of it being schema written as prose.</p>
+  <p>That wasn’t necessarily a bad design choice. We knew it wouldn’t remain manageable forever, but at that point, we were balancing implementation cost against impact. We wanted to build something useful, get it into people’s hands, and let real usage tell us where it needed to evolve, without over-engineering the first version.</p>
+  <p>That’s been a consistent principle for us: build the foundations with scale in mind, but don’t assume the first shape of those foundations has to last forever. As the product grows, the way those pieces are assembled can change with it. What we built here wasn’t throwaway; we kept reshaping it as we learned what the system needed.</p>
+  <blockquote>The architecture was fine. It had a ceiling, and we didn’t hit it until we had built enough on top of it.</blockquote>
+
+  <h2>Where it started to hurt</h2>
+  <p>Five failures, in roughly this order. Each one looked like a bug rather than a design signal. That’s the trap.</p>
+
+  <h3>Long JSON from a model is a coin flip</h3>
+  <p>As responses got richer the payload got long, and a missing brace four thousand tokens in took the whole reply with it. Not degraded, <strong>deleted</strong>. The user got a spinner, then nothing.</p>
+  <p>A silent retry, re-prompting with the parse error, turned most of those into slow successes. It also meant paying twice for an answer we had already paid for once.</p>
+
+  <h3>The escaping arms race</h3>
+  <p>Models like emitting nested structure as JSON strings rather than real objects. It’s cheaper for them. So the prompt grew defensive clauses, and you can watch the scar tissue accumulate in the diff:</p>
+
+  <Snippet caption="system prompt · the defensive clauses" code={defensiveClauses} editor />
+
+  <p>Every one of those sentences is a production incident with a bandage on it. At some point I realised our system prompt had become <strong>a bug tracker written in the imperative mood</strong>.</p>
+  <p>The bandages didn’t hold either. We still needed a client-side normaliser to re-parse stringified fields, because an instruction works most of the time, and most of the time isn’t a contract.</p>
+
+  <h3>Nothing could render early</h3>
+  <p>We couldn’t draw the first chart until we had buffered enough of the blob to know what it was. The model had finished describing it forty seconds ago. We were still waiting on the closing brace.</p>
+  <p>So the parser got cleverer and cleverer at finding complete blocks inside invalid JSON. Genuinely nice engineering, in service of working around a bad contract.</p>
+
+  <h3>Prose and props drifted</h3>
+  <p>The prompt described a component’s fields in English. The React component declared them in TypeScript. Nothing connected the two, so changing a renderer’s props and forgetting the prose gave us a bug that is invisible in code review and shows up as an empty chart in production.</p>
+
+  <h3>The prompt was unownable</h3>
+  <p>A prompt with hundreds of lines of schema is not something two people can edit in parallel. Adding a component meant a prompt PR. Adjusting a field meant a prompt PR. Our fastest iteration surface had become the most contended file in the repo.</p>
+  <blockquote>Read together, those aren’t five bugs. They’re one: we were asking the model to be a JSON document author, and it isn’t one.</blockquote>
+
+  <h2>The pivot: one tool call per component</h2>
+  <p>On <strong>6 April 2026</strong> we changed the contract. It remains the largest single structural change in the project, and it was not a one-shot call. We read a lot first.</p>
+
+  <h3>A pattern we kept seeing</h3>
+  <p>Looking at how other teams were approaching generative UI, one thing kept repeating: <strong>nobody turns the whole response into structured UI.</strong></p>
+  <p>The model still answers naturally, in streamed text and markdown. It switches to a structured representation only where the answer genuinely benefits from one. A chart, a table, a card, a form.</p>
+  <p><a href="https://ai-sdk.dev/" rel="noopener">Vercel’s AI SDK</a> makes the separation explicit in its message model, where text, tool calls and tool results are distinct message parts. <a href="https://www.copilotkit.ai/builder" rel="noopener">CopilotKit</a> does the same with tool-based generative UI, exposing React components as tools the agent can invoke. The Claude and OpenAI products combine conversational text with structured interactions too, though the implementations differ.</p>
+
+  <HybridSplit />
+
+  <p>That distinction mattered. <strong>Text is already a great format for text.</strong> There was little value in forcing every sentence through a JSON schema just because some parts of the answer needed to become UI.</p>
+  <blockquote>Natural language when the model is communicating. Structured data when the model is composing an interface.</blockquote>
+  <p>So we settled on the hybrid, which is the standard approach. Only the interface-shaped parts become tool calls.</p>
+
+  <h3>Straight from the research notes</h3>
+  <p><em>Two extracts from the internal analysis, here to show the pivot wasn’t a blind jump. The research itself, and how we landed on the hybrid approach, is a story of its own. We’ll write that one up separately.</em></p>
+  <p><strong>Industry landscape.</strong> The dominant patterns:</p>
+
+  <ProseTable caption="Industry landscape">
+    <thead>
+      <tr><th scope="col">Pattern</th><th scope="col">Used by</th><th scope="col">Core idea</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Tool-call rendering</th><td>CopilotKit, AG-UI protocol, Google A2UI</td><td>Each UI component is a tool. The model calls <code>render_chart(...)</code> instead of generating JSON</td></tr>
+      <tr><th scope="row">SDUI (server-driven UI)</th><td>Airbnb, Netflix, DoorDash, Vercel <code>json-render</code></td><td>Component catalogue with schemas. Server sends component specs, client renders</td></tr>
+      <tr><th scope="row">Multi-part messages</th><td>Vercel AI SDK 5/6, Google A2UI</td><td>Messages are arrays of typed parts (text, tool-result and so on), not single strings</td></tr>
+      <tr><th scope="row">MDX-enhanced markdown</th><td>Emerging</td><td>The model writes markdown with embedded <code>&lt;Chart /&gt;</code> directives</td></tr>
+      <tr><th scope="row">Code sandbox</th><td>v0.dev, Claude Artifacts</td><td>The model generates actual React code, executed in a sandbox</td></tr>
+    </tbody>
+  </ProseTable>
+
+  <p><strong>Recommended ecosystem.</strong> The note’s shortlist at the time. Several of these did not earn the dependency, we took the necessary value additions from the set.</p>
+
+  <ProseTable caption="Recommended ecosystem">
+    <thead>
+      <tr><th scope="col">Tool</th><th scope="col">Role</th><th scope="col">Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Vercel AI SDK 5/6</th><td>Multi-part message protocol and the <code>useChat</code> hook</td><td>Already installed</td></tr>
+      <tr><th scope="row">AG-UI protocol</th><td>SSE event format standard</td><td>Align our events with this emerging standard</td></tr>
+      <tr><th scope="row">Instructor.js</th><td>Server-side Zod validation and auto-retry for tool args</td><td>Wraps Anthropic and OpenAI calls</td></tr>
+      <tr><th scope="row"><code>json-render</code> (Vercel)</th><td>Component registry pattern reference</td><td>Study the pattern for our registry layer</td></tr>
+    </tbody>
+  </ProseTable>
+
+  <h3>A small POC first</h3>
+  <p>By then we knew what we wanted. This was just a little POC to gain some more confidence before acting on it: a simple Node server on the Claude SDK, with tests.</p>
+  <p>Three questions:</p>
+  <ul class="doodle-list">
+    <li><strong>Does the model pick the right tool?</strong> A tool + tool-search setup, to see what happens when the catalogue gets big.</li>
+    <li><strong>Does <code>defer_loading</code> hold up?</strong> Lazy-loaded tools, discovered on demand rather than shipped every turn.</li>
+    <li><strong>Does it survive our hard cases?</strong> Not a toy chart — the complex UI elements we actually support.</li>
+  </ul>
+  <p>It did. Only then did we commit. The POC is up at <a href="https://github.com/strivelabsco/tool-driven-gen-ui-poc" rel="noopener">strivelabsco/tool-driven-gen-ui-poc</a>.</p>
+
+  <h3>What we landed on</h3>
+  <p>The model no longer authors a document. <strong>It calls a component.</strong></p>
+
+  <Snippet caption="The same turn, now" code={sameTurnNow} />
+
+  <p>The envelope is gone, and the array with it. The prompt went back to the shape it is meant for: business and data context.</p>
+
+  <h3>One schema, three jobs</h3>
+  <p>Each tool has exactly one schema definition, and it does three things at once.</p>
+
+  <Snippet caption="One definition, three consumers" code={threeJobs} />
+
+  <p>No wire format, no separate renderer contract, no adapter between them. The model emits, literally, what the renderer reads.</p>
+
+  <h3>Why it had to be a pivot, not a patch</h3>
+  <p>Every problem above shares a root, and none of them can be fixed downstream:</p>
+
+  <ProseTable caption="Symptom, root cause, and what replaced it">
+    <thead>
+      <tr><th scope="col">Symptom</th><th scope="col">Root cause under “one document”</th><th scope="col">Under “one call per component”</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Truncated or malformed replies</th><td>One large payload; one weak token sinks it</td><td>Per-tool arguments are small</td></tr>
+      <tr><th scope="row">One bad chart deletes the whole answer</th><td>Failure is atomic</td><td>A bad block is a bordered error inside a complete answer</td></tr>
+      <tr><th scope="row">Nothing renders until the end</th><td>One payload has one completion moment</td><td>Every call has its own</td></tr>
+      <tr><th scope="row">Prompt and renderer disagree</th><td>Two artifacts, one of them in English</td><td>One schema, enforced at compile time</td></tr>
+      <tr><th scope="row">Nobody can safely edit the prompt</th><td>Components live in the prompt</td><td>Components live in code</td></tr>
+    </tbody>
+  </ProseTable>
+
+  <p>Each row is a consequence of “one document” versus “many calls.” You don’t patch your way from one to the other.</p>
+
+  <h2>What we had to build to make it work</h2>
+  <p>Three things that aren’t obvious until you try it.</p>
+
+  <h3>Containers without a container tool</h3>
+  <p>Grouped layouts, two metric cards side by side or a masonry of charts, are tempting to model as a container tool with nested children. Nesting puts you straight back in monolithic-JSON territory, so every tool carries an optional <strong>group id</strong> instead and the client does the assembly.</p>
+
+  <GroupingDiagram />
+
+  <h3>A rule about what streams</h3>
+  <blockquote>Only text streams character by character. Everything else appears complete.</blockquote>
+  <p>A half-parsed chart config isn’t a preview of a chart, it’s garbage. Partial text is exactly as useful as complete text, one word earlier.</p>
+
+  <h3>Don’t echo tool inputs</h3>
+  <p>The natural tool handler returns its input as its result. Nothing ever reads it, because the block renders from the streamed arguments, yet it doubles the token cost of every rendered block for the rest of the conversation, because tool results replay into every subsequent request.</p>
+  <p>Our handlers return a two-word acknowledgement. <strong>Generative UI has rent, not just a purchase price.</strong></p>
+
+  <h2>What the pivot bought us</h2>
+  <p>Immediately:</p>
+  <ul class="doodle-list">
+    <li><strong>Failures became partial.</strong> One block can fail while the rest of the answer still arrives.</li>
+    <li><strong>Responses render as they’re built.</strong> Each block appears the moment its own arguments close.</li>
+    <li><strong>The prompt shrank by 40%</strong> in one commit.</li>
+    <li><strong>An entire bug class is gone.</strong> Prose-versus-props drift can’t happen when there is one artifact.</li>
+    <li><strong>Cost per rendered block dropped</strong>, and stopped compounding across the conversation.</li>
+  </ul>
+
+  <p>The compounding part took longer to show. The five months after the pivot delivered more than the seven before it, and that is not a coincidence.</p>
+
+  <p><strong>The interaction loop.</strong> Once a component is a tool call, the user’s answer can be the tool result. The card renders, registers as a pending call, and the click posts that choice back as the output of that call. The model reads it as an ordinary tool result, indistinguishable from a database query returning a row.</p>
+  <blockquote>That framing is what separates “the assistant drew a chart” from “the assistant is running a workflow with you.”</blockquote>
+
+  <p><strong>Live slots, then a canvas for them.</strong> Auto-triggered behaviours mount real agent views inside messages. The canvas is a React portal, rendered once in the message tree and portalled into the canvas mount, so hooks, polling timers, fetched data and edit state all survive the move because there is no move.</p>
+
+  <p><strong>A deferrable tool catalogue.</strong> Thirty-odd tools is a lot of schema to ship on every request, so only eight load eagerly. The rest are declared deferred and discovered on demand through the provider’s tool search. Only possible because tools are the unit: under the old design, every component’s description was in the prompt, every turn, forever.</p>
+  <p>The whole thing is one method on the <code>Tool</code> interface. <code>isDeferred()</code> returns <code>false</code> by default. App-action tools, the long tail that acts in the product rather than drawing in it, override it to <code>true</code>. No registry of deferred names, no config file.</p>
+  <p>Each provider adapter translates that flag on the way out and appends the matching search tool:</p>
+
+  <ProseTable caption="Deferred tools, per provider">
+    <thead>
+      <tr><th scope="col">Provider</th><th scope="col">Per-tool marker</th><th scope="col">Search tool appended</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Anthropic</th><td><code>defer_loading: true</code></td><td><code>&#123; type: 'tool_search_tool_bm25_20251119', name: 'tool_search_tool_bm25' &#125;</code></td></tr>
+      <tr><th scope="row">OpenAI and Azure</th><td><code>defer_loading: true</code></td><td><code>&#123; type: 'tool_search' &#125;</code></td></tr>
+    </tbody>
+  </ProseTable>
+
+  <p>Not everything can defer. The search tool has to find something, so a request with no eager tools is rejected.</p>
+
+  <p><strong>File attachments, citations, agent traces, a chat mode picker, a conversation minimap.</strong> All of it landed faster on a contract that didn’t fight back.</p>
+
+  <h2>Seven lessons worth keeping</h2>
+  <p>Five of them are this post compressed into a line each.</p>
+  <ol class="doodle-list doodle-list--num">
+    <li><strong>Don’t ask a model for one large structured artifact.</strong> You bet the whole response on its weakest token.</li>
+    <li><strong>A schema in a prompt is a schema you don’t own.</strong> Nothing verifies it, nothing versions it, and nobody can edit it in parallel.</li>
+    <li><strong>Delete the translation layer.</strong> Two schemas will disagree, and the adapter between them is where the disagreement hides.</li>
+    <li><strong>Defensive clauses in a prompt are telling you about the architecture.</strong> The fix was never a better sentence.</li>
+    <li><strong>Progressive rendering is a product decision.</strong> Stream the one thing where partial output is genuinely useful, not everything you can.</li>
+  </ol>
+  <p>The first one travels well past chat. It applies anywhere you are tempted to have a model emit a big config, a whole document, or a full migration.</p>
+  <p>Two the post hasn’t covered.</p>
+  <p><strong>Ship structural rewrites opt-in.</strong> The canvas went out behind a per-surface flag that defaulted to the old behaviour, migrated one experience at a time. The tool catalogue is opt-in per tool. We restructured a chat people use daily without a single cutover. Caution had nothing to do with it. It’s the only reason we could move fast enough to attempt it.</p>
+  <p><strong>The UI should not be authoritative.</strong> The one I most wish we’d unlearned sooner. Our first prompt literally said the user isn’t expected to reply in free text. The current design inverts it: every card can be answered by typing instead. A confident typed answer applies directly. An ambiguous one re-presents the same card pre-filled with the agent’s interpretation, so the user corrects rather than re-explains.</p>
+  <blockquote>Generative UI is an accelerant on a conversation, not a replacement for one. Every time we’ve forgotten that, usage data has reminded us within a week.</blockquote>
+
+  <h2>Twelve months in one timeline</h2>
+
+  <ArcTimeline />
+
+  <h2>Where it stands today</h2>
+
+  <StatGrid />
+
+  <p>The numbers are the least interesting part. What matters is the use cases, and the journey that pushed us to scale to them.</p>
+
+  <h2>What’s next</h2>
+  <p><strong>Artifacts.</strong></p>
+  <p>We got here early too. Artifacts are already in production, powering parts of our reporting and making those experiences shareable. There’s a lot more to that story, but it deserves its own post — so we’ll save the details for another day.</p>
+  <p>And there’s plenty more coming.</p>
+  <p><strong>Chat writes code.</strong> The JSON contract disappears. So does the rulebook we’ve been stuffing into prompts — along with all the hallucinated field names that come with it. Instead, we give the model the design context, and let the system wire up the UI around whatever the answer needs.</p>
+  <p><strong>And why stop at interfaces?</strong> What if chat could spin up an actual functional app inside a slot — something nobody had to pre-build or explicitly design for? Unlike the slots we ship today, the interface could be created on demand, for the task at hand.</p>
+  <p>Whatever comes next, one thing stays true: <strong>the contract between the model and our components is ours to design.</strong> Get that layer right, and we spend the next year building richer interfaces for marketers — not writing increasingly creative sentences to keep a model inside the lines.</p>
+  <p>There’s a lot we’re excited to build. And honestly, it feels like we’re just getting started.</p>
+
+  <!-- The whiteboard shots open in here; the class flips them in dark mode to
+       match their thumbnails. -->
+  <dialog class="lightbox lightbox--ink" data-lightbox aria-label="Whiteboard sketch">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img />
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</PostLayout>

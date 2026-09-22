@@ -68,7 +68,7 @@ LLM ─▶ individual tool calls ─▶ TOOL_STREAM_START/CONTENT
   <blockquote>Chat is the easy part. The harness underneath it is the product.</blockquote>
 
   <h2>Under the hood</h2>
-  <p>React 19 · TypeScript · custom SSE streaming · Zod contracts · an in-house block &amp; canvas library. Full teardown coming to the blog.</p>
+  <p>React 19 · TypeScript · custom SSE streaming · Zod contracts · an in-house block &amp; canvas library. <a href="/writing/generative-ui-chat-engine/">Full teardown here</a>.</p>
 
   <!--
     Adding media: drop files into public/images/work/strive-gen-ui-chat/ and use one of these.
@@ -84,11 +84,17 @@ LLM ─▶ individual tool calls ─▶ TOOL_STREAM_START/CONTENT
     </figure>
   -->
 
-  <aside class="next-up callout wobbly wobbly--2" aria-label="Upcoming write-up">
+  <aside class="next-up callout wobbly wobbly--2" aria-label="Long-form write-up">
     <Icon name="pen" />
     <div>
       <strong>Deep dive: streaming generative UI, block by block</strong>
-      <p>Parser internals, the tool-call migration, and everything that broke on the way. <span class="soon">Blog landing here soon.</span></p>
+      <p>Parser internals, the tool-call migration, and everything that broke on the way — a year of it, written up.</p>
+      <p class="next-up-link"><a class="pill" href="/writing/generative-ui-chat-engine/">Read the full story<Icon name="arrow-right" /></a></p>
     </div>
   </aside>
 </WorkLayout>
+<style>
+  .next-up-link { margin-top: .7rem !important; }
+  .next-up-link .pill { font-size: .88rem; padding: .45rem .85rem; }
+</style>
+

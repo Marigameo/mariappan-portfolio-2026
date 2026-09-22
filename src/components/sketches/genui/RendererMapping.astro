@@ -1,0 +1,81 @@
+---
+/* One switch on block type. Each type chip lines up with the renderer it reaches;
+   the three chart types share one, so that cell spans their rows. Every renderer
+   draws its own dashed error boundary just outside itself.
+   Row placement is set inline because each row is a different grid line. */
+
+const rows = [
+  { type: 'text', renderer: '<TextBlockRenderer />' },
+  { type: 'table', renderer: '<TableBlockRenderer />' },
+  { type: 'metrics_grid', renderer: '<MetricsGridBlockRenderer />' },
+  { type: 'line_chart', renderer: '<ChartBlockRenderer />', span: 3 },
+  { type: 'bar_chart' },
+  { type: 'pie_chart' },
+  { type: 'radio', renderer: '<RadioBlockRenderer />' },
+  { type: 'artifact_card', renderer: '<ArtifactCardBlockRenderer />' },
+];
+
+const alt =
+  'Eight block types dispatch through a switch to six React renderers, with three chart types ' +
+  'sharing one renderer and every renderer wrapped in an error boundary.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet" role="img" aria-label={alt}>
+    <p class="map-switch"><span>switch (block.type)</span></p>
+
+    <div class="map">
+      <p class="sk-hdr map-hdr map-hdr--l">Block type</p>
+      <p class="sk-hdr map-hdr map-hdr--r">Renderer</p>
+
+      {rows.map((r, i) => (
+        <>
+          <span class="map-type" style={`grid-row:${i + 2}`}>{r.type}</span>
+          {r.renderer && (
+            <span
+              class:list={['map-rend', r.span && 'map-rend--shared']}
+              style={`grid-row:${i + 2} / span ${r.span ?? 1}`}
+            >{r.renderer}</span>
+          )}
+        </>
+      ))}
+    </div>
+
+    <p class="map-foot">
+      <span>Unknown type → renders nothing, never crashes.</span>
+      <span>Each renderer sits in its own error boundary: a bad block can’t break the message.</span>
+    </p>
+  </div>
+  <figcaption>One switch on block type. Chart types share a renderer, an unknown type draws nothing, and every renderer sits inside its own error boundary.</figcaption>
+</figure>
+
+<style>
+  .map-switch { margin: 0 0 .9rem !important; max-width: none; text-align: center; }
+  .map-switch span { display: inline-block; padding: .4rem .9rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--font-mono); font-size: .68rem; letter-spacing: .04em; }
+
+  /* The row gap has to clear the dashed ring each renderer draws outside itself. */
+  .map { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: .65rem .9rem; align-items: center; position: relative; }
+  .map-hdr { grid-row: 1; margin-bottom: 0 !important; }
+  .map-hdr--l { grid-column: 1; }
+  .map-hdr--r { grid-column: 2; }
+
+  /* A type chip: drawn in the accent, with the wire to its renderer as a
+     dashed right border on the cell gap. */
+  .map-type { grid-column: 1; position: relative; padding: .3rem .55rem; border: 1.5px solid var(--coral); border-radius: 8px 4px 9px 4px / 4px 9px 4px 8px; background: var(--paper-2); font-family: var(--font-mono); font-size: .7rem; color: var(--coral); white-space: nowrap; }
+  .map-type::after { content: ""; position: absolute; left: 100%; top: 50%; width: .9rem; border-top: 1.5px dashed var(--ink-faint); }
+
+  .map-rend { position: relative; grid-column: 2; padding: .3rem .55rem; border: 1.5px solid var(--ink); border-radius: 4px 9px 4px 8px / 9px 4px 8px 4px; background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); font-family: var(--font-mono); font-size: .7rem; color: var(--ink); overflow-wrap: anywhere; }
+  /* The error boundary, drawn per renderer rather than once around the column:
+     each one really does get its own, and a single frame at this width ended up
+     wedged between the boxes where it read as stray ticks. */
+  .map-rend::after { content: ""; position: absolute; inset: -4px; border: 1.5px dashed var(--ink-faint); border-radius: 7px 12px 7px 11px / 12px 7px 11px 7px; pointer-events: none; }
+  /* The one renderer three types share, tall enough to span their rows. */
+  .map-rend--shared { align-self: stretch; display: flex; align-items: center; }
+
+  .map-foot { display: grid; gap: .3rem; margin: 1.1rem 0 0 !important; max-width: none; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1.25; color: var(--ink-soft); }
+
+  @media (max-width: 519px) {
+    .map { gap: .55rem .6rem; }
+    .map-type, .map-rend { font-size: .64rem; padding: .28rem .4rem; }
+    .map-type::after { width: .6rem; }
+  }
+</style>

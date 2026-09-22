@@ -1,0 +1,85 @@
+---
+/* The four fields of a block, each annotated in the margin the way you would
+   label a sketch. The `behaviours` row is drawn in dashes because it is optional.
+   Rows are a two-column grid (field, note) that collapses to one on a phone. */
+
+const fields = [
+  {
+    key: 'type',
+    value: '"metrics_grid"',
+    accent: true,
+    title: 'Which renderer draws it',
+    note: 'text · table · line_chart · metrics_grid · radio …',
+  },
+  {
+    key: 'version',
+    value: '"1.0"',
+    title: 'Contract version',
+    note: 'Old messages keep rendering when a widget evolves.',
+  },
+  {
+    key: 'content',
+    value: '{ header: "Paid media",\n    cells: [ … ],\n    columns: 3 }',
+    title: 'The component’s props',
+    note: 'Exactly the shape the tool’s Zod schema describes.',
+  },
+  {
+    key: 'behaviours',
+    value: '[ { trigger: "auto", … } ]',
+    optional: true,
+    title: 'Optional: behaviours',
+    note: 'Slots and actions that attach to the block.',
+  },
+];
+
+const alt =
+  'Anatomy of a block: a type field naming the renderer, a version field, a content object ' +
+  'holding the component props, and an optional behaviours array.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet" role="img" aria-label={alt}>
+    <p class="sk-hdr">A block</p>
+    <div class="blk">
+      <span class="blk-brace" aria-hidden="true">{'{'}</span>
+      {fields.map((f, i) => (
+        <div class="blk-row">
+          <div class:list={['sk-box', `sk-lean-${i + 1}`, 'blk-field', f.accent && 'sk-box--coral', f.optional && 'blk-field--opt']}>
+            <span class="blk-key">{f.key}</span>
+            <span class="sk-mono blk-val">{f.value}</span>
+          </div>
+          <div class="blk-note">
+            <strong>{f.title}</strong>
+            <span>{f.note}</span>
+          </div>
+        </div>
+      ))}
+      <span class="blk-brace" aria-hidden="true">{'}'}</span>
+    </div>
+  </div>
+  <figcaption>Type picks the renderer. Version keeps old messages rendering when a widget evolves. Content is the component’s props, verbatim.</figcaption>
+</figure>
+
+<style>
+  /* The braces sit outside the rows so the whole thing reads as one object. */
+  .blk-brace { display: block; font-family: var(--font-mono); font-size: 1rem; color: var(--ink-faint); }
+  .blk-row { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: .1rem 1rem; align-items: center; margin: .45rem 0 .45rem .9rem; }
+  .blk-field { --c: var(--ink-faint); display: grid; grid-template-columns: 5.6rem minmax(0, 1fr); gap: .1rem .5rem; align-items: baseline; padding: .55rem .7rem; }
+  .blk-field--opt { border-style: dashed; border-color: var(--ink-faint); box-shadow: none; }
+  .blk-key { font-family: var(--font-mono); font-size: .74rem; color: var(--ink-faint); }
+  .blk-val { font-size: .74rem; color: var(--ink); white-space: pre; overflow-x: auto; }
+  .sk-box--coral .blk-val { color: var(--coral); }
+  .blk-field--opt .blk-val { color: var(--ink-faint); }
+
+  /* The note is the pencil annotation: a dashed leader, then the label. */
+  .blk-note { position: relative; padding-left: 1.4rem; }
+  .blk-note::before { content: ""; position: absolute; left: 0; top: .62em; width: 1rem; border-top: 1.5px dashed var(--ink-faint); }
+  .blk-note strong { display: block; font-size: .82rem; font-weight: 500; color: var(--ink); }
+  .blk-note span { display: block; margin-top: .1rem; font-size: .76rem; line-height: 1.4; color: var(--ink-faint); }
+
+  @media (max-width: 719px) {
+    .blk-row { grid-template-columns: 1fr; margin-left: .5rem; gap: .4rem; }
+    .blk-note { padding-left: .6rem; border-left: 1.5px dashed var(--ink-faint); }
+    .blk-note::before { display: none; }
+    .blk-field { grid-template-columns: 1fr; }
+  }
+</style>

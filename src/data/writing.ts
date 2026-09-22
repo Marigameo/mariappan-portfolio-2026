@@ -33,6 +33,7 @@ export const shelves: Shelf[] = [
       { href: 'https://medium.com/geekculture/vite-witnessing-the-next-gen-frontend-tooling-part-1-a157f4033c33', title: 'Vite: witnessing the next-gen frontend tooling', spine: 'Vite: next-gen tooling', colour: 'yellow', bh: '12.5rem', lean: true },
       { href: 'https://medium.com/@mariappan/monorepos-at-scale-4cbfd221f352', title: 'Monorepos at scale', spine: 'Monorepos at scale', colour: 'coral', bh: '14.5rem', bw: '3.1rem' },
       { href: '/writing/monorepo-migration/', title: 'How we migrated Freshworks’ critical monorepo tackling tech debts', spine: 'Migrating a monorepo', colour: 'teal', bh: '12rem', bw: '2.7rem' },
+      { href: '/writing/generative-ui-chat-engine/', title: 'From answers to UI: how we built Strive’s generative UI engine', spine: "Strive's gen-UI engine", colour: 'violet', bh: '14rem', bw: '3.2rem' },
     ],
   },
   {

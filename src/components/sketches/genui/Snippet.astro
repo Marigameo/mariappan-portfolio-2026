@@ -1,0 +1,25 @@
+---
+/* A code sample, drawn as a small desktop window: title bar with three lights, the
+   original snippet's label as the window title, code on a dark panel below.
+
+   `code` is pre-escaped HTML (the `.c` / `.k` / `.s` spans do the colouring), split
+   here into one <span class="line"> per row. That is what lets `--editor` number the
+   lines with a CSS counter instead of a second column of markup. Spans are emitted
+   without whitespace between them because <pre> would render it. */
+
+interface Props {
+  /** Window title — the `title="…"` from the original fenced block. */
+  caption: string;
+  /** Escaped HTML, one line per newline. */
+  code: string;
+  /** Show a line-number gutter: for a file being read, not a fragment quoted. */
+  editor?: boolean;
+}
+
+const { caption, code, editor = false } = Astro.props;
+const lines = code.split('\n');
+---
+<figure class:list={['snippet', editor && 'snippet--editor']}>
+  <figcaption>{caption}</figcaption>
+  <pre><code>{lines.map((line) => <span class="line" set:html={line} />)}</code></pre>
+</figure>

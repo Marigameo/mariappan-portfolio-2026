@@ -1,0 +1,102 @@
+---
+/* An assistant message that is still doing something: a block, the behaviour
+   attached to it, and the live slot that behaviour mounted. The original put its
+   labels in the right margin; at this column width they read better underneath. */
+
+const queue = [
+  { post: '10 SEO tips for 2026', status: 'Done', when: '2m ago' },
+  { post: 'How to audit backlinks', status: 'In progress', when: 'just now', live: true },
+  { post: 'Content refresh checklist', status: 'Queued', when: '—' },
+  { post: 'Keyword clustering guide', status: 'Queued', when: '—' },
+];
+
+const alt =
+  'An assistant message holds an artifact card block carrying an automatic behaviour, which mounts ' +
+  'a slot: a live, polling task queue rendered inside the message.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet" role="img" aria-label={alt}>
+    <p class="sk-hdr">Assistant message</p>
+
+    <div class="sk-box sk-lean-1 bhv-bubble">
+      <p class="bhv-said">Queued 12 posts for a content refresh. Here’s the live queue:</p>
+
+      <div class="bhv-block">
+        <span class="bhv-chip" aria-hidden="true"></span>
+        <span><strong>Content refresh · 12 posts</strong><em>artifact_card</em></span>
+      </div>
+
+      <p class="bhv-tag">behaviour · auto · blog_refresh_queue</p>
+
+      <div class="bhv-slot">
+        <p class="bhv-slot-head">
+          <span class="sk-hdr">Slot</span>
+          <span class="bhv-live"><i aria-hidden="true"></i>live · every 15s</span>
+        </p>
+        <table class="bhv-table">
+          <thead><tr><th>Post</th><th>Status</th><th>Updated</th></tr></thead>
+          <tbody>
+            {queue.map((q) => (
+              <tr>
+                <td>{q.post}</td>
+                <td><span class:list={['bhv-status', q.live && 'bhv-status--live']}>{q.status}</span></td>
+                <td>{q.when}</td>
+              </tr>
+            ))}
+            <tr><td colspan="3" class="bhv-more">+ 8 more</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <dl class="bhv-notes">
+      <div><dt>The block</dt><dd>Rendered like any other block.</dd></div>
+      <div><dt>Its behaviour</dt><dd>The model only names an experience and a trigger. No data, no markup. <code>auto</code> mounts with the block; <code>click</code> mounts when the user taps.</dd></div>
+      <div><dt>The slot</dt><dd>A live agent view mounted inside the message. Fetches its own data, polls, can go fullscreen.</dd></div>
+    </dl>
+  </div>
+  <figcaption>The model only names an experience and a trigger. The data, the polling and the edit state all belong to the slot.</figcaption>
+</figure>
+
+<style>
+  .bhv-bubble { padding: .85rem .9rem 1rem; }
+  .bhv-said { margin: 0 0 .7rem !important; max-width: none; font-size: .85rem; line-height: 1.5; color: var(--ink); }
+
+  .bhv-block { display: flex; align-items: center; gap: .6rem; padding: .55rem .6rem; border: 1px solid var(--line); border-radius: 9px 5px 10px 5px / 5px 10px 5px 9px; background: var(--paper); }
+  .bhv-chip { width: 1.1rem; height: 1.1rem; flex: none; border: 1.5px solid var(--coral); border-radius: 5px 2px 6px 2px / 2px 6px 2px 5px; background: color-mix(in srgb, var(--coral) 25%, transparent); }
+  .bhv-block strong { display: block; font-size: .82rem; font-weight: 500; color: var(--ink); }
+  .bhv-block em { display: block; font-family: var(--font-mono); font-size: .62rem; font-style: normal; color: var(--ink-faint); }
+
+  .bhv-tag { display: inline-block; margin: .5rem 0 !important; padding: .28rem .6rem; border: 1.5px solid var(--coral); border-radius: 999px; background: color-mix(in srgb, var(--coral) 10%, transparent); font-family: var(--font-mono); font-size: .6rem; letter-spacing: .04em; color: var(--coral); max-width: none; }
+
+  /* The slot is dashed because it is not part of the block: it is mounted into it. */
+  .bhv-slot { padding: .6rem .65rem .7rem; border: 1.5px dashed var(--coral); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--paper); }
+  .bhv-slot-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; margin: 0 0 .5rem !important; max-width: none; }
+  .bhv-slot-head .sk-hdr { margin: 0 !important; color: var(--coral); }
+  .bhv-live { display: inline-flex; align-items: center; gap: .3rem; font-size: .62rem; color: var(--ink-faint); }
+  /* Same pulse as the .live dot elsewhere, declared here so Astro's scoping
+     keeps the name and the reference together. */
+  .bhv-live i { width: .4rem; height: .4rem; border-radius: 50%; background: var(--teal); animation: bhv-pulse 2.2s ease-out infinite; }
+  @keyframes bhv-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .bhv-live i { animation: none; } }
+
+  .bhv-table { width: 100%; border-collapse: collapse; }
+  .bhv-table th, .bhv-table td { padding: .32rem .3rem; text-align: left; border-bottom: 1px solid var(--line); }
+  .bhv-table th { font-family: var(--font-mono); font-size: .56rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .bhv-table td { font-size: .74rem; color: var(--ink-soft); }
+  .bhv-table tr:last-child td { border-bottom: 0; }
+  .bhv-status { display: inline-block; padding: .12rem .45rem; border-radius: 999px; background: var(--sand-2); font-size: .62rem; color: var(--ink-soft); white-space: nowrap; }
+  .bhv-status--live { background: color-mix(in srgb, var(--coral) 16%, transparent); color: var(--coral); }
+  .bhv-more { font-size: .68rem !important; color: var(--ink-faint) !important; }
+
+  /* The margin labels, moved under the drawing. */
+  .bhv-notes { display: grid; gap: .55rem; margin: 1.1rem 0 0; }
+  .bhv-notes > div { padding-left: .7rem; border-left: 1.5px dashed var(--ink-faint); }
+  .bhv-notes dt { font-size: .82rem; font-weight: 500; color: var(--ink); }
+  .bhv-notes dd { margin: .1rem 0 0; font-size: .78rem; line-height: 1.45; color: var(--ink-faint); }
+  .bhv-notes code { font-family: var(--font-mono); font-size: .9em; color: var(--coral); background: none; padding: 0; }
+
+  @media (max-width: 479px) {
+    .bhv-table th:last-child, .bhv-table td:last-child { display: none; }
+  }
+</style>

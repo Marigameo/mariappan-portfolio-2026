@@ -1,0 +1,52 @@
+---
+/* Vercel's AI SDK releases, with the month we started pinned on the end. Drawn as
+   a vertical rail rather than the original's horizontal one: six stops do not fit
+   across a reading column, and the last stop is the point of the whole figure. */
+
+const milestones = [
+  { date: '2023', title: 'First release', note: 'Streaming text. Very early.', href: 'https://vercel.com/blog/introducing-the-vercel-ai-sdk' },
+  { date: '2024', title: 'Generative UI', note: 'Arrives, but only through RSC.', href: 'https://vercel.com/blog/ai-sdk-3-generative-ui' },
+  { date: 'Early 2025', title: 'Client-side support', note: 'Lands, still leaning on RSC.', href: 'https://vercel.com/blog/introducing-vercel-ai-sdk-3-2' },
+  { date: 'Jul 2025', title: 'AI SDK 5', note: 'Typed chat, four frameworks.', href: 'https://vercel.com/blog/ai-sdk-5' },
+  { date: '6 Aug 2025', title: 'AI Elements', note: 'The component library.', href: 'https://vercel.com/changelog/introducing-ai-elements' },
+  /* The one stop on this rail that is ours. */
+  { date: 'Sep 2025', title: 'We begin', note: 'One month later.', ours: true },
+];
+
+const alt = `Vercel's AI SDK timeline: ${milestones.map((m) => `${m.date}, ${m.title} — ${m.note}`).join(' ')}`;
+---
+<figure class="sk-fig">
+  <ol class="sk-sheet sk-sheet--bare rail-list" aria-label={alt}>
+    {milestones.map((m) => (
+      <li class:list={['rail-stop', m.ours && 'rail-stop--ours']}>
+        <span class="rail-dot" aria-hidden="true"></span>
+        <p class="rail-date">{m.date}</p>
+        <p class="rail-title">
+          {m.href ? <a href={m.href} rel="noopener">{m.title}</a> : m.title}
+        </p>
+        <p class="rail-note">{m.note}</p>
+      </li>
+    ))}
+  </ol>
+  <figcaption>Vercel’s AI SDK, 2023 to 2025. Generative UI arrived through React Server Components and stayed there, which is exactly where our hesitation came from.</figcaption>
+</figure>
+
+<style>
+  .rail-list { list-style: none; margin: 0; padding-left: 1.6rem; }
+  .rail-stop { position: relative; padding: 0 0 1.1rem 1.4rem; }
+  .rail-stop:last-child { padding-bottom: 0; }
+  /* The rail itself, drawn as a dashed line behind the dots. */
+  .rail-stop::before { content: ""; position: absolute; left: .3rem; top: .75rem; bottom: -.2rem; border-left: 1.5px dashed var(--ink-faint); }
+  .rail-stop:last-child::before { display: none; }
+  .rail-dot { position: absolute; left: 0; top: .35rem; width: .65rem; height: .65rem; border: 1.5px solid var(--ink-faint); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper); }
+  /* Our stop: bigger, filled, and in the accent. */
+  .rail-stop--ours .rail-dot { left: -.12rem; top: .22rem; width: .9rem; height: .9rem; border: 2px solid var(--coral); background: var(--coral); }
+  .rail-stop--ours::before { border-left-color: var(--coral); }
+
+  .rail-date { margin: 0 !important; max-width: none; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .rail-stop--ours .rail-date { color: var(--coral); }
+  .rail-title { margin: .1rem 0 0 !important; max-width: none; font-size: .95rem; font-weight: 500; color: var(--ink); }
+  .rail-stop--ours .rail-title { font-family: var(--font-hand); font-size: 1.5rem; color: var(--coral); }
+  .rail-title a { color: inherit; }
+  .rail-note { margin: .05rem 0 0 !important; max-width: none; font-size: .82rem; line-height: 1.45; color: var(--ink-faint); }
+</style>

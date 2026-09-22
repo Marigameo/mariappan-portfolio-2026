@@ -1,0 +1,59 @@
+---
+/* The fork every stack we looked at makes: prose down one branch, interface down
+   the other. Two columns under a single node; the fork is drawn with borders so
+   it collapses cleanly to a single stem when the branches stack. */
+
+const branches = [
+  { label: 'Natural language', carrier: 'streamed as text', sink: 'Markdown renderer', tone: 'teal' },
+  { label: 'Structured UI', carrier: 'tool call, typed payload', sink: 'Schema + component registry', tone: 'coral' },
+];
+
+const alt =
+  'An LLM response forks two ways: natural language, streamed as text into a markdown renderer; ' +
+  'and structured UI, sent as a tool call with a typed payload into a schema and component registry.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet hyb" role="img" aria-label={alt}>
+    <p class="hyb-source"><span>LLM response</span></p>
+    <div class="hyb-fork" aria-hidden="true"><i></i><i></i></div>
+    <div class="hyb-branches">
+      {branches.map((b, i) => (
+        <div class="hyb-branch">
+          <div class:list={['sk-box', `sk-box--${b.tone}`, `sk-lean-${i + 1}`, 'hyb-top']}>{b.label}</div>
+          <p class="hyb-carrier">{b.carrier}</p>
+          <div class:list={['sk-box', `sk-lean-${i + 3}`, 'hyb-sink']}>{b.sink}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <figcaption>The shape every stack we looked at converged on. Text stays text. Only the parts that have to become an interface go through a schema.</figcaption>
+</figure>
+
+<style>
+  /* The figure is full width like its neighbours; the fork and branches are held
+     to a narrower measure inside it so the two columns stay close enough to read
+     as one split rather than two separate diagrams. */
+  .hyb-branches, .hyb-fork { max-width: 40rem; margin-inline: auto; }
+  .hyb-source { margin: 0 !important; max-width: none; text-align: center; }
+  .hyb-source span { display: inline-block; padding: .45rem 1rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .85rem; font-weight: 500; }
+
+  /* Two stems joined by a crossbar: the crossbar is the top border of each half. */
+  .hyb-fork { display: flex; height: 1.9rem; }
+  .hyb-fork i { flex: 1; height: 100%; }
+  .hyb-fork i:first-child { border-top: 1.5px dashed var(--ink-faint); border-right: 1.5px dashed var(--ink-faint); margin-top: .9rem; border-top-right-radius: 8px; }
+  .hyb-fork i:last-child { border-top: 1.5px dashed var(--ink-faint); border-left: 1.5px dashed var(--ink-faint); margin-top: .9rem; border-top-left-radius: 8px; }
+
+  .hyb-branches { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .hyb-branch { display: grid; justify-items: center; gap: .45rem; text-align: center; }
+  .hyb-top { width: 100%; font-size: .88rem; font-weight: 500; color: var(--c); }
+  .hyb-sink { width: 100%; font-size: .82rem; color: var(--ink); }
+  .hyb-carrier { margin: 0 !important; max-width: none; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1.2; color: var(--ink-faint); }
+
+  @media (max-width: 519px) {
+    /* Stacked: one honest stem instead of a fork, and a gap between the branches. */
+    .hyb-fork { justify-content: center; height: 1.4rem; }
+    .hyb-fork i { flex: none; width: 0; border: 0 !important; border-left: 1.5px dashed var(--ink-faint) !important; margin-top: 0 !important; border-radius: 0 !important; }
+    .hyb-fork i:last-child { display: none; }
+    .hyb-branches { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+</style>

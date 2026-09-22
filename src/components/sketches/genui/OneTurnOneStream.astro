@@ -1,0 +1,122 @@
+---
+/* One turn of the chat, end to end: what the model writes, what travels over the
+   wire, and what the client draws. Redrawn from the original post's architecture
+   diagram. Three panels side by side on a desktop, stacked on a phone, with the
+   arrows rotating to point down when they stack. */
+import Icon from '../../Icon.astro';
+
+const alt =
+  'A model response of plain text plus two tool calls streams over SSE to the client, ' +
+  'where text renders as it arrives and each widget mounts once its arguments are complete. ' +
+  'One Zod schema per widget serves as both the model’s tool input and the component’s props.';
+---
+<figure class="sk-fig turn">
+  <div class="sk-sheet" role="img" aria-label={alt}>
+    <div class="turn-row">
+      <!-- 1 · what the model writes -->
+      <div class="turn-col">
+        <p class="sk-hdr">Model response</p>
+        <div class="sk-box sk-lean-1 turn-card">
+          <span class="turn-kind">text</span>
+          <p class="turn-line">Spend is up 12% this week, driven by Search…</p>
+        </div>
+        <div class="sk-box sk-box--coral sk-lean-2 turn-card turn-card--call">
+          <span class="turn-kind">tool call</span>
+          <p class="sk-mono turn-call">{'ui_metrics_grid({ … })'}</p>
+        </div>
+        <div class="sk-box sk-box--coral sk-lean-3 turn-card turn-card--call">
+          <span class="turn-kind">tool call</span>
+          <p class="sk-mono turn-call">{'ui_line_chart({ … })'}</p>
+        </div>
+        <p class="turn-note">Text is written as text.<br />Every widget is its own tool call.</p>
+      </div>
+
+      <i class="sk-arrow turn-arrow" aria-hidden="true"><Icon name="arrow-right" /></i>
+
+      <!-- 2 · what travels -->
+      <div class="turn-col">
+        <p class="sk-hdr">SSE stream</p>
+        <div class="turn-track">
+          <span class="chunk chunk--call">"series</span>
+          <span class="chunk">by Search</span>
+          <span class="chunk chunk--call">"cells":[</span>
+          <span class="chunk chunk--call">{'{"header'}</span>
+          <span class="chunk">Spend is</span>
+        </div>
+        <p class="turn-note">Text tokens and tool arguments interleave as the model writes them.</p>
+      </div>
+
+      <i class="sk-arrow turn-arrow" aria-hidden="true"><Icon name="arrow-right" /></i>
+
+      <!-- 3 · what the client draws -->
+      <div class="turn-col">
+        <p class="sk-hdr">Client</p>
+        <div class="sk-box sk-lean-2 turn-bubble">
+          <p class="turn-line">Spend is up 12% this week, driven by Search…</p>
+          <div class="turn-metrics">
+            <div><b>$48.2k</b><span>Spend</span><i class="up">+12%</i></div>
+            <div><b>3.1%</b><span>CTR</span><i class="up">+0.4pt</i></div>
+            <div><b>$1.9k</b><span>CPA</span><i class="down">−3%</i></div>
+          </div>
+          <div class="turn-chart">
+            <svg viewBox="0 0 160 40" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="4,34 34,26 64,30 94,16 124,20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="sk-hand">chart arriving…</span>
+          </div>
+        </div>
+        <p class="turn-note">Text renders as it streams; each widget mounts the moment its arguments close.</p>
+      </div>
+    </div>
+
+    <!-- the schema bridge, tying the far left to the far right -->
+    <p class="turn-bridge"><span>One Zod schema per widget: the model’s tool input <em>and</em> the component’s props</span></p>
+  </div>
+  <figcaption>One turn, one stream. Text is written as text, every widget is its own tool call, and the client mounts each one the moment its arguments close.</figcaption>
+</figure>
+
+<style>
+  .turn-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: .5rem; align-items: start; }
+  .turn-col { min-width: 0; }
+  .turn-arrow { align-self: center; margin-top: 2.5rem; }
+
+  .turn-card { margin-bottom: .55rem; padding: .5rem .6rem .55rem; }
+  .turn-kind { display: block; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  .turn-line { margin: .2rem 0 0 !important; font-size: .78rem; line-height: 1.4; color: var(--ink); max-width: none; }
+  .turn-call { margin: .2rem 0 0 !important; font-size: .72rem; color: var(--coral); white-space: normal; max-width: none; }
+  .turn-note { margin: .8rem 0 0 !important; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1.25; color: var(--ink-soft); max-width: none; }
+
+  /* The wire: a rounded track with the chunks that happen to be in flight. */
+  .turn-track { display: flex; flex-wrap: wrap; gap: .3rem; padding: .55rem .6rem; border: 1.5px solid var(--line); border-radius: 999px 18px 999px 18px / 18px 999px 18px 999px; background: var(--paper-2); }
+  .chunk { font-family: var(--font-mono); font-size: .62rem; line-height: 1; padding: .35rem .4rem; border: 1px solid var(--line); border-radius: 6px 3px 7px 3px / 3px 7px 3px 6px; background: var(--paper); color: var(--ink-soft); }
+  .chunk--call { border-color: var(--coral); color: var(--coral); }
+
+  .turn-bubble { padding: .6rem .65rem .7rem; }
+  .turn-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; margin-top: .5rem; padding: .5rem .4rem; border: 1px solid var(--line); border-radius: 8px 4px 9px 4px / 4px 9px 4px 8px; background: var(--paper); }
+  .turn-metrics div { display: flex; flex-direction: column; gap: .05rem; min-width: 0; }
+  .turn-metrics b { font-size: .84rem; font-weight: 500; color: var(--ink); }
+  .turn-metrics span { font-size: .56rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); }
+  .turn-metrics i { font-family: var(--font-mono); font-size: .58rem; font-style: normal; }
+  .turn-metrics .up { color: var(--teal); }
+  .turn-metrics .down { color: var(--coral); }
+
+  /* The block still arriving: dashed, drawn in the accent, unfinished on purpose. */
+  .turn-chart { display: flex; align-items: center; gap: .4rem; margin-top: .4rem; padding: .45rem .4rem; border: 1.5px dashed var(--coral); border-radius: 8px 4px 9px 4px / 4px 9px 4px 8px; color: var(--coral); }
+  .turn-chart svg { width: 3.4rem; height: 1.4rem; flex: none; opacity: .65; }
+  .turn-chart .sk-hand { --c: var(--coral); font-size: 1rem; }
+
+  /* A dashed rule with the sentence sitting in a gap in the middle of it. */
+  .turn-bridge { display: flex; align-items: center; gap: .7rem; margin: 1.4rem 0 0 !important; max-width: none; font-size: .8rem; line-height: 1.4; color: var(--ink); text-align: center; }
+  .turn-bridge::before, .turn-bridge::after { content: ""; flex: 1; border-top: 1.5px dashed var(--ink-faint); }
+  .turn-bridge span { flex: none; max-width: 30rem; }
+  .turn-bridge em { font-family: var(--font-hand); font-size: 1.15rem; font-style: normal; color: var(--coral); }
+
+  @media (max-width: 719px) {
+    .turn-row { grid-template-columns: 1fr; gap: .2rem; }
+    .turn-arrow { justify-self: center; margin: .5rem 0; transform: rotate(90deg); }
+    .turn-col + .turn-col, .turn-col:not(:first-child) { margin-top: .4rem; }
+    .turn-bridge { flex-direction: column; gap: .5rem; }
+    .turn-bridge::before, .turn-bridge::after { display: none; }
+    .turn-bridge span { border-top: 1.5px dashed var(--ink-faint); padding-top: .8rem; }
+  }
+</style>
