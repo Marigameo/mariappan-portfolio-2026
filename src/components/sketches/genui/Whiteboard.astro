@@ -1,0 +1,56 @@
+---
+/* A photographed whiteboard from the early sessions. Too dense to read inline, so
+   the whole thing is a button that hands the image to the page's [data-lightbox],
+   with a glowing pill over the bottom-right corner to say so — the small line of
+   handwriting it replaced was easy to read past.
+   `.ink-shot` is what flips the scan in dark mode; the dialog carries the matching
+   `.lightbox--ink` so the enlarged copy looks the same. */
+import Icon from '../../Icon.astro';
+
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption: string;
+}
+
+const { src, alt, width, height, caption } = Astro.props;
+---
+<figure class="sk-fig wb">
+  <button class="wb-shot ink-shot" type="button" data-full={src} aria-label={`View full size: ${alt}`}>
+    <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+    <!-- Decorative: the button's aria-label already says what this does. -->
+    <span class="wb-cta" aria-hidden="true"><Icon name="zoom-in" />Tap to enlarge</span>
+  </button>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  /* The extra bottom margin is the room the pill needs to hang past the frame. */
+  .wb-shot { position: relative; display: block; width: 100%; margin-bottom: 1.1rem; padding: .5rem; border: 1.5px solid var(--border); border-radius: 12px 6px 14px 6px / 6px 14px 6px 12px; background: var(--paper-2); box-shadow: 4px 4px 0 var(--shadow-ink); cursor: zoom-in; transform: rotate(-.5deg); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+  .wb-shot:hover { transform: rotate(0); box-shadow: 6px 7px 0 var(--shadow-ink); }
+  .wb-shot img { display: block; width: 100%; height: auto; border: 0; border-radius: 8px 4px 9px 4px / 4px 9px 4px 8px; }
+
+  /* Floats over the bottom-right corner, half on the image and half off it.
+     pointer-events: none so every click lands on the button underneath. */
+  .wb-cta { position: absolute; right: .8rem; bottom: -.85rem; z-index: 2; display: inline-flex; align-items: center; gap: .4rem; padding: .5rem .9rem .5rem .75rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .84rem; font-weight: 500; line-height: 1; white-space: nowrap; pointer-events: none; animation: wb-glow 2.6s ease-in-out infinite; }
+  .wb-cta :global(.doodle) { width: 1.05rem; height: 1.05rem; stroke-width: 2; }
+  /* The ring that expands out of the pill, the same nudge the hero deck uses. */
+  .wb-cta::after { content: ""; position: absolute; inset: -3px; border-radius: 999px; border: 1.5px solid var(--coral); opacity: 0; animation: wb-ring 2.6s ease-out infinite; }
+
+  .wb-shot:hover .wb-cta, .wb-shot:focus-visible .wb-cta { background: var(--coral); color: #fff; }
+
+  @keyframes wb-glow {
+    0%, 100% { box-shadow: 0 5px 16px -8px rgba(0, 0, 0, .55), 0 0 0 0 color-mix(in srgb, var(--coral) 60%, transparent); }
+    50% { box-shadow: 0 5px 16px -8px rgba(0, 0, 0, .55), 0 0 1.2rem .3rem color-mix(in srgb, var(--coral) 42%, transparent); }
+  }
+  @keyframes wb-ring {
+    0% { opacity: .8; transform: scale(1); }
+    70%, 100% { opacity: 0; transform: scale(1.3); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wb-cta { animation: none; }
+    .wb-cta::after { animation: none; opacity: .5; }
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+/* Where it stands today. Four numbers on sticky-note-ish cards, each leaning a
+   different way so the grid reads as four things pinned up rather than a table. */
+
+const stats = [
+  { value: '153+', label: 'Total tools', sub: 'native, platform and app actions', ink: 'coral' },
+  { value: '16+', label: 'Integrated apps', ink: 'blue' },
+  { value: '34+', label: 'UI tools the model can call', sub: '28 block types · 35 renderers', ink: 'teal' },
+  { value: '7 + 4', label: 'Live agent slots + side-canvas surfaces', sub: 'Live, interactable views that mount inside a message', ink: 'violet' },
+];
+---
+<ul class="stats">
+  {stats.map((s, i) => (
+    <li class:list={['sk-box', `sk-box--${s.ink}`, `sk-lean-${i + 1}`]}>
+      <b>{s.value}</b>
+      <strong>{s.label}</strong>
+      {s.sub && <span>{s.sub}</span>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .stats { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; margin-block: var(--space-4); padding: 0; }
+  .stats li { display: flex; flex-direction: column; gap: .15rem; padding: 1rem 1.05rem 1.1rem; }
+  .stats b { font-family: var(--font-display); font-size: 2.1rem; line-height: 1; letter-spacing: -.02em; color: var(--c); }
+  .stats strong { margin-top: .35rem; font-size: .95rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+  .stats span { font-size: .8rem; line-height: 1.45; color: var(--ink-faint); }
+</style>

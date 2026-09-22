@@ -1,0 +1,66 @@
+---
+/* Why grouped layouts are not a container tool. The two panels have to be read
+   side by side, so the rejected one is drawn as a ghost and the one we shipped
+   carries the ink and the assembled row underneath it. */
+import Icon from '../../Icon.astro';
+
+const alt =
+  'Rejected: a ui_group tool with nested children, which nothing draws until every child arrives. ' +
+  'Shipped: three flat tool calls that share a group id, assembled into one container on the client.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet grp" role="img" aria-label={alt}>
+    <div class="grp-panel grp-panel--no">
+      <p class="grp-tag"><Icon name="close" />Container tool</p>
+      <pre class="sk-mono">{`ui_group({
+  children: [
+    ui_metric({}),
+    ui_metric({}),
+    ui_chart({})
+  ]
+})`}</pre>
+      <p class="grp-note">Nested, so it is a small monolith. Nothing draws until every child has arrived, and one bad child takes the group with it.</p>
+    </div>
+
+    <div class="grp-panel grp-panel--yes">
+      <p class="grp-tag"><Icon name="check" />Group id</p>
+      <pre class="sk-mono">{`ui_metric({ group: "g1", layout })
+ui_metric({ group: "g1" })
+ui_chart({  group: "g1" })`}</pre>
+
+      <p class="grp-seam"><span>assembled client-side</span></p>
+      <div class="grp-cells">
+        <span>metric</span><span>metric</span><span>chart</span>
+      </div>
+
+      <p class="grp-note">Flat in the model’s output. Each block still streams, renders and fails on its own.</p>
+    </div>
+  </div>
+  <figcaption>Grouping happens at assembly time. The model emits siblings that share an id, and the client puts them in a container at the position of the first one.</figcaption>
+</figure>
+
+<style>
+  .grp { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+  .grp-panel { padding: .85rem .9rem 1rem; }
+  /* The one we did not build: dashed, no shadow, colourless. */
+  .grp-panel--no { border: 1.5px dashed var(--ink-faint); border-radius: var(--radius-wobble-2); background: transparent; }
+  /* The one we shipped: inked, leaning, with the accent. */
+  .grp-panel--yes { border: 1.5px solid var(--coral); border-radius: 12px 6px 14px 6px / 6px 14px 6px 12px; background: var(--paper-2); box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-.6deg); }
+
+  .grp-tag { display: flex; align-items: center; gap: .35rem; margin: 0 0 .6rem !important; max-width: none; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .grp-panel--yes .grp-tag { color: var(--coral); }
+  .grp-tag :global(.doodle) { width: .8rem; height: .8rem; stroke-width: 2.2; }
+
+  .grp pre { margin: 0; overflow-x: auto; font-size: .7rem; line-height: 1.7; }
+  .grp-panel--yes pre { color: var(--ink); }
+
+  /* The seam where the model's output stops and the client's assembly begins. */
+  .grp-seam { display: flex; align-items: center; gap: .5rem; margin: .7rem 0 .5rem !important; max-width: none; }
+  .grp-seam::before, .grp-seam::after { content: ""; flex: 1; border-top: 1.5px dashed color-mix(in srgb, var(--coral) 55%, transparent); }
+  .grp-seam span { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em; text-transform: uppercase; color: var(--coral); }
+
+  .grp-cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; }
+  .grp-cells span { padding: .3rem 0; text-align: center; border: 1.5px solid color-mix(in srgb, var(--coral) 55%, transparent); border-radius: 6px 3px 7px 3px / 3px 7px 3px 6px; background: var(--paper); font-family: var(--font-mono); font-size: .62rem; color: var(--coral); }
+
+  .grp-note { margin: .7rem 0 0 !important; max-width: none; padding-top: .55rem; border-top: 1px solid var(--line); font-size: .78rem; line-height: 1.45; color: var(--ink-faint); }
+</style>

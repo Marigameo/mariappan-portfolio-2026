@@ -136,6 +136,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .doodle-list > li::before { content: ""; position: absolute; left: 0; top: .5em; width: .7em; height: .7em; border: 1.5px solid var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-8deg); }
 .doodle-list > li:nth-child(2n)::before { border-color: var(--blue); }
 .doodle-list > li:nth-child(3n)::before { border-color: var(--teal); }
+/* Numbered variant: the count is written inside the same wobbly circle, so an
+   <ol> keeps its numbers instead of losing them to `list-style: none`. */
+.doodle-list--num { counter-reset: doodle-num; }
+.doodle-list--num > li { counter-increment: doodle-num; padding-left: 2.2em; }
+.doodle-list--num > li::before { content: counter(doodle-num); display: grid; place-items: center; top: .05em; width: 1.6em; height: 1.6em; font-family: var(--font-hand); font-size: .95em; font-weight: 700; line-height: 1; color: var(--coral); }
+.doodle-list--num > li:nth-child(2n)::before { color: var(--blue); }
+.doodle-list--num > li:nth-child(3n)::before { color: var(--teal); }
 .tilt-1 { transform: rotate(-.5deg); } .tilt-2 { transform: rotate(.4deg); } .tilt-3 { transform: rotate(-.25deg); }
 .ink-blue { color: var(--blue); } .ink-coral { color: var(--coral); } .ink-teal { color: var(--teal); } .ink-violet { color: var(--violet); }
 .tag { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .06em; line-height: 1; padding: .4rem .6rem; background: var(--sand-2); color: var(--ink-soft); border-radius: 999px; }
@@ -554,6 +561,42 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .table-wrap tbody th { font-weight: 500; color: var(--ink); }
 .table-wrap tbody td { color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .table-wrap tbody tr:last-child th, .table-wrap tbody tr:last-child td { border-bottom: 0; }
+/* Tables whose cells are sentences rather than numbers: wrapping keeps the last
+   column on screen, where nowrap would scroll it past the edge of the column. */
+.table-wrap--prose tbody td { white-space: normal; font-variant-numeric: normal; }
+.table-wrap--prose th, .table-wrap--prose td { padding: .6rem .85rem; }
+.table-wrap--prose code { white-space: nowrap; }
+/* Scrollable sideways: a shadow at whichever edge still has content past it. The
+   `local` gradients are the page colour painted over the shadow, so each side
+   uncovers itself as you reach that end — no JS needed for the shadows. The
+   hand-written nudge below does need JS, since it should only appear when the
+   table actually overflows. */
+.table-wrap--prose {
+  background:
+    linear-gradient(to right, var(--paper-2) 30%, transparent) left center / 2.5rem 100% no-repeat local,
+    linear-gradient(to left, var(--paper-2) 30%, transparent) right center / 2.5rem 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--ink) 22%, transparent), transparent) left center / .9rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--ink) 22%, transparent), transparent) right center / .9rem 100% no-repeat scroll,
+    var(--paper-2);
+}
+/* The figure wrapping a prose table: the box inside it scrolls, this does not, so
+   the nudge below stays put instead of sliding away as you scroll. */
+.table-fig { margin: var(--space-3) 0; }
+.table-fig .table-wrap { margin: 0; }
+.scroll-note { display: none; margin: .45rem .2rem 0 0 !important; max-width: none; text-align: right; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: var(--coral); transition: opacity .25s ease; }
+.scroll-note .doodle { width: 1rem; height: 1rem; stroke-width: 2; margin-left: .2rem; animation: nudge-x 1.6s ease-in-out infinite; }
+/* main.js sets .can-scroll on a table box whose content is wider than its frame,
+   and .at-end once it is scrolled all the way over. */
+.table-wrap.can-scroll + .scroll-note { display: block; }
+.table-wrap.at-end + .scroll-note { opacity: 0; }
+@keyframes nudge-x { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(.3rem); } }
+@media (prefers-reduced-motion: reduce) { .scroll-note .doodle { animation: none; } }
+/* On a phone three columns of prose still need a sideways nudge, so tighten the
+   type and padding to keep as much of the last column on screen as possible. */
+@media (max-width: 639px) {
+  .table-wrap--prose table { font-size: .82rem; }
+  .table-wrap--prose th, .table-wrap--prose td { padding: .5rem .55rem; }
+}
 .callout { padding: 1rem 1.2rem; display: flex; gap: .8rem; align-items: flex-start; }
 .callout .doodle { color: var(--coral); width: 1.5rem; height: 1.5rem; margin-top: .1rem; }
 .callout p { margin: 0; font-size: .98rem; }
@@ -579,7 +622,77 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .next-up p { margin: .3rem 0 0; font-size: .95rem; color: var(--ink-soft); }
 .next-up .soon { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); }
 
-/* ---------- 14. Footer ------------------------------------------------------- */
+/* Code samples in an article, drawn as a little desktop window: a title bar with
+   three lights, the original snippet's label as the window title, and the code on
+   a dark panel underneath. `--editor` adds a line-number gutter for the samples
+   that are a file being read rather than a fragment being quoted. */
+.snippet { --snip-bg: #1b1e26; --snip-ink: #d7d3c8; --snip-faint: rgba(215, 211, 200, .45);
+  margin: var(--space-3) 0; border: 1.5px solid var(--border); border-radius: 12px 7px 13px 7px / 7px 13px 7px 12px; background: var(--snip-bg); box-shadow: 4px 5px 0 var(--shadow-ink); overflow: hidden; }
+/* The title bar. The lights reuse the browser-peek palette so the two bits of
+   fake chrome on this site look like they came from the same hand. */
+.snippet > figcaption { display: flex; align-items: center; gap: .4rem; margin: 0 !important; padding: .55rem .75rem; text-align: left !important; border-bottom: 1px solid rgba(215, 211, 200, .13); background: rgba(255, 255, 255, .04); font-family: var(--font-mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: var(--snip-faint); }
+.snippet > figcaption::before { content: ""; flex: none; width: 2.1rem; height: .55rem;
+  background: radial-gradient(circle at .275rem 50%, var(--coral-soft) .25rem, transparent 0),
+              radial-gradient(circle at 1.05rem 50%, var(--yellow) .25rem, transparent 0),
+              radial-gradient(circle at 1.825rem 50%, var(--teal) .25rem, transparent 0); }
+.snippet pre { margin: 0; padding: .95rem 1.1rem 1.1rem; overflow-x: auto; }
+.snippet code { display: block; background: none; padding: 0; border-radius: 0; font-size: .82rem; line-height: 1.75; color: var(--snip-ink); white-space: pre; }
+.snippet .line { display: block; min-height: 1.75em; }
+.snippet .c { color: var(--snip-faint); font-style: italic; }
+.snippet .k { color: var(--coral-soft); }
+.snippet .s { color: #7fd1bd; }
+
+/* Editor variant: a gutter of line numbers down the left, drawn with a counter so
+   the markup stays one span per line. */
+.snippet--editor pre { padding-left: 0; }
+.snippet--editor code { counter-reset: snip-line; }
+.snippet--editor .line { position: relative; padding-left: 3.2rem; }
+.snippet--editor .line::before { counter-increment: snip-line; content: counter(snip-line); position: absolute; left: 0; width: 2.2rem; text-align: right; color: rgba(215, 211, 200, .3); font-variant-numeric: tabular-nums; }
+/* The gutter rule sits behind the numbers and runs the full height of the block. */
+.snippet--editor pre { background: linear-gradient(90deg, rgba(255,255,255,.04) 0 2.7rem, transparent 2.7rem); }
+.snippet--editor .line { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* ---------- 14. Article figures (hand-drawn diagrams) ------------------------- */
+/* The diagrams in /writing/ are drawn in markup rather than shipped as images, so
+   they inherit the page's fonts, ink and dark mode. These are the shared bones;
+   anything specific to one diagram lives in that component's scoped styles.
+   `.sk-*` here is the article-figure prefix — unrelated to the `.sk` card sketches. */
+.sk-fig { margin: var(--space-4) 0; max-width: none; }
+/* The dashed sheet a diagram is drawn on. The padding is deliberately generous:
+   at anything tighter the boxes inside crowd the outline. */
+.sk-sheet { padding: 2rem 1.9rem 2.1rem; border: 2px dashed var(--ink-faint); border-radius: var(--radius-wobble-3); background: color-mix(in srgb, var(--sand) 60%, transparent); }
+/* A figure that is already a list with its own rail reads as clutter inside a
+   second frame, so the timelines keep the width and drop the sheet. */
+.sk-sheet--bare { padding: .4rem 0 .2rem; border: 0; background: none; }
+@media (max-width: 639px) { .sk-sheet { padding: 1.35rem 1.1rem 1.5rem; } }
+.sk-fig:nth-of-type(2n) .sk-sheet { border-radius: var(--radius-wobble-2); }
+.sk-hdr { margin: 0 0 .7rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); max-width: none; }
+/* A box drawn by hand: hard ink outline, offset shadow, and a slight lean. The
+   four lean variants cycle so neighbouring boxes never tilt the same way. */
+.sk-box { --c: var(--ink); border: 1.5px solid var(--ink); background: var(--paper-2); box-shadow: 3px 3px 0 var(--shadow-ink); padding: .7rem .85rem; }
+.sk-box--coral { --c: var(--coral); } .sk-box--blue { --c: var(--blue); } .sk-box--teal { --c: var(--teal); } .sk-box--violet { --c: var(--violet); }
+.sk-lean-1 { border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; transform: rotate(-1deg); }
+.sk-lean-2 { border-radius: 6px 12px 5px 10px / 10px 5px 12px 6px; transform: rotate(.8deg); }
+.sk-lean-3 { border-radius: 12px 6px 10px 5px / 5px 10px 6px 12px; transform: rotate(-.6deg); }
+.sk-lean-4 { border-radius: 5px 10px 6px 12px / 12px 6px 10px 5px; transform: rotate(1deg); }
+/* Ghost box: the thing we did NOT do, drawn in dashes with no shadow. */
+.sk-box--ghost { border: 1.5px dashed var(--ink-faint); background: transparent; box-shadow: none; color: var(--ink-faint); }
+.sk-mono { font-family: var(--font-mono); font-size: .78rem; line-height: 1.6; color: var(--ink-soft); white-space: pre; }
+.sk-hand { font-family: var(--font-hand); font-size: 1.1rem; line-height: 1.2; color: var(--c, var(--coral)); }
+.sk-arrow { display: block; line-height: 0; color: var(--ink-faint); }
+.sk-arrow .doodle { width: 1.6rem; height: 1.6rem; stroke-width: 1.6; }
+
+/* Whiteboard photos are black ink on white paper. On a dark page that is a slab
+   of glare, so the scan is flipped instead — thumbnail and lightbox together, or
+   enlarging one would change its colours halfway. */
+[data-theme="dark"] .ink-shot img,
+[data-theme="dark"] .lightbox--ink img { filter: invert(1) hue-rotate(180deg); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ink-shot img,
+  :root:not([data-theme="light"]) .lightbox--ink img { filter: invert(1) hue-rotate(180deg); }
+}
+
+/* ---------- 15. Footer ------------------------------------------------------- */
 .site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink);
   /* Clip only sideways: the edge plants and grass bleed past the viewport and
      would add horizontal scroll. overflow-y stays visible so the wave crest,
@@ -719,7 +832,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
   .deco-19, .deco-20 { display: none; }
 }
 
-/* ---------- 15. Motion / print ------------------------------------------------ */
+/* ---------- 16. Motion / print ------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

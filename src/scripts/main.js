@@ -177,6 +177,32 @@
     });
   }
 
+  // --- Sideways-scrollable tables: show the nudge only when there is somewhere to go ---
+  // CSS draws the edge shadows on its own, but whether a table actually overflows
+  // depends on the text and the viewport, so the written hint needs measuring.
+  var scrollers = document.querySelectorAll("[data-scrollable]");
+  if (scrollers.length) {
+    var syncScroller = function (box) {
+      // 1px of slack: sub-pixel layout can leave scrollWidth a hair over clientWidth.
+      var overflows = box.scrollWidth - box.clientWidth > 1;
+      box.classList.toggle("can-scroll", overflows);
+      box.classList.toggle("at-end", overflows && box.scrollLeft >= box.scrollWidth - box.clientWidth - 1);
+    };
+    scrollers.forEach(function (box) {
+      syncScroller(box);
+      box.addEventListener("scroll", function () { syncScroller(box); }, { passive: true });
+    });
+    var resyncAll = function () { scrollers.forEach(syncScroller); };
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(resyncAll);
+      scrollers.forEach(function (box) { ro.observe(box); });
+    } else {
+      window.addEventListener("resize", resyncAll);
+    }
+    // Web fonts land after first paint and change how wide the cells are.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(resyncAll);
+  }
+
   // --- Footer year ---------------------------------------------------------------
   document.querySelectorAll("[data-year]").forEach(function (y) { y.textContent = new Date().getFullYear(); });
 })();
