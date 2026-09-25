@@ -1,0 +1,140 @@
+---
+/* The AI-element variants I added to the registry, each as a small sketch of the
+   real component: overflowing tabs, charts with reference markers, the editable
+   list, stacked suggestions and the AI section editor. Same .sk classes as the
+   card sketches so they follow the theme. */
+const items = [
+  { key: 'tabs', name: 'Overflowing tabs', note: 'Many series, one strip. Scroll it, never wrap it.' },
+  { key: 'markers', name: 'Charts with markers', note: 'Dots, lines, areas, or all three. Show what changed, when.' },
+  { key: 'list', name: 'Editable list', note: 'Grouped rows the agent drafts and you tweak before Apply.' },
+  { key: 'stack', name: 'Stacked suggestions', note: 'Next prompts, fanned like a deck, not a wall of chips.' },
+  { key: 'editor', name: 'AI section editor', note: 'Select a section, say what to change, get an edit back.' },
+];
+const lines = [0, 1, 2, 3];
+---
+<ul class="aie" aria-label="AI elements I added to the registry">
+  {items.map((it, i) => (
+    <li class:list={['sk-box', `sk-lean-${(i % 4) + 1}`, `aie-${it.key}`]}>
+      <svg class="sk aie-svg" viewBox="0 0 240 130" aria-hidden="true">
+        {it.key === 'tabs' && (
+          <g>
+            <rect x="8" y="8" width="224" height="26" rx="7" class="f-tint"/>
+            <rect x="24" y="11" width="56" height="20" rx="5" class="f-card s-soft"/>
+            <text x="52" y="25" text-anchor="middle" class="aie-t">MEA</text>
+            <text x="104" y="25" text-anchor="middle" class="aie-t t-soft">SEA</text>
+            <text x="148" y="25" text-anchor="middle" class="aie-t t-soft">US&amp;CA</text>
+            <text x="194" y="25" text-anchor="middle" class="aie-t t-soft">LC Wo</text>
+            <circle cx="16" cy="21" r="10" class="f-card aie-edge"/><path d="M18 17l-4 4 4 4" class="s-ink"/>
+            <circle cx="224" cy="21" r="10" class="f-card aie-edge"/><path d="M222 17l4 4-4 4" class="s-ink"/>
+            {lines.map((l) => <line x1="14" x2="226" y1={52 + l * 20} y2={52 + l * 20} class="aie-grid"/>)}
+            <path d="M14 66c30-4 46 2 70-6s50 0 74 4 40 8 68 10" class="aie-line aie-line--teal"/>
+            <path d="M14 108c40-2 80 0 120 1s60 1 92 2" class="aie-line aie-line--blue"/>
+          </g>
+        )}
+        {it.key === 'markers' && (
+          <g>
+            <rect x="14" y="30" width="62" height="86" class="aie-area"/>
+            <text x="45" y="42" text-anchor="middle" class="aie-t aie-t--sm t-soft">baseline</text>
+            {lines.map((l) => <line x1="14" x2="226" y1={30 + l * 28} y2={30 + l * 28} class="aie-grid"/>)}
+            <path d="M14 58c20 2 30 6 48 2s30-18 50-18 50 8 70 16 30 12 44 14" class="aie-line aie-line--violet"/>
+            <line x1="112" x2="112" y1="24" y2="116" class="aie-vline"/>
+            <text x="116" y="22" class="aie-t aie-t--sm aie-coral">Budget +20%</text>
+            <circle cx="112" cy="42" r="3.5" class="aie-dot-coral"/>
+            <path d="M182 50l5 5-5 5-5-5z" class="aie-dot-amber"/>
+            <text x="182" y="72" text-anchor="middle" class="aie-t aie-t--sm aie-amber">New ads</text>
+          </g>
+        )}
+        {it.key === 'list' && (
+          <g>
+            <rect x="8" y="6" width="224" height="24" rx="4" class="f-tint"/>
+            <text x="18" y="22" class="aie-t aie-b">Group A</text>
+            <rect x="182" y="10" width="42" height="16" rx="5" class="f-card s-soft"/>
+            <text x="203" y="21.5" text-anchor="middle" class="aie-t aie-t--sm">+ Add</text>
+            {[0, 1, 2].map((r) => (
+              <g>
+                <text x="18" y={48 + r * 20} class="aie-t t-soft">{`Item ${r + 1}`}</text>
+                <path d={`M192 ${46 + r * 20}l7-7 3 3-7 7h-3z`} class="s-ink aie-thin"/>
+                <path d={`M210 ${39 + r * 20}h10m-8 0v9h6v-9m-5-2h4`} class="s-ink aie-thin"/>
+                <line x1="8" x2="232" y1={54 + r * 20} y2={54 + r * 20} class="s-line"/>
+              </g>
+            ))}
+            <text x="150" y="118" text-anchor="middle" class="aie-t aie-t--sm t-soft">Cancel</text>
+            <rect x="178" y="104" width="50" height="20" rx="5" class="f-ink"/>
+            <text x="203" y="118" text-anchor="middle" class="aie-t aie-t--sm aie-paper">Apply</text>
+          </g>
+        )}
+        {it.key === 'stack' && (
+          <g>
+            <rect x="36" y="34" width="168" height="34" rx="9" class="f-card s-soft"/>
+            <rect x="26" y="44" width="188" height="36" rx="9" class="f-card s-soft"/>
+            <rect x="14" y="56" width="212" height="40" rx="10" class="f-card aie-edge"/>
+            <path d="M34 67l2.4 5.6 5.6 2.4-5.6 2.4-2.4 5.6-2.4-5.6-5.6-2.4 5.6-2.4z" class="aie-spark"/>
+            <text x="50" y="80" class="aie-t aie-b">Help me brainstorm ideas</text>
+            <text x="120" y="118" text-anchor="middle" class="aie-hand">+2 more, tucked behind</text>
+          </g>
+        )}
+        {it.key === 'editor' && (
+          <g>
+            <rect x="12" y="10" width="216" height="46" rx="3" class="aie-sel"/>
+            <rect x="18" y="16" width="150" height="10" rx="3" class="f-ink" fill-opacity=".7"/>
+            <rect x="18" y="32" width="190" height="5" rx="2.5" class="f-bar"/>
+            <rect x="18" y="42" width="140" height="5" rx="2.5" class="f-bar"/>
+            <rect x="18" y="68" width="200" height="5" rx="2.5" class="f-bar-2"/>
+            <rect x="18" y="78" width="170" height="5" rx="2.5" class="f-bar-2"/>
+            <g>
+              <rect x="70" y="46" width="140" height="78" rx="8" class="f-card aie-edge"/>
+              <path d="M82 58l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" class="aie-spark-v"/>
+              <text x="94" y="67" class="aie-t aie-t--sm aie-b">AI edit suggestion</text>
+              <rect x="78" y="74" width="124" height="26" rx="5" class="aie-input"/>
+              <rect x="152" y="104" width="50" height="14" rx="5" class="aie-submit"/>
+              <text x="177" y="114" text-anchor="middle" class="aie-t aie-t--xs aie-paper">Submit</text>
+            </g>
+          </g>
+        )}
+      </svg>
+      <strong>{it.name}</strong>
+      <span>{it.note}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .aie { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; }
+  .aie li { display: flex; flex-direction: column; gap: .2rem; padding: .8rem .85rem 1rem; }
+  .aie li:last-child { grid-column: 1 / -1; }
+  .aie-svg { width: 100%; height: auto; margin-bottom: .5rem; border-radius: 6px; background: var(--paper); }
+  .aie-editor .aie-svg { max-width: 26rem; margin-inline: auto; }
+  .aie strong { font-size: .95rem; font-weight: 500; color: var(--ink); }
+  .aie span { font-size: .82rem; line-height: 1.45; color: var(--ink-faint); }
+
+  .aie-t { font-size: 10px; }
+  .aie-t--sm { font-size: 8.5px; }
+  .aie-t--xs { font-size: 7.5px; }
+  .aie-b { font-weight: 600; }
+  .aie-paper { fill: var(--paper) !important; }
+  .aie-coral { fill: var(--coral) !important; }
+  .aie-amber { fill: #e0a030 !important; }
+  .aie-hand { font-family: var(--font-hand) !important; font-size: 14px; fill: var(--ink-faint) !important; }
+
+  .aie-grid { stroke: var(--ink); stroke-opacity: .12; stroke-dasharray: 3 3; }
+  .aie-line { fill: none; stroke-width: 2; stroke-linecap: round; }
+  .aie-line--teal { stroke: var(--teal); }
+  .aie-line--blue { stroke: var(--blue); }
+  .aie-line--violet { stroke: var(--violet); }
+  .aie-area { fill: var(--ink); fill-opacity: .06; stroke: var(--ink); stroke-opacity: .18; }
+  .aie-vline { stroke: var(--coral); stroke-width: 1.3; stroke-dasharray: 4 3; }
+  .aie-dot-coral { fill: var(--coral); }
+  .aie-dot-amber { fill: #e0a030; }
+  .aie-thin { stroke-width: 1.1; }
+  /* Outlined surface that stays opaque (.s-ink sets fill: none). */
+  .aie-edge { stroke: var(--ink); stroke-width: 1.4; }
+  .aie-spark { fill: var(--yellow); }
+  .aie-spark-v { fill: var(--violet); }
+  .aie-sel { fill: var(--violet); fill-opacity: .16; }
+  .aie-input { fill: none; stroke: var(--violet); stroke-width: 1.5; }
+  .aie-submit { fill: var(--violet); fill-opacity: .8; }
+
+  @media (max-width: 519px) {
+    .aie { grid-template-columns: 1fr; }
+  }
+</style>

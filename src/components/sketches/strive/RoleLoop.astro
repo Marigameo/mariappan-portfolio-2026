@@ -1,0 +1,37 @@
+---
+/* The loop from use case to production and back again, run with the team.
+   Steps wrap as chips; the last one loops back with a hand-written note. */
+import Icon from '../../Icon.astro';
+
+const steps = [
+  { label: 'Use cases', icon: 'lightbulb', tone: 'coral' },
+  { label: 'User research', icon: 'book', tone: 'blue' },
+  { label: 'Prototype', icon: 'pen', tone: 'teal' },
+  { label: 'Feedback', icon: 'mail', tone: 'violet' },
+  { label: 'Iterate', icon: 'arrow-curly', tone: 'coral' },
+  { label: 'Ship to prod', icon: 'plane', tone: 'blue' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet rl" role="img" aria-label="The loop from idea to production: use cases, user research, prototype, feedback, iterate, ship to production, and round again.">
+    <ol class="rl-steps">
+      {steps.map((s, i) => (
+        <li class:list={['sk-box', `sk-box--${s.tone}`, `sk-lean-${(i % 4) + 1}`]}>
+          <Icon name={s.icon} />
+          <span>{s.label}</span>
+        </li>
+      ))}
+    </ol>
+    <p class="rl-note sk-hand"><Icon name="arrow-curly" /> …and round again.</p>
+  </div>
+</figure>
+
+<style>
+  .rl-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem 1.4rem; counter-reset: rl; }
+  .rl-steps li { counter-increment: rl; position: relative; display: flex; align-items: center; gap: .55rem; font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .rl-steps li::after { content: counter(rl, decimal-leading-zero); margin-left: auto; font-family: var(--font-mono); font-size: .62rem; color: var(--ink-faint); }
+  .rl-steps :global(.doodle) { color: var(--c); width: 1.2rem; height: 1.2rem; }
+  .rl-note { margin: 1.1rem 0 0 !important; max-width: none; text-align: right; color: var(--coral); }
+  .rl-note :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1); }
+  @media (max-width: 559px) { .rl-steps { grid-template-columns: 1fr 1fr; } }
+</style>

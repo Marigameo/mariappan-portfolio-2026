@@ -1,19 +1,35 @@
 ---
+/* Strive AI, told as my part in it rather than as the product: a short deck of
+   numbered "slides", each a headline, two or three pointers and a drawing. The
+   technical teardown lives in /writing/generative-ui-chat-engine/, linked from
+   the big card at the end. */
 import WorkLayout from '../../layouts/WorkLayout.astro';
 import Icon from '../../components/Icon.astro';
 import StriveChat from '../../components/sketches/StriveChat.astro';
+import RoleLoop from '../../components/sketches/strive/RoleLoop.astro';
+import FoundationStack from '../../components/sketches/strive/FoundationStack.astro';
+import BuildVsOwn from '../../components/sketches/strive/BuildVsOwn.astro';
+import CanvasBeforeAfter from '../../components/sketches/strive/CanvasBeforeAfter.astro';
+import AiElements from '../../components/sketches/strive/AiElements.astro';
+import ParserContracts from '../../components/sketches/strive/ParserContracts.astro';
 
-const description = "Strive's chat agent renders answers as live, interactive UI. The frontend behind it — a from-scratch streaming engine, a block and slot vocabulary, and the design system it runs on — is work I've helped build from day zero.";
+const description = "Strive AI, a chat that answers in live interfaces, and my part in building it with a small team: the foundations, the bet on owning the chat, moving the canvas beside the thread, and the AI elements, parser and contracts underneath.";
+
+const lessons = [
+  { miss: 'Rendered rich slots inline, in the thread.', lesson: 'Give big surfaces their own room. The container should fit the content, not the other way round.' },
+  { miss: 'Asked the model for one giant JSON per answer.', lesson: 'Make complexity additive. One bad block should never sink the whole reply.' },
+  { miss: 'Worried a side panel would look like a copy.', lesson: 'Familiar is a feature. Stand out on what goes inside the pattern.' },
+  { miss: 'No AI playbook on the team, me included.', lesson: 'Benchmark, borrow, break, repeat. Ship small and learn in production.' },
+];
 ---
 <WorkLayout
   title="Strive AI — generative UI chat"
   description={description}
-  ogDescription="Strive's chat agent renders answers as live, interactive UI. The frontend behind it: a from-scratch streaming engine, a block and slot vocabulary, and the design system it runs on."
-  eyebrow="Strivelabs · Founding engineer · 2024 → now"
+  ogDescription="Strive AI, a chat that answers in live interfaces, and my part in building it with a small team."
+  eyebrow="Strivelabs · Design engineer · 2024 → now"
   heading="Strive AI"
   facts={[
-    { label: 'Role', value: 'Founding engineer · frontend owner' },
-    { label: 'Scope', value: 'Gen-UI engine, end to end' },
+    { label: 'Role', value: 'Design engineer · frontend' },
     { label: 'Status', value: 'In production, still shipping' },
   ]}
   link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
@@ -22,79 +38,166 @@ const description = "Strive's chat agent renders answers as live, interactive UI
     url: 'https://strivelabs.ai/',
     description: 'The chat surface Strive agents reach the user through: a from-scratch streaming engine, a block and slot vocabulary, and rich generative interfaces rendered live.',
     inLanguage: 'en',
-    keywords: 'generative UI, AI chat, streaming, React 19, TypeScript, design systems, design engineering',
+    keywords: 'generative UI, AI chat, design engineering, UX for AI, design systems, AI elements, streaming, React, TypeScript',
   }}
 >
   <StriveChat slot="sketch" />
 
-  <Fragment slot="lede">Marketing engine that answers in <mark class="hl">live interfaces, not paragraphs</mark>. I've been on the frontend since day zero — building the streaming engine, the block vocabulary, and the gen-UI foundation the platform runs on.</Fragment>
+  <Fragment slot="lede">A marketing chat that answers in <mark class="hl">live interfaces, not paragraphs</mark>. We built it as a small team, all new to AI, and I got to play a big part on the frontend: research, prototypes, the design system and the UI we shipped. This is my side of the story.</Fragment>
 
-  <h2>The setup</h2>
-  <ul class="doodle-list">
-    <li>Marketing used to run on pre-built dashboards, spreadsheets, and slide decks — each one kept alive by hand, and collaborating meant chasing whoever "owned" the file.</li>
-    <li>The agentic era handed us a better primitive: just <em>ask</em>. So we bet the platform on chat — but chat that answers in rich, generative UI, not walls of text.</li>
-  </ul>
+  <div class="story">
+    <section class="slide" aria-labelledby="s-role">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">My role</p><h2 id="s-role">Design engineer, end to end</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>New ground for all of us.</strong> None of us came from AI, so we learned UI for AI together.</li>
+        <li><strong>Design and code, side by side.</strong> I helped carry ideas from use case to production, iterating with the team at every step.</li>
+      </ul>
+      <RoleLoop />
+    </section>
 
-  <h2>The bet we made</h2>
-  <ul class="doodle-list">
-    <li>Gen UI wasn't really a category yet. None of us were AI experts — we learned it hands-on: benchmark, borrow, break, repeat.</li>
-    <li>We test-drove the shortcuts — Vercel AI SDK, Thesys, a few others. Promising, but not quite there yet for what we needed.</li>
-    <li>So we chose to build the engine in-house. It's the core of the platform, and owning it outright gave us the flexibility to shape it around marketing — more responsibility, but worth it.</li>
-  </ul>
+    <section class="slide" aria-labelledby="s-found">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Foundations</p><h2 id="s-found">Bones before features</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Defined <strong>primitives, AI elements, screens and layouts</strong> before features piled on.</li>
+        <li>Those layers became the base of our <strong>block</strong> concept: everything the model renders is built from them.</li>
+      </ul>
+      <FoundationStack />
+    </section>
 
-  <h2>What's under the chat</h2>
-  <ul class="doodle-list">
-    <li><strong>Blocks</strong> — the atom. Charts, tables, forms, controls, whole interactive surfaces the model composes an answer from.</li>
-    <li><strong>A canvas beside the thread</strong> — a workspace for things too big to inline. We landed on it early, and tuned it for agentic, marketing-specific work rather than a generic doc pane.</li>
-    <li><strong>Contracts</strong> — every streamed block is validated at the boundary, so a confused model degrades gracefully instead of blanking the screen.</li>
-  </ul>
+    <section class="slide" aria-labelledby="s-bet">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">The bet</p><h2 id="s-bet">Own the chat, don't rent it</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Streaming and AI elements: <strong>build it ourselves, or pull in a ready-made kit?</strong></li>
+        <li>I bet on owning it. Chat is the core, and flexible interfaces are our moat.</li>
+      </ul>
+      <BuildVsOwn />
+    </section>
 
-  <h2>Where it got interesting</h2>
-  <p>The first cut asked the model for one giant JSON payload holding every block. Fine — until answers got complex, and then malformed JSON, truncations, silent retries.</p>
-  <!-- .flow is white-space: pre, so the line breaks below are the layout. -->
-  <div class="flow" role="img" aria-label="Before: the model returns a single JSON blob that is parsed into progressive blocks. After: the model emits individual tool calls, each parsed on its own, with plain text streaming alongside.">
-<b class="bad">BEFORE</b>
-LLM ─▶ one JSON blob ─▶ CONTENT_STREAM ─▶ parser ─▶ blocks
+    <section class="slide" aria-labelledby="s-canvas">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · slots &amp; canvas</p><h2 id="s-canvas">Move the canvas out of the thread</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Answers can be <strong>rich surfaces</strong>: artifacts, an editor, whole pre-built agent interfaces.</li>
+        <li>We first rendered them inline. It worked, but it kept hurting my taste, so I redesigned slots to <strong>open in a right-hand panel</strong>.</li>
+      </ul>
+      <CanvasBeforeAfter />
+      <aside class="qa sk-box sk-lean-2" aria-label="The debate">
+        <p class="qa-q"><span>Team</span>"Isn't that just a Claude copy?"</p>
+        <p class="qa-a"><span>Me</span>Claude set the standard, and this fixes our usability problems. If it's the right way to present, we use it and make what goes inside the panel ours.</p>
+      </aside>
+    </section>
 
-<b class="good">AFTER</b>
-LLM ─▶ individual tool calls ─▶ TOOL_STREAM_START/CONTENT
-    ─▶ per-tool parsing ─▶ blocks
-    (plain text keeps streaming alongside)</div>
-  <ul class="doodle-list">
-    <li>Rebuilt around individual tool calls: each block parses on its own, so one bad block can't sink the whole answer.</li>
-    <li>Richer answers just mean <em>more</em> tool calls, not a bigger blob — complexity became additive.</li>
-  </ul>
+    <section class="slide" aria-labelledby="s-elements">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">AI elements registry</p><h2 id="s-elements">New pieces for the kit</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><code>@strivelabs/ui-core</code> for the foundations, <code>@strivelabs/ui-blocks</code> for reusable blocks, with our AI elements across both.</li>
+        <li>Our use cases kept asking for UI that didn't exist yet, so I designed and built the variants. Five I'd pin:</li>
+      </ul>
+      <AiElements />
+    </section>
 
-  <blockquote>Chat is the easy part. The harness underneath it is the product.</blockquote>
+    <section class="slide" aria-labelledby="s-under">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Under the UI</p><h2 id="s-under">A parser and a contract for everything</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Custom streaming parser</strong> between backend blocks and the renderer. Inspired by <a href="https://github.com/globalaiplatform/langdiff" rel="noopener">langdiff</a>, extended with our platform specifics.</li>
+        <li><strong>One contract system</strong> for interactive, read-only and stateful components alike. Hard to get right, and it took a lot of client and server pairing.</li>
+      </ul>
+      <ParserContracts />
+    </section>
 
-  <h2>Under the hood</h2>
-  <p>React 19 · TypeScript · custom SSE streaming · Zod contracts · an in-house block &amp; canvas library. <a href="/writing/generative-ui-chat-engine/">Full teardown here</a>.</p>
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What I'd tell day-zero me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
 
-  <!--
-    Adding media: drop files into public/images/work/strive-gen-ui-chat/ and use one of these.
-
-    <figure>
-      <img src="/images/work/strive-gen-ui-chat/slot-canvas.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
-      <figcaption>Slot canvas, opened beside a thread</figcaption>
-    </figure>
-
-    <figure>
-      <video src="/images/work/strive-gen-ui-chat/streaming.mp4" poster="/images/work/strive-gen-ui-chat/streaming-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
-      <figcaption>Blocks streaming in, one at a time</figcaption>
-    </figure>
-  -->
-
-  <aside class="next-up callout wobbly wobbly--2" aria-label="Long-form write-up">
-    <Icon name="pen" />
-    <div>
-      <strong>Deep dive: streaming generative UI, block by block</strong>
-      <p>Parser internals, the tool-call migration, and everything that broke on the way — a year of it, written up.</p>
-      <p class="next-up-link"><a class="pill" href="/writing/generative-ui-chat-engine/">Read the full story<Icon name="arrow-right" /></a></p>
-    </div>
-  </aside>
+    <a class="deep-dive wobbly wobbly--2" href="/writing/generative-ui-chat-engine/">
+      <span class="deep-dive-shot taped ink-shot">
+        <img src="/images/writing/generative-ui-chat-engine/sketch-chat-engine.png" alt="" width="2400" height="1419" loading="lazy" decoding="async">
+      </span>
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="pen" />Deep dive · ~15 min read</span>
+        <strong>From answers to UI: how we built Strive’s generative UI engine</strong>
+        <span class="deep-dive-sub">The options we weighed, why we took the bet, and everything that broke along the way.</span>
+        <span class="deep-dive-go">Read the full story<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+  </div>
 </WorkLayout>
-<style>
-  .next-up-link { margin-top: .7rem !important; }
-  .next-up-link .pill { font-size: .88rem; padding: .45rem .85rem; }
-</style>
 
+<style>
+  /* The story runs the full width of the narrow wrap; only the pointers keep a
+     reading measure. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  /* The "Claude copy?" exchange, as two chat lines. */
+  .qa { margin-top: var(--space-3); padding: 1rem 1.1rem; display: grid; gap: .6rem; }
+  .qa p { margin: 0 !important; max-width: none; font-size: .95rem; line-height: 1.5; }
+  .qa span { display: inline-block; min-width: 3.4rem; margin-right: .5rem; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .qa-q { color: var(--ink-faint) !important; font-style: italic; }
+  .qa-a { color: var(--ink) !important; }
+  .qa-a span { color: var(--teal); }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* The big card to the long-form write-up. */
+  .deep-dive { display: block; margin-top: var(--space-5); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-shot { display: block; aspect-ratio: 16 / 7; overflow: visible; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; transform: rotate(-.6deg); transition: transform .25s ease; }
+  .deep-dive:hover .deep-dive-shot { transform: rotate(0); }
+  .deep-dive-shot img { width: 100%; height: 100%; object-fit: cover; object-position: 0 30%; border-radius: inherit; }
+  .deep-dive-body { display: grid; gap: .45rem; padding: 1.2rem .3rem .2rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+</style>

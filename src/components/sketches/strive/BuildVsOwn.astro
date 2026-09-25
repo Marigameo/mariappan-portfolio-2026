@@ -1,0 +1,38 @@
+---
+/* The build-vs-buy call for streaming and AI elements. The path not taken is a
+   ghost box; the bet is inked, with a stamp. */
+const kit = ['Fast on day one', 'Their abstractions, their roadmap', 'A bundle of things we would never use', 'Wait on upstream for every fix'];
+const own = ['Chat is the core of the product', 'Flexible interfaces are the moat', 'Iterate daily, zero dependencies', 'Grow only what our problems need'];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet bvo" role="img" aria-label="Ready-made kit: fast on day one, but their abstractions and roadmap, a bundle we would not use, and waiting on upstream. Owning it, the bet I took: chat is the core, flexible interfaces are the moat, iterate daily with no dependencies, grow only what our problems need.">
+    <div class="sk-box sk-box--ghost sk-lean-1 bvo-col">
+      <p class="sk-hdr">Ready-made kit</p>
+      <ul>{kit.map((k, i) => <li class={i === 0 ? 'is-plus' : ''}>{k}</li>)}</ul>
+    </div>
+    <p class="bvo-vs" aria-hidden="true">vs</p>
+    <div class="sk-box sk-box--coral sk-lean-2 bvo-col bvo-own">
+      <p class="sk-hdr">Own it <span class="bvo-stamp">the bet</span></p>
+      <ul>{own.map((k) => <li class="is-plus">{k}</li>)}</ul>
+    </div>
+  </div>
+  <figcaption>The price: every bug is ours. Worth it for the one surface everything else runs through.</figcaption>
+</figure>
+
+<style>
+  .bvo { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+  .bvo-col .sk-hdr { font-size: .64rem; }
+  .bvo-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+  .bvo-col li { position: relative; padding-left: 1.2rem; font-size: .85rem; line-height: 1.4; }
+  .bvo-col li::before { content: "–"; position: absolute; left: 0; font-weight: 700; }
+  .bvo-col li.is-plus::before { content: "+"; color: var(--teal); }
+  .sk-box--ghost li { color: var(--ink-faint); }
+  .bvo-own li { color: var(--ink); }
+  .bvo-own .sk-hdr { color: var(--coral); display: flex; align-items: center; gap: .5rem; }
+  .bvo-stamp { padding: .15rem .45rem; border: 1.5px solid var(--coral); border-radius: 4px; font-family: var(--font-hand); font-size: .95rem; letter-spacing: 0; text-transform: none; transform: rotate(-6deg); }
+  .bvo-vs { margin: 0 !important; font-family: var(--font-display); font-size: 1.4rem; color: var(--ink-faint); }
+  @media (max-width: 559px) {
+    .bvo { grid-template-columns: 1fr; }
+    .bvo-vs { text-align: center; }
+  }
+</style>

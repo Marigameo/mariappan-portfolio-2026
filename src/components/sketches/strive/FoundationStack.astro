@@ -1,0 +1,35 @@
+---
+/* The four layers I set up before features piled on. Drawn as slabs, widest at
+   the bottom, each layer only building on the ones below it. */
+const layers = [
+  { name: 'Screens & layouts', pkg: '', eg: ['Chat', 'Canvas panel', 'Workspace'], tone: 'violet' },
+  { name: 'Blocks', pkg: '@strivelabs/ui-blocks', eg: ['Table', 'Chart', 'Form', 'Artifact card'], tone: 'teal' },
+  { name: 'AI elements', pkg: 'AI-native pieces', eg: ['Streaming text', 'Suggestions', 'Section editor'], tone: 'coral' },
+  { name: 'Primitives', pkg: '@strivelabs/ui-core', eg: ['Button', 'Input', 'Tabs', 'Popover'], tone: 'blue' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet fs" role="img" aria-label="Four layers, bottom up: primitives in @strivelabs/ui-core, AI elements, blocks in @strivelabs/ui-blocks, then screens and layouts. Together they are the base of the block concept.">
+    <ol class="fs-stack">
+      {layers.map((l, i) => (
+        <li class:list={['sk-box', `sk-box--${l.tone}`, `sk-lean-${i + 1}`]} style={`--w:${70 + i * 10}%`}>
+          <p class="fs-head"><strong>{l.name}</strong>{l.pkg && <code>{l.pkg}</code>}</p>
+          <p class="fs-eg">{l.eg.map((e) => <span>{e}</span>)}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="fs-note sk-hand">the ground our block concept stands on</p>
+  </div>
+</figure>
+
+<style>
+  .fs-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; justify-items: center; }
+  .fs-stack li { width: var(--w); padding: .65rem .9rem .75rem; }
+  .fs-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .2rem .8rem; margin: 0 0 .45rem !important; max-width: none; }
+  .fs-head strong { font-size: .95rem; font-weight: 500; color: var(--c); }
+  .fs-head code { font-family: var(--font-mono); font-size: .68rem; color: var(--ink-faint); background: none; padding: 0; }
+  .fs-eg { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0 !important; max-width: none; }
+  .fs-eg span { padding: .2rem .5rem; border-radius: 999px; background: var(--sand-2); font-size: .72rem; color: var(--ink-soft); }
+  .fs-note { margin: 1rem 0 0 !important; max-width: none; text-align: center; color: var(--coral); }
+  @media (max-width: 559px) { .fs-stack li { width: 100%; } }
+</style>
