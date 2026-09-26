@@ -1,0 +1,52 @@
+---
+/* Not "our components or the agent's HTML" but both, each where it fits. One
+   node forks into two branches; drawn like the hybrid-split figure in the
+   gen-UI post, with the fork collapsing to a single stem when they stack. */
+const branches = [
+  { label: 'Controlled components', carrier: 'tool call → our renderer', sink: 'Chat cards, forms, approvals', why: 'where consistency matters', tone: 'blue' },
+  { label: 'Agent-written HTML', carrier: 'one HTML file → a sandboxed canvas', sink: 'Reports and dashboards', why: 'open-ended, data-heavy', tone: 'coral' },
+];
+
+const alt =
+  'The chat forks two ways. Controlled components go through a tool call into our own renderer, for chat cards, forms and approvals where consistency matters. ' +
+  'Agent-written HTML goes into a sandboxed canvas as one HTML file, for reports and dashboards that are open-ended and data-heavy.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet tk" role="img" aria-label={alt}>
+    <p class="tk-source"><span>Strive chat</span></p>
+    <div class="tk-fork" aria-hidden="true"><i></i><i></i></div>
+    <div class="tk-branches">
+      {branches.map((b, i) => (
+        <div class="tk-branch">
+          <div class:list={['sk-box', `sk-box--${b.tone}`, `sk-lean-${i + 1}`, 'tk-top']}>{b.label}</div>
+          <p class="tk-carrier">{b.carrier}</p>
+          <div class:list={['sk-box', `sk-lean-${i + 3}`, 'tk-sink']}><strong>{b.sink}</strong><span>{b.why}</span></div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <figcaption>Controlled output and agent-written UI, side by side. The registry keeps the chat consistent; the agent gets the surfaces a schema would only get in the way of.</figcaption>
+</figure>
+
+<style>
+  .tk-branches, .tk-fork { max-width: 40rem; margin-inline: auto; }
+  .tk-source { margin: 0 !important; max-width: none; text-align: center; }
+  .tk-source span { display: inline-block; padding: .45rem 1rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .85rem; font-weight: 500; }
+  .tk-fork { display: flex; height: 1.9rem; }
+  .tk-fork i { flex: 1; height: 100%; margin-top: .9rem; border-top: 1.5px dashed var(--ink-faint); }
+  .tk-fork i:first-child { border-right: 1.5px dashed var(--ink-faint); border-top-right-radius: 8px; }
+  .tk-fork i:last-child { border-left: 1.5px dashed var(--ink-faint); border-top-left-radius: 8px; }
+  .tk-branches { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .tk-branch { display: grid; justify-items: center; gap: .45rem; text-align: center; }
+  .tk-top { width: 100%; font-size: .88rem; font-weight: 500; color: var(--c); }
+  .tk-sink { width: 100%; display: grid; gap: .1rem; }
+  .tk-sink strong { font-size: .84rem; font-weight: 500; color: var(--ink); }
+  .tk-sink span { font-size: .74rem; color: var(--ink-faint); }
+  .tk-carrier { margin: 0 !important; max-width: none; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1.2; color: var(--ink-faint); }
+  @media (max-width: 519px) {
+    .tk-fork { justify-content: center; height: 1.4rem; }
+    .tk-fork i { flex: none; width: 0; border: 0 !important; border-left: 1.5px dashed var(--ink-faint) !important; margin-top: 0; border-radius: 0 !important; }
+    .tk-fork i:last-child { display: none; }
+    .tk-branches { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+</style>

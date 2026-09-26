@@ -18,6 +18,7 @@ import HybridSplit from '../../components/sketches/genui/HybridSplit.astro';
 import GroupingDiagram from '../../components/sketches/genui/GroupingDiagram.astro';
 import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
 import StatGrid from '../../components/sketches/genui/StatGrid.astro';
+import TypedAnswer from '../../components/sketches/genui/TypedAnswer.astro';
 
 const description =
   'A year of building a chat where every non-text element is an LLM tool call. Why we started by asking the model for one big JSON document, why that ceiling was structural rather than fixable, and what changed when we pivoted to one tool call per component.';
@@ -89,7 +90,7 @@ type MetricsGridProps = z.infer&lt;typeof metricsGrid&gt;;`;
 >
   <Fragment slot="lede">A year of building a chat where every non-text element is an <mark class="hl">LLM tool call</mark>. Why we started by asking the model for one big JSON document, why that ceiling turned out to be structural rather than fixable, and what changed when we pivoted to one tool call per component.</Fragment>
 
-  <p><strong>Strive AI</strong> is our generative UI chat engine, the gateway to the agentic marketing OS we’ve built at <a href="https://strivelabs.ai/" rel="noopener">Strivelabs</a>. I’ve been on the frontend of it since day zero.</p>
+  <p><strong>Strive AI</strong> is our generative UI chat engine, the gateway to the agentic marketing OS we’ve built at <a href="https://strivelabs.ai/" rel="noopener">Strivelabs</a>. I’ve had the privilege of building its frontend with the team from day zero.</p>
 
   <blockquote>A chat that answers in UI, not just text.</blockquote>
 
@@ -365,6 +366,9 @@ type MetricsGridProps = z.infer&lt;typeof metricsGrid&gt;;`;
   <p>Two the post hasn’t covered.</p>
   <p><strong>Ship structural rewrites opt-in.</strong> The canvas went out behind a per-surface flag that defaulted to the old behaviour, migrated one experience at a time. The tool catalogue is opt-in per tool. We restructured a chat people use daily without a single cutover. Caution had nothing to do with it. It’s the only reason we could move fast enough to attempt it.</p>
   <p><strong>The UI should not be authoritative.</strong> The one I most wish we’d unlearned sooner. Our first prompt literally said the user isn’t expected to reply in free text. The current design inverts it: every card can be answered by typing instead. A confident typed answer applies directly. An ambiguous one re-presents the same card pre-filled with the agent’s interpretation, so the user corrects rather than re-explains.</p>
+
+  <TypedAnswer />
+
   <blockquote>Generative UI is an accelerant on a conversation, not a replacement for one. Every time we’ve forgotten that, usage data has reminded us within a week.</blockquote>
 
   <h2>Twelve months in one timeline</h2>

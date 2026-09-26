@@ -143,6 +143,8 @@
       btn.addEventListener("click", function () {
         var thumb = btn.querySelector("img");
         lbImg.src = btn.getAttribute("data-full");
+        // whiteboard scans flip in dark mode; screenshots keep their colours
+        lightbox.classList.toggle("lightbox--ink", btn.classList.contains("ink-shot"));
         lbImg.alt = thumb ? thumb.alt : "";
         if (lbCap) lbCap.textContent = thumb ? thumb.alt : "";
         lightbox.showModal();

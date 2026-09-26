@@ -1,0 +1,25 @@
+---
+/* How a sandboxed report gets live data without ever holding a key: it asks,
+   the host checks the message, runs the call as the user, and answers only
+   that question. */
+import Sequence from './Sequence.astro';
+
+interface Props { caption?: string }
+const { caption = 'The report asks, the host answers. Credentials, the session and every check stay on the host side of the frame.' } = Astro.props;
+---
+<Sequence
+  lanes={[
+    { label: 'Report · sandbox', sub: 'the HTML the agent wrote', tone: 'coral' },
+    { label: 'Host · Strive app', sub: 'holds the session', tone: 'blue' },
+    { label: 'Your data', sub: 'ads, analytics, CRM, warehouse', tone: 'teal' },
+  ]}
+  steps={[
+    { from: 0, to: 1, label: 'query(…) · id 7', note: 'asks, holding no keys' },
+    { from: 1, to: 1, label: 'Three checks', note: 'source · origin · shape' },
+    { from: 1, to: 2, label: 'call as the user', note: 'host picks the credential · read-only' },
+    { from: 2, to: 1, label: 'rows' },
+    { from: 1, to: 0, label: 'result · id 7', note: 'only the answer to its own question' },
+  ]}
+  alt="Sequence: the sandboxed report posts a query with a request id to the host. The host runs three checks on the message: its source, its origin and its shape. It then calls the data source as the signed-in user, choosing the credential itself and only running read-only actions. The rows come back to the host, which posts the result to the report with the same request id."
+  caption={caption}
+/>

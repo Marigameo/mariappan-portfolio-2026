@@ -1,0 +1,95 @@
+---
+/* "The UI should not be authoritative", drawn. The agent asks with a card, and
+   the user types back instead of clicking. The answer forks: a confident one
+   applies straight away; an ambiguous one brings the same card back,
+   pre-filled with the agent's reading, so the user only has to correct it.
+   Two branches side by side, stacked on a phone with the fork as one stem. */
+import Icon from '../../Icon.astro';
+
+const alt =
+  'The agent asks with a card: weekly budget for Search, with options of 20k, 50k or custom and a confirm button, plus a hint that you can just type. ' +
+  'The user types instead of clicking. A confident reply, "35k, search only", is applied directly. ' +
+  'An ambiguous reply, "a bit lower than last month?", brings the same card back pre-filled with 40k, marked as the agent’s reading of last month’s 48k minus about 15%, with confirm and change buttons.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ta" role="img" aria-label={alt}>
+    <p class="sk-hdr ta-hdr">The agent asks with a card</p>
+    <div class="sk-box sk-lean-1 ta-card ta-card--ask">
+      <p class="ta-q">Weekly budget for Search?</p>
+      <p class="ta-opts"><span>₹20k</span><span>₹50k</span><span>Custom</span></p>
+      <p class="ta-foot"><span class="ta-btn">Confirm</span><span class="ta-hint"><Icon name="pen" />or just type your answer</span></p>
+    </div>
+
+    <div class="ta-fork" aria-hidden="true"><i></i><i></i></div>
+
+    <div class="ta-branches">
+      <div class="ta-branch ta-branch--sure">
+        <p class="ta-label">Confident answer</p>
+        <p class="ta-user">35k, search only</p>
+        <div class="sk-box sk-box--teal sk-lean-2 ta-card ta-done">
+          <Icon name="check" />
+          <p><strong>Applied</strong><span>₹35k / week · Search campaigns</span></p>
+        </div>
+        <p class="ta-note sk-hand">applies directly</p>
+      </div>
+
+      <div class="ta-branch ta-branch--unsure">
+        <p class="ta-label">Ambiguous answer</p>
+        <p class="ta-user">a bit lower than last month?</p>
+        <div class="sk-box sk-box--coral sk-lean-3 ta-card">
+          <p class="ta-q">Weekly budget for Search?</p>
+          <p class="ta-opts"><span>₹20k</span><span class="is-picked">₹40k</span><span>₹50k</span></p>
+          <p class="ta-read">my read: last month ₹48k, about 15% lower</p>
+          <p class="ta-foot"><span class="ta-btn">Confirm</span><span class="ta-btn ta-btn--ghost">Change</span></p>
+        </div>
+        <p class="ta-note sk-hand">same card, pre-filled: correct it, don’t re-explain</p>
+      </div>
+    </div>
+  </div>
+  <figcaption>Every card can be answered by typing. The card proposes; the conversation decides.</figcaption>
+</figure>
+
+<style>
+  .ta-hdr { font-size: .62rem; text-align: center; }
+  .ta-card--ask, .ta-fork, .ta-branches { max-width: 40rem; margin-inline: auto; }
+  .ta-card--ask { max-width: 21rem; }
+
+  .ta-card { display: grid; gap: .55rem; padding: .75rem .85rem .8rem; }
+  .ta-q { margin: 0 !important; max-width: none; font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .ta-opts { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 !important; max-width: none; }
+  .ta-opts span { padding: .25rem .65rem; border: 1.5px solid var(--line); border-radius: 999px; font-size: .78rem; color: var(--ink-soft); }
+  .ta-opts .is-picked { border-color: var(--coral); background: color-mix(in srgb, var(--coral) 14%, transparent); color: var(--coral); font-weight: 500; }
+  .ta-read { margin: 0 !important; max-width: none; font-family: var(--font-hand); font-size: 1.02rem; line-height: 1.2; color: var(--coral); }
+  .ta-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin: 0 !important; max-width: none; }
+  .ta-btn { padding: .3rem .75rem; border-radius: 8px; background: var(--ink); color: var(--paper); font-size: .76rem; font-weight: 500; }
+  .ta-btn--ghost { background: none; color: var(--ink); border: 1.5px solid var(--line); }
+  .ta-hint { display: inline-flex; align-items: center; gap: .3rem; font-size: .74rem; color: var(--ink-faint); }
+  .ta-hint :global(.doodle) { width: .9rem; height: .9rem; color: var(--coral); }
+
+  .ta-fork { display: flex; height: 1.9rem; }
+  .ta-fork i { flex: 1; height: 100%; margin-top: .9rem; border-top: 1.5px dashed var(--ink-faint); }
+  .ta-fork i:first-child { border-right: 1.5px dashed var(--ink-faint); border-top-right-radius: 8px; }
+  .ta-fork i:last-child { border-left: 1.5px dashed var(--ink-faint); border-top-left-radius: 8px; }
+
+  .ta-branches { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+  .ta-branch { display: grid; gap: .6rem; }
+  .ta-branch--sure { --c: var(--teal); }
+  .ta-branch--unsure { --c: var(--coral); }
+  .ta-label { margin: 0 !important; max-width: none; text-align: center; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  /* What the user typed, as their own chat bubble on the right. */
+  .ta-user { justify-self: end; margin: 0 !important; max-width: 90%; padding: .45rem .8rem; border-radius: 14px 14px 4px 14px; background: var(--ink); color: var(--paper); font-size: .84rem; line-height: 1.35; }
+
+  .ta-done { grid-template-columns: auto 1fr; align-items: center; gap: .6rem; }
+  .ta-done :global(.doodle) { width: 1.4rem; height: 1.4rem; color: var(--teal); stroke-width: 2.2; }
+  .ta-done p { display: grid; gap: .1rem; margin: 0 !important; max-width: none; }
+  .ta-done strong { font-size: .88rem; font-weight: 500; color: var(--teal); }
+  .ta-done span { font-size: .8rem; color: var(--ink); }
+  .ta-note { margin: 0 !important; max-width: none; text-align: center; color: var(--c); }
+
+  @media (max-width: 559px) {
+    .ta-fork { justify-content: center; height: 1.4rem; }
+    .ta-fork i { flex: none; width: 0; border: 0 !important; border-left: 1.5px dashed var(--ink-faint) !important; margin-top: 0; border-radius: 0 !important; }
+    .ta-fork i:last-child { display: none; }
+    .ta-branches { grid-template-columns: 1fr; gap: 1.8rem; }
+  }
+</style>

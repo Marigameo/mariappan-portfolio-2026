@@ -1,0 +1,100 @@
+---
+/* A three-lane sequence diagram drawn by hand: a head box per lane, dashed
+   lifelines under them, and one row per step. A step between two lanes is an
+   arrow with its message written above it; a step on a single lane is a small
+   box sitting on that lifeline. On a phone the lanes are too narrow for words
+   above an arrow, so the lifelines go and every step becomes a numbered row
+   that names its route ("Report → Host") instead. */
+
+interface Lane { label: string; sub: string; tone: 'coral' | 'blue' | 'teal' | 'violet' }
+interface Step { from: number; to: number; label: string; note?: string }
+
+interface Props {
+  lanes: [Lane, Lane, Lane];
+  steps: Step[];
+  alt: string;
+  caption?: string;
+}
+
+const { lanes, steps, alt, caption } = Astro.props;
+const short = (i: number) => lanes[i].label.split(' ·')[0];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet seq" role="img" aria-label={alt}>
+    <ol class="seq-heads">
+      {lanes.map((l, i) => (
+        <li class:list={['sk-box', `sk-box--${l.tone}`, `sk-lean-${i + 1}`]}>
+          <strong>{l.label}</strong>
+          <span>{l.sub}</span>
+        </li>
+      ))}
+    </ol>
+
+    <ol class="seq-body">
+      {lanes.map((l, i) => <i class:list={['seq-life', `seq-life--${l.tone}`]} style={`--i:${i}`} aria-hidden="true"></i>)}
+      {steps.map((s, n) => {
+        const self = s.from === s.to;
+        const lo = Math.min(s.from, s.to);
+        const span = Math.abs(s.to - s.from);
+        return (
+          <li
+            class:list={['seq-step', self ? 'seq-step--self' : s.to > s.from ? 'seq-step--right' : 'seq-step--left', `seq-tone--${lanes[s.from].tone}`]}
+            style={self ? `--lo:${s.from}` : `--lo:${lo};--span:${span}`}
+          >
+            <span class="seq-route">{self ? short(s.from) : `${short(s.from)} → ${short(s.to)}`}</span>
+            <span class="seq-label"><b>{n + 1}</b>{s.label}</span>
+            {!self && <span class="seq-line" aria-hidden="true"></span>}
+            {s.note && <span class="seq-note">{s.note}</span>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .seq-heads, .seq-body { list-style: none; margin: 0; padding: 0; }
+  .seq-heads { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .seq-heads li { display: grid; gap: .15rem; margin-inline: .45rem; padding: .55rem .6rem .6rem; text-align: center; }
+  .seq-heads strong { font-size: .86rem; font-weight: 500; color: var(--c); }
+  .seq-heads span { font-size: .7rem; line-height: 1.3; color: var(--ink-faint); }
+
+  /* Lifelines sit at the centre of each third, under the head boxes. */
+  .seq-body { position: relative; padding: 1.3rem 0 .6rem; display: grid; gap: 1.35rem; }
+  .seq-life { position: absolute; top: 0; bottom: 0; left: calc((var(--i) * 2 + 1) / 6 * 100%); border-left: 1.5px dashed var(--ink-faint); opacity: .7; }
+
+  .seq-step { position: relative; display: grid; justify-items: center; gap: .3rem; margin-left: calc(var(--lo) * 33.333% + 16.667%); width: calc(var(--span) * 33.333%); text-align: center; }
+  .seq-tone--coral { --c: var(--coral); } .seq-tone--blue { --c: var(--blue); } .seq-tone--teal { --c: var(--teal); } .seq-tone--violet { --c: var(--violet); }
+  .seq-route { display: none; }
+  .seq-label { display: inline-flex; align-items: baseline; gap: .4rem; padding: 0 .3rem; font-family: var(--font-mono); font-size: .7rem; line-height: 1.35; color: var(--ink); background: color-mix(in srgb, var(--sand) 60%, var(--paper)); position: relative; z-index: 1; }
+  .seq-label b { flex: none; display: inline-grid; place-items: center; width: 1.05rem; height: 1.05rem; border-radius: 50%; font-family: var(--font-body); font-size: .6rem; font-weight: 700; color: var(--paper); background: var(--c); }
+  .seq-note { font-family: var(--font-hand); font-size: 1rem; line-height: 1.15; color: var(--ink-soft); padding: 0 .3rem; }
+
+  /* The arrow: a rule in the sender's colour with a chevron at the receiving end. */
+  .seq-line { position: relative; width: 100%; border-top: 1.8px solid var(--c); }
+  .seq-line::after { content: ""; position: absolute; top: -5.5px; width: 9px; height: 9px; border-top: 1.8px solid var(--c); border-right: 1.8px solid var(--c); }
+  .seq-step--right .seq-line::after { right: 1px; transform: rotate(45deg); }
+  .seq-step--left .seq-line::after { left: 1px; transform: rotate(-135deg); }
+
+  /* A step that stays on one lane: a small box on its lifeline. */
+  .seq-step--self { margin-left: calc(var(--lo) * 33.333%); width: 33.333%; padding: 0 .45rem; }
+  .seq-step--self .seq-label, .seq-step--self .seq-note { background: none; }
+  .seq-step--self > .seq-label { width: 100%; justify-content: center; padding: .45rem .5rem .1rem; border: 1.5px solid var(--c); border-bottom: 0; border-radius: 8px 4px 0 0 / 6px 8px 0 0; background: var(--paper-2); font-family: var(--font-body); font-size: .74rem; }
+  .seq-step--self > .seq-note { width: 100%; margin-top: -.3rem; padding: .1rem .5rem .45rem; border: 1.5px solid var(--c); border-top: 0; border-radius: 0 0 4px 8px / 0 0 8px 6px; background: var(--paper-2); font-size: .95rem; }
+  .seq-step--self:not(:has(.seq-note)) > .seq-label { border-bottom: 1.5px solid var(--c); border-radius: 8px 4px 9px 4px / 4px 9px 4px 8px; padding-bottom: .45rem; }
+
+  @media (max-width: 599px) {
+    .seq-heads li { margin-inline: .2rem; padding: .45rem .35rem; }
+    .seq-heads strong { font-size: .76rem; }
+    .seq-heads span { display: none; }
+    .seq-life { display: none; }
+    .seq-body { gap: .7rem; padding-top: 1rem; }
+    .seq-step, .seq-step--self { margin-left: 0; width: 100%; padding: .55rem .7rem .6rem; justify-items: start; text-align: left; border-left: 3px solid var(--c); background: var(--paper-2); border-radius: 0 8px 8px 0; }
+    .seq-route { display: block; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+    .seq-label, .seq-step--self > .seq-label { width: auto; padding: 0; border: 0 !important; background: none; font-family: var(--font-mono); font-size: .72rem; }
+    .seq-label b { display: none; }
+    .seq-line { display: none; }
+    .seq-note, .seq-step--self > .seq-note { width: auto; margin: 0; padding: 0; border: 0; background: none; font-size: .98rem; }
+  }
+</style>

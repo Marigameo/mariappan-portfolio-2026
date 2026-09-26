@@ -1,0 +1,59 @@
+---
+/* The most common tell of a generated dashboard, and what the skill asks for
+   instead. Left, ghosted: four identical KPI cards. Right: one hero number with
+   supporting metrics and a delta that carries an arrow and a colour. */
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ke" role="img" aria-label="Left, the tell: a row of four identical KPI cards with nothing to say which number matters. Right, an emphasis recipe: one large hero metric with a green delta arrow, and three smaller supporting metrics beside it, numbers right-aligned in tabular figures.">
+    <div class="ke-side">
+      <p class="ke-tag ke-tag--bad">The tell</p>
+      <svg class="sk ke-svg" viewBox="0 0 260 110" aria-hidden="true">
+        {[0, 1, 2, 3].map((i) => (
+          <g>
+            <rect x={4 + i * 64} y="20" width="56" height="70" rx="6" class="ke-ghost"/>
+            <rect x={12 + i * 64} y="32" width="28" height="4" rx="2" class="f-bar-2"/>
+            <rect x={12 + i * 64} y="54" width="36" height="12" rx="3" class="f-bar"/>
+          </g>
+        ))}
+      </svg>
+      <p class="ke-cap">Four identical cards. Which one matters?</p>
+    </div>
+    <div class="ke-side">
+      <p class="ke-tag ke-tag--good">An emphasis recipe</p>
+      <svg class="sk ke-svg" viewBox="0 0 260 110" aria-hidden="true">
+        <rect x="4" y="10" width="130" height="90" rx="6" class="f-card ke-edge"/>
+        <rect x="4" y="10" width="130" height="3" class="ke-brand"/>
+        <rect x="14" y="24" width="44" height="4" rx="2" class="f-bar-2"/>
+        <text x="14" y="66" class="t-display" font-size="30">₹312</text>
+        <path d="M16 84l5-6 5 6z" class="ke-up"/>
+        <text x="30" y="84" font-size="10" class="ke-up-t">18% vs last week</text>
+        {[0, 1, 2].map((i) => (
+          <g>
+            <rect x="144" y={10 + i * 31} width="112" height="26" rx="5" class="f-card ke-thin"/>
+            <rect x="152" y={20 + i * 31} width="34" height="4" rx="2" class="f-bar-2"/>
+            <rect x={220} y={18 + i * 31} width="28" height="8" rx="2" class="f-bar"/>
+          </g>
+        ))}
+      </svg>
+      <p class="ke-cap">One hero, a few supporters, every delta with an arrow and a colour.</p>
+    </div>
+  </div>
+  <figcaption>“A row of four identical cards is the number one AI-dashboard tell,” straight from the skill. So it ships recipes for emphasis instead.</figcaption>
+</figure>
+
+<style>
+  .ke { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+  .ke-side { min-width: 0; }
+  .ke-tag { margin: 0 0 .5rem !important; max-width: none; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; }
+  .ke-tag--bad { color: var(--ink-faint); }
+  .ke-tag--good { color: var(--teal); }
+  .ke-svg { width: 100%; height: auto; }
+  .ke-ghost { fill: none; stroke: var(--ink-faint); stroke-width: 1.3; stroke-dasharray: 4 3; }
+  .ke-edge { stroke: var(--ink); stroke-width: 1.4; }
+  .ke-thin { stroke: var(--ink); stroke-opacity: .35; stroke-width: 1; }
+  .ke-brand { fill: var(--coral); }
+  .ke-up { fill: var(--teal); }
+  .ke-up-t { fill: var(--teal) !important; font-family: var(--font-mono) !important; }
+  .ke-cap { margin: .6rem 0 0 !important; max-width: none; font-size: .82rem; line-height: 1.4; color: var(--ink-soft); }
+  @media (max-width: 559px) { .ke { grid-template-columns: 1fr; gap: 1.5rem; } }
+</style>

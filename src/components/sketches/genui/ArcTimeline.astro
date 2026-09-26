@@ -1,9 +1,14 @@
 ---
 /* Twelve months on one rail, split into the two contracts. The rail is grey for
    everything built on "one JSON document per turn" and turns coral at the pivot,
-   so the shape of the year is readable before any of the text is. */
+   so the shape of the year is readable before any of the text is. Other posts
+   pass their own `phases` and `caption`; the defaults are the gen-UI year. */
 
-const phases = [
+interface Item { period: string; title: string; detail: string; pivot?: boolean }
+interface Phase { label: string; tone: 'grey' | 'coral' | 'teal'; items: Item[] }
+interface Props { phases?: Phase[]; caption?: string }
+
+const defaultPhases: Phase[] = [
   {
     label: 'Contract 1 · one JSON document per turn',
     tone: 'grey',
@@ -25,6 +30,11 @@ const phases = [
     ],
   },
 ];
+
+const {
+  phases = defaultPhases,
+  caption = 'Twelve months, two contracts. Everything above the coral line was built on a single JSON document per turn; everything on it was built on one tool call per component.',
+} = Astro.props;
 ---
 <figure class="sk-fig">
   <div class="sk-sheet sk-sheet--bare arc">
@@ -44,12 +54,13 @@ const phases = [
       </section>
     ))}
   </div>
-  <figcaption>Twelve months, two contracts. Everything above the coral line was built on a single JSON document per turn; everything on it was built on one tool call per component.</figcaption>
+  <figcaption>{caption}</figcaption>
 </figure>
 
 <style>
   .arc-phase { --rail: var(--ink-faint); }
   .arc-phase--coral { --rail: var(--coral); }
+  .arc-phase--teal { --rail: var(--teal); }
   .arc-phase + .arc-phase { margin-top: 1.4rem; }
 
   .arc-label { display: flex; align-items: center; gap: .5rem; margin: 0 0 .7rem; font-family: var(--font-mono); font-size: .64rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--rail); }

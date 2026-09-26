@@ -80,6 +80,7 @@ const lessons = [
         <li>I bet on owning it. Chat is the core, and flexible interfaces are our moat.</li>
       </ul>
       <BuildVsOwn />
+      <p class="more-note"><a href="/writing/generative-ui-chat-engine/">There’s a lot more behind this call: what we tried, what we weighed, and why. The full story is in the <span class="nowrap">blog<Icon name="arrow-right" /></span></a></p>
     </section>
 
     <section class="slide" aria-labelledby="s-canvas">
@@ -93,8 +94,14 @@ const lessons = [
       </ul>
       <CanvasBeforeAfter />
       <aside class="qa sk-box sk-lean-2" aria-label="The debate">
-        <p class="qa-q"><span>Team</span>"Isn't that just a Claude copy?"</p>
-        <p class="qa-a"><span>Me</span>Claude set the standard, and this fixes our usability problems. If it's the right way to present, we use it and make what goes inside the panel ours.</p>
+        <div class="qa-row qa-row--team">
+          <span class="qa-av qa-av--team" aria-hidden="true"><i></i><i></i><i></i></span>
+          <p class="qa-bubble qa-q"><span>Team</span>"Isn't that just a Claude copy?"</p>
+        </div>
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-a"><span>Me</span>Claude set the standard, and this fixes our usability problems. If it's the right way to present, we use it and make what goes inside the panel ours.</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
       </aside>
     </section>
 
@@ -168,13 +175,40 @@ const lessons = [
   .slide-points li { font-size: 1.02rem; line-height: 1.55; }
   .slide-points strong { color: var(--ink); font-weight: 500; }
 
+  /* A handwritten pointer from a slide to the long-form post. */
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+  .more-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .more-note :global(.doodle) { width: 1.1rem; height: 1.1rem; margin-left: .3rem; vertical-align: -.15em; transition: transform .2s ease; }
+  .more-note a:hover :global(.doodle) { transform: translateX(3px); }
+
   /* The "Claude copy?" exchange, as two chat lines. */
-  .qa { margin-top: var(--space-3); padding: 1rem 1.1rem; display: grid; gap: .6rem; }
-  .qa p { margin: 0 !important; max-width: none; font-size: .95rem; line-height: 1.5; }
-  .qa span { display: inline-block; min-width: 3.4rem; margin-right: .5rem; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
-  .qa-q { color: var(--ink-faint) !important; font-style: italic; }
-  .qa-a { color: var(--ink) !important; }
+  /* A handwritten pointer from a slide to the long-form post. */
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .more-note :global(.doodle) { width: 1.1rem; height: 1.1rem; margin-left: .3rem; vertical-align: -.15em; transition: transform .2s ease; }
+  .more-note a:hover :global(.doodle) { transform: translateX(3px); }
+
+  /* The "Claude copy?" exchange, as a two-line chat: the team on the left with a
+     huddle of faces, me on the right with my portrait. */
+  .qa { margin-top: var(--space-3); padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .9rem; }
+  .qa-row { display: flex; align-items: flex-end; gap: .65rem; }
+  .qa-row--me { justify-content: flex-end; }
+  .qa-bubble { margin: 0 !important; max-width: min(34rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; border: 1.5px solid var(--line); }
+  .qa-bubble span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .qa-q { color: var(--ink-soft) !important; font-style: italic; background: var(--sand); border-radius: 14px 14px 14px 4px; }
+  .qa-a { color: var(--ink) !important; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border-color: color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 4px 14px; }
   .qa-a span { color: var(--teal); }
+  .qa-av { flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1.5px solid var(--ink); }
+  .qa-av--me { object-fit: cover; background: var(--sand); }
+  /* Three small faces in a huddle: "the team", without naming anyone. */
+  .qa-av--team { position: relative; background: var(--sand-2); overflow: hidden; }
+  .qa-av--team i { position: absolute; bottom: -.35rem; width: 1.15rem; height: 1.5rem; border-radius: 50% 50% 40% 40%; border: 1.5px solid var(--ink); }
+  .qa-av--team i:nth-child(1) { left: -.1rem; background: var(--coral-soft); }
+  .qa-av--team i:nth-child(2) { right: -.1rem; background: var(--blue); opacity: .85; }
+  .qa-av--team i:nth-child(3) { left: .55rem; bottom: -.2rem; background: var(--yellow); z-index: 1; }
 
   .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
   .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }

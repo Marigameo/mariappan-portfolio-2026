@@ -1,0 +1,24 @@
+---
+/* PDF export from a page the host cannot read: the host asks, the report
+   snapshots itself, and the host hands that HTML to a renderer with an action
+   the report never gets to choose. */
+import Sequence from './Sequence.astro';
+---
+<Sequence
+  lanes={[
+    { label: 'Report · sandbox', sub: 'the only one who can see its DOM', tone: 'coral' },
+    { label: 'Host · Strive app', sub: 'toolbar, limits, download', tone: 'blue' },
+    { label: 'PDF renderer', sub: 'Playwright, on a Lambda', tone: 'violet' },
+  ]}
+  steps={[
+    { from: 1, to: 0, label: 'export, please', note: 'someone hit Export' },
+    { from: 0, to: 0, label: 'Snapshot itself', note: 'every tab shown · charts drawn still' },
+    { from: 0, to: 1, label: 'HTML snapshot' },
+    { from: 1, to: 1, label: 'Under 5 MB? On time?', note: 'otherwise a clear error' },
+    { from: 1, to: 2, label: 'HTML + fixed action', note: 'the report never picks the action' },
+    { from: 2, to: 2, label: 'Page by page', note: 'load each page, snapshot, stitch' },
+    { from: 2, to: 1, label: 'multi-page PDF' },
+  ]}
+  alt="Sequence: when someone hits Export, the host asks the sandboxed report for a snapshot. The report reveals every tab, draws its charts without animation and serialises its own DOM, then posts the HTML back. The host checks it is under 5 MB and arrived in time, otherwise shows a clear error, and sends the HTML with a fixed export action to a PDF renderer running Playwright on a Lambda, which loads and snapshots each page separately and stitches them into one multi-page PDF."
+  caption="Only the report can see its own page, so export is a request, not a screenshot. The host keeps the limits and the action."
+/>

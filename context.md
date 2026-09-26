@@ -1,53 +1,45 @@
-Strive AI:
+Strive Studio:
 
-- this project when clicked open up a story. I want that story to talk on my perspective & contribution to that project rather than the project itself
-- today it's like we have done A, B & impact. Ideally it should be like I played this major role, here are my design engineer contributions, critical decisions I took/took along with teammates & failures, lessons learnt from them. 
-- it should be more like a presentation rather than a blog (less text, more pointers/numbers)
+- Strive studio/report builder is our reporting system in strive with which one can spin up a live dashboard/report by connecting their marketing sources. 
+- It's more like a lovable for marketing harness or claude artifacts that are live & personalised
 
-Then at last there should be a card kind of bigger thumbnail to the blog to read more on technical details on the project
+How it started?
 
-So the context on my contributions are as follows,
+- We already had a rich gen UI chat engine & AI centered component registry. Check out Strive AI project for more details.
 
-- None of our team mates are from AI background. I've not build UI for AI before, so it's learning for all building UI for AI platform
-- I kind of made sure the foundations are structured right - primitive components, AI elements, screens/layouts defined. These forms the foundation for our block concept
-- I was the only frontend engineer, we had no specific designer at that point. So it was me as a design engineer - understanding the usecases, product/user research, prototyping, gathering feedbacks, iterating & shipping to prod 
-- There was a tradeoff between building things ourselves vs using available solutions for certain parts like streaming, AI elements etc. I kind of took the bet to own things ourselves considering chat is gonna be our core & flexibility is gonna be our moat when it comes to interfaces. Felt like we can quickly iterate without any dependencies & at the same time evolve with things that only matter/personalised to our problems rather than bloating with a ready made bundle 
+- Owning the component registry, having control over the design specs is one leverage. But has a maintenance overhead. UI is not limited, as model gets better -> it can generate better UI itself. 
 
-Some design knocks / pointers which shaped our platform UX over time - bets I took as a design engineer
+- I still remember my CTOs words on this - we should simply let models spin up with things that are already super popular in internet & have enough context on. HTML is something agents are already super proficient on, can't make mistakes. Probably we should let agents spin up HTML reports, why not?
 
-Slot/Canvas experience 
+- So it's not like controlled output vs agent wiring up own UI. It's controlled outputs & agent spinning up UI for everything else & wherever it fits nicely. 
 
-- We do support a rich canvas experience as response in chat. These can accommodate rich surfaces like artifacts, editor, pre-build agent interfaces etc. 
-- so initially we were rendering this inline with the chat response. 
-- However there were some usability issues which was hurting my taste a lot. 
-- Then I re-designed the slots to open as right panel. This was mostly inspired from claude. 
-- There was a discussion like it's a claude copy, how is ours gonna be different? But, I kind of stressed it like this is gonna be the standard & claude has defined it first. I felt like if this solves the usability issues we do have then this is the right way to present. 
-- Issues we had - our slots can present rich pre-build agent interfaces - say a long table of entries, a complete dashboard app etc. These won't probably fit in the viewport when rendered inline. User has to scroll & can't essentially consume at 1 glance. On the other hand right panel slots stay sticky only the content within the panel scrolls & user is inline with corresponding chat section in parallel. Work against the canvas without any hassle.
-- Also the canvas is resizable & has a full screen view for the user to focus on intended artifact 
+- Reports are one such a wonderful case where JSON schemas would not be a great fit. It involves lots of data points & schemas can get super complex very soon. On the other hand, dashboard UIs are not new. Models are already trained on millions of such dashboard UI contexts, it can easily spin up a very good 1st UI. 
 
-<--- illustration here ---> Use the attached screenshots as reference & come up with the illustration showing old vs new UI, what was the issue in old
+How is it different from artifacts in claude?
 
-AI elements registry
+- we're actually super early to artifacts & little more advanced as we didn't aim for static artifacts only
+- The very 1st version of reports we rolled out iself was HTML documents which runs live data queries against customer data sources 
+- You can create, edit & share as claude artifacts. With a bonus of data is always upto date. You vibe code your personalized marketing reports & dashboards. 
 
-I kind of have a rich design system & component registry for our platform. We named it as,
+Good first version:
 
-@strivelabs/ui-core – implies foundational components.
-@strivelabs/ui-blocks - packages the common reusable blocks
+- Initially we spinned up a dedicted chat for teh report builder. The idea is not to bloat the main chat system prompt with the report guidelines & context
+- Experiment undisturbed, built it as a pluggable version that once stable can be plugged to the core chat system
 
-As part of these, there are also special components for AI - our AI elements
+Limitation we were happy to live with for a short time:
 
-There was need for certain UI & interactions for our usecases, so I was supposed to come up with new variants for those, few such which I'd pin are
+- As this was a separate chat, the history remained separate.
 
-Attaching screenshots
-- overflowing tabs
-- tabbed charts with pointers - dots, lines, areas, combined markers
-- editable list
-- stacked suggestions
-- AI sections editor
+Unifying with core chat system
 
-Functional challenges
-- there is a parser which sits between backend response blocks & client's renderer. This parser was custom rolled out. I took inspirations from langdiff progressive UI for LLM(https://github.com/globalaiplatform/langdiff) aspects (open source), enhanced it with few of our platform specifics & rolled it out 
-- the contracts in itself was a good challenge. Our components are of different nature - interactive, non-interactive, stateful, etc. Powering all these under a consistent contract system was in itself a great challenge. It involved lots of colloboration between client & server modules. We do have a separate package where contracts, prompt registry & zod schemas are maintained which will be consumed by both client & server.
+- we already knew this is supposed to be a chat skill rather than a standalone entity atleast on the interface end.
 
+- Report builder skill with context on how to wire up the report, what design context to use, how data parts can be wired up. Chat uses the skill to spin up the report builder when it matches the intend of report building
 
-Read the story here [blog link] to understand what other options were considered & why we took the bet
+----
+
+What else can be added?
+
+- How the iframe communication happens securely via iframes in report builder
+- how frontend wires up the builder with design context, other scripts 
+- security aspects & experience aspects, error handling aspects taken into considerations

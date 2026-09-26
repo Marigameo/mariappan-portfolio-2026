@@ -1,0 +1,78 @@
+---
+/* The four report shapes the skill lets the agent choose between. Each is a
+   tiny wireframe in the card-sketch style; the one coral bar in each is where
+   brand colour is allowed to go. Two across on a phone. */
+const types = [
+  { name: 'One-pager', use: 'a weekly recap on one screen' },
+  { name: 'Tabbed', use: 'one report, a few angles' },
+  { name: 'Long-form', use: 'a narrative you scroll' },
+  { name: 'Spotlight', use: 'one number, then why' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ra" role="img" aria-label="Four report archetypes as small wireframes: a one-pager with a hero, a KPI row, a chart and a table; a tabbed report with a tab bar above its panels; a long-form report of stacked sections; and a spotlight report with one big number and a supporting chart.">
+    <ul class="ra-grid">
+      {types.map((t, i) => (
+        <li>
+          <svg class="sk ra-svg" viewBox="0 0 120 150" aria-hidden="true">
+            <rect x="2" y="2" width="116" height="146" rx="8" class="f-card ra-edge"/>
+            {i === 0 && (
+              <g>
+                <rect x="10" y="10" width="100" height="20" rx="3" class="f-tint"/><rect x="10" y="10" width="40" height="3" class="ra-brand"/>
+                <rect x="10" y="36" width="31" height="20" rx="3" class="f-bar-2"/><rect x="45" y="36" width="31" height="20" rx="3" class="f-bar-2"/><rect x="80" y="36" width="30" height="20" rx="3" class="f-bar-2"/>
+                <polyline points="12,96 32,84 52,88 72,72 108,78" class="ra-line"/>
+                <rect x="10" y="106" width="100" height="5" rx="2" class="f-bar-2"/><rect x="10" y="116" width="100" height="5" rx="2" class="f-bar-2"/><rect x="10" y="126" width="100" height="5" rx="2" class="f-bar-2"/>
+              </g>
+            )}
+            {i === 1 && (
+              <g>
+                <rect x="10" y="10" width="26" height="9" rx="3" class="ra-brand"/><rect x="40" y="10" width="26" height="9" rx="3" class="f-bar-2"/><rect x="70" y="10" width="26" height="9" rx="3" class="f-bar-2"/>
+                <line x1="10" x2="110" y1="24" y2="24" class="s-line"/>
+                <rect x="10" y="30" width="48" height="24" rx="3" class="f-bar-2"/><rect x="62" y="30" width="48" height="24" rx="3" class="f-bar-2"/>
+                <rect x="10" y="60" width="100" height="44" rx="3" class="f-tint"/>
+                <polyline points="14,96 34,86 54,90 74,74 106,80" class="ra-line"/>
+                <rect x="10" y="112" width="100" height="5" rx="2" class="f-bar-2"/><rect x="10" y="122" width="70" height="5" rx="2" class="f-bar-2"/>
+              </g>
+            )}
+            {i === 2 && (
+              <g>
+                <rect x="10" y="10" width="60" height="7" rx="3" class="f-bar"/><rect x="10" y="21" width="30" height="3" class="ra-brand"/>
+                <rect x="10" y="32" width="100" height="4" rx="2" class="f-bar-2"/><rect x="10" y="40" width="88" height="4" rx="2" class="f-bar-2"/>
+                <rect x="10" y="52" width="100" height="30" rx="3" class="f-tint"/>
+                <rect x="10" y="90" width="100" height="4" rx="2" class="f-bar-2"/><rect x="10" y="98" width="76" height="4" rx="2" class="f-bar-2"/>
+                <rect x="10" y="110" width="100" height="30" rx="3" class="f-tint"/>
+              </g>
+            )}
+            {i === 3 && (
+              <g>
+                <rect x="10" y="12" width="40" height="4" rx="2" class="f-bar-2"/>
+                <text x="10" y="50" class="t-display" font-size="30">₹42L</text>
+                <rect x="10" y="58" width="44" height="4" rx="2" class="ra-brand"/>
+                <rect x="10" y="74" width="100" height="44" rx="3" class="f-tint"/>
+                <rect x="18" y="98" width="10" height="16" class="f-bar"/><rect x="34" y="90" width="10" height="24" class="f-bar"/><rect x="50" y="84" width="10" height="30" class="ra-brand"/><rect x="66" y="94" width="10" height="20" class="f-bar"/><rect x="82" y="100" width="10" height="14" class="f-bar"/>
+                <rect x="10" y="126" width="80" height="4" rx="2" class="f-bar-2"/><rect x="10" y="134" width="60" height="4" rx="2" class="f-bar-2"/>
+              </g>
+            )}
+          </svg>
+          <strong>{t.name}</strong>
+          <span>{t.use}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="ra-note sk-hand">pick one, don’t blend</p>
+  </div>
+  <figcaption>Four archetypes in the skill. The agent picks the shape before it writes a line, which is most of what keeps a report from looking generated.</figcaption>
+</figure>
+
+<style>
+  .ra-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.1rem; }
+  .ra-grid li { display: grid; justify-items: center; gap: .15rem; text-align: center; }
+  .ra-svg { width: 100%; max-width: 9rem; height: auto; margin-bottom: .4rem; }
+  .ra-edge { stroke: var(--ink); stroke-width: 1.4; }
+  .ra-brand { fill: var(--coral); }
+  .ra-line { fill: none; stroke: var(--coral); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ra-grid strong { font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .ra-grid span { font-size: .76rem; line-height: 1.35; color: var(--ink-faint); }
+  .ra-note { margin: 1.1rem 0 0 !important; max-width: none; text-align: center; color: var(--coral); }
+  @media (max-width: 559px) { .ra-grid { grid-template-columns: 1fr 1fr; gap: 1.3rem 1rem; } }
+</style>

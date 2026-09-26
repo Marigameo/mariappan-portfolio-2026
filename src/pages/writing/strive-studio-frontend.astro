@@ -1,0 +1,316 @@
+---
+/* The Strive Studio story: how a chat that could already share insights grew a
+   studio for live reports. The backstory, the naming call that let both live
+   side by side, the bet on agent-written HTML, and what broke at scale. The
+   short, picture-first version is the project page at /work/report-builder/.
+   Figures live in ../../components/sketches/studio/, the whiteboard in
+   /public/images/writing/strive-studio/. */
+import PostLayout from '../../layouts/PostLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Snippet from '../../components/sketches/genui/Snippet.astro';
+import Whiteboard from '../../components/sketches/genui/Whiteboard.astro';
+import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import ShareInsightsSteps from '../../components/sketches/studio/ShareInsightsSteps.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import TwoKindsOfUI from '../../components/sketches/studio/TwoKindsOfUI.astro';
+import SandboxBridge from '../../components/sketches/studio/SandboxBridge.astro';
+import DesignContext from '../../components/sketches/studio/DesignContext.astro';
+import ReportArchetypes from '../../components/sketches/studio/ReportArchetypes.astro';
+import KpiEmphasis from '../../components/sketches/studio/KpiEmphasis.astro';
+import StudioToChat from '../../components/sketches/studio/StudioToChat.astro';
+import EntryPoints from '../../components/sketches/studio/EntryPoints.astro';
+import CanvasStates from '../../components/sketches/studio/CanvasStates.astro';
+import ExportFlow from '../../components/sketches/studio/ExportFlow.astro';
+
+const description =
+  'How a chat that could already share insights grew a studio for live reports: the backstory, naming two ways to share so both could live side by side, the bet on letting the agent write HTML, and what broke at scale.';
+
+/* Code samples, pre-escaped so comments and strings can carry a colour. They
+   show the shape of the thing, not the production source. */
+const threeChecks = `window.addEventListener(<span class="s">"message"</span>, (event) =&gt; {
+  <span class="k">if</span> (event.source !== frame.contentWindow) <span class="k">return</span>;  <span class="c">// 1 · this frame</span>
+  <span class="k">if</span> (event.origin !== <span class="s">&quot;null&quot;</span>) <span class="k">return</span>;               <span class="c">// 2 · a sandboxed origin</span>
+  <span class="k">if</span> (!isReportRequest(event.data)) <span class="k">return</span>;          <span class="c">// 3 · a known shape</span>
+  handle(event.data);                                <span class="c">// anything else: ignored</span>
+});`;
+
+const theme = `tailwind.config = {
+  theme: { extend: {
+    colors: {
+      brand: { DEFAULT: <span class="s">&quot;#F97316&quot;</span>, dark: <span class="s">&quot;#EA580C&quot;</span>, soft: <span class="s">&quot;#FFF7ED&quot;</span> },
+    },
+    fontFamily: { sans: [<span class="s">&quot;Inter&quot;</span>, <span class="s">&quot;system-ui&quot;</span>, <span class="s">&quot;sans-serif&quot;</span>] },
+  } },
+};
+
+<span class="c">// charts read the same token the markup does</span>
+const brand = getComputedStyle(document.documentElement)
+  .getPropertyValue(<span class="s">&quot;--brand&quot;</span>);`;
+
+/* The v1 flow, in the same four-box shape as the report loop. */
+const insightSteps = [
+  { kicker: 'Chat', label: 'Run an analysis', sub: 'insights come back in fragments across the thread', tone: '' },
+  { kicker: 'Pick', label: 'Keep what matters', sub: 'your picks, or the agent’s suggested first set', tone: 'blue' },
+  { kicker: 'Compile', label: 'An insight doc', sub: 'the chat’s blocks plus AI summaries', tone: 'teal' },
+  { kicker: 'Reuse', label: 'Schedule, share, export', sub: 'a fresh snapshot of the same dimensions, later', tone: 'violet' },
+];
+
+const phases = [
+  {
+    label: 'v1 · insights curated from chat',
+    tone: 'grey' as const,
+    items: [
+      { period: 'Feb to Mar 2026', title: 'Insight docs', detail: 'Blocks picked from a chat, compiled into a shareable, schedulable insight document. Still in the product as /share-insights' },
+    ],
+  },
+  {
+    label: 'Agent-written HTML · a studio of its own',
+    tone: 'coral' as const,
+    items: [
+      { period: '26 Apr 2026', title: 'HTML in a sandbox', detail: 'First HTML report rendered in a sandboxed iframe, talking to the host over a postMessage bridge', pivot: true },
+      { period: 'Late Apr 2026', title: 'The SDK and the way back to chat', detail: 'Report SDK split out of the first report, app actions from reports, “ask about this” handing off to chat' },
+      { period: 'Mid May 2026', title: 'Report Studio', detail: 'A dedicated chat with the report builder skill, design-system context, then Tailwind-based theme tokens' },
+      { period: 'Late May 2026', title: 'First users', detail: 'Rolled out behind a flag to a selected set of users' },
+    ],
+  },
+  {
+    label: 'One chat · the report builder as a skill',
+    tone: 'teal' as const,
+    items: [
+      { period: '11 Jun 2026', title: 'Folded into the main chat', detail: 'Studio page and its agent retired; the report opens as a canvas slot beside the thread' },
+      { period: 'Early Jul 2026', title: 'Hardening', detail: 'White-label-safe report links, live tool calls with a read-only guard, rename and delete' },
+      { period: 'Late Jul 2026', title: 'PDF export', detail: 'Self-snapshotting reports, page-by-page export, waiting for data before snapshotting' },
+      { period: 'Aug to Sep 2026', title: 'The pattern spreads', detail: 'Brand context from onboarding, and chat artifacts generalising “the agent writes HTML, a sandbox runs it”' },
+    ],
+  },
+];
+---
+<PostLayout
+  title="Building live reports inside Strive: the story of Strive Studio"
+  description={description}
+  ogDescription="How a chat that could already share insights grew a studio for live reports: the backstory, the bet on agent-written HTML, and what broke at scale."
+  heading="Building live reports inside Strive: the story of Strive Studio"
+  eyebrow="Strivelabs engineering · Generative UI"
+  published="2026-09-25"
+  publishedLabel="September 2026"
+  keywords="generative UI, AI reports, live dashboards, sandboxed iframe, postMessage, Tailwind, design tokens, design engineering, AI chat, Strive Studio"
+  facts={[
+    { label: 'Stack', value: 'React 19 · TypeScript · sandboxed iframes' },
+    { label: 'Read', value: '~10 minutes' },
+  ]}
+>
+  <Fragment slot="lede">How a chat that could already share insights grew a studio for <mark class="hl">live reports</mark>. The backstory, the naming call that let both live side by side, the bet on letting the agent write HTML, and everything that broke once people started using it.</Fragment>
+
+  <p><strong>Strive Studio</strong> is where you build marketing reports in Strive. Describe what you want in chat, and you get back a live dashboard wired to your own ad, analytics and CRM data, right beside the conversation.</p>
+  <blockquote>Think Claude artifacts, but the numbers never go stale.</blockquote>
+
+  <h2>A little bit of backstory</h2>
+  <p>We already had a stable generative UI chat, <a href="/writing/generative-ui-chat-engine/">Strive AI</a>, built from the ground up. It could already put together a good first version of insights, straight from a conversation.</p>
+  <p>But we soon hit real bottlenecks, and the need for a far more flexible builder came much sooner than we had planned.</p>
+  <p>It started as a simple, slightly wild idea from our CTO:</p>
+  <blockquote>What if we just let the agent write the code, instead of struggling with schemas and teaching it to make sense of them?</blockquote>
+
+  <h3>v1: insights, curated from chat</h3>
+  <p>The first version lived inside the chat. You ran an analysis, the insights came back in pieces across the thread, and you kept the pieces that mattered.</p>
+
+  <StudioLoop
+    steps={insightSteps}
+    note="a snapshot of one moment, worth keeping"
+    caption="v1: the blocks you pick from a chat, compiled into an insight doc you can re-run on a schedule."
+    alt="Run an analysis in chat and insights come back in fragments. Keep what matters, either your own picks or the agent’s suggested first set. They compile into an insight document made of the chat’s blocks plus AI summaries. You can schedule the same analysis for a fresh snapshot of the same dimensions later, and share or export it."
+  />
+
+  <p>Under the hood, an insight doc is just a set of blocks, handpicked by you or suggested by the agent, compiled into a structured page with AI summaries alongside the metrics.</p>
+  <p>It still works today, as <code>/share-insights</code>:</p>
+
+  <ShareInsightsSteps />
+
+  <h3>Where v1 ran out</h3>
+  <p>An insight doc is a snapshot. Reports asked for a lot more: large volumes of data, and numbers that stay live after you share them.</p>
+  <ul class="doodle-list">
+    <li><strong>The registry didn’t scale to every layout.</strong> Owning it helped in many ways, but each new layout or variant meant one more UI tool, and more context for the agent to carry.</li>
+    <li><strong>Some reports can’t be written as JSON.</strong> Multi-dimensional, multi-page reports need schemas that no model follows reliably.</li>
+    <li><strong>Strict patterns drained the story out.</strong> Every time we boxed the UI into a fixed pattern, reports lost their appeal. A report should tell its story in one quick scan.</li>
+  </ul>
+
+  <h2>Two ways to share, one product</h2>
+  <p>This was one of the more interesting problems for me as a design engineer. We were about to have two ways to make something shareable, and people needed to pick the right one without thinking about it.</p>
+  <p>We couldn’t simply drop v1. Insight docs are snapshots with AI summaries you can read in a minute, and schedulable templates that bring the same outline back every week. They’re powerful, and a few customers were already happy with them. Reports needed a proper playground.</p>
+  <p>So the first job was the words.</p>
+
+  <Versus
+    left={{ title: '/share-insights · insight doc', tone: 'teal', items: ['A snapshot of one moment in a chat', 'The chat’s blocks, plus AI summaries', 'Re-run on a schedule for a fresh copy', 'Lives in the chat, sent or downloaded'] }}
+    right={{ title: 'Report Studio · live report', stamp: 'live', tone: 'coral', items: ['A dashboard on your connected data', 'Agent-written HTML, laid out your way', 'Always current, so no schedule needed', 'Its own Reports page, linked to the chat'] }}
+    mid="&"
+    marks="dot"
+    alt="Two ways to share. The share-insights skill makes an insight doc: a snapshot of one moment in a chat, made of the chat’s blocks plus AI summaries, re-run on a schedule, and sent or downloaded from the chat. Report Studio makes a live report: a dashboard on your connected data, agent-written HTML laid out your way, always current so it needs no schedule, with its own Reports page linked to the chat."
+    caption="Each named for what it is. Insights for a moment worth keeping; reports for numbers that keep moving."
+  />
+
+  <ul class="doodle-list">
+    <li><strong>Insights became insight blocks</strong>, behind a skill of their own, <code>/share-insights</code>, which guides you to curate what’s worth keeping from a chat.</li>
+    <li><strong>Reports got a studio.</strong> I wanted it to feel like a hand-off from chat into a dedicated playground. It isn’t a separate environment, though: the slot becomes the studio.</li>
+    <li><strong>Reports got a home.</strong> A Reports page lists them, each one linked to its chat. Open a report there and jump into the studio to change it, or go the other way.</li>
+  </ul>
+  <p>I’ll admit there’s still some overlap. Building at a startup is always cost against impact, so we let people use both, and we’ll unify them once we’ve seen how they do.</p>
+
+  <h2>Why we let the agent write HTML</h2>
+  <p>For reports, we stopped enforcing schemas altogether. The agent gets taste and brand context instead, and you decide what goes in the report and how it’s laid out.</p>
+  <p>Our CTO had been saying it from the start: leave the agent with what it already knows, and what’s already all over the internet. We’d made the same call before, choosing charting libraries, graph tools and diagram formats.</p>
+  <ul class="doodle-list">
+    <li><strong>Models are extremely good at HTML.</strong></li>
+    <li><strong>No framework overhead.</strong> No bundling, nothing to compile. Minimal, and a good fit for marketing dashboards.</li>
+    <li><strong>It’s a standard people know.</strong> If humans start editing alongside the agent one day, there’s very little to learn.</li>
+  </ul>
+  <p>We’re not against frameworks. This one just works for us.</p>
+
+  <TwoKindsOfUI />
+
+  <p>For the frontend, the job changed completely. Instead of rendering <em>our</em> components, we now had to host <em>someone else’s</em> page, safely, and still make it feel like part of the product.</p>
+
+  <h2>The one-liner</h2>
+  <p>The agent writes one HTML file. We host it in a sandbox, lend it live data through a narrow bridge, and give it enough design context to look like it belongs.</p>
+
+  <StudioLoop />
+
+  <h2>Hosting a page we didn’t write</h2>
+  <p>Reports render in <code>&lt;iframe sandbox="allow-scripts"&gt;</code>, deliberately <strong>without</strong> <code>allow-same-origin</code>. That one missing token does most of the work: the report runs its own scripts and charts, but it can’t read our cookies, storage or DOM, and it can’t call our API.</p>
+  <p>So when it needs data, it has to ask.</p>
+
+  <SandboxBridge />
+
+  <Snippet caption="Three checks before acting on a message" code={threeChecks} />
+
+  <ul class="doodle-list">
+    <li><strong>The host picks the credential</strong>, never the iframe.</li>
+    <li><strong>Every app action from a report is read-only</strong>, on both client and server. Reports run unattended whenever someone opens them, so they should never write.</li>
+    <li><strong>A small SDK wraps it all.</strong> <code>report.dataset.query(sql)</code>, <code>report.app.execute(…)</code>, <code>report.export()</code>. It’s a plain script, not a bundle, so a fix reaches every report without regenerating any HTML.</li>
+  </ul>
+  <blockquote>The report can ask for anything. It can’t hold anything.</blockquote>
+
+  <h2>What broke at scale</h2>
+  <p>Agent-written HTML was an instant hit. Then came the scale problems, and they taught us the most.</p>
+
+  <h3>Design context: from a stylesheet to a little taste</h3>
+  <p>At first I wrote the whole CSS context myself: 650 lines of classes matching our design system, with the skill trained on top. It became unmaintainable very quickly, and honestly it went against the whole point of moving away from fixed schemas.</p>
+  <p>What the agent really needed was a small amount of taste and a few guidelines; it can work out the rest. Tailwind is a standard models already know well, so now the agent writes Tailwind classes straight into the HTML, instead of picking from a set we defined.</p>
+
+  <DesignContext detailed />
+
+  <Snippet caption="The theme, roughly" code={theme} />
+
+  <p>The taste lives in the skill: restraint over decoration, brand orange in four places and no more, numbers that read like numbers, and one layout archetype per report.</p>
+
+  <ReportArchetypes />
+
+  <p>And a few <strong>emphasis recipes</strong>, for the most common tell of a generated dashboard.</p>
+
+  <KpiEmphasis />
+
+  <h3>Huge volumes of data</h3>
+  <p>Loading everything on page load didn’t scale. On big accounts the browser stalled, and heavy pages broke outright.</p>
+
+  <Versus
+    left={{ title: 'Before · everything at once', tone: 'ghost', items: ['Every row fetched on page load', 'The tab stalls on big accounts', 'Heavy pages break'] }}
+    right={{ title: 'Now · progressive loading', stamp: 'lazy', tone: 'teal', items: ['What you see loads first', 'Queries run on demand, as you scroll or switch tabs', 'Paginated on client and server', 'The server caps every query by default'] }}
+    alt="Before: every row fetched on page load, the tab stalls on big accounts and heavy pages break. Now, with progressive loading: what you see loads first, queries run on demand as you scroll or switch tabs, results are paginated on both client and server, and the server caps every query by default."
+    caption="Live should never mean heavy."
+  />
+
+  <h3>Less AI slop</h3>
+  <p>Reports shouldn’t look vibe-coded. They should carry the customer’s brand, and be easy to customise.</p>
+  <p>So during onboarding we extract a brand’s design-system context and keep it in our knowledge base, where it can be edited. Several workflows plug into it, and reports are one of them. That part deserves its own post, coming soon.</p>
+
+  <h3>Multi-page exports</h3>
+  <p>PDF export worked fine, until reports became interactive and multi-page. The host can’t read a sandboxed page, so only the report can snapshot itself, and then each page has to be drawn on its own.</p>
+
+  <ExportFlow />
+
+  <ul class="doodle-list">
+    <li><strong>Page by page.</strong> Each page loads separately in Playwright, gets snapshotted, and the snapshots are stitched into one PDF.</li>
+    <li><strong>A strict 5 MB limit.</strong> It all runs on a Lambda, and we learned the hard way that it needs a firm cap.</li>
+    <li><strong>It waits for the data</strong> before snapshotting, and the host fixes the action; the iframe only supplies HTML.</li>
+  </ul>
+
+  <h2>From a studio of its own to a skill</h2>
+  <p>The first Report Studio was <strong>a separate chat, on purpose</strong>. It kept the report rules out of the main chat’s prompt, and let us experiment without touching the chat everyone uses daily. Here’s how we sketched it.</p>
+
+  <Whiteboard
+    src="/images/writing/strive-studio/sketch-studio-flow.webp"
+    width={2400}
+    height={1888}
+    alt="Hand-drawn whiteboard sketch of the first Report Studio: typing /generate_report in the global chat routes to the studio; while in progress the studio shows code beside the chat, once ready it shows a preview of the report; a chat history view lists only report-related conversations, and switching one loads its report and chat."
+    caption="Report Studio on a whiteboard, before we built it. Chat routes into the studio, code while it builds, a preview once it’s ready, and a history of report chats only."
+  />
+
+  <p>The trade-off we were happy to live with for a while: a separate agent meant a separate history. We always knew it was meant to be a skill, at least from the user’s side, so once it was stable we folded it in. One chat, one history.</p>
+
+  <StudioToChat />
+
+  <ul class="doodle-list">
+    <li><strong>The report became a canvas slot</strong>, in the same floating panel and navigator rail the chat already had. No new chrome.</li>
+    <li><strong>The page drives it, not the agent.</strong> It opens as soon as a thread has a report, even while history is still loading.</li>
+    <li><strong>The chat stayed generic.</strong> No report imports, just a canvas slot and an awaited pre-send step. That’s what made folding it in cheap.</li>
+  </ul>
+
+  <EntryPoints />
+
+  <h2>The small things that make it feel native</h2>
+
+  <CanvasStates />
+
+  <ul class="doodle-list">
+    <li><strong>No flicker on edits.</strong> A staged splash on first load only; after that, the page swaps in quietly.</li>
+    <li><strong>Honest empty states.</strong> “Report not found” only after the query resolves, and a failed tool turn keeps the previous version.</li>
+    <li><strong>A workspace, not a new chat.</strong> “Let’s get cooking!”, starter prompts that fill the composer instead of sending, titles taken from your prompt.</li>
+    <li><strong>“Ask about this”</strong> inside a report opens a chat that already knows which report it came from.</li>
+  </ul>
+
+  <h2>What I’d keep</h2>
+  <ol class="doodle-list doodle-list--num">
+    <li><strong>Don’t throw away what works.</strong> Insights stayed. Clear names made room for both.</li>
+    <li><strong>Let the model use what it already knows.</strong> HTML and Tailwind beat any vocabulary we could invent.</li>
+    <li><strong>Treat agent HTML as untrusted.</strong> Opaque origin, host-held credentials, read-only actions, three checks on every message.</li>
+    <li><strong>Live should never mean heavy.</strong> Load what’s on screen, and fetch the rest when it’s asked for.</li>
+    <li><strong>Build apart, then fold in.</strong> The standalone studio was how we learned fast without breaking the main chat.</li>
+  </ol>
+
+  <h2>Six months on one timeline</h2>
+
+  <ArcTimeline phases={phases} caption="From insights curated out of chat, to live HTML reports in a studio of their own, then into the main chat as a skill." />
+
+  <h2>What’s next</h2>
+  <ul class="doodle-list">
+    <li><strong>Public sharable links.</strong></li>
+    <li><strong>Streaming HTML into the canvas</strong> while the agent edits.</li>
+    <li><strong>Revision history and diffs.</strong></li>
+    <li><strong>Editing together</strong> on one report.</li>
+    <li><strong>One way to share.</strong> Bringing insights and reports closer, once we’ve learned enough from both.</li>
+  </ul>
+  <p>The report canvas also became our first page-driven slot, and the same shape now powers briefing panels, routine previews, task details and chat artifacts. Reports were the first place we let the agent write the interface itself. They won’t be the last.</p>
+
+  <h2>Thanks</h2>
+  <p>Strive Studio is a team effort, from the data and sandboxes underneath to the agent, the skill and the checks that keep every number honest. Thanks to the whole team at Strivelabs for building it together.</p>
+
+  <aside class="back-to-story callout wobbly wobbly--3" aria-label="The short version">
+    <Icon name="slides" />
+    <div>
+      <strong>The short version</strong>
+      <p>One slide per chapter, a drawing on each: <a href="/work/report-builder/">Strive Studio on the work page</a>.</p>
+    </div>
+  </aside>
+
+  <!-- The whiteboard opens in here; main.js adds the dark-mode ink flip. -->
+  <dialog class="lightbox" data-lightbox aria-label="Whiteboard sketch">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img />
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</PostLayout>
+
+<style>
+  .back-to-story { margin-top: var(--space-4); }
+</style>

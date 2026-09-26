@@ -1,0 +1,56 @@
+---
+/* What the agent is handed so a report looks like it belongs: a shell the
+   client owns, tokens in a script, taste in the skill. Three cards feed one
+   agent, which writes one report. `detailed` adds the specifics for the blog. */
+import Icon from '../../Icon.astro';
+
+interface Props { detailed?: boolean }
+const { detailed = false } = Astro.props;
+
+const layers = [
+  { name: 'The shell', where: 'owned by the client', gist: 'A fixed HTML scaffold, there before the first turn', more: ['Head scripts in a set order', 'Tailwind → theme → charts → icons → SDK'], tone: 'blue' },
+  { name: 'The tokens', where: 'in a script', gist: 'Brand colours and type as a Tailwind extension', more: ['CSS variables the charts read', 'No custom class vocabulary to learn'], tone: 'teal' },
+  { name: 'The taste', where: 'in the skill', gist: 'How a good report reads and where colour goes', more: ['Archetypes, emphasis recipes', 'Brand colour in four slots, no more'], tone: 'coral' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet dc" role="img" aria-label="Three things feed the agent: the shell, a fixed HTML scaffold owned by the client; the tokens, brand colours and type in a script that extends Tailwind; and the taste, rules in the skill about how a good report reads and where colour goes. The agent then writes the report's body.">
+    <ol class="dc-layers">
+      {layers.map((l, i) => (
+        <li class:list={['sk-box', `sk-box--${l.tone}`, `sk-lean-${i + 1}`]}>
+          <p class="dc-head"><strong>{l.name}</strong><span>{l.where}</span></p>
+          <p class="dc-gist">{l.gist}</p>
+          {detailed && <ul class="dc-more">{l.more.map((m) => <li>{m}</li>)}</ul>}
+        </li>
+      ))}
+    </ol>
+    <div class="dc-down" aria-hidden="true"><i class="sk-arrow"><Icon name="arrow-down" /></i></div>
+    <p class="dc-agent"><span>Agent</span></p>
+    <div class="dc-down" aria-hidden="true"><i class="sk-arrow"><Icon name="arrow-down" /></i></div>
+    <div class="sk-box sk-lean-4 dc-report">
+      <p class="sk-hdr">The report</p>
+      <p class="dc-gist">One HTML file. The agent writes the body; everything around it was already decided.</p>
+    </div>
+    <p class="dc-note sk-hand">we don’t ask it to memorise our brand</p>
+  </div>
+  <figcaption>The shell, the tokens and the taste each live where they are hardest to get wrong: in the client, in code, and in the skill.</figcaption>
+</figure>
+
+<style>
+  .dc-layers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .dc-layers > li { display: grid; align-content: start; gap: .35rem; padding: .7rem .8rem .8rem; }
+  .dc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .1rem .6rem; margin: 0 !important; max-width: none; }
+  .dc-head strong { font-size: .95rem; font-weight: 500; color: var(--c); }
+  .dc-head span { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .dc-gist { margin: 0 !important; max-width: none; font-size: .82rem; line-height: 1.4; color: var(--ink); }
+  .dc-more { list-style: none; margin: .2rem 0 0; padding: 0; display: grid; gap: .25rem; }
+  .dc-more li { position: relative; padding-left: .9rem; font-size: .74rem; line-height: 1.35; color: var(--ink-soft); }
+  .dc-more li::before { content: "·"; position: absolute; left: .2rem; font-weight: 700; color: var(--c); }
+  .dc-down { display: flex; justify-content: center; margin: .5rem 0; }
+  .dc-agent { margin: 0 !important; max-width: none; text-align: center; }
+  .dc-agent span { display: inline-block; padding: .45rem 1.1rem; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .85rem; font-weight: 500; }
+  .dc-report { max-width: 24rem; margin-inline: auto; text-align: center; }
+  .dc-report .sk-hdr { margin-bottom: .3rem !important; font-size: .64rem; }
+  .dc-note { margin: 1rem 0 0 !important; max-width: none; text-align: center; color: var(--coral); }
+  @media (max-width: 639px) { .dc-layers { grid-template-columns: 1fr; gap: .8rem; } }
+</style>

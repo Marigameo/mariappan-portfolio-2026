@@ -1,0 +1,56 @@
+---
+/* Four ways into building a report, all landing in the same place: one chat
+   thread with the report canvas beside it. The inputs stack on the left, a
+   bracket gathers them, and the one destination sits on the right. Stacked
+   on a phone, with the bracket turning into a down arrow. */
+import Icon from '../../Icon.astro';
+
+const ways = [
+  { label: 'Reports → Create', sub: 'start from a blank report' },
+  { label: '“Customize in Studio”', sub: 'from a report you are viewing' },
+  { label: '/report_builder', sub: 'the skill badge, in any chat' },
+  { label: 'Reopen a thread', sub: 'that already has a report' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ep" role="img" aria-label="Four ways in: create from the Reports page, Customize in Studio from a report viewer, the report builder skill badge in any chat, or reopening a thread that already has a report. All four land in one chat thread with the report canvas open beside it, and the report file already exists before the first message is sent.">
+    <ol class="ep-ways">
+      {ways.map((w, i) => (
+        <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+          <strong>{w.label}</strong>
+          <span>{w.sub}</span>
+        </li>
+      ))}
+    </ol>
+    <div class="ep-join" aria-hidden="true"><span></span><i class="sk-arrow"><Icon name="arrow-right" /></i></div>
+    <div class="ep-dest">
+      <div class="sk-box sk-box--teal sk-lean-2">
+        <p class="sk-hdr">One flow</p>
+        <strong>One chat thread + the report canvas</strong>
+        <span>Same agent, same history, same panel.</span>
+      </div>
+      <p class="ep-note sk-hand">the file exists before the first message goes out</p>
+    </div>
+  </div>
+  <figcaption>Four doors, one room. Whichever way you come in, the thread and the report are bound before the agent reads a thing.</figcaption>
+</figure>
+
+<style>
+  .ep { display: grid; grid-template-columns: minmax(0, 1fr) 3rem minmax(0, 1fr); align-items: center; gap: .6rem; }
+  .ep-ways { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+  .ep-ways li, .ep-dest .sk-box { display: grid; gap: .1rem; padding: .55rem .75rem .6rem; }
+  .ep-ways strong { font-family: var(--font-mono); font-size: .76rem; font-weight: 500; color: var(--ink); }
+  .ep-ways span, .ep-dest span { font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .ep-join { position: relative; height: 85%; display: flex; align-items: center; justify-content: flex-end; }
+  .ep-join span { position: absolute; left: 0; top: 0; bottom: 0; width: .8rem; border: 1.5px dashed var(--ink-faint); border-left: 0; border-radius: 0 12px 12px 0; }
+  .ep-dest .sk-box { padding: .85rem .95rem .95rem; }
+  .ep-dest .sk-hdr { font-size: .64rem; color: var(--teal); margin-bottom: .35rem !important; }
+  .ep-dest strong { font-size: .95rem; font-weight: 500; color: var(--ink); }
+  .ep-note { margin: .9rem 0 0 !important; max-width: none; text-align: center; color: var(--teal); }
+  @media (max-width: 599px) {
+    .ep { grid-template-columns: 1fr; }
+    .ep-join { height: 2.4rem; justify-content: center; }
+    .ep-join span { display: none; }
+    .ep-join .sk-arrow { transform: rotate(90deg); }
+  }
+</style>

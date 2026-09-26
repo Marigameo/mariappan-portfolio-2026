@@ -1,108 +1,238 @@
 ---
+/* Strive Studio, told the same way as the Strive AI story: a short deck of
+   numbered "slides", each a headline, two pointers and a picture. The journey
+   in full lives in /writing/strive-studio-frontend/, linked from the big card
+   at the end. */
 import WorkLayout from '../../layouts/WorkLayout.astro';
 import Icon from '../../components/Icon.astro';
 import ReportBuilder from '../../components/sketches/ReportBuilder.astro';
+import StudioGlance from '../../components/sketches/studio/StudioGlance.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import ShareInsightsSteps from '../../components/sketches/studio/ShareInsightsSteps.astro';
+import TwoKindsOfUI from '../../components/sketches/studio/TwoKindsOfUI.astro';
+import SandboxBridge from '../../components/sketches/studio/SandboxBridge.astro';
+import DesignContext from '../../components/sketches/studio/DesignContext.astro';
+import StudioToChat from '../../components/sketches/studio/StudioToChat.astro';
 
-const description = "Strive Studio: vibe-coding for live marketing dashboards. An agent that knows your business, your data, and your brand writes the whole report as live software, keeps it in sync, and renders it in the browser. Frontend built by Mariappan Subramanian.";
+const description = "Strive Studio: describe a marketing report in chat and get back a live dashboard wired to your own data. How we let the agent write the report as HTML, host it safely in a sandbox, and fold it into the main chat, told from the frontend side.";
+
+const lessons = [
+  { miss: 'Wrote 650 lines of CSS for the agent to learn.', lesson: 'Give it taste, not a stylesheet. Extend what models already write, like Tailwind.' },
+  { miss: 'Loaded every row on page load. Big accounts froze the tab.', lesson: 'Live should never mean heavy. Load what’s on screen, fetch the rest on demand.' },
+  { miss: 'Early reports looked vibe-coded: four KPI cards in a row.', lesson: 'Brand context and emphasis rules make a report look like yours.' },
+  { miss: 'Exported multi-page reports in one go.', lesson: 'Snapshot page by page, and put a hard cap on the size.' },
+];
 ---
 <WorkLayout
   title="Strive Studio — agent-written live reports"
   description={description}
-  ogDescription="Vibe-coding for live marketing dashboards. An agent writes the whole report as live software that pulls warehouse data, renders in your brand, and stays in sync."
-  eyebrow="Strivelabs · Founding engineer · 2025 → now"
+  ogDescription="Describe a marketing report in chat, get back a live dashboard wired to your own data. The frontend side of Strive Studio."
+  eyebrow="Strivelabs · Design engineer · 2026 → now"
   heading="Strive Studio"
   facts={[
-    { label: 'Role', value: 'Founding engineer · frontend + prompts' },
-    { label: 'Scope', value: 'Frontend from zero' },
+    { label: 'Role', value: 'Design engineer · frontend' },
     { label: 'Status', value: 'In production, still shipping' },
   ]}
   link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
   schema={{
     name: 'Strive Studio — report builder',
     url: 'https://strivelabs.ai/',
-    description: "Vibe-coding for live marketing dashboards: an agent writes the whole report as live software that pulls warehouse data, renders in the customer's brand, and stays in sync.",
+    description: 'Describe a marketing report in chat and get back a live dashboard: agent-written HTML in a sandboxed iframe, live read-only data through a host bridge, and design context handed to the agent.',
     inLanguage: 'en',
-    keywords: 'generative UI, AI reports, live dashboards, sandboxed iframe, postMessage, BigQuery, brand theming, design engineering',
+    keywords: 'generative UI, AI reports, live dashboards, sandboxed iframe, postMessage, design systems, Tailwind, design engineering, UX for AI',
   }}
 >
   <ReportBuilder slot="sketch" />
 
-  <Fragment slot="lede">Vibe-coding for live dashboards — <mark class="hl">Lovable for marketing</mark>. Describe the report you want; an agent that knows your business, your data, and your brand writes it, keeps it live, and holds it in sync.</Fragment>
+  <Fragment slot="lede">Describe a marketing report in chat and get back a <mark class="hl">live dashboard</mark>, wired to your own ad and CRM data. Think Lovable for marketing, or Claude artifacts whose numbers never go stale. We built it as a small team; this is the frontend side.</Fragment>
 
-  <h2>The setup</h2>
-  <ul class="doodle-list">
-    <li>Building reports and dashboards is one of a marketer's most constant jobs — and it's still done the hard way, stitched across fragmented tools.</li>
-    <li>Vibe-code a deck in Claude today and it looks great for a week — then the data's stale, and keeping it current is manual work all over again.</li>
-  </ul>
+  <div class="story">
+    <StudioGlance />
 
-  <h2>What we built</h2>
-  <ul class="doodle-list">
-    <li>Connect your data sources, ask for what you want, and get a rich, live dashboard — shareable, collaborative, always in sync.</li>
-    <li>It's personal, not generic vibe-coding: it reads your business context, runs against your data, and renders in your brand — so a report looks like your team made it, not ours.</li>
-  </ul>
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">It started with insights</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><a href="/work/strive-gen-ui-chat/">Strive AI</a> could already turn a chat into a shareable <strong>insight doc</strong>: blocks you pick, plus AI summaries.</li>
+        <li>It still lives on as <code>/share-insights</code>. But reports wanted more: <strong>live data, big volumes, and a story you get in one scan.</strong></li>
+      </ul>
+      <ShareInsightsSteps only="result" caption="v1, still in the product: blocks from a chat, compiled into an insight doc beside the thread." />
+    </section>
 
-  <h2>The bet we made</h2>
-  <ul class="doodle-list">
-    <li>We could've kept a JSON-contract UI — strict schemas, tight control, every component defined by us.</li>
-    <li>Instead we bet the agent could be trained on our design system: write its own code and components, stay true to our design principles, and skip the schema wrangling. More trust in the model, far more flexibility.</li>
-  </ul>
+    <section class="slide" aria-labelledby="s-bet">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">The bet</p><h2 id="s-bet">Let the model write HTML</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Every new report layout meant <strong>another schema and another UI tool</strong>. Some reports can’t be written as JSON at all.</li>
+        <li>So for reports we dropped schemas, and let the agent write what it knows best.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-2" aria-label="Where the idea came from">
+        <div class="qa-row">
+          <span class="qa-av" aria-hidden="true"><i></i></span>
+          <p class="qa-bubble"><span>Our CTO</span>“What if we just let the agent write the code, instead of struggling with schemas and teaching it to make sense of them?”</p>
+        </div>
+      </aside>
+      <TwoKindsOfUI />
+    </section>
 
-  <h2>Live artifacts, early</h2>
-  <ul class="doodle-list">
-    <li>The building block is a <em>slot</em> — an analysis you can render, schedule, and export.</li>
-    <li>When Claude shipped static artifacts, we already had live ones in production with clients: full-stack dashboards they could vibe-code against their own data.</li>
-  </ul>
+    <section class="slide" aria-labelledby="s-name">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Design call · naming</p><h2 id="s-name">Two ways to share, one product</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We couldn’t drop insights. Snapshots with AI summaries, on a schedule, and <strong>customers liked them.</strong></li>
+        <li>So I named the two apart, and gave reports a studio and a home of their own.</li>
+      </ul>
+      <Versus
+        left={{ title: '/share-insights · insight doc', tone: 'teal', items: ['A snapshot of one moment in a chat', 'The chat’s blocks, plus AI summaries', 'Re-run on a schedule for a fresh copy'] }}
+        right={{ title: 'Report Studio · live report', stamp: 'live', tone: 'coral', items: ['A dashboard on your connected data', 'Agent-written HTML, laid out your way', 'Its own Reports page, linked to chat'] }}
+        mid="&"
+        marks="dot"
+        alt="Two ways to share. The share-insights skill makes an insight doc: a snapshot of one moment in a chat, the chat’s blocks plus AI summaries, re-run on a schedule. Report Studio makes a live report: a dashboard on your connected data, agent-written HTML laid out your way, with its own Reports page linked to chat."
+        caption="Insights for a moment worth keeping; reports for numbers that keep moving."
+      />
+    </section>
 
-  <h2>Where it got hard</h2>
-  <ul class="doodle-list">
-    <li>Reports render live in the browser, against big datasets and live external sources. Done naively, that's a frozen tab — we saw our share of crashes early on.</li>
-    <li>So we trained the agent to fetch data <em>lazily</em>, only when it's needed, and to compose dashboards that stay smooth: efficient reads and writes, caching that also keeps token use in check.</li>
-    <li>Sensitive data never reaches the browser in the clear — queries run through a secured sandboxed bridge, so a report can <em>ask</em> for data without ever holding the keys.</li>
-  </ul>
-  <!-- .flow is white-space: pre, so the line breaks below are the layout. -->
-  <div class="flow" role="img" aria-label="Data path: the sandboxed report asks the host over postMessage, the host queries the Cube semantic layer over BigQuery, and results travel back into the sandbox to render.">
-<b class="bad">SANDBOX</b>   agent-written HTML ─▶ asks over postMessage
-<b class="blue">HOST</b>      TanStack Query ─▶ Cube ─▶ BigQuery
-<b class="good">BACK</b>      results ─▶ through the bridge ─▶ charts render</div>
-  <p>It's a coordinated effort — the team holds the secured bridge on the backend, and I built and maintain the frontend side of the loop: auth, retries, loading, and keeping the sandbox in sync on every read and write.</p>
+    <section class="slide" aria-labelledby="s-safe">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Security</p><h2 id="s-safe">Untrusted HTML, trusted data</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The report runs in a <strong>sandboxed iframe</strong>: no cookies, no storage, no direct line to our API.</li>
+        <li>It <strong>asks the host</strong> for data. The host checks every message, holds the credentials, and only runs read-only calls.</li>
+      </ul>
+      <SandboxBridge caption="The report can ask for anything. It can’t hold anything." />
+    </section>
 
-  <h2>Under the hood</h2>
-  <p>React 19 · TypeScript · TanStack Query · agent-authored HTML in a sandboxed iframe · Cube + BigQuery · lazy, cached live data. Full teardown coming to the blog.</p>
+    <section class="slide" aria-labelledby="s-design">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design context</p><h2 id="s-design">From a stylesheet to a little taste</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I first wrote <strong>650 lines of CSS</strong> for the agent to learn. It didn’t scale, and fought the point of dropping schemas.</li>
+        <li>Now it’s <strong>a little taste plus Tailwind</strong>, which models already write fluently, and brand context pulled in at onboarding.</li>
+      </ul>
+      <DesignContext />
+    </section>
 
-  <!--
-    Adding media: drop files into public/images/work/report-builder/ and use one of these.
+    <section class="slide" aria-labelledby="s-data">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Scale</p><h2 id="s-data">Live, not heavy</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Loading every row on page load <strong>froze the tab</strong> on big accounts.</li>
+        <li>Now reports load what you see first, and <strong>query the rest on demand</strong>, paginated on both ends.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Before · everything at once', tone: 'ghost', items: ['Every row fetched on page load', 'The tab stalls on big accounts', 'Heavy pages break'] }}
+        right={{ title: 'Now · progressive loading', stamp: 'lazy', tone: 'teal', items: ['What you see loads first', 'Queries run as you scroll or switch tabs', 'Paginated on client and server'] }}
+        alt="Before: every row fetched on page load, the tab stalls on big accounts and heavy pages break. Now, with progressive loading: what you see loads first, queries run as you scroll or switch tabs, and results are paginated on client and server."
+        caption="Live should never mean heavy."
+      />
+    </section>
 
-    <figure>
-      <img src="/images/work/report-builder/canvas.png" alt="Describe what the image shows" width="1600" height="1000" loading="lazy">
-      <figcaption>A report being rewritten from the conversation beside it</figcaption>
-    </figure>
+    <section class="slide" aria-labelledby="s-fold">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Shipping it</p><h2 id="s-fold">Build apart, then fold in</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>v1 was its own chat</strong>, to keep report rules out of the main prompt and experiment undisturbed. The price: a separate history.</li>
+        <li><strong>v2 made it a skill</strong> in the main chat, with the report in a canvas beside the thread. One chat, one history.</li>
+      </ul>
+      <StudioToChat />
+    </section>
 
-    <figure>
-      <video src="/images/work/report-builder/build.mp4" poster="/images/work/report-builder/build-poster.jpg" controls playsinline preload="none" width="1600" height="900"></video>
-      <figcaption>From a sentence to a branded, live report</figcaption>
-    </figure>
-  -->
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What the first reports taught us</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
 
-  <h2>What stuck with me</h2>
-  <ul class="doodle-list">
-    <li>Trained well on a design system, an agent writing its own components beat us hand-authoring UI contracts.</li>
-  </ul>
+    <blockquote class="closer">A dashboard shows you numbers someone else chose. This builds the report you asked for, and keeps it alive.</blockquote>
 
-  <blockquote>A dashboard shows you numbers someone else chose. This builds the report you asked for — and keeps it alive.</blockquote>
+    <a class="deep-dive wobbly wobbly--2" href="/writing/strive-studio-frontend/">
+      <span class="deep-dive-shot taped ink-shot">
+        <img src="/images/writing/strive-studio/sketch-studio-flow.webp" alt="" width="2400" height="1888" loading="lazy" decoding="async">
+      </span>
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="pen" />Deep dive · ~10 min read</span>
+        <strong>Building live reports inside Strive: the story of Strive Studio</strong>
+        <span class="deep-dive-sub">The backstory, the naming call, the bet on HTML, and everything that broke at scale.</span>
+        <span class="deep-dive-go">Read the full story<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+  </div>
 
-  <aside class="next-up callout wobbly wobbly--2" aria-label="Upcoming write-up">
-    <Icon name="pen" />
-    <div>
-      <strong>Deep dive: multi-page PDF export from a sandboxed report</strong>
-      <p>Self-snapshotting the DOM, pagination that respects charts, and the Lambda pipeline behind it. <span class="soon">Blog landing here soon.</span></p>
-    </div>
-  </aside>
-
-  <aside class="next-up callout wobbly wobbly--3" aria-label="Upcoming write-up">
-    <Icon name="pen" />
-    <div>
-      <strong>Deep dive: extracting a design system from a domain</strong>
-      <p>How brand tokens get pulled at onboarding and fed to the agent as generation context. <span class="soon">Blog landing here soon.</span></p>
-    </div>
-  </aside>
 </WorkLayout>
+
+<style>
+  /* Same deck styles as the Strive AI story. The story runs the full width of
+     the narrow wrap; only the pointers keep a reading measure. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  /* The CTO line, as a chat message with an avatar, like the "Claude copy?"
+     exchange on the Strive AI story. A drawn face stands in for a photo. */
+  .qa { margin-top: var(--space-3); padding: 1.1rem 1.1rem 1.2rem; }
+  .qa-row { display: flex; align-items: flex-end; gap: .65rem; }
+  .qa-bubble { margin: 0 !important; max-width: min(36rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; color: var(--ink) !important; background: var(--sand); border: 1.5px solid var(--line); border-radius: 14px 14px 14px 4px; }
+  .qa-bubble span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+  .qa-av { position: relative; flex: none; width: 2.4rem; height: 2.4rem; overflow: hidden; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--sand-2); }
+  .qa-av i { position: absolute; left: 50%; bottom: -.45rem; width: 1.5rem; height: 1.9rem; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; border: 1.5px solid var(--ink); background: var(--teal); }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  .closer { margin-top: var(--space-5); }
+
+  /* The big card to the long-form write-up. */
+  .deep-dive { display: block; margin-top: var(--space-4); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-shot { display: block; aspect-ratio: 16 / 7; overflow: visible; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; transform: rotate(-.6deg); transition: transform .25s ease; }
+  .deep-dive:hover .deep-dive-shot { transform: rotate(0); }
+  .deep-dive-shot img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 92%; border-radius: inherit; }
+  .deep-dive-body { display: grid; gap: .45rem; padding: 1.2rem .3rem .2rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+</style>

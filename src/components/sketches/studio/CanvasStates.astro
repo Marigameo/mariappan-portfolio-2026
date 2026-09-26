@@ -1,0 +1,41 @@
+---
+/* The canvas has two lives: the first time it opens, and every time the agent
+   edits after that. The first gets a staged splash; the rest swap the page in
+   place, because a latch remembers it has loaded once. */
+import Icon from '../../Icon.astro';
+
+const lanes = [
+  { label: 'First open', steps: ['Fetching', 'Loading', 'Ready'], tone: 'blue', note: 'a staged splash, once' },
+  { label: 'Every edit after', steps: ['Ready', 'Agent edits', 'Quiet swap'], tone: 'teal', note: 'no splash, no flicker' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet cs" role="img" aria-label="First open: fetching, loading, ready, shown as a staged splash once. Every edit after: ready, the agent edits, and the new page swaps in quietly with no splash, because the canvas remembers it has loaded once.">
+    {lanes.map((l, i) => (
+      <div class:list={['cs-row', `cs-row--${l.tone}`]}>
+        <p class="sk-hdr">{l.label}</p>
+        <ol>
+          {l.steps.map((s, j) => (
+            <>
+              {j > 0 && <li class="sk-arrow" aria-hidden="true"><Icon name="arrow-right" /></li>}
+              <li class:list={['sk-box', j === l.steps.length - 1 && `sk-box--${l.tone}`, `sk-lean-${((i + j) % 4) + 1}`]}>{s}</li>
+            </>
+          ))}
+        </ol>
+        <p class="cs-note sk-hand">{l.note}</p>
+      </div>
+    ))}
+  </div>
+  <figcaption>A latch, not a loading state: once the canvas has shown a report, it never goes back to the splash.</figcaption>
+</figure>
+
+<style>
+  .cs { display: grid; gap: 1.4rem; }
+  .cs-row--blue { --c: var(--blue); } .cs-row--teal { --c: var(--teal); }
+  .cs-row .sk-hdr { font-size: .64rem; color: var(--c); }
+  .cs-row ol { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; }
+  .cs-row .sk-box { padding: .45rem .8rem; font-size: .84rem; font-weight: 500; color: var(--ink); }
+  .cs-row .sk-box[class*="sk-box--"] { color: var(--c); }
+  .cs-note { margin: .5rem 0 0 !important; max-width: none; color: var(--c); }
+  .cs-row .sk-arrow :global(.doodle) { width: 1.2rem; height: 1.2rem; }
+</style>

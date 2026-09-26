@@ -1,0 +1,151 @@
+---
+/* /share-insights in three sketches, drawn in markup like the site's other
+   figures rather than as product screenshots: only the essentials, with made-up
+   numbers. 1 · the skill chip and the ask in the composer. 2 · the agent lists
+   what goes in, and a card asks you to confirm. 3 · the compiled insight doc
+   open beside the thread. The first two sit side by side above the third;
+   `only="result"` draws just the third, for the story page. */
+import Icon from '../../Icon.astro';
+
+interface Props { only?: 'result'; caption?: string }
+const { only, caption } = Astro.props;
+const all = !only;
+
+const picks = ['Summary KPIs', 'Visibility trend chart', 'Spend by campaign', 'The key finding'];
+const kpis = [
+  { v: '₹12.4k', l: 'Ad spend' },
+  { v: '4.8%', l: 'Visibility, early' },
+  { v: '2.7%', l: 'Visibility, late', d: '−44%' },
+];
+
+const alt =
+  (all
+    ? 'Three sketches of the share-insights flow. One: the chat composer with a Share Insights skill chip and the ask “compile the charts and blocks above into a shareable doc”. ' +
+      'Two: the agent lists what it will include, summary KPIs, a visibility trend chart, spend by campaign and the key finding, followed by a confirm card with yes and no options and an Apply button. Three: '
+    : '') +
+  'the compiled insight doc open in a panel beside the chat, with a title, three KPI tiles, a short AI summary and a trend chart, and a Send to Slack button.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet sis" role="img" aria-label={alt}>
+    {all && (
+      <div class="sis-top">
+        <div class="sis-step">
+          <p class="sis-label"><b>1</b>Pick the skill, say what to compile</p>
+          <div class="sk-box sk-lean-1 sis-card">
+            <div class="sis-thread" aria-hidden="true"><i style="--w:88%"></i><i style="--w:70%"></i><i style="--w:80%"></i></div>
+            <div class="sis-composer">
+              <span class="sis-chip"><Icon name="sparkles" />Share Insights <em>×</em></span>
+              <p class="sis-ask">compile the charts &amp; blocks above into a shareable doc</p>
+              <span class="sis-send" aria-hidden="true"><Icon name="arrow-right" /></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sis-step">
+          <p class="sis-label"><b>2</b>The agent lists what goes in, you confirm</p>
+          <div class="sk-box sk-lean-2 sis-card">
+            <p class="sis-said">Here’s what I’ll include:</p>
+            <ol class="sis-picks">{picks.map((p) => <li>{p}</li>)}</ol>
+            <div class="sis-confirm">
+              <p class="sis-q">Confirm compilation</p>
+              <p class="sis-radio is-on"><i></i>Yes, proceed</p>
+              <p class="sis-radio"><i></i>No, cancel</p>
+              <p class="sis-btns"><span>Cancel</span><span class="is-primary">Apply</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <div class="sis-step">
+      {all && <p class="sis-label"><b>3</b>The insight doc opens beside the thread</p>}
+      <div class="sk-box sk-lean-3 sis-card sis-split">
+        <div class="sis-chat">
+          <div class="sis-thread" aria-hidden="true"><i style="--w:80%"></i><i style="--w:92%"></i></div>
+          <div class="sis-doc-chip">
+            <span>Insights</span>
+            <strong>Visibility vs. ad spend</strong>
+            <em><Icon name="zoom-in" />Viewing</em>
+          </div>
+          <div class="sis-thread" aria-hidden="true"><i style="--w:90%"></i><i style="--w:75%"></i><i style="--w:60%"></i></div>
+        </div>
+        <div class="sis-panel">
+          <p class="sis-panel-head"><strong>Visibility vs. ad spend</strong><span class="sis-slack">Send to Slack</span></p>
+          <div class="sis-kpis">
+            {kpis.map((k) => (
+              <div><b>{k.v}{k.d && <i>{k.d}</i>}</b><span>{k.l}</span></div>
+            ))}
+          </div>
+          <div class="sis-summary" aria-hidden="true"><span class="sis-ai"><Icon name="sparkles" />AI summary</span><i style="--w:100%"></i><i style="--w:86%"></i></div>
+          <svg class="sis-chart" viewBox="0 0 200 50" preserveAspectRatio="none" aria-hidden="true">
+            <polyline points="4,38 34,22 64,14 94,24 124,30 154,34 196,40" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  {(caption || all) && <figcaption>{caption ?? '/share-insights today. Pick what mattered in a chat, and it compiles into an insight doc you can send or download.'}</figcaption>}
+</figure>
+
+<style>
+  .sis-top { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.5rem; align-items: stretch; }
+  .sis-step { display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+  .sis-label { display: flex; align-items: center; gap: .5rem; margin: 0 0 .6rem !important; max-width: none; font-size: .84rem; font-weight: 500; color: var(--ink); }
+  .sis-label b { flex: none; display: inline-grid; place-items: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; background: var(--coral); color: #fff; font-size: .7rem; }
+  .sis-card { display: grid; align-content: space-between; gap: .7rem; padding: .8rem .85rem .9rem; }
+
+  /* Placeholder lines standing in for chat text. */
+  .sis-thread { display: grid; gap: .35rem; }
+  .sis-thread i { display: block; width: var(--w); height: .38rem; border-radius: 999px; background: var(--ink); opacity: .12; }
+
+  .sis-composer { display: grid; grid-template-columns: 1fr auto; gap: .45rem .5rem; align-items: end; padding: .55rem .6rem; border: 1.5px solid var(--line); border-radius: 12px; background: var(--paper); }
+  .sis-chip { grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; gap: .3rem; padding: .18rem .55rem; border: 1.5px solid color-mix(in srgb, var(--coral) 55%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--coral) 10%, transparent); font-size: .72rem; font-weight: 500; color: var(--coral); }
+  .sis-chip :global(.doodle) { width: .8rem; height: .8rem; }
+  .sis-chip em { font-style: normal; opacity: .7; }
+  .sis-ask { margin: 0 !important; max-width: none; font-size: .8rem; line-height: 1.35; color: var(--ink); }
+  .sis-send { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 8px; background: var(--ink); color: var(--paper); }
+  .sis-send :global(.doodle) { width: .85rem; height: .85rem; stroke-width: 2; transform: rotate(-35deg); }
+
+  .sis-said { margin: 0 !important; max-width: none; font-size: .8rem; color: var(--ink); }
+  .sis-picks { margin: 0; padding-left: 1.1rem; display: grid; gap: .15rem; font-size: .76rem; color: var(--ink-soft); }
+  .sis-confirm { display: grid; gap: .3rem; padding: .55rem .65rem; border-radius: 10px; background: var(--paper); border: 1.5px solid var(--line); }
+  .sis-q { margin: 0 0 .1rem !important; max-width: none; font-size: .8rem; font-weight: 500; color: var(--ink); }
+  .sis-radio { display: flex; align-items: center; gap: .4rem; margin: 0 !important; max-width: none; font-size: .74rem; color: var(--ink-soft); }
+  .sis-radio i { width: .7rem; height: .7rem; border-radius: 50%; border: 1.5px solid var(--ink-faint); }
+  .sis-radio.is-on i { border-color: var(--ink); background: radial-gradient(circle, var(--ink) 45%, transparent 50%); }
+  .sis-btns { display: flex; justify-content: flex-end; gap: .4rem; margin: .2rem 0 0 !important; max-width: none; }
+  .sis-btns span { padding: .2rem .55rem; border-radius: 6px; font-size: .7rem; color: var(--ink); }
+  .sis-btns .is-primary { background: var(--ink); color: var(--paper); }
+
+  /* 3 · chat on the left, the insight doc in a panel on the right. */
+  .sis-split { grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); align-content: stretch; gap: .9rem; }
+  .sis-chat { display: grid; align-content: start; gap: .8rem; padding: .2rem .1rem; }
+  .sis-doc-chip { display: grid; grid-template-columns: 1fr auto; gap: .1rem .5rem; align-items: center; padding: .5rem .6rem; border: 1.5px solid var(--blue); border-radius: 10px; background: var(--paper); }
+  .sis-doc-chip span { grid-column: 1 / -1; font-family: var(--font-mono); font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .sis-doc-chip strong { font-size: .76rem; font-weight: 500; color: var(--ink); }
+  .sis-doc-chip em { display: inline-flex; align-items: center; gap: .2rem; font-style: normal; font-size: .66rem; color: var(--blue); }
+  .sis-doc-chip :global(.doodle) { width: .75rem; height: .75rem; }
+
+  .sis-panel { display: grid; gap: .55rem; padding: .65rem .7rem .7rem; border: 1.5px solid var(--ink); border-radius: 10px; background: var(--paper); }
+  .sis-panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .3rem .6rem; margin: 0 !important; max-width: none; }
+  .sis-panel-head strong { font-size: .86rem; font-weight: 600; color: var(--ink); }
+  .sis-slack { padding: .15rem .5rem; border: 1.5px solid var(--line); border-radius: 6px; font-size: .66rem; color: var(--ink-soft); }
+  .sis-kpis { display: grid; grid-template-columns: repeat(3, 1fr); border: 1.5px solid var(--line); border-radius: 8px; }
+  .sis-kpis div { display: grid; gap: .05rem; padding: .4rem .45rem; min-width: 0; }
+  .sis-kpis div + div { border-left: 1.5px solid var(--line); }
+  .sis-kpis b { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem; font-size: .86rem; font-weight: 500; color: var(--ink); }
+  .sis-kpis b i { font-style: normal; font-size: .6rem; color: var(--coral); }
+  .sis-kpis span { font-size: .58rem; line-height: 1.25; color: var(--ink-faint); }
+  .sis-summary { display: grid; gap: .3rem; }
+  .sis-ai { display: inline-flex; align-items: center; gap: .25rem; font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
+  .sis-ai :global(.doodle) { width: .7rem; height: .7rem; }
+  .sis-summary i { display: block; width: var(--w); height: .36rem; border-radius: 999px; background: var(--ink); opacity: .12; }
+  .sis-chart { width: 100%; height: 3rem; border: 1.5px dashed var(--line); border-radius: 8px; }
+  .sis-chart polyline { fill: none; stroke: var(--coral); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+
+  @media (max-width: 639px) {
+    .sis-top { grid-template-columns: 1fr; }
+    .sis-split { grid-template-columns: 1fr; }
+    .sis-chat { display: none; }
+  }
+</style>
