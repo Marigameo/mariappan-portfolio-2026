@@ -190,6 +190,16 @@
     update();
   });
 
+  // --- Developing polaroids: reveal each photo once it has loaded -----------------
+  // <button class="polaroid is-developing" data-develop> … <img> … </button>
+  document.querySelectorAll("[data-develop]").forEach(function (p) {
+    var img = p.querySelector("img");
+    function done() { p.classList.remove("is-developing"); }
+    if (!img || (img.complete && img.naturalWidth)) { done(); return; }
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });
+  });
+
   // --- Photo carousels: one photo per view, arrows + a counter ---------------------
   // <div data-carousel> <div data-carousel-track>slides…</div> [data-carousel-prev] [data-carousel-next] [data-carousel-count] </div>
   document.querySelectorAll("[data-carousel]").forEach(function (c) {

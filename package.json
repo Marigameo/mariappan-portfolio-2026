@@ -8,7 +8,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "thumbs": "node scripts/thumbs.mjs"
   },
   "engines": {
     "node": ">=22.12.0"

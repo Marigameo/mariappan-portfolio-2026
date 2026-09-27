@@ -4,7 +4,9 @@
    To feature a photo: drop it in public/images/about/<hobby>/ and add it to that
    hobby's `picks`. Picks show whole, big enough to enjoy in place, in a sideways
    reel that ends with the Instagram card; tapping one enlarges it. With no picks,
-   the board shows just the Instagram card (or `aside`, when there's no account). */
+   the board shows just the Instagram card (or `aside`, when there's no account).
+   After adding or replacing a photo, run `pnpm thumbs` to make its reel-sized copy
+   and loading preview (scripts/thumbs.mjs). */
 import { site } from './site';
 
 /** Thenga's props on its day off (src/components/mascots/Thenga.astro). */

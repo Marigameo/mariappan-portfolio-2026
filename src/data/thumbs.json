@@ -1,0 +1,102 @@
+{
+ "/images/portraits/guitar.webp": {
+  "sm": "/images/portraits/guitar.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRiwBAABXRUJQVlA4ICABAACQBgCdASoYACAAPu1kqE2ppaOiMAgBMB2JbACdMoCGY1zrpArQOJe3OZ8U+Y6NOsnvnqsp93t9WiTCeFcAAP7fDKUkocd9mT3Ho2ksAdJZZPEicjh8AVLKiBpU95WnF+Cqz7qLonc4MfWGf19UugX/7c6/lpaK6BVxPmetsB1K5JSWIZoWYhKyo8skJwWlz5/VuBtWw1YeAbfj7q1lg1M5xN9rSmSFmGcuvcpVlrkEVBV2rQnqX9PQdzXFPY/KmKskBa0jGNTSO5XNUyzLb65kwRgDcN7kvguAU3n0PDkS13fKEh9MMtViLrMi116JH5lZ8Ejf1Iu6yEB6ttL921xvSLYKZAnKxsNIzIqjgoD+ZkRXxM+JuHi3ZHJRF88fQAA="
+ },
+ "/images/about/music/golden-hour.webp": {
+  "sm": "/images/about/music/golden-hour.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRgIBAABXRUJQVlA4IPYAAADwBQCdASoYACAAPu1qrlCppaQiqAqpMB2JaACdMoSENfgC2fKyYDzr5fqcoG9APTh5Q4S6IQoyAAD+8NLAPDSpctLb89qCiuQtqBA9Q8woLlOZ39FyYPGQ1uiMLJGkCMQ4Vj0AA4J1hhbIQAeomvXxidK5nrXjk/0fbbPho++UeWF+ZKZsG475wtjVIIbQdrxzdlN5CiGf+EcBYq77uD1fgY1c3rBWTIcaKsnWlvBSpc21fi5HF/sYIFKkV5ERQl75TSlipctW4pvPwQZkW/tON3+yTJdGKbuDzJBIQSalgXd+Q5527GpPOd8fTXB2TRQ35DKAAAA="
+ },
+ "/images/about/travel/trip-1.webp": {
+  "sm": "/images/about/travel/trip-1.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAADQBACdASoYACAAPu1qq08ppiOiMBgIATAdiWcAygAFFpyKoQ5940AvrIhl2mILoAD5u2WD6ZcjSkIjMRsn6xJPuuhTw79m3Q7HMQ5gFdWMDnAgsEeGHbix0UaaWVKfwCx9kk5M0hq7TfMI7W2ZfDcTbu5AHIiTnyEHYf8O9c8g5BHUcIpkWclUavgHYXYHof9ncGYxM+sXLjTiq9V4/juo1/B78GWrXsAAAA=="
+ },
+ "/images/about/travel/trip-2.webp": {
+  "sm": "/images/about/travel/trip-2.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRtIAAABXRUJQVlA4IMYAAABQBgCdASoYACAAPu1kqE2ppaOiMAgBMB2JZwC2ydwLgnb++QFbDFhe7VsXMecfCGfhXEd82vmFRhg5AAD+3pPtDYntwB+Lq2lE8tvrL3oR8ef2Nkj1vo+cv/3ggxkfRGXuvQfxA+U/zwOb2Ofn2J0WPCT/uaoU9Vb7FrInTT87pDuP0asj9Aztl1sELJhc1VEFG4+qjwbeCJHm0s6t1GgNly9YlPiqm9l2vG7njzKU3YYanqB1ISthxaQJSH5n8CZ8t2gAAAA="
+ },
+ "/images/about/travel/trip-3.webp": {
+  "sm": "/images/about/travel/trip-3.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRj4BAABXRUJQVlA4IDIBAABwBwCdASoYACsAPu1kq1GppSOiqrgKATAdiWUAyVG5saMZLK2zhDaedTXc0Njfm3e4pK5M1CsDuQ41x4AQHGtUc2rhAAD9hP5ZYO756iWWPinlmrurRAI8MC3o/eh5PVb6NjaehVEF6De36Cs91qWCc/DkOnMznq+2gSrPpc1o3+KyXwN8YU3Lr7dj2h2w/Yr93feJxPu2/y1Tti/IWuTR8x0W1RGXkLIZ0U+cGf6qSJTas4zwvL00L2r7sEyoFktgPKT0af2aa9sdmWjyyL3HmLaEI9akTQsD7bjKtn9OCsW+/bkeG5ruUoQG6am3pydjmVwxfAkPYDxDhK1jIdylE5p4Y87zoY2rV+LgrDVFHWzXFBApaSfwnTFp779R42adXJuj3H8DX1j0C8NwOsgAAAA="
+ },
+ "/images/about/travel/trip-4.webp": {
+  "sm": "/images/about/travel/trip-4.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRjQBAABXRUJQVlA4ICgBAADQBgCdASoYACsAPu1ur1GppiQipWsxMB2JYwCuT9Y/SlQi9/CjKqILJerP20AGOM/sGa5zEODk089s+Ea3hAAA/r+9RLn3j4CuaaTx5qN+WEKHm8AhYwcICoKZROv0has2rYxe+uMWkbyM8VVnc17mRaF2O2YlWUnSA1w5rpQRVLAog2QZtBSn2O7Ek49HOaLpk2YDY6hckqYMPHKw2yrPRMQ4KeHCvH0ubgs0P7oJXCsE9dqH3vhN6SGJjXbr7fLJ56gjggcAx+W4Pnmjt6+6oLzS+9xLENv4OiTP+x/OeGWAI/AEdPSYkt1MLLVH9zCDA46adKS59DtY0R2E/C/p7MSUmh1ZbS9f0oJuskYiROiB1ENSEWhJfc4OBL3o0j5GgzjaXBwAAA=="
+ },
+ "/images/about/travel/trip-5.webp": {
+  "sm": "/images/about/travel/trip-5.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABQBgCdASoYACAAPu1kpk6ppaMiMBgMATAdiWMAygKv8VEFb+6hM/1fd3oqoJlkVX6kU85XgIGg29HQAAD+WXp7iyUkuZ6cFmdB2ft7jOD/Xf/AJyULP/fX/mM+Igod5iDVTIgoN/G8okIshAKLTBEfhrDjrNvi/Rnq0lfZehvnOPURSmjy4xlxJnPlAAAA"
+ },
+ "/images/about/travel/trip-6.webp": {
+  "sm": "/images/about/travel/trip-6.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRgoBAABXRUJQVlA4IP4AAABQBgCdASoYACAAPu1qrVCppaQiqAqpMB2JYwAOgpYzL0Oikmx91dCHFnVfF6UZoScJa/2jq8DGJIMzIAD+zo/EhMFcSe0zMG+VWLBNiXeYyE3YomsitVlYsWUzHVxTx9odITNk7Eclj0zOXTHlQC13aHc8dPaqEYYgz5bGh5ZU4dHRJktgHrmQOH6T8hOIu+6Vk/lKqdQpvbUEQM2/3ZjVFgO2gnN/NbjY0oi+cXapL2lgxsU870u/GoxjZf4OhGT2Z5pTTWdHu/NKLAMuWRiFtl3904zlGkBGk/hteU6zEl4r4vO89qvctsciXoW0YETK/+S/HH+IpJD/cinAAA=="
+ },
+ "/images/about/travel/trip-7.webp": {
+  "sm": "/images/about/travel/trip-7.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRgYBAABXRUJQVlA4IPoAAABQBgCdASoYACAAPu1irFAppSQisBgIATAdiWMAwOLwNWN0Ct693QdOmsiYpZfBWK5inbG3pA3tJ4SUAADlyWe/9EvUfISSxj7Pb1arvm4FHH9Dzso41ZpI6B8/HcK5FMxu8Ft5jZUpm5qzNlFQKtdQ25f6XbWtfIW2MMvtcrsenXEDCpHUPzCDckL3v1Z1a6NEobiiGETmCOs/pyAKpyNRTZy/KSXaC4YIHQHdODjmIBV0V7bi0+VeiyxD6+TXk9OvEemY6whB+Blc4GeLKck1zlzAoHFtqtYLNocEQp36WFlDOy2QU4dgy2hW2H1TlRTVR7grumRSc2AA"
+ },
+ "/images/about/travel/trip-8.webp": {
+  "sm": "/images/about/travel/trip-8.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRgIBAABXRUJQVlA4IPYAAACwBQCdASoYACAAPu1kqlAppSOisBgIATAdiWIAnQGM0GSj5AQztwlZu6nrKv5bu/wGd9x2kwAA/pnsSoVpFEhLktaHiv0MKx8WiTVBRqzFR8/Ahid7mf3euZVQpRB7MWdIaMZRZxmCRrO+/RQi2rZNZickyFZ9+nxe5U9Yrci0gvf+MLvd8tSm8dvDgJyIFWr/rmgPKNou+zkuM3Ivk4yewi3b539/ZC2uFWcAqhFUmk75wsNfUSkobj9zhtWnIebzARPO/i+7xzJEznYSfK+EgOMrHfVe38baQb+ItkJwIj5urNoJQU/Cp28FY17YAIoDaDWDwAA="
+ },
+ "/images/about/cooking/dish-1.webp": {
+  "sm": "/images/about/cooking/dish-1.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRuIAAABXRUJQVlA4INYAAABwBQCdASoYACAAPu1qsFAppaSiqAqpMB2JbACdAAm+RRwDyA9B5L74+efRnXxymIAqmPyQAP2dUQEbbb3ukHs4mrWrEZlb0TTuxBd8HWYVyKnohV6zQeuybcU+d0rFva4BqCSFr7xK45k5ArBUw8uRY+mh5RJypD9/GDdjlRzbSHZae5FBeqzQ1ve7Rh06Tbi+StyLUuWBHxDxbY4whyte3v+fh07i8Gf18AOTBNi2CYphNwzW6XrNxUm8FfNw7oX2bI7X2/wOHjrXqKNOwA2EuYD1oGAA"
+ },
+ "/images/about/cooking/dish-2.webp": {
+  "sm": "/images/about/cooking/dish-2.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRroAAABXRUJQVlA4IK4AAAAQBQCdASoYABIAPu1urlIppiQiqAgBMB2JYwC+SA0d9TKnvjGWIJeRFLFfNW5oi5AAAP5VdIDVoLZ9n5ZYxkMroMZJfVXgKSeAvq/QiaXvWmi33iNfV6uDZ2zDW5qLSEs/pPZCpOCmTj6mNZ7X7GCbw9nK5pAEdOw8s//mo17vcXqlDBBdb9u2aSRmSIxc4UqCqE9nVfur49+GcQZSYVdCEKLthP8xYKV0QZ8AAAA="
+ },
+ "/images/about/cooking/dish-3.webp": {
+  "sm": "/images/about/cooking/dish-3.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRgoBAABXRUJQVlA4IP4AAABQBgCdASoYACAAPu1sqk8ppiOiMBgIATAdiWUAwoWvsYFa+ggN5KtF93hQBbfCUM0szkQtHxVtp2CcAAD+7u5fS/ByykfCr/ni8G5YCfiLsExXke79qvV+ArrEJh1nWT+cW/coryhLFA/S99MHmMWfU+nn1XFiNTL8t+cTR79VrJroad/8HgNPQb6b93stvUVn0zvrVQGOmChhG88oWJBgIul9JSnOxL45gJU97HW8H27Sl/n7TROW6g/WBuNZSkBU6yMTxRQM7H4VlFupEX3Kt9etQyxvM/ToMB5qZBjXY1N51AR9d2Pu1xJf9wBPk60nP43Zonyyx55+8wNwAA=="
+ },
+ "/images/about/cooking/dish-4.webp": {
+  "sm": "/images/about/cooking/dish-4.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRsYAAABXRUJQVlA4ILoAAABwBQCdASoYACAAPu1mqU2ppaOiMAgBMB2JYgCdM2QCfBmsfysYfAnj2xplpmoztI95brcAANbya+kAQdRRlyuRfG2YaxHQJwEq6Qz6dFOBaUNtDL1j5dtxaTTX1J34yHQ1b67cINjAD2zfJBejWjJDYYccZVr46FQx8jsSwNO3iI0YoDw/QCRcuqCqheCtEu7SfGwDbnXSpNdm/tICh8HX9IC6LSePbEyy3zxHRSpwMbCaPCfkxMYAAAA="
+ },
+ "/images/about/cooking/dish-5.webp": {
+  "sm": "/images/about/cooking/dish-5.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRhwBAABXRUJQVlA4IBABAABwBgCdASoYACAAPu1epk2ppKMiMAgBMB2JYgCsM48OYJK9ZcYvc7XvQCtJu9Jf46QCqLXRWQs+UKVf8wAA+fRGdrKY6subD3liXUVglaTFPw8hUK96oXJMzvn6TQZnpIVrcNZa188NuLCQ9ZEHpg41PrPUkaUthC8Ui4891Q2hsY1ePnIcAxVqVqbleUlRsZ7KGiTVnuP25pOpuJ1El4tb3sZ8Ao9Ce95rggfcm79dEQ9M6ZGU3IhGqhNoBiMpu2DlQNHx2LmbYS8+/Wj94/2XQpbOU9oCACwDDxBwaZzFx+7ZGPlNObRI8JW44peevQeUsi3KdRjZwqkABvdnlS3t+uV7Mxu0tzjDcI7EgwAAAA=="
+ },
+ "/images/about/poetry/sol-manamae.webp": {
+  "sm": "/images/about/poetry/sol-manamae.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADQBACdASoYAB8APuFeqk2opSQiMAwBEBwJZQDLpCFsmcBQ+kQ9MFh2sF94Cy54AAD+5GXYAxfShQofJWjp9X8k44n+/zsfu6A9v7Zm/Eun7CqdMdN8Od1jbUgF/xLqK+VNZXHyyOAw0N+UYSdLuowTqCsjBk9YWsUUG+mhLrNAAA=="
+ },
+ "/images/about/poetry/oru-peyar.webp": {
+  "sm": "/images/about/poetry/oru-peyar.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAABwBACdASoYACAAPtlgpE2oJiOiN/qoAQAbCWcAx+Qh39YGUkC7QZEkjtQgAAD+9M7yHBv9Rjxn83BhlXO2s5D2PSBiLwCbf7DWYwVJoH3mmKVKBLtDd9BT/MEgG6zgWlO0VY+kfUpRfwQWFLX+MBm8ZbAAAA=="
+ },
+ "/images/about/poetry/thangai.webp": {
+  "sm": "/images/about/poetry/thangai.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAAAwBQCdASoYAB4APu1osFAppaUiqAqpMB2JYwC/OC8fPTv9/OWMJM7WdQCmeuKQvSRugADb68G4q8P9M9Ug19XuPoADAmOj1QjSW+iATaklIHSGrA0rbS+MofKEuosbDS1X/QLOUW6Ba1HzI5nC1S/YbEQD4JlGpGOhKeKqrEkwuMgpEEtqfCUHxNIK3P7rDEAAAA=="
+ },
+ "/images/about/poetry/manpuru-mangaye.webp": {
+  "sm": "/images/about/poetry/manpuru-mangaye.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADQAwCdASoYABgAPu1kp02ppaMiMBgMATAdiWcAzYQRAT1Gf6UhyKAA/vHbNmSLdpeHWXqj0zHM54Gk/QNu5EycSiStzPnWjG43HX6h9mDIrDd0OeGk5RG9glkg0SmWOW4medh0eqfZxUge+r03TJgA"
+ },
+ "/images/about/poetry/thalattum-katre-vaa.webp": {
+  "sm": "/images/about/poetry/thalattum-katre-vaa.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAADQBACdASoYABgAPu1qrVCppaQiqAqpMB2JZQC/avIBW5QsmXMTty0qrpaR7un7sAD+8rTOFn5kPdI2VWjjvioZUzBvtGLIdbqgaWXEk31t7q2Q2T033CPGOkDwrw2k4Hgv86hxoD5JeeFer/aw9MzOo2SwlVLzOl0ous4N6n/1jG0IOBe70GWBtvGCzgAA"
+ },
+ "/images/about/photos/frame-1.webp": {
+  "sm": "/images/about/photos/frame-1.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoYACsAPu1wrlCppqQjqrgKATAdiWcAzNA+wOqFwE3p4H8QFTAA/vBca4WL27m4XkvLXpkwb88AvxFvIToesBuTO11mu7Rr4M0e0WvmxlVzjXf4Tql3dS4PvEvYyTl1AQKXAlscCMCDoRQE0UHOSoAA"
+ },
+ "/images/about/photos/frame-2.webp": {
+  "sm": "/images/about/photos/frame-2.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRgIBAABXRUJQVlA4IPYAAACQBgCdASoYACAAPuFeqE2opSQiMAwBEBwJZgCo+axSB4rSfuPIXDo+t/jtyxYy5TVYRZ9ihQ6LPoRDkOAQAP6txg+s5GoXhUsvHgIc/bR2pHkVLt4x+5PuImtTVR8F5Iby1Fl10k/juR5SVaeOILIK6JKRaOK+2lm9eyEyun08lbikAHcGBSP9BuvD+VUn0eA9rau58G04J9KqUQLmmWM6QKDn4avq92VhACMNA9zQetpP/428VpczWwXBGB1fEe8XYvXFfR2MJPTSjsSeWoLtyC5HT9OgIe21fetbcAnHw4Qm3FT3/yxw8y3oLD1+CUWwlGoAAAA="
+ },
+ "/images/about/photos/frame-3.webp": {
+  "sm": "/images/about/photos/frame-3.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAAAQBQCdASoYACAAPu1qq1EppaOiqAqpMB2JYgCdMt8E7WSvfBMbp5n+wvaY86SNvCggAPpg0jU6yB+aM8TORuJoWNJGZZYeFbQxdiTaiDDFx+Aoy0gYEGoXNSynWEAX7tfX2x1e4q+PT6Vb1GyNAGoZlBm9SMa6QsO5hTG/UknxvqvcuTfS5RI65NC2eJt/BnQIJ37OlfOJtjJ7vpa/rUzhe1fTo1XUJoVRBr/c+Ums+U4gAAA="
+ },
+ "/images/about/photos/frame-4.webp": {
+  "sm": "/images/about/photos/frame-4.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADwAwCdASoYACAAPuFcqE2opSQiMAwBEBwJZQDLpCHfw72Zah6t4hYAAP71bZaMrIrCINoloHBCX6PbU+E1XCm9eIjWo7+xeqxCUgstWKU4wnjxUJiKjF/B+Gn+38wbn5kG/Xsgcx0hKdDMeOKodAAA"
+ },
+ "/images/about/photos/frame-5.webp": {
+  "sm": "/images/about/photos/frame-5.sm.webp",
+  "lqip": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAAAwBQCdASoYACAAPu1oqU+ppiOiKA1RMB2JZgCBHhHr85ZwLNt/Yr6WChPbxlmc4DzYAAD+uTSs+FFF6FRYRLgu7iZ2/R4wzGo+mlgOsko+fHTtCPNKocOxcLZBZzlujNLfNaytinnm921UvoyHV6VUwkOc2oMcWwp5/mgReSsRsZfBPK+NOFYJoAA="
+ }
+}

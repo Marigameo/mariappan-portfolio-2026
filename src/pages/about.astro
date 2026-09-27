@@ -3,6 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import Thenga from '../components/mascots/Thenga.astro';
 import { pastimes } from '../data/offclock';
+import thumbs from '../data/thumbs.json';
+
+// Reel-sized copy and blurred preview per pick (scripts/thumbs.mjs); the original still opens full size.
+const thumb = (src: string) => (thumbs as Record<string, { sm: string; lqip: string }>)[src];
 import { site } from '../data/site';
 
 const description = 'Beyond the job title: guitar covers, slow travel, home cooking, Tamil poetry and photographs. The other sides of Mariappan Subramanian, plus the journey so far.';
@@ -61,6 +65,8 @@ const wins = [
         <!-- One board per pastime, from src/data/offclock.ts: Thenga and the words, then a reel of
              picks big enough to enjoy in place (the rail script in main.js drives the arrows), and
              an Instagram card for the rest. Tapping a pick still opens it in the lightbox below. -->
+        <!-- Without JS nothing would clear .is-developing, so show the photos straight away. -->
+        <noscript><style>.polaroid.is-developing img { opacity: 1; filter: none; } .polaroid-developing, .polaroid-photo::after { display: none; }</style></noscript>
         <ol class="boards">
           {pastimes.map((p, i) => {
             const cta = p.more ?? (p.picks.length ? 'More on' : 'Meanwhile, it’s all on');
@@ -93,8 +99,11 @@ const wins = [
                     <ul class="rail-track reel-track" id={`${p.id}-reel`} data-track aria-label={`${p.title}: a few picks`}>
                       {p.picks.map((x) => (
                         <li class="reel-item">
-                          <button class="polaroid" type="button" data-full={x.src} aria-label={`View full size: ${x.alt}`}>
-                            <img src={x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
+                          <button class="polaroid is-developing" type="button" data-full={x.src} data-develop aria-label={`View full size: ${x.alt}`}>
+                            <span class="polaroid-photo" style={thumb(x.src) ? `background-image: url(${thumb(x.src).lqip})` : undefined}>
+                              <img src={thumb(x.src)?.sm ?? x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
+                              <span class="polaroid-developing" aria-hidden="true">developing…</span>
+                            </span>
                             {x.caption && <span class="polaroid-caption" aria-hidden="true">{x.caption}</span>}
                           </button>
                         </li>

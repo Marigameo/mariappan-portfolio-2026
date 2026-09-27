@@ -474,7 +474,21 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .polaroid { position: relative; display: flex; flex-direction: column; padding: .6rem .6rem 0; border: 1.5px solid var(--border); border-radius: 3px; background: #fbf8f2; box-shadow: 4px 5px 0 var(--shadow-ink); cursor: zoom-in; transform: rotate(-.8deg); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
 .reel-item:nth-child(2n) .polaroid { transform: rotate(.8deg); }
 .polaroid:hover, .polaroid:focus-visible { transform: rotate(0) translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); }
-.polaroid img { display: block; height: var(--reel-h); width: auto; max-width: min(34rem, 84vw); object-fit: cover; border: 1px solid rgba(6, 6, 6, .15); }
+.polaroid-photo { position: relative; display: block; overflow: hidden; border: 1px solid rgba(6, 6, 6, .15); background: #e9e1cf center / cover no-repeat; }
+.polaroid img { display: block; height: var(--reel-h); width: auto; max-width: min(34rem, 84vw); object-fit: cover; transition: opacity .5s ease, filter .9s ease; }
+
+/* While a photo loads the polaroid "develops": the blurred preview (an inline data
+   URI from scripts/thumbs.mjs) under a slow shimmer and a handwritten tag, then the
+   photo fades in from sepia. main.js drops .is-developing on load. */
+.polaroid-photo::before { content: ""; position: absolute; inset: -12px; background: inherit; filter: blur(12px) saturate(1.2); z-index: 0; }
+.polaroid-photo::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(105deg, transparent 30%, rgba(255, 250, 238, .45) 50%, transparent 70%); background-size: 250% 100%; opacity: 0; pointer-events: none; transition: opacity .4s ease; }
+.polaroid img { position: relative; z-index: 1; }
+.polaroid.is-developing img { opacity: 0; filter: sepia(.8) blur(6px) brightness(1.15); }
+.polaroid.is-developing .polaroid-photo::after { opacity: 1; animation: develop-shimmer 1.6s ease-in-out infinite; }
+.polaroid-developing { position: absolute; left: 50%; bottom: .7rem; z-index: 3; padding: .2rem .6rem .3rem; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1; color: #2a2610; background: rgba(251, 248, 242, .85); border-radius: 999px; transform: translateX(-50%); white-space: nowrap; opacity: 0; transition: opacity .3s ease; pointer-events: none; }
+.polaroid.is-developing .polaroid-developing { opacity: 1; animation: develop-dots 1.6s ease-in-out infinite; }
+@keyframes develop-shimmer { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+@keyframes develop-dots { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 /* The chin: at least one line tall, grows for a second, and stretches so every chin in a row matches.
    The caption can't be wider than the photo, so long names wrap instead of widening the frame. */
 .polaroid::after { content: ""; display: block; min-height: 2.4rem; }
