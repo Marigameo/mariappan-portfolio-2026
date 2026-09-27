@@ -1,11 +1,13 @@
 ---
-/* One chapter of work (a company, or the indie pile): a header with prev/next arrows and a
+/* One chapter of work (the companies, or the indie pile): a header with prev/next arrows and a
    progress line, then a sideways scroller of <WorkCard>s in the slot. Arrows and the line
-   only appear once the rail has more cards than fit on screen (src/scripts/main.js). */
+   only appear once the rail has more cards than fit on screen (src/scripts/main.js).
+   When the cards carry a `company`, the title and meta follow the card in view, so one rail
+   can hold several companies; `title`/`meta`/`live` are what shows before any scrolling. */
 import Icon from '../Icon.astro';
 
 interface Props {
-  id: string;      // e.g. "rail-strive"; the track becomes "<id>-track"
+  id: string;      // e.g. "rail-work"; the track becomes "<id>-track"
   icon: string;    // doodle id for the badge
   title: string;
   meta: string;
@@ -19,10 +21,10 @@ const trackId = `${id}-track`;
   <div class="wrap">
     <div class="rail-head">
       <div class="rail-title">
-        <span class="rail-badge"><Icon name={icon} /></span>
-        <div>
-          <h3 id={id}>{title}</h3>
-          <p class="meta">{live && <span class="live" aria-hidden="true"></span>}{meta}</p>
+        <span class="rail-badge" data-rail-badge><Icon name={icon} /></span>
+        <div aria-live="polite">
+          <h3 id={id}><span class="rail-swap" data-rail-name>{title}</span></h3>
+          <p class="meta"><span class="live" aria-hidden="true" data-rail-live hidden={!live}></span><span class="rail-swap" data-rail-meta>{meta}</span></p>
         </div>
       </div>
       <div class="rail-controls">

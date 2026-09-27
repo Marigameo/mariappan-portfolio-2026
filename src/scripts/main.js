@@ -129,6 +129,86 @@
     function go(dir) { track.scrollBy({ left: dir * step(), behavior: reduceMotion ? "auto" : "smooth" }); }
     if (prev) prev.addEventListener("click", function () { go(-1); });
     if (next) next.addEventListener("click", function () { go(1); });
+
+    // Several companies in one rail: the header shows the company of the card in view.
+    // The "in view" point slides from the rail's left edge to its right edge as it
+    // scrolls, so the first card wins at the start and the last card at the end, even
+    // when two cards fit on screen at once.
+    var chapters = track.querySelectorAll("[data-company]");
+    var nameEl = rail.querySelector("[data-rail-name]");
+    var metaEl = rail.querySelector("[data-rail-meta]");
+    var liveEl = rail.querySelector("[data-rail-live]");
+    var badge = rail.querySelector("[data-rail-badge]");
+    var company = nameEl ? nameEl.textContent : "";
+    var swapId = 0;
+    function show(card) {
+      nameEl.textContent = card.dataset.company;
+      metaEl.textContent = card.dataset.meta || "";
+      if (liveEl) liveEl.hidden = card.dataset.live !== "true";
+    }
+    function swap(card) {
+      company = card.dataset.company;
+      if (reduceMotion || !nameEl.animate) { show(card); return; }
+      var id = ++swapId;
+      var els = [nameEl, metaEl];
+      var gone = { opacity: 0, transform: "translateY(-.5em)", filter: "blur(3px)" };
+      var here = { opacity: 1, transform: "none", filter: "blur(0)" };
+      var outs = els.map(function (el, i) {
+        el.getAnimations().forEach(function (a) { a.cancel(); });
+        return el.animate([here, gone], { duration: 170, delay: i * 40, easing: "ease-in", fill: "forwards" }).finished;
+      });
+      Promise.all(outs).then(function () {
+        if (id !== swapId) return; // a newer swap took over mid-fade
+        show(card);
+        els.forEach(function (el, i) {
+          el.getAnimations().forEach(function (a) { a.cancel(); });
+          el.animate([{ opacity: 0, transform: "translateY(.5em)", filter: "blur(3px)" }, here], { duration: 320, delay: i * 60, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
+        });
+        if (badge) badge.animate([{ transform: "rotate(-4deg)" }, { transform: "rotate(10deg) scale(1.06)" }, { transform: "rotate(-4deg)" }], { duration: 450, easing: "ease-in-out" });
+      }).catch(function () {});
+    }
+    function chapter() {
+      var max = track.scrollWidth - track.clientWidth;
+      var box = track.getBoundingClientRect();
+      var pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+      var x = box.left + pad + (max > 0 ? track.scrollLeft / max : 0) * (box.width - 2 * pad);
+      var pick = chapters[0], best = Infinity;
+      chapters.forEach(function (c) {
+        var r = c.getBoundingClientRect();
+        var d = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+        if (d < best) { best = d; pick = c; }
+      });
+      if (pick.dataset.company !== company) swap(pick);
+    }
+    if (chapters.length && nameEl && metaEl) {
+      track.addEventListener("scroll", chapter, { passive: true });
+      window.addEventListener("resize", chapter);
+    }
+
+    track.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  });
+
+  // --- Photo carousels: one photo per view, arrows + a counter ---------------------
+  // <div data-carousel> <div data-carousel-track>slides…</div> [data-carousel-prev] [data-carousel-next] [data-carousel-count] </div>
+  document.querySelectorAll("[data-carousel]").forEach(function (c) {
+    var track = c.querySelector("[data-carousel-track]");
+    if (!track) return;
+    var prev = c.querySelector("[data-carousel-prev]");
+    var next = c.querySelector("[data-carousel-next]");
+    var count = c.querySelector("[data-carousel-count]");
+    var n = track.children.length;
+    function at() { return Math.round(track.scrollLeft / (track.clientWidth || 1)); }
+    function update() {
+      var i = at();
+      if (count) count.textContent = String(i + 1);
+      if (prev) prev.disabled = i <= 0;
+      if (next) next.disabled = i >= n - 1;
+    }
+    function go(d) { track.scrollTo({ left: (at() + d) * track.clientWidth, behavior: reduceMotion ? "auto" : "smooth" }); }
+    if (prev) prev.addEventListener("click", function () { go(-1); });
+    if (next) next.addEventListener("click", function () { go(1); });
     track.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     update();

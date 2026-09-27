@@ -1,6 +1,7 @@
 ---
 import PostLayout from '../../layouts/PostLayout.astro';
 import MigrationPhases from '../../components/sketches/MigrationPhases.astro';
+import Icon from '../../components/Icon.astro';
 
 const description = 'At Freshworks Marketplace, we have leveraged a single codebase to power two distinct experiences: a unified in-product gallery and a public website. Despite their differing natures, we have designed them in a manner that ensures a consistent UI across both experiences.';
 ---
@@ -33,6 +34,11 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
   <p>You can read the full story behind our decision to use a single codebase <a href="https://codeburst.io/one-codebase-two-experiences-5e4a42dcdb46" rel="noopener">here</a>.</p>
 
   <p>While we have enjoyed the benefits of using a monorepo to help with this unique problem, it has also presented its own set of tradeoffs. One such challenge we encountered was migrating our entire codebase to the latest versions of the components in our tech stack. To make things more interesting, around the same time we recognized the need to improve the user experience through a major revamp. Our latest revamp features prominent filters, upgraded search capabilities, eye-catching colors, better use of available real estate, and a streamlined user interface that’s intuitive and easy to use. With these enhancements, our platform now provides an even more user-friendly experience than ever before. This post summarizes our learnings and the approaches that worked for us during this journey.</p>
+
+  <figure class="shot-fig">
+    <img src="/images/work/freshworks-marketplace/marketplace-home.webp" alt="The revamped Freshworks Marketplace: a search bar, product filters on the left, and a grid of popular apps with ratings, installs and supported products." width="1800" height="890" loading="lazy" decoding="async">
+    <figcaption>The revamped Marketplace: prominent filters, a bigger search, and more room for the apps.</figcaption>
+  </figure>
 
   <h2>Getting started</h2>
   <p>On February 7, 2022, <a href="https://blog.vuejs.org/posts/vue-3-as-the-new-default" rel="noopener">Vue 3 was announced</a> as the new major version for Vue.js. Having heavily invested in Vue.js since 2018, we were eager to learn about the new upgrades and advancements from this community-led project.</p>
@@ -211,4 +217,17 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
     <li><a href="https://www.infoq.com/news/2020/07/state-vuenion-2020-vue3/" rel="noopener">InfoQ — State of the Vuenion 2020</a></li>
     <li><a href="https://www.infoq.com/news/2019/01/vue-3-preview/" rel="noopener">InfoQ — Vue 3 preview</a></li>
   </ul>
+
+  <aside class="back-to-story callout wobbly wobbly--3" aria-label="The short version">
+    <Icon name="slides" />
+    <div>
+      <strong>The short version</strong>
+      <p>One slide per chapter, a drawing on each: <a href="/work/freshworks-marketplace/">Freshworks Marketplace on the work page</a>.</p>
+    </div>
+  </aside>
 </PostLayout>
+
+<style>
+  .shot-fig img { display: block; width: 100%; height: auto; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.5deg); }
+  .back-to-story { margin-top: var(--space-4); }
+</style>

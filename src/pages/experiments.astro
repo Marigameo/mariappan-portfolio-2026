@@ -1,0 +1,320 @@
+---
+/* Thenga's yard: the experiments heap. One shelf of small cards per category,
+   and a single "cracked open" panel (a <dialog>) that shows one experiment at a
+   time, with previous/next to walk the whole pile. Every experiment's notes are
+   rendered into the panel up front (hidden), so they are in the page for search
+   and need no templating. /experiments/#<id> opens one directly.
+   All content comes from src/data/experiments.ts. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import Thenga from '../components/mascots/Thenga.astro';
+import CoconutHeap from '../components/mascots/CoconutHeap.astro';
+import { moods, shelves, experiments, experimentCount } from '../data/experiments';
+import { site } from '../data/site';
+
+const description = 'Thenga’s yard: the heap where I pile up my experiments. Marketplace apps, a pivoted product, college ventures, freelance work and night hacks, each with what I found inside.';
+const n = experiments.length;
+---
+<BaseLayout title={`Thenga’s yard — experiments | ${site.name}`} description={description} current="work">
+  <main id="main" class="wrap yard">
+    <header class="yard-hero">
+      <div>
+        <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
+        <p class="eyebrow">Thenga’s yard · {experimentCount} on the pile</p>
+        <h1>Every coconut’s a keeper.</h1>
+        <p class="lede">The yard where I keep piling up experiments: shipped apps, a pivot, college ventures and night hacks. Not all of them became palms, but every one cracked open with something inside.</p>
+        <nav class="yard-jump" aria-label="Shelves">
+          {shelves.map((s) => <a class="pill" href={`#${s.id}`}>{s.name}<span>{s.items.length}</span></a>)}
+        </nav>
+      </div>
+      <div class="yard-heap">
+        <CoconutHeap items={experiments} />
+        <p class="yard-hint" aria-hidden="true">pick a coconut</p>
+      </div>
+    </header>
+
+    <ul class="legend" aria-label="What each coconut means">
+      {Object.entries(moods).map(([key, m]) => (
+        <li>
+          <Thenga mood={key as keyof typeof moods} />
+          <p><strong>{m.label}</strong>{m.meaning}</p>
+        </li>
+      ))}
+    </ul>
+
+    {shelves.map((shelf) => (
+      <section class="shelf" id={shelf.id} aria-labelledby={`${shelf.id}-title`}>
+        <header class="shelf-head">
+          <h2 id={`${shelf.id}-title`}>{shelf.name}</h2>
+          <p>{shelf.tagline}</p>
+        </header>
+        <ul class="nuts">
+          {shelf.items.map((x) => (
+            <li class="nut m-hover-host">
+              <div class="nut-top">
+                <Thenga mood={x.mood} class="nut-mood" />
+                <span class="tag">{moods[x.mood].label}</span>
+                <span class="nut-status">{x.status}</span>
+              </div>
+              <h3><button type="button" class="nut-open" data-open={x.id} aria-haspopup="dialog">{x.name}</button></h3>
+              <p class="nut-context">{x.context}</p>
+              <p class="nut-hook">{x.hook}</p>
+              <span class="nut-go" aria-hidden="true">Crack it open<Icon name="arrow-right" /></span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <p style="margin-top: var(--space-5)">
+      <a class="pill" href="/#work"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
+    </p>
+
+    <!-- The cracked-open panel. One article per experiment; the script shows one at a time. -->
+    <dialog class="crack" id="crack" data-crack aria-labelledby={`${experiments[0].id}-t`}>
+      <div class="crack-sheet">
+        <button type="button" class="crack-close rail-btn" data-close aria-label="Close"><Icon name="close" /></button>
+        {experiments.map((x, i) => {
+          const prev = experiments[(i - 1 + n) % n];
+          const next = experiments[(i + 1) % n];
+          return (
+            <article class="crack-item" data-item={x.id} aria-labelledby={`${x.id}-t`} hidden={i !== 0}>
+              <header class="crack-head">
+                <Thenga mood={x.mood} class="crack-mood" />
+                <div>
+                  <p class="crack-tags"><span class="tag">{moods[x.mood].label}</span><span class="nut-status">{x.status}</span></p>
+                  <h2 id={`${x.id}-t`}>{x.name}</h2>
+                  <p class="nut-context">{x.context}</p>
+                </div>
+              </header>
+              <p class="crack-hook">{x.hook}</p>
+
+              <div class="crack-sections">
+                {x.sections.map((s) => (
+                  <section>
+                    <h3>{s.title}</h3>
+                    <ul class="doodle-list">{s.points.map((p) => <li>{p}</li>)}</ul>
+                  </section>
+                ))}
+              </div>
+
+              {x.shot && <img class="crack-shot" src={x.shot.src} alt={x.shot.alt} width={x.shot.w} height={x.shot.h} loading="lazy" decoding="async" />}
+
+              <section class="crack-found">
+                <h3><span aria-hidden="true">✦</span> Found inside</h3>
+                <ul>{x.found.map((f) => <li>{f}</li>)}</ul>
+              </section>
+
+              {x.note && <p class="crack-note">{x.note}</p>}
+
+              {x.links && x.links.length > 0 && (
+                <p class="crack-links">
+                  {x.links.map((l) => <a class="pill" href={l.href} rel="noopener" target="_blank">{l.label}<Icon name="external" /></a>)}
+                </p>
+              )}
+
+              <footer class="crack-nav">
+                <button type="button" class="crack-step" data-step="-1"><Icon name="arrow-right" style="transform:scaleX(-1)" /><span><small>Previous</small>{prev.name}</span></button>
+                <span class="crack-count">{i + 1} / {n}</span>
+                <button type="button" class="crack-step crack-step--next" data-step="1"><span><small>Next</small>{next.name}</span><Icon name="arrow-right" /></button>
+              </footer>
+            </article>
+          );
+        })}
+      </div>
+    </dialog>
+  </main>
+</BaseLayout>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-crack]');
+  if (dlg && typeof dlg.showModal === 'function') {
+    const items = Array.from(dlg.querySelectorAll<HTMLElement>('[data-item]'));
+    const ids = items.map((a) => a.dataset.item!);
+    const sheet = dlg.querySelector<HTMLElement>('.crack-sheet')!;
+    let current = -1;
+    let opener: HTMLElement | null = null;
+
+    const show = (i: number, focusStep?: string) => {
+      items.forEach((a, j) => { a.hidden = j !== i; });
+      current = i;
+      dlg.setAttribute('aria-labelledby', `${ids[i]}-t`);
+      sheet.scrollTop = 0;
+      history.replaceState(null, '', `#${ids[i]}`);
+      if (focusStep) items[i].querySelector<HTMLElement>(`[data-step="${focusStep}"]`)?.focus();
+    };
+    const step = (by: number, focusStep?: string) => {
+      dlg.dataset.swapped = '';
+      show((current + by + items.length) % items.length, focusStep);
+    };
+    const open = (id: string, from: HTMLElement | null) => {
+      const i = ids.indexOf(id);
+      if (i < 0) return;
+      opener = from;
+      show(i);
+      if (!dlg.open) { dlg.showModal(); document.documentElement.classList.add('crack-lock'); }
+    };
+
+    dlg.addEventListener('close', () => {
+      document.documentElement.classList.remove('crack-lock');
+      delete dlg.dataset.swapped;
+      history.replaceState(null, '', location.pathname + location.search);
+      opener?.focus();
+      opener = null;
+    });
+    // A click on the backdrop lands on the <dialog> itself; the sheet covers everything else.
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => dlg.close()));
+    dlg.querySelectorAll<HTMLElement>('[data-step]').forEach((b) => b.addEventListener('click', () => step(Number(b.dataset.step), b.dataset.step)));
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') step(1);
+      if (e.key === 'ArrowLeft') step(-1);
+    });
+
+    document.querySelectorAll<HTMLElement | SVGElement>('[data-open]').forEach((el) => {
+      el.addEventListener('click', () => open(el.dataset.open!, el instanceof HTMLButtonElement ? el : null));
+    });
+
+    // The heap: a label that follows the coconut under the pointer.
+    const heap = document.querySelector<HTMLElement>('[data-heap]');
+    const tip = heap?.querySelector<HTMLElement>('[data-heap-tip]');
+    if (heap && tip) {
+      heap.querySelectorAll<SVGGElement>('[data-open]').forEach((nut) => {
+        nut.addEventListener('pointerenter', () => {
+          const h = heap.getBoundingClientRect();
+          const r = nut.getBoundingClientRect();
+          tip.textContent = nut.dataset.name ?? '';
+          tip.style.left = `${r.left + r.width / 2 - h.left}px`;
+          tip.style.top = `${r.top - h.top - 8}px`;
+          tip.hidden = false;
+        });
+        nut.addEventListener('pointerleave', () => { tip.hidden = true; });
+      });
+    }
+
+    const fromHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (ids.includes(id)) open(id, null);
+    };
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
+  }
+</script>
+
+<style>
+  .yard { padding-bottom: var(--space-5); }
+  .yard-hero { display: grid; grid-template-columns: 1fr minmax(18rem, 30rem); align-items: end; gap: 1rem 3rem; padding-top: var(--space-4); }
+  .yard-hero h1 { margin-top: .3rem; }
+  .yard-jump { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
+  .yard-jump .pill { font-size: .9rem; padding: .45rem .8rem; gap: .5rem; }
+  .yard-jump .pill span { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); }
+  .yard-heap { position: relative; }
+  .yard-hint { position: absolute; top: 2%; left: 4%; margin: 0; font-family: var(--font-hand); font-size: 1.3rem; color: var(--coral); transform: rotate(-5deg); }
+
+  /* The three kinds of coconut. Looping, out of step with each other. */
+  .legend { list-style: none; margin: var(--space-4) 0 0; padding: 1.1rem 1.3rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem 1.5rem; border: 2px dashed var(--ink-faint); border-radius: var(--radius-wobble-3); background: color-mix(in srgb, var(--sand) 60%, transparent); }
+  .legend li { display: flex; align-items: center; gap: .8rem; }
+  .legend li:nth-child(2) { --m-delay: -1s; }
+  .legend li:nth-child(3) { --m-delay: -.5s; }
+  .legend :global(.mascot) { flex: none; width: 4.2rem; }
+  .legend p { margin: 0; font-size: .9rem; line-height: 1.4; }
+  .legend strong { display: block; font-family: var(--font-hand); font-size: 1.35rem; font-weight: 400; line-height: 1.1; color: var(--ink); }
+
+  .shelf { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); scroll-margin-top: 5rem; }
+  .shelf-head { margin-bottom: 1.4rem; }
+  .shelf-head h2 { margin-bottom: .3rem; }
+  .shelf-head p { margin: 0; }
+
+  /* Cards: a mood, a name, one line. The whole card opens the panel: the
+     heading's button stretches over it. The coconut only moves on hover. */
+  .nuts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1.4rem; }
+  .nut { position: relative; display: flex; flex-direction: column; gap: .45rem; padding: 1rem 1.2rem 1.1rem; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
+  .nut:nth-child(2n) { border-radius: 6px 12px 5px 10px / 10px 5px 12px 6px; }
+  .nut:nth-child(3n) { border-radius: 12px 6px 10px 5px / 5px 10px 6px 12px; }
+  .nut:hover, .nut:focus-within { transform: translateY(-3px) rotate(-.4deg); box-shadow: 5px 6px 0 var(--shadow-ink); }
+  .nut-top { display: flex; align-items: center; gap: .5rem; }
+  .nut-top :global(.nut-mood) { width: 3.2rem; margin: -.4rem 0 -.2rem -.3rem; }
+  .nut-status { margin-left: auto; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); padding: .3rem .5rem; border: 1.5px dashed currentColor; border-radius: 999px; line-height: 1; white-space: nowrap; }
+  .nut h3 { margin: .1rem 0 0; font-size: 1.35rem; }
+  .nut-open { padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; color: var(--ink); }
+  .nut-open::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .nut-open:focus-visible { outline: none; }
+  .nut:has(.nut-open:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .nut p { margin: 0; max-width: none; }
+  .nut-context { margin: 0; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); max-width: none; }
+  .nut-hook { font-size: .95rem; }
+  .nut-go { margin-top: auto; padding-top: .5rem; display: inline-flex; align-items: center; gap: .3rem; font-size: .9rem; font-weight: 500; color: var(--coral); }
+  .nut-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .nut:hover .nut-go :global(.doodle) { transform: translateX(4px); }
+
+  /* ---- The cracked-open panel ---- */
+  /* While the panel is open: no page scroll (keeping the scrollbar's gutter so the
+     page doesn't jump sideways), and everything behind the backdrop holds still. */
+  :global(html.crack-lock) { overflow: hidden; scrollbar-gutter: stable; }
+  :global(html.crack-lock main > :not(dialog)),
+  :global(html.crack-lock main > :not(dialog) *),
+  :global(html.crack-lock .site-footer *) { animation-play-state: paused !important; transition: none !important; }
+  .crack { padding: 0; border: 0; background: transparent; width: min(46rem, calc(100vw - 2rem)); max-width: none; max-height: calc(100vh - 3rem); overflow: visible; color: var(--ink); }
+  /* A plain dim, no blur: blurring a page that is still painting made the panel shimmer. */
+  .crack::backdrop { background: rgba(6, 6, 6, .62); }
+  .crack[open] { animation: crack-in .3s cubic-bezier(.2,.8,.2,1); }
+  .crack[open]::backdrop { animation: crack-dim .25s ease-out; }
+  .crack-sheet { position: relative; max-height: calc(100vh - 3rem); overflow-y: auto; overscroll-behavior: contain; padding: 1.5rem 1.6rem 1.2rem; background: var(--paper); border: 1.5px solid var(--border); border-radius: 14px 8px 16px 8px / 8px 16px 8px 14px; box-shadow: 5px 6px 0 var(--shadow-ink); }
+  .crack-close { position: sticky; top: 0; float: right; margin: -.4rem -.5rem 0 .5rem; z-index: 2; }
+  .crack-close :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+  /* Only when stepping between experiments; the first one rides in with the panel. */
+  .crack[data-swapped] .crack-item:not([hidden]) { animation: crack-swap .28s ease both; }
+
+  .crack-head { display: flex; align-items: center; gap: 1rem; }
+  .crack-head :global(.crack-mood) { flex: none; width: 5.5rem; }
+  .crack-tags { display: flex; align-items: center; gap: .5rem; margin: 0 0 .35rem; max-width: none; }
+  .crack-tags .nut-status { margin-left: 0; }
+  .crack-head h2 { margin: 0 0 .2rem; font-size: clamp(1.7rem, 4vw, 2.3rem); }
+  .crack-hook { margin: 1rem 0 0; font-size: 1.05rem; color: var(--ink); max-width: none; }
+
+  .crack-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem 1.6rem; margin-top: 1.2rem; }
+  .crack-sections h3, .crack-found h3 { margin: 0 0 .6rem; font-family: var(--font-mono); font-size: .68rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .crack-sections li { font-size: .94rem; line-height: 1.45; margin-bottom: .45em; }
+  /* Screenshots keep their own colours; small ones stay at their natural size. */
+  .crack-shot { display: block; width: auto; max-width: min(100%, 26rem); margin: 1.2rem auto 0; background: #fff; border: 1.5px solid var(--border); border-radius: 8px 4px 9px 4px / 4px 9px 4px 8px; box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(.6deg); }
+
+  /* What I found inside: the treasure, on a sticky note. */
+  .crack-found { margin-top: 1.3rem; padding: .9rem 1.1rem 1rem; background: color-mix(in srgb, var(--yellow) 30%, var(--paper-2)); border: 1.5px solid var(--border); border-radius: 6px 12px 5px 10px / 10px 5px 12px 6px; box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .crack-found h3 { color: var(--ink-soft); }
+  .crack-found h3 span { color: var(--coral); }
+  .crack-found ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+  .crack-found li { font-family: var(--font-hand); font-size: 1.35rem; line-height: 1.2; color: var(--ink); }
+  .crack-note { margin: 1rem 0 0; padding-left: .9rem; border-left: 2px dashed var(--ink-faint); font-size: .92rem; font-style: italic; max-width: none; }
+  .crack-links { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.1rem 0 0; max-width: none; }
+  .crack-links .pill { font-size: .86rem; padding: .45rem .8rem; }
+
+  .crack-nav { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-top: 1.4rem; padding-top: 1rem; border-top: 1.5px dashed var(--line); }
+  .crack-step { display: inline-flex; align-items: center; gap: .5rem; min-width: 0; max-width: 42%; padding: .3rem .4rem; border: 0; background: none; color: var(--ink); text-align: left; border-radius: 8px; }
+  .crack-step--next { text-align: right; }
+  .crack-step span { display: grid; min-width: 0; font-size: .92rem; font-weight: 500; }
+  .crack-step span, .crack-step small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .crack-step small { font-family: var(--font-mono); font-size: .6rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .crack-step :global(.doodle) { flex: none; width: 1.1rem; height: 1.1rem; stroke-width: 2; color: var(--coral); }
+  .crack-step:hover { color: var(--coral); }
+  .crack-count { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-faint); }
+
+  @keyframes crack-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes crack-dim { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes crack-swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 767px) {
+    .yard-hero { grid-template-columns: 1fr; }
+    .yard-heap { width: min(26rem, 100%); justify-self: center; margin-top: .5rem; }
+    .legend { grid-template-columns: 1fr; }
+  }
+  /* Phones: the panel is a sheet that rises from the bottom edge. */
+  @media (max-width: 639px) {
+    .crack { width: 100vw; max-height: 90vh; margin: auto 0 0; }
+    .crack-sheet { max-height: 90vh; padding: 1.2rem 1.1rem 1rem; border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 0 var(--shadow-ink); }
+    .crack[open] { animation: crack-up .34s cubic-bezier(.2,.8,.2,1); }
+    .crack-head :global(.crack-mood) { width: 4.2rem; }
+    .crack-count { display: none; }
+    .crack-step { max-width: 49%; padding-inline: 0; }
+  }
+  @keyframes crack-up { from { transform: translateY(40%); opacity: .4; } to { transform: none; opacity: 1; } }
+</style>

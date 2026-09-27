@@ -290,6 +290,8 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .rail-title { display: flex; align-items: center; gap: .9rem; min-width: 0; }
 .rail-title h3 { margin: 0; font-size: clamp(1.45rem, 2.6vw, 1.85rem); }
 .rail-title .meta { margin: .15rem 0 0; font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
+/* The company name and role · years that swap as the rail scrolls (main.js animates them). */
+.rail-swap { display: inline-block; }
 .rail-badge { display: grid; place-items: center; width: 2.9rem; height: 2.9rem; flex: none; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-4deg); }
 .rail-badge .doodle { width: 1.45rem; height: 1.45rem; color: var(--coral); stroke-width: 1.6; }
 .rail + .rail .rail-badge .doodle { color: var(--teal); }
@@ -439,21 +441,69 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .rule { border: 0; height: 1px; background: var(--line); margin: 0; }
 
 /* ---------- 12. About page -------------------------------------------------- */
-/* Off the clock: a list of big tinted doodle badges with a line each and an Instagram handle. */
-.into { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3) var(--space-4); max-width: 46rem; }
-.into-item { --accent: var(--coral); display: grid; grid-template-columns: 4rem 1fr; gap: 1.1rem; align-items: start; }
-.into-badge { width: 4rem; height: 4rem; display: grid; place-items: center; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: color-mix(in srgb, var(--accent) 16%, var(--paper-2)); color: var(--accent); box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-5deg); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
-.into-item:nth-child(2n) .into-badge { transform: rotate(4deg); border-radius: 45% 55% 50% 50% / 50% 45% 55% 50%; }
-.into-item:hover .into-badge { transform: rotate(0) scale(1.06); }
-.into-badge .doodle { width: 2.1rem; height: 2.1rem; stroke-width: 1.5; }
-.into-body { display: grid; gap: .35rem; justify-items: start; padding-top: .3rem; }
-.into-body h3 { margin: 0; font-size: 1.35rem; }
-.into-body p { margin: 0; font-size: 1rem; }
-.into-link { margin-top: .35rem; font-size: .88rem; padding: .45rem .8rem; }
-.into-link .doodle { color: var(--accent); width: 1.05rem; height: 1.05rem; }
-@media (min-width: 720px) {
-  .into { max-width: none; grid-template-columns: repeat(2, 1fr); }
-  .into-item:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 46rem; }
+/* Thenga's day off: one board per pastime. On top, Thenga in its hobby pose on a
+   tinted blob next to the words; below, a sideways reel of picks shown whole and
+   big enough to enjoy in place, ending with an Instagram card. The reel reuses
+   the work rails' track and controls (§9, main.js). Thenga floats; its prop loop
+   (§14b) plays on top. */
+.dayoff-head { margin-bottom: var(--space-4); }
+.dayoff-head h2 { margin: .3rem 0 0; }
+/* minmax(0, …) and min-width: 0 keep each board to the page width, so its reel
+   scrolls sideways instead of stretching the page. */
+.boards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.board { --accent: var(--coral); min-width: 0; }
+.board-head { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1.2rem 2.5rem; align-items: center; max-width: 56rem; }
+.board-who { position: relative; padding: .7rem; background: color-mix(in srgb, var(--accent) 22%, var(--sand)); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; }
+.board-who .mascot { animation: dayoff-float 5.2s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.board-doing { position: absolute; left: 50%; bottom: -.9rem; margin: 0; padding: .25rem .65rem .35rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; white-space: nowrap; color: var(--sticky-ink); background: var(--yellow); box-shadow: 2px 2px 0 var(--shadow-ink); transform: translateX(-50%) rotate(-3deg); }
+@keyframes dayoff-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-2deg); } }
+.board-main { display: grid; gap: .5rem; justify-items: start; min-width: 0; }
+.board-main h3 { margin: 0; font-size: clamp(1.5rem, 2.8vw, 1.9rem); }
+.board-main > p { margin: 0; font-size: 1rem; max-width: 52ch; }
+.board-aside { font-family: var(--font-hand); font-size: 1.25rem !important; color: var(--ink-soft); margin-top: .3rem !important; }
+
+/* The reel: arrows + progress line above the track, only when it overflows.
+   Every pick shares one height (--reel-h) and takes its own width from its shape,
+   so tops, bottoms and captions line up along the row. */
+.reel { --reel-h: 24rem; margin-top: 1.6rem; }
+.reel-controls { justify-content: flex-end; margin: 0 0 .4rem; }
+.reel-track { align-items: stretch; gap: 1.5rem; padding-top: .6rem; padding-bottom: 1.4rem; }
+.reel-item { flex: 0 0 auto; display: flex; scroll-snap-align: start; }
+
+/* Polaroids: a white frame with a thick chin, a gentle alternating tilt, the photo whole. */
+.polaroid { position: relative; display: flex; flex-direction: column; padding: .6rem .6rem 0; border: 1.5px solid var(--border); border-radius: 3px; background: #fbf8f2; box-shadow: 4px 5px 0 var(--shadow-ink); cursor: zoom-in; transform: rotate(-.8deg); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+.reel-item:nth-child(2n) .polaroid { transform: rotate(.8deg); }
+.polaroid:hover, .polaroid:focus-visible { transform: rotate(0) translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+.polaroid img { display: block; height: var(--reel-h); width: auto; max-width: min(34rem, 84vw); object-fit: cover; border: 1px solid rgba(6, 6, 6, .15); }
+/* The chin: at least one line tall, grows for a second, and stretches so every chin in a row matches.
+   The caption can't be wider than the photo, so long names wrap instead of widening the frame. */
+.polaroid::after { content: ""; display: block; min-height: 2.4rem; }
+.polaroid:has(.polaroid-caption)::after { display: none; }
+.polaroid-caption { flex: 1; display: grid; place-items: center; width: 0; min-width: 100%; min-height: 2.4rem; padding: .35rem .2rem .45rem; font-family: var(--font-hand); font-size: 1.3rem; line-height: 1.05; color: #2a2610; text-align: center; text-wrap: balance; }
+
+/* The Instagram card: at the end of a reel, or inline under the words when there are no picks yet. */
+.ig-card { display: grid; align-content: center; justify-items: start; gap: .3rem; min-height: 14rem; padding: 1.2rem 1.1rem; color: var(--ink); text-decoration: none; background: var(--paper-2); border: 1.5px dashed var(--accent); border-radius: 12px 6px 14px 6px / 6px 14px 6px 12px; transform: rotate(1.5deg); transition: transform .25s cubic-bezier(.2,.8,.2,1), background .2s ease; }
+.ig-card .doodle { width: 1.7rem; height: 1.7rem; color: var(--accent); }
+.ig-card span { font-size: .95rem; color: var(--ink-soft); line-height: 1.3; }
+.ig-card strong { font-family: var(--font-hand); font-size: 1.6rem; font-weight: 400; line-height: 1.05; }
+.ig-card .ig-go { width: 1.2rem; height: 1.2rem; margin-top: .2rem; stroke-width: 2; transition: transform .2s ease; }
+.ig-card:hover { color: var(--ink); transform: rotate(0) translateY(-3px); background: color-mix(in srgb, var(--accent) 8%, var(--paper-2)); }
+.ig-card:hover .ig-go { transform: translateX(4px); }
+/* At the end of a reel the card stands as tall as the polaroids beside it. */
+.reel-item--cta { width: min(15rem, 62vw); }
+.reel-item--cta .ig-card { flex: 1; min-height: 0; transform: rotate(.8deg); }
+.reel-item--cta:nth-child(2n) .ig-card { transform: rotate(-.8deg); }
+.ig-card--note { margin: 0; justify-items: center; text-align: center; font-family: var(--font-hand); font-size: 1.4rem; line-height: 1.2; color: var(--ink-soft); max-width: none; }
+.ig-card--inline { display: inline-flex; align-items: center; gap: .5rem; min-height: 0; margin-top: .6rem; padding: .6rem .9rem; transform: rotate(-.6deg); }
+.ig-card--inline .doodle { width: 1.3rem; height: 1.3rem; }
+.ig-card--inline strong { font-size: 1.3rem; }
+.ig-card--inline .ig-go { margin: 0; }
+
+@media (max-width: 719px) {
+  .reel { --reel-h: 22rem; }
+  .board-head { grid-template-columns: 1fr; gap: 1.6rem; }
+  .board-who { width: min(11rem, 55%); justify-self: center; }
+  .ig-card--inline { flex-wrap: wrap; }
 }
 
 /* Journey: a dashed spine on the left, a hand-lettered year stamp per stop, and
@@ -502,15 +552,29 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .win-photos { flex: 1; min-height: 0; display: grid; gap: .6rem; padding: .35rem .2rem 0; }
 .win-shot { position: relative; display: block; width: 100%; height: 100%; min-height: 0; aspect-ratio: 4 / 3; padding: 0; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); box-shadow: 3px 3px 0 var(--shadow-ink); overflow: hidden; cursor: zoom-in; transform: rotate(-1.2deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
 .win-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
-.win-shot-hint { position: absolute; right: .5rem; bottom: .5rem; padding: .28rem .55rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--paper); background: rgba(6, 6, 6, .72); border-radius: 999px; opacity: 0; transition: opacity .2s ease; }
+.win-shot-hint { position: absolute; right: .5rem; bottom: .5rem; padding: .28rem .55rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: rgba(6, 6, 6, .72); border-radius: 999px; opacity: 0; transition: opacity .2s ease; }
 .win-shot:hover .win-shot-hint, .win-shot:focus-visible .win-shot-hint { opacity: 1; }
 @media (hover: none) { .win-shot-hint { opacity: .9; } }
-.win-photos--fan { aspect-ratio: 4 / 3; grid-template-columns: 1.5fr 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
-.win-photos--fan .win-shot { aspect-ratio: auto; transform: rotate(-.8deg); }
-.win-photos--fan .win-shot img { object-position: center 35%; }
-.win-photos--fan .win-shot:first-child { grid-row: 1 / span 2; transform: rotate(-1.2deg); }
-.win-photos--fan .win-shot:nth-child(2) { transform: rotate(1.4deg); }
-.win-photos--fan .win-shot:nth-child(2) img { object-position: center 30%; }
+/* A win with several photos: a sideways carousel the full width of the card.
+   Photos are shown whole (contain), over a blurred copy that fills the edges,
+   so portraits and group shots never get cropped. main.js drives the arrows. */
+.win-carousel { position: relative; margin: .35rem .2rem 0; transform: rotate(-.8deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+.win:hover .win-carousel { transform: rotate(0); }
+.win-track { display: flex; aspect-ratio: 4 / 3; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); box-shadow: 3px 3px 0 var(--shadow-ink); }
+.win-track::-webkit-scrollbar { display: none; }
+.win-slide { position: relative; flex: 0 0 100%; padding: 0; border: 0; background: none; overflow: hidden; scroll-snap-align: start; cursor: zoom-in; }
+.win-slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1; }
+.win-slide .win-slide-bg { z-index: 0; object-fit: cover; filter: blur(16px) saturate(1.1); transform: scale(1.2); opacity: .6; }
+.win-slide .win-shot-hint { z-index: 2; }
+.win-slide:hover .win-shot-hint, .win-slide:focus-visible .win-shot-hint { opacity: 1; }
+.win-slide:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
+.win-nav { position: absolute; top: 50%; z-index: 2; width: 2.1rem; height: 2.1rem; transform: translateY(-50%); background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); }
+.win-nav--prev { left: .5rem; }
+.win-nav--next { right: .5rem; }
+.win-nav--prev .doodle { transform: scaleX(-1); }
+.win-nav:hover { transform: translateY(calc(-50% - 1px)); }
+.win-nav[disabled] { opacity: 0; pointer-events: none; }
+.win-count { position: absolute; left: .55rem; bottom: .55rem; z-index: 2; margin: 0; padding: .28rem .55rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; color: #fff; background: rgba(6, 6, 6, .72); border-radius: 999px; }
 .win:hover .win-shot { transform: rotate(0); }
 /* Lightbox: the full photo on a dimmed page, close button top-right, caption below */
 .lightbox { border: 0; padding: 0; background: transparent; max-width: min(96vw, 80rem); max-height: 96vh; overflow: visible; }
@@ -691,6 +755,108 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
   :root:not([data-theme="light"]) .ink-shot img,
   :root:not([data-theme="light"]) .lightbox--ink img { filter: invert(1) hue-rotate(180deg); }
 }
+
+/* ---------- 14b. Mascot (Thenga, src/components/mascots/) -------------------- */
+/* Ink for the coconut. Outlines and paper follow the theme tokens; the shell,
+   leaves and feet keep their own colours in both themes, like a real coconut. */
+.mascot { width: 100%; height: auto; overflow: visible; }
+.mascot .m-line { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.mascot .m-thin { stroke-width: 2; }
+.mascot .m-ray { stroke: var(--coral); }
+.mascot .m-wave { stroke: var(--ink-faint); }
+.mascot .m-fibre { stroke: #5c3a24; stroke-opacity: .55; }
+.mascot .m-shadow { fill: var(--ink); opacity: .1; }
+.mascot :is(.m-card, .m-yellow, .m-leaf, .m-shell, .m-foot, .m-mouth, .m-flame, .m-star) { stroke: var(--ink); stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
+.mascot .m-card { fill: var(--paper-2); }
+.mascot .m-yellow { fill: var(--yellow); }
+.mascot .m-leaf { fill: #6f9a4f; stroke-width: 2.2; }
+.mascot .m-shell { fill: #9a6440; }
+.mascot .m-pore { fill: #4a2c1a; }
+.mascot .m-foot { fill: #7a4c2e; stroke-width: 2.2; }
+.mascot .m-mouth { fill: var(--ink); stroke-width: 2; }
+.mascot .m-flame { fill: var(--yellow); stroke: var(--coral); stroke-width: 2.2; }
+.mascot .m-star { fill: var(--yellow); stroke-width: 2.2; }
+.mascot .m-dot { fill: var(--ink); }
+.mascot .m-cheek { fill: var(--coral-soft); opacity: .6; }
+.mascot .m-trail { stroke: var(--ink-faint); stroke-dasharray: 3 5; }
+.mascot .m-ink-soft { stroke: var(--ink-soft); stroke-width: 1.4; }
+/* Thenga's day off: the props. Wood, steel and canvas keep their own colours. */
+.mascot :is(.m-wood, .m-camera, .m-pot, .m-pot-rim, .m-pack, .m-pack-pocket, .m-lens) { stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.mascot .m-wood { fill: #d9924a; }
+.mascot .m-wood-join { fill: none; stroke: #d9924a; stroke-width: 3; }
+.mascot .m-neck-ink { stroke: var(--ink); stroke-width: 9; stroke-linecap: round; }
+.mascot .m-neck { stroke: #8a5a34; stroke-width: 5; stroke-linecap: round; }
+.mascot .m-string { fill: none; stroke: var(--paper-2); stroke-width: .8; opacity: .8; }
+.mascot .m-camera { fill: #3b3f4a; }
+.mascot .m-lens { fill: #7fb3d5; }
+.mascot .m-pen { fill: none; stroke: var(--blue); stroke-width: 4; stroke-linecap: round; }
+.mascot .m-pot { fill: #8f9aa6; }
+.mascot .m-pot-rim { fill: #b7c0ca; }
+.mascot .m-ladle { fill: none; stroke: #7a4c2e; stroke-width: 3.5; stroke-linecap: round; }
+.mascot .m-steam { stroke: var(--ink-faint); }
+.mascot .m-pack { fill: var(--coral-soft); }
+.mascot .m-pack-pocket { fill: color-mix(in srgb, var(--coral-soft) 70%, #000); stroke-width: 1.8; }
+.mascot .m-strap { fill: none; stroke: #7a4c2e; stroke-width: 4; stroke-linecap: round; }
+.mascot .m-stick { fill: none; stroke: #7a4c2e; stroke-width: 4.5; stroke-linecap: round; }
+
+/* Idle loops, one per mood, a few pixels each. Origins are in the 160×160
+   viewBox. Set --m-delay (negative) on a wrapper to take a mascot out of step
+   with its neighbours. The reduced-motion rule in section 15 stops them all. */
+.mascot [class*="m-a-"] { transform-box: view-box; }
+/* hero: a slow bob, a wave, a blink */
+.mascot--hero .m-a-body { animation: m-bob 3.2s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--hero .m-a-wave { transform-origin: 122px 100px; animation: m-wave 3.2s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--hero .m-a-blink { transform-origin: 80px 96px; animation: m-blink 4.4s linear infinite; animation-delay: var(--m-delay, 0s); }
+/* sprouted: a squash-and-hop, leaves swaying */
+.mascot--sprouted .m-a-body { transform-origin: 80px 142px; animation: m-hop 2.8s cubic-bezier(.3,.7,.4,1) infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--sprouted .m-a-shadow { transform-origin: 80px 148px; animation: m-hop-shadow 2.8s cubic-bezier(.3,.7,.4,1) infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--sprouted .m-a-sprout { transform-origin: 80px 58px; animation: m-sway 2.8s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+/* cracked: the lid pops up, the star inside twinkles, the shell jumps with it */
+.mascot--cracked .m-a-lid { transform-origin: 56px 56px; animation: m-lid 3s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--cracked .m-a-star { transform-origin: 80px 56px; animation: m-star 3s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--cracked .m-a-body { transform-origin: 80px 142px; animation: m-jolt 3s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+/* moonshot: hovering on flickering flames */
+.mascot--moonshot .m-a-body { animation: m-hover 2.4s ease-in-out infinite alternate; animation-delay: var(--m-delay, 0s); }
+.mascot--moonshot .m-a-shadow { transform-origin: 80px 148px; animation: m-hover-shadow 2.4s ease-in-out infinite alternate; animation-delay: var(--m-delay, 0s); }
+.mascot--moonshot .m-a-flames { transform-origin: 80px 128px; animation: m-flicker .28s ease-in-out infinite alternate; }
+.mascot--moonshot .m-a-rays { animation: m-fade 1.2s ease-in-out infinite alternate; }
+
+/* Inside an .m-hover-host (the project cards) a coconut rests until its card is
+   hovered or focused. The delays skip each loop's idle lead-in, so the hop or
+   lid pop starts the moment the pointer arrives. */
+.m-hover-host:not(:hover, :focus-within) .mascot [class*="m-a-"] { animation-name: none; }
+.m-hover-host .mascot--sprouted { --m-delay: -1.3s; }
+.m-hover-host .mascot--cracked { --m-delay: -1.35s; }
+
+/* Thenga's day off: each hobby's own little loop. */
+.mascot--guitar .m-a-strum { transform-origin: 40px 102px; animation: m-strum 2.4s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--guitar .m-a-notes { animation: m-notes 3s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--camera .m-a-flash { transform-origin: 66px 100px; animation: m-flash 3.2s ease-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--pen .m-a-write { animation: m-write 1.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--pot .m-a-stir { transform-origin: 114px 104px; animation: m-stir 2s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--pot .m-a-steam { animation: m-steam 2.6s ease-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--backpack .m-a-plane { animation: m-plane 4s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+@keyframes m-strum { 0%, 40%, 100% { transform: rotate(0); } 46%, 58%, 70% { transform: rotate(9deg); } 52%, 64% { transform: rotate(-3deg); } }
+@keyframes m-notes { 0% { transform: translateY(6px); opacity: 0; } 30%, 70% { opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
+@keyframes m-flash { 0%, 62%, 100% { opacity: 0; transform: scale(.6); } 66% { opacity: 1; transform: scale(1.1); } 76% { opacity: 0; transform: scale(1.2); } }
+@keyframes m-write { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-3px, 1px); } 50% { transform: translate(1px, -1px); } 75% { transform: translate(-2px, 2px); } }
+@keyframes m-stir { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-10deg); } }
+@keyframes m-steam { 0% { transform: translateY(4px); opacity: 0; } 35% { opacity: .9; } 100% { transform: translateY(-8px); opacity: 0; } }
+@keyframes m-plane { 0%, 100% { transform: translate(0, 0) rotate(0); } 50% { transform: translate(-6px, 4px) rotate(-4deg); } }
+
+@keyframes m-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes m-wave { 0%, 45%, 100% { transform: rotate(0); } 12%, 34% { transform: rotate(-14deg); } 23% { transform: rotate(4deg); } }
+@keyframes m-blink { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.1); } }
+@keyframes m-hop { 0%, 50%, 100% { transform: none; } 58% { transform: scale(1.05, .93); } 70% { transform: translateY(-11px) scale(.98, 1.03); } 82% { transform: scale(1.04, .95); } 90% { transform: none; } }
+@keyframes m-hop-shadow { 0%, 58%, 90%, 100% { transform: none; opacity: .1; } 70% { transform: scaleX(.75); opacity: .06; } }
+@keyframes m-sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes m-lid { 0%, 48%, 100% { transform: none; } 58% { transform: translate(-2px, -9px) rotate(-10deg); } 68% { transform: none; } 74% { transform: translateY(-3px) rotate(-3deg); } 80% { transform: none; } }
+@keyframes m-star { 0%, 48%, 100% { transform: scale(.9); } 58% { transform: translateY(-5px) scale(1.15) rotate(12deg); } 72% { transform: scale(1); } }
+@keyframes m-jolt { 0%, 50%, 66%, 100% { transform: none; } 56% { transform: scale(1.03, .96); } 60% { transform: translateY(-4px); } }
+@keyframes m-hover { from { transform: translateY(0); } to { transform: translateY(-7px); } }
+@keyframes m-hover-shadow { from { transform: none; opacity: .1; } to { transform: scaleX(.78); opacity: .06; } }
+@keyframes m-flicker { from { transform: scaleY(.82); } to { transform: scaleY(1.1); } }
+@keyframes m-fade { from { opacity: .35; } to { opacity: 1; } }
 
 /* ---------- 15. Footer ------------------------------------------------------- */
 .site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink);

@@ -1,0 +1,231 @@
+---
+/* Freshworks Marketplace's move to Vue 3, told the same way as the Strive stories:
+   a short deck of numbered "slides", each a headline, two pointers and a picture.
+   The full write-up lives in /writing/monorepo-migration/, linked from the big card
+   at the end. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import OneRepoTwoApps from '../../components/sketches/freshworks/OneRepoTwoApps.astro';
+import MigrationPhases from '../../components/sketches/MigrationPhases.astro';
+
+const description = "Freshworks Marketplace runs two experiences, an in-product gallery and a public website, from one monorepo. How we moved both onto Vue 3, Nuxt 3, Vite and Pinia in a quarter, in stages, while shipping a revamp on top.";
+
+const shot = { src: '/images/work/freshworks-marketplace/marketplace-home.webp', w: 1800, h: 890 };
+
+const lessons = [
+  { title: 'Weigh every item', text: 'List the upgrades, then ask what each one buys you. Some can wait a release.' },
+  { title: 'Prove it on one page', text: 'A POC on a real page, with real APIs and store, answers what a doc can’t.' },
+  { title: 'Ship in stages', text: 'Code first, UI after, one app at a time. No big bang for users or the pipeline.' },
+  { title: 'Write it down', text: 'Document and audit each stage, so the next person starts where you stopped.' },
+];
+---
+<WorkLayout
+  title="Freshworks Marketplace — the move to Vue 3"
+  description={description}
+  ogDescription="One codebase, two very different experiences, and a quarter to move both onto Vue 3 — while shipping a revamp on top of it."
+  eyebrow="Freshworks · Senior software engineer · 2021 → 2024"
+  heading="Freshworks Marketplace"
+  facts={[
+    { label: 'Role', value: 'Frontend · the Marketplace monorepo' },
+    { label: 'Status', value: 'Shipped, live' },
+  ]}
+  link={{ href: 'https://www.freshworks.com/apps/', label: 'freshworks.com/apps' }}
+  schema={{
+    name: 'Freshworks Marketplace — Vue 3 migration',
+    url: 'https://www.freshworks.com/apps/',
+    description: 'Moving the Freshworks Marketplace monorepo, an in-product gallery and a public website, from Vue 2 and Nuxt 2 to Vue 3, Nuxt 3, Vite and Pinia in staged releases, alongside a UI revamp.',
+    inLanguage: 'en',
+    keywords: 'Vue 3, Nuxt 3, Vite, Pinia, monorepo, migration, tech debt, frontend architecture, Freshworks Marketplace',
+  }}
+>
+  <img slot="sketch" class="work-img" src={shot.src} alt="The revamped Freshworks Marketplace: a search bar, product filters on the left, and a grid of popular apps." width={shot.w} height={shot.h} decoding="async">
+
+  <Fragment slot="lede">One codebase, two very different experiences, and a quarter to move both onto Vue 3 — while <mark class="hl">shipping a revamp on top of it</mark>. We did it as a team, and I got to play a big part in the plan, the proof of concept and the rollout. This is the short version.</Fragment>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-setup">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">The setup</p><h2 id="s-setup">One codebase, two experiences</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The Marketplace lives in two places: a <strong>gallery inside every Freshworks product</strong>, and a <strong>public website</strong>.</li>
+        <li>One monorepo powers both, so they share components and <strong>look like one product</strong>.</li>
+      </ul>
+      <OneRepoTwoApps />
+    </section>
+
+    <section class="slide" aria-labelledby="s-why">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Why now</p><h2 id="s-why">The clock on Vue 2</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Vue 3 became the default in 2022, and <strong>Vue 2 support was ending</strong> in December 2023. Staying put meant a toolset slowly going stale.</li>
+        <li>Vite, Pinia and Vitest were becoming the new defaults, and a <strong>UI revamp</strong> was already on the roadmap with marketing dates attached.</li>
+      </ul>
+      <blockquote>Vue 3 is faster, smaller, more maintainable and it’s easier to target native.<cite>— Evan You</cite></blockquote>
+    </section>
+
+    <section class="slide" aria-labelledby="s-plan">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Plan first</p><h2 id="s-plan">Six upgrades, one quarter</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Vue 3, Nuxt 3, Vite, the Composition API, Pinia, and <a href="https://crayons.freshworks.com/" rel="noopener">Crayons</a> in place of Element UI. Each one <strong>weighed, estimated and written up</strong> for the team to review.</li>
+        <li>The checklist paid off early: <strong>non-critical UI could wait</strong>, and backend asks went out ahead so that work ran in parallel.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-poc">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Prove it</p><h2 id="s-poc">A POC before rocking the boat</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>A thousand-plus apps live on the Marketplace, so we rebuilt <strong>just the homepage</strong> on Vue 3 first: real APIs, real store, no blockers.</li>
+        <li>Nuxt 3 was still a release candidate. Waiting meant <strong>keeping a Vue 2 copy of every shared component</strong>, so we took the RC instead.</li>
+      </ul>
+      <figure class="sk-fig">
+        <div class="sk-sheet fork" role="img" aria-label="The Nuxt call. Wait for stable Nuxt 3 and keep a Vue 2 copy of every shared component for the website: not taken, it doesn't scale. Adopt the Nuxt 3 release candidate and keep one set of components: taken.">
+          <div class="sk-box sk-box--ghost sk-lean-1">
+            <p class="sk-hdr">Wait for stable</p>
+            <p class="fork-text">Duplicate shared components in Vue 2 for the website</p>
+            <span class="sk-hand fork-note">doesn’t scale</span>
+          </div>
+          <p class="fork-vs" aria-hidden="true">vs</p>
+          <div class="sk-box sk-box--teal sk-lean-2">
+            <p class="sk-hdr fork-hdr">Nuxt 3 RC <span class="fork-stamp">our call</span></p>
+            <p class="fork-text">Keep one set of components, and test the RC hard</p>
+            <span class="sk-hand fork-note">Nuxt Bridge tried, dropped</span>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-stages">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Rollout</p><h2 id="s-stages">No big bang</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Code first, UI after</strong>, one app at a time, so nothing broke in production along the way.</li>
+        <li>The gallery went first. By the website’s turn we knew the road, so its <strong>two phases ran in parallel</strong>.</li>
+      </ul>
+      <MigrationPhases />
+    </section>
+
+    <section class="slide" aria-labelledby="s-after">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">The other side</p><h2 id="s-after">Faster loops, fewer holes</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We paid down debt on the way: a <strong>single trunk branch</strong> with tags per environment, and a Volar-based editor setup.</li>
+        <li>The upgrade took <strong>85 of 90 audit vulnerabilities</strong> with it, and the dev loop got a lot quicker.</li>
+      </ul>
+      <figure class="table-wrap">
+        <table>
+          <caption>Before → after</caption>
+          <thead>
+            <tr><th scope="col">&nbsp;</th><th scope="col">Before</th><th scope="col">After</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Gallery dev server start</th><td>~8.6 s</td><td>~0.8 s</td></tr>
+            <tr><th scope="row">Gallery build</th><td>~36.7 s</td><td>~9.5 s</td></tr>
+            <tr><th scope="row">Website dev server start</th><td>~40.4 s</td><td>~5 s</td></tr>
+            <tr><th scope="row">Packages audited</th><td>2445</td><td>1645</td></tr>
+            <tr><th scope="row">Vulnerabilities</th><td>90</td><td>5</td></tr>
+          </tbody>
+        </table>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Takeaways</p><h2 id="s-lessons">What I’d carry into the next one</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-title">{l.title}</p>
+            <p>{l.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <a class="deep-dive wobbly wobbly--2" href="/writing/monorepo-migration/">
+      <span class="deep-dive-shot taped">
+        <img src={shot.src} alt="" width={shot.w} height={shot.h} loading="lazy" decoding="async">
+      </span>
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="pen" />Deep dive · ~10 min read</span>
+        <strong>How we migrated Freshworks’ critical monorepo tackling tech debts</strong>
+        <span class="deep-dive-sub">The analysis, the POC outcomes, every stage, and the full numbers.</span>
+        <span class="deep-dive-go">Read the full story<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+  </div>
+</WorkLayout>
+
+<style>
+  /* The screenshot fills the hero frame the other stories draw their sketch in. */
+  .work-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+
+  /* The story runs the full width of the narrow wrap; only the pointers keep a
+     reading measure. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+  .story :global(.table-wrap) { margin-bottom: 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  /* The Nuxt call: the path not taken in dashes, the one we took inked. */
+  .fork { display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; gap: 1rem; }
+  .fork .sk-box { display: grid; gap: .45rem; align-content: start; }
+  .fork .sk-hdr { margin-bottom: 0 !important; }
+  .fork-text { margin: 0 !important; font-size: .9rem; line-height: 1.4; max-width: none; }
+  .sk-box--ghost .fork-text { color: var(--ink-faint); }
+  .fork-note { font-size: 1.05rem; }
+  .sk-box--ghost .fork-note { color: var(--ink-faint); }
+  .fork-hdr { color: var(--teal) !important; display: flex; align-items: center; gap: .5rem; }
+  .fork-stamp { padding: .15rem .45rem; border: 1.5px solid var(--teal); border-radius: 4px; font-family: var(--font-hand); font-size: .95rem; letter-spacing: 0; text-transform: none; transform: rotate(-6deg); }
+  .fork-vs { align-self: center; margin: 0 !important; font-family: var(--font-display); font-size: 1.4rem; color: var(--ink-faint); }
+  @media (max-width: 559px) {
+    .fork { grid-template-columns: 1fr; }
+    .fork-vs { text-align: center; }
+  }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .4rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
+  .lessons .lessons-title { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* The big card to the long-form write-up. */
+  .deep-dive { display: block; margin-top: var(--space-5); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-shot { display: block; aspect-ratio: 16 / 7; overflow: visible; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; transform: rotate(-.6deg); transition: transform .25s ease; }
+  .deep-dive:hover .deep-dive-shot { transform: rotate(0); }
+  .deep-dive-shot img { width: 100%; height: 100%; object-fit: cover; object-position: 0 30%; border-radius: inherit; }
+  .deep-dive-body { display: grid; gap: .45rem; padding: 1.2rem .3rem .2rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+</style>

@@ -1,0 +1,130 @@
+---
+/* Thenga's yard: one coconut per experiment, piled into a heap, with Thenga on
+   top and one more coconut mid-toss (the pile is never done). Each coconut is a
+   shortcut that cracks its experiment open ([data-open], wired in
+   experiments.astro). The heap is a mouse shortcut only: the cards below are the
+   accessible way in, so the drawing is aria-hidden and its coconuts are not
+   focusable. */
+import Thenga from './Thenga.astro';
+import type { Experiment } from '../../data/experiments';
+
+interface Props { items: Experiment[] }
+const { items } = Astro.props;
+
+// Rows from the ground up: the widest row first, one fewer each row, so the
+// pile stays a mound however many coconuts there are.
+const R = 23, DX = 50, DY = 37, GROUND = 232, CX = 210;
+let base = 1;
+while ((base * (base + 1)) / 2 < items.length) base++;
+const nuts: { item: Experiment; x: number; y: number; rot: number }[] = [];
+let row = 0, col = 0;
+for (const item of items) {
+  const inRow = base - row;
+  const x = CX - ((inRow - 1) * DX) / 2 + col * DX + (((row * 7 + col * 13) % 9) - 4);
+  const y = GROUND - R - row * DY + (((row * 5 + col * 3) % 5) - 2);
+  const rot = ((col * 37 + row * 11) % 28) - 14;
+  nuts.push({ item, x, y, rot });
+  if (++col >= inRow) { row++; col = 0; }
+}
+// Rows are drawn bottom-up, so upper coconuts overlap the ones below them.
+
+// Stand Thenga on the top coconut. In units of the heap's width W: the drawing
+// starts below an 18% top pad and is 260/420 W tall; Thenga is 30% W square with
+// its feet 86% of the way down. translateY(%) is relative to Thenga's own height.
+const topY = Math.min(...nuts.map((n) => n.y)) - R + 4;
+const feetAt = 0.18 + (topY / 260) * (260 / 420);
+const thengaY = ((feetAt - 0.3 * 0.86) / 0.3) * 100;
+---
+<div class="heap" data-heap style={`--thenga-y: ${thengaY.toFixed(1)}%`}>
+  <svg class="heap-svg" viewBox="0 0 420 260" aria-hidden="true">
+    <!-- ground -->
+    <ellipse cx="210" cy="236" rx="170" ry="12" class="heap-ground" />
+    <path d="M28 238h40M354 240h36M90 244h18M318 245h14" class="heap-dash" />
+
+    <!-- the signpost -->
+    <g class="heap-sign" transform="rotate(-6 40 150)">
+      <path d="M44 236V150" class="heap-post" />
+      <rect x="4" y="124" width="84" height="40" rx="5" class="heap-board" />
+      <text x="46" y="142" text-anchor="middle" class="heap-sign-t1">THENGA’S YARD</text>
+      <text x="46" y="157" text-anchor="middle" class="heap-sign-t2">keep piling!</text>
+    </g>
+
+    <!-- one more on its way -->
+    <path d="M404 52c-14-10-34-10-50 6" class="heap-arc" />
+    <g class="heap-toss"><g transform="translate(352 72) rotate(24)">
+      <ellipse rx="13" ry="12" class="heap-shell" />
+      <circle cx="-3" cy="-6" r="1.4" class="heap-pore" /><circle cx="3" cy="-6" r="1.4" class="heap-pore" /><circle cx="0" cy="-2.5" r="1.4" class="heap-pore" />
+    </g></g>
+
+    {nuts.map(({ item, x, y, rot }) => (
+      <g transform={`translate(${x} ${y}) rotate(${rot})`}>
+        <g class="heap-nut" data-open={item.id} data-name={item.name}>
+          <ellipse rx={R} ry={R - 2} class="heap-shell" />
+          <path d={`M${-R + 7} -4c3-4 6-6 10-7M${R - 9} 8c-2 3-5 5-9 6`} class="heap-fibre" />
+          <circle cx="-4" cy="-11" r="1.7" class="heap-pore" /><circle cx="4" cy="-11" r="1.7" class="heap-pore" /><circle cx="0" cy="-6.5" r="1.7" class="heap-pore" />
+          {item.mood === 'sprouted' && (
+            <g>
+              <path d="M0 -21c0-6 1-9 2-12" class="heap-line" />
+              <path d="M2 -32c-5-4-11-4-14 0 4 2 10 2 14 0zM2 -32c3-5 10-6 14-3-3 4-10 5-14 3z" class="heap-leaf" />
+              <path d="M-9 4c2-3 5-3 7 0M3 4c2-3 5-3 7 0" class="heap-line heap-thin" />
+            </g>
+          )}
+          {item.mood === 'cracked' && (
+            <g>
+              <path d={`M${-R + 2} -8l6 4 6-5 6 5 6-5 6 5 6-5 5 4`} class="heap-line heap-thin" />
+              <path d="M9 -24l2 4 4.5.6-3.3 3 .8 4.4-4-2.2-4 2.2.8-4.4-3.3-3 4.5-.6z" class="heap-star" />
+              <circle cx="-6" cy="5" r="1.8" class="heap-eye" /><circle cx="6" cy="5" r="1.8" class="heap-eye" />
+              <ellipse cx="0" cy="11" rx="2.2" ry="2.6" class="heap-eye" />
+            </g>
+          )}
+          {item.mood === 'moonshot' && (
+            <g>
+              <circle cx="-6" cy="4" r="4.6" class="heap-googly" /><circle cx="7" cy="3" r="5.4" class="heap-googly" />
+              <circle cx="-5" cy="3" r="1.9" class="heap-eye" /><circle cx="8.5" cy="2" r="2.1" class="heap-eye" />
+              <path d="M-14 -16l-4-3M14 -18l3-4" class="heap-line heap-thin heap-ray" />
+            </g>
+          )}
+        </g>
+      </g>
+    ))}
+  </svg>
+  <Thenga class="heap-thenga" />
+  <p class="heap-tip" data-heap-tip hidden></p>
+</div>
+
+<style>
+  .heap { position: relative; padding-top: 18%; }
+  .heap-svg { width: 100%; height: auto; overflow: visible; }
+  /* Thenga stands on the top coconut. Its feet sit at 86% of its own height. */
+  .heap :global(.heap-thenga) { position: absolute; top: 0; left: 50%; width: 30%; transform: translate(-46%, var(--thenga-y)); pointer-events: none; }
+
+  .heap-ground { fill: var(--ink); opacity: .08; }
+  .heap-dash { fill: none; stroke: var(--ink-faint); stroke-width: 2; stroke-linecap: round; }
+  .heap-post { stroke: #7a4c2e; stroke-width: 5; stroke-linecap: round; }
+  .heap-board { fill: var(--paper-2); stroke: var(--ink); stroke-width: 2.2; }
+  .heap-sign-t1 { font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .1em; fill: var(--ink); }
+  .heap-sign-t2 { font-family: var(--font-hand); font-size: 15px; fill: var(--coral); }
+  .heap-arc { fill: none; stroke: var(--ink-faint); stroke-width: 2; stroke-dasharray: 3 6; stroke-linecap: round; }
+
+  .heap-shell { fill: #9a6440; stroke: var(--ink); stroke-width: 2.2; }
+  .heap-fibre { fill: none; stroke: #5c3a24; stroke-opacity: .55; stroke-width: 1.6; stroke-linecap: round; }
+  .heap-pore { fill: #4a2c1a; }
+  .heap-line { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .heap-thin { stroke-width: 1.7; }
+  .heap-ray { stroke: var(--coral); }
+  .heap-leaf { fill: #6f9a4f; stroke: var(--ink); stroke-width: 1.7; stroke-linejoin: round; }
+  .heap-star { fill: var(--yellow); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+  .heap-eye { fill: var(--ink); }
+  .heap-googly { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1.5; }
+
+  /* Hover lifts a coconut off the pile; the label follows it (experiments.astro). */
+  .heap-nut { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .2s cubic-bezier(.2,.8,.2,1); }
+  .heap-nut:hover { transform: translateY(-5px) rotate(-6deg) scale(1.1); }
+  .heap-nut:hover .heap-shell { fill: #b27650; }
+
+  /* The coconut on its way: bobbing along the arc. */
+  .heap-toss { transform-box: view-box; animation: heap-toss 2.6s ease-in-out infinite; }
+  @keyframes heap-toss { 0%, 100% { transform: translate(0, 0) rotate(0); } 50% { transform: translate(-4px, -6px) rotate(-8deg); } }
+
+  .heap-tip { position: absolute; z-index: 2; margin: 0; padding: .35rem .65rem .45rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; white-space: nowrap; color: var(--sticky-ink); background: var(--yellow); box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -100%) rotate(-3deg); pointer-events: none; }
+</style>

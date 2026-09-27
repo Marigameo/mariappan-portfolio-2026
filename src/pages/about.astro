@@ -1,18 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import Thenga from '../components/mascots/Thenga.astro';
+import { pastimes } from '../data/offclock';
 import { site } from '../data/site';
 
 const description = 'Beyond the job title: guitar covers, slow travel, home cooking, Tamil poetry and photographs. The other sides of Mariappan Subramanian, plus the journey so far.';
-
-// Off the clock. `link` is an Instagram handle; `accent` tints the badge.
-const into = [
-  { icon: 'guitar', accent: 'coral', title: 'Music, mostly on six strings', text: "I'm into music and love to play guitar. Covers land on Instagram now and then.", link: { href: site.links.guitar, label: '@mari.strings' } },
-  { icon: 'plane', accent: 'blue', title: 'Slow travel', text: 'Not the rush-to-destinations kind. I stay until a place sinks in — no plans, just vibes, people, culture, and a lot of photographs to carry home.', link: { href: site.links.travel, label: '@mari.gameo' } },
-  { icon: 'cooking', accent: 'violet', title: 'Cooking, almost every day', text: 'I love home-cooked food, so I cook most days — and keep trying new dishes.' },
-  { icon: 'pen', accent: 'teal', title: 'Poetry, in Tamil', text: 'I pen down kavithai, mostly in Tamil.', link: { href: site.links.poetry, label: '@ullunarvu.writes' } },
-  { icon: 'camera', accent: 'coral', title: 'Photographs that get to live', text: 'I hate letting travel photographs die on my phone, so the keepers get curated here.', link: { href: site.links.instagram, label: '@mari.fstop' } },
-];
 
 // The journey, newest first. `roles` with two entries renders as "A → B". Dates per LinkedIn.
 const journey = [
@@ -40,6 +33,8 @@ const wins = [
       { src: '/images/wins/cliqtrix-team-1.jpg', alt: 'Cliqtrix finalists in Trixster t-shirts posing with certificates and a prize cheque', w: 960, h: 639 },
       { src: '/images/wins/cliqtrix-solo.jpg', alt: "Mariappan holding a Cliqtrix '18 certificate, prize cheque and trophy", w: 432, h: 720 },
       { src: '/images/wins/cliqtrix-team-2.jpg', alt: 'Cliqtrix winners group photo with prize cheques', w: 770, h: 513 },
+      { src: '/images/wins/cliqtrix-team-3.jpg', alt: 'Cliqtrix winners in black Trixster t-shirts holding up their trophies and certificates', w: 1200, h: 707 },
+      { src: '/images/wins/cliqtrix-team-4.jpg', alt: 'The Cliqtrix finalists seated on the steps outside a glass-fronted office building', w: 770, h: 513 },
     ],
     links: [
       { href: 'https://www.cliqtrix.com/archives/2018/?src=cliqtrix-header#winners', label: "'18 winners" },
@@ -59,19 +54,71 @@ const wins = [
 
     <section class="section before-wave" style="padding-top: var(--space-2)" id="into" aria-labelledby="into-title">
       <div class="wrap">
-        <h2 id="into-title" class="visually-hidden">Off the clock</h2>
-        <ul class="into">
-          {into.map((i) => (
-            <li class="into-item" style={`--accent: var(--${i.accent})`}>
-              <span class="into-badge"><Icon name={i.icon} /></span>
-              <div class="into-body">
-                <h3>{i.title}</h3>
-                <p>{i.text}</p>
-                {i.link && <a class="pill pill--soft into-link" href={i.link.href} rel="noopener"><Icon name="instagram" />{i.link.label}</a>}
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div class="dayoff-head">
+          <p class="eyebrow">Off the clock</p>
+          <h2 id="into-title">Thenga’s day off.</h2>
+        </div>
+        <!-- One board per pastime, from src/data/offclock.ts: Thenga and the words, then a reel of
+             picks big enough to enjoy in place (the rail script in main.js drives the arrows), and
+             an Instagram card for the rest. Tapping a pick still opens it in the lightbox below. -->
+        <ol class="boards">
+          {pastimes.map((p, i) => {
+            const cta = p.more ?? (p.picks.length ? 'More on' : 'Meanwhile, it’s all on');
+            return (
+              <li class="board" id={p.id} style={`--accent: var(--${p.accent}); --m-delay: -${(i * 0.7).toFixed(1)}s`} aria-labelledby={`${p.id}-title`}>
+                <div class="board-head">
+                  <div class="board-who">
+                    <Thenga hobby={p.hobby} />
+                    <p class="board-doing" aria-hidden="true">{p.doing}</p>
+                  </div>
+                  <div class="board-main">
+                    <h3 id={`${p.id}-title`}>{p.title}</h3>
+                    <p>{p.text}</p>
+                    {p.picks.length === 0 && (p.link ? (
+                      <a class="ig-card ig-card--inline" href={p.link.href} rel="noopener">
+                        <Icon name="instagram" /><span>{cta}</span><strong>{p.link.label}</strong><Icon name="arrow-right" class="ig-go" />
+                      </a>
+                    ) : (
+                      <p class="board-aside">{p.aside}</p>
+                    ))}
+                  </div>
+                </div>
+                {p.picks.length > 0 && (
+                  <div class="reel" data-rail>
+                    <div class="rail-controls reel-controls">
+                      <button class="rail-btn" type="button" data-prev aria-label="Previous" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
+                      <span class="rail-progress" aria-hidden="true"><i data-thumb></i></span>
+                      <button class="rail-btn" type="button" data-next aria-label="Next" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
+                    </div>
+                    <ul class="rail-track reel-track" id={`${p.id}-reel`} data-track aria-label={`${p.title}: a few picks`}>
+                      {p.picks.map((x) => (
+                        <li class="reel-item">
+                          <button class="polaroid" type="button" data-full={x.src} aria-label={`View full size: ${x.alt}`}>
+                            <img src={x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
+                            {x.caption && <span class="polaroid-caption" aria-hidden="true">{x.caption}</span>}
+                          </button>
+                        </li>
+                      ))}
+                      {p.link && (
+                        <li class="reel-item reel-item--cta">
+                          <a class="ig-card" href={p.link.href} rel="noopener">
+                            <Icon name="instagram" />
+                            <span>{cta}</span>
+                            <strong set:html={p.link.label.replaceAll('.', '.<wbr>')} />
+                            <Icon name="arrow-right" class="ig-go" />
+                          </a>
+                        </li>
+                      )}
+                      {!p.link && p.aside && (
+                        <li class="reel-item reel-item--cta"><p class="ig-card ig-card--note">{p.aside}</p></li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
 
@@ -114,14 +161,32 @@ const wins = [
         <ul class="wins">
           {wins.map((w) => (
             <li class:list={['win', 'wobbly', w.wobbly, `tilt-${w.tilt}`]} style={`--accent: var(--${w.accent})`}>
-              <div class:list={['win-photos', w.photos.length > 1 && 'win-photos--fan']}>
-                {w.photos.map((p) => (
-                  <button class="win-shot" type="button" data-full={p.src} aria-label={`View full size: ${p.alt}`}>
-                    <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy">
-                    <span class="win-shot-hint" aria-hidden="true">view</span>
-                  </button>
-                ))}
-              </div>
+              {w.photos.length > 1 ? (
+                /* Several photos: a full-width carousel, each shown whole over a blurred copy of itself. */
+                <div class="win-carousel" data-carousel role="group" aria-roledescription="carousel" aria-label={`${w.title} photos`}>
+                  <div class="win-track" data-carousel-track>
+                    {w.photos.map((p, i) => (
+                      <button class="win-slide" type="button" data-full={p.src} aria-label={`Photo ${i + 1} of ${w.photos.length}, view full size: ${p.alt}`}>
+                        <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy">
+                        <img class="win-slide-bg" src={p.src} alt="" aria-hidden="true" loading="lazy">
+                        <span class="win-shot-hint" aria-hidden="true">view</span>
+                      </button>
+                    ))}
+                  </div>
+                  <button class="rail-btn win-nav win-nav--prev" type="button" data-carousel-prev aria-label="Previous photo"><Icon name="arrow-right" /></button>
+                  <button class="rail-btn win-nav win-nav--next" type="button" data-carousel-next aria-label="Next photo"><Icon name="arrow-right" /></button>
+                  <p class="win-count" aria-hidden="true"><span data-carousel-count>1</span> / {w.photos.length}</p>
+                </div>
+              ) : (
+                <div class="win-photos">
+                  {w.photos.map((p) => (
+                    <button class="win-shot" type="button" data-full={p.src} aria-label={`View full size: ${p.alt}`}>
+                      <img src={p.src} alt={p.alt} width={p.w} height={p.h} loading="lazy">
+                      <span class="win-shot-hint" aria-hidden="true">view</span>
+                    </button>
+                  ))}
+                </div>
+              )}
               <div class="win-body">
                 <span class="win-badge"><Icon name={w.icon} /></span>
                 <p class="win-when">{w.when}</p>

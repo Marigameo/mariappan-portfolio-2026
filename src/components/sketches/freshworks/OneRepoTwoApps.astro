@@ -1,0 +1,52 @@
+---
+/* The Marketplace monorepo: one box of shared components feeding the two apps it
+   ships, each with the stack it had before the move and the one it moved to. */
+import Icon from '../../Icon.astro';
+
+const apps = [
+  { name: 'In-product gallery', kind: 'SPA inside every Freshworks product', from: 'Vue 2 · Vue CLI · Vuex', to: 'Vue 3 · Vite · Pinia', box: 'sk-box--blue sk-lean-2' },
+  { name: 'Public website', kind: 'SSR at freshworks.com/apps', from: 'Nuxt 2', to: 'Nuxt 3 · Vite', box: 'sk-box--teal sk-lean-4' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ortx" role="img" aria-label="One monorepo of shared components feeds two apps. The in-product gallery, a single-page app inside every Freshworks product, moved from Vue 2, Vue CLI and Vuex to Vue 3, Vite and Pinia. The public website, server-rendered at freshworks.com/apps, moved from Nuxt 2 to Nuxt 3 on Vite.">
+    <div class="sk-box sk-lean-1 ortx-repo">
+      <p class="sk-hdr">One monorepo</p>
+      <strong>Shared components</strong>
+      <span class="sk-hand">one UI, both places</span>
+    </div>
+    <div class="ortx-apps">
+      {apps.map((a) => (
+        <div class="ortx-app">
+          <i class="sk-arrow" aria-hidden="true"><Icon name="arrow-right" /></i>
+          <div class:list={['sk-box', a.box]}>
+            <strong>{a.name}</strong>
+            <span class="ortx-kind">{a.kind}</span>
+            <p class="ortx-stack"><s>{a.from}</s><span>{a.to}</span></p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <figcaption>The catch: shared components can only speak one Vue. Move one app and the other has to follow.</figcaption>
+</figure>
+
+<style>
+  .ortx { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); align-items: center; gap: 1rem; }
+  .ortx strong { display: block; font-size: .98rem; font-weight: 500; color: var(--ink); line-height: 1.3; }
+  .ortx-repo { display: grid; gap: .25rem; }
+  .ortx-repo .sk-hdr { margin-bottom: .3rem !important; }
+  .ortx-apps { display: grid; gap: 1.1rem; }
+  .ortx-app { display: flex; align-items: center; gap: .6rem; }
+  .ortx-app .sk-box { flex: 1; min-width: 0; display: grid; gap: .2rem; }
+  .ortx-kind { font-size: .82rem; color: var(--ink-soft); }
+  .ortx-stack { margin: .25rem 0 0 !important; display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .6rem; font-family: var(--font-mono); font-size: .72rem; max-width: none; }
+  .ortx-stack s { color: var(--ink-faint); text-decoration-thickness: 1.5px; }
+  .ortx-stack span { color: var(--c); font-weight: 500; }
+  .ortx-stack span::before { content: "→ "; color: var(--ink-faint); font-weight: 400; }
+  @media (max-width: 559px) {
+    .ortx { grid-template-columns: 1fr; }
+    .ortx-app { flex-direction: column; align-items: stretch; }
+    .ortx-app .sk-arrow { align-self: center; transform: rotate(90deg); }
+  }
+</style>

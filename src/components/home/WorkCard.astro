@@ -1,7 +1,9 @@
 ---
 /* A project card inside a <Rail>. Put the thumbnail in the "sketch" slot: an inline
    <svg class="sk"> drawing (see src/components/sketches/) or a real screenshot
-   <img width height alt loading="lazy">. The description goes in the default slot. */
+   <img width height alt loading="lazy">. The description goes in the default slot.
+   `company`, `meta` and `live` are what the rail header switches to while this card
+   is in view; leave them off on rails that are a single chapter. */
 import Icon from '../Icon.astro';
 import type { Accent } from '../../data/talks';
 
@@ -12,17 +14,20 @@ interface Props {
   title: string;
   titleLang?: string;
   tags: string[];
+  company?: string;  // e.g. "Freshworks"
+  meta?: string;     // e.g. "Senior software engineer · 2021 → 2024"
+  live?: boolean;    // pulsing dot in the header: still working there
 }
 
-const { href, accent, when, title, titleLang, tags } = Astro.props;
+const { href, accent, when, title, titleLang, tags, company, meta, live = false } = Astro.props;
 ---
-<li class="card" style={`--accent: var(--${accent})`}>
+<li class="card" style={`--accent: var(--${accent})`} data-company={company} data-meta={meta} data-live={company ? String(live) : undefined}>
   <a class="card-link" href={href}>
     <figure class="shot taped">
       <slot name="sketch" />
     </figure>
     <div class="card-body">
-      <p class="card-when">{when}</p>
+      <p class="card-when">{company && <span class="visually-hidden">{company} · </span>}{when}</p>
       <h4 lang={titleLang}>{title}</h4>
       <p><slot /></p>
       <div class="card-foot">
