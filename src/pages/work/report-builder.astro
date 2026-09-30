@@ -31,7 +31,8 @@ const lessons = [
   heading="Strive Studio"
   facts={[
     { label: 'Role', value: 'Design engineer · frontend' },
-    { label: 'Status', value: 'In production, still shipping' },
+    { label: 'Team', value: 'Same 5–6 engineers · our CTO built the data and sandbox, I built what sits on top' },
+    { label: 'Status', value: 'Live for all customers' },
   ]}
   link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
   schema={{
@@ -44,7 +45,30 @@ const lessons = [
 >
   <ReportBuilder slot="sketch" />
 
-  <Fragment slot="lede">Describe a marketing report in chat and get back a <mark class="hl">live dashboard</mark>, wired to your own ad and CRM data. Think Lovable for marketing, or Claude artifacts whose numbers never go stale. We built it as a small team; this is the frontend side.</Fragment>
+  <Fragment slot="lede">Describe a marketing report in chat and get back a <mark class="hl">live dashboard</mark>, wired to your own ad and CRM data. Think Lovable for marketing, or Claude artifacts whose numbers never go stale.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The problem</h3>
+      <p>Insight docs were snapshots, and reports asked for more: big volumes of data, numbers that stay live after you share them, and a story you get in one scan. A new schema and UI tool for every layout wasn’t going to scale.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The report skill.</strong> The design guidelines and prompts every report is written with. They went from 650 lines of CSS to a little taste plus Tailwind presets.</li>
+          <li><strong>Studio, designed in code.</strong> Prototyped the way I’d learnt on Lovable, v0 and Replit: clear sync states, a canvas that paints without flicker, and a resizable panel whose controls don’t overwhelm.</li>
+          <li><strong>The plumbing in between.</strong> The report SDK and the postMessage bridge to our CTO’s sandbox and data layer, plus the first few reports.</li>
+          <li><strong>The naming call.</strong> Insight docs and live reports named apart, so both could live side by side.</li>
+        </ul>
+        <p>Our CTO had the idea of letting the agent write HTML, and built the data layer and sandbox. PDF export was shared with the backend team.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>Live for all customers, and one of the most used features in Strive. It’s where we’re investing most right now, in tokens and in quality.</p>
+    </div>
+  </Fragment>
 
   <div class="story">
     <StudioGlance />
@@ -68,7 +92,7 @@ const lessons = [
       </header>
       <ul class="doodle-list slide-points">
         <li>Every new report layout meant <strong>another schema and another UI tool</strong>. Some reports can’t be written as JSON at all.</li>
-        <li>So for reports we dropped schemas, and let the agent write what it knows best.</li>
+        <li>So for reports we dropped schemas, and <a href="/writing/strive-studio-frontend/#why-we-let-the-agent-write-html">let the agent write what it knows best</a>.</li>
       </ul>
       <aside class="qa sk-box sk-lean-2" aria-label="Where the idea came from">
         <div class="qa-row">
@@ -105,7 +129,7 @@ const lessons = [
       </header>
       <ul class="doodle-list slide-points">
         <li>The report runs in a <strong>sandboxed iframe</strong>: no cookies, no storage, no direct line to our API.</li>
-        <li>It <strong>asks the host</strong> for data. The host checks every message, holds the credentials, and only runs read-only calls.</li>
+        <li>It <strong>asks the host</strong> for data. <a href="/writing/strive-studio-frontend/#hosting-a-page-we-didnt-write">The host checks every message</a>, holds the credentials, and only runs read-only calls.</li>
       </ul>
       <SandboxBridge caption="The report can ask for anything. It can’t hold anything." />
     </section>
@@ -151,9 +175,42 @@ const lessons = [
       <StudioToChat />
     </section>
 
-    <section class="slide" aria-labelledby="s-lessons">
+    <section class="slide" aria-labelledby="s-canvas">
       <header class="slide-head">
         <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Design call · canvas</p><h2 id="s-canvas">Loud canvas, quiet controls</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Sync you can see.</strong> Chat and sandbox stay in step, and every stage says what’s happening: written to the sandbox, rendering, or why it’s slow. The canvas paints smoothly, with no flicker on a rewrite.</li>
+        <li><strong>Controls that don’t overwhelm.</strong> A resize handle with a generous hit area, and sensible default and max widths. Distinct icons for the main actions, with split buttons tucking secondary ones like export away. Lovable’s clean side panel was the bar.</li>
+      </ul>
+      <!-- The real product, with numbered hand-drawn marks. Mark positions are percentages of
+           the screenshot, so they scale with it; the list below says what each number points at. -->
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src="/images/work/report-builder/studio-canvas.webp" width="1800" height="960" loading="lazy" decoding="async" alt="Strive Studio in use: on the left, the chat narrates each step of building a branded and non-branded traffic report; on the right, the finished report sits in a resizable canvas, with code, preview, open, full-screen and panel controls in its header.">
+          <span class="shot-mark" style="--l: 2%; --t: 23%; --w: 33.5%; --h: 43%" aria-hidden="true"></span>
+          <span class="shot-mark shot-mark--pill" style="--l: 36.2%; --t: 46%; --w: 2.6%; --h: 11.5%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 85.6%; --t: 6.6%; --w: 5.2%; --h: 6%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 90.8%; --t: 6.6%; --w: 7.8%; --h: 6%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 1%; --t: 18%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 39.5%; --t: 43%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 83.6%; --t: 9.6%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 94.6%; --t: 17%" aria-hidden="true">4</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>Every stage, said out loud.</strong> Reading the data, validating queries, writing, then live.</li>
+          <li><strong>A handle you can’t miss.</strong> A generous hit area, a sensible default and a max width.</li>
+          <li><strong>Code or preview.</strong> One toggle, never a new screen.</li>
+          <li><strong>Distinct icons for the main moves.</strong> Open in Reports, full screen, collapse the panel.</li>
+        </ol>
+        <figcaption>The report gets the room. The controls stay out of its way.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
         <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What the first reports taught us</h2></div>
       </header>
       <ul class="lessons">
@@ -218,6 +275,24 @@ const lessons = [
   .lessons-learn { color: var(--ink) !important; font-weight: 500; }
   .lessons-learn span { color: var(--teal); font-weight: 400; }
   @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 08: the real screenshot, taped on, with coral hand-drawn marks and numbers. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-mark--pill { border-radius: 50%; transform: none; }
+  .shot-num { position: absolute; left: var(--l); top: var(--t); display: grid; place-items: center; width: 1.6rem; height: 1.6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -50%) rotate(-6deg); }
+  .shot-notes { list-style: none; counter-reset: note; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem 1.5rem; margin: 1.4rem 0 0; padding: 0; }
+  .shot-notes li { counter-increment: note; position: relative; padding-left: 2.1rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  .shot-notes li::before { content: counter(note); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .shot-notes strong { color: var(--ink); font-weight: 500; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .shot-notes { grid-template-columns: 1fr; }
+    .shot-num { width: 1rem; height: 1rem; font-size: .8rem; box-shadow: 1px 1px 0 var(--shadow-ink); }
+    .shot-mark { border-width: 1.5px; }
+  }
 
   .closer { margin-top: var(--space-5); }
 

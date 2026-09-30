@@ -295,6 +295,34 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(resyncAll);
   }
 
+  // --- Section links on blog headings ----------------------------------------------
+  // Every h2/h3 with an id gets a small link icon. Clicking it puts the section's URL in
+  // the address bar and copies it, so a story can deep-link any part of the blog.
+  var anchored = document.querySelector("[data-anchors]");
+  if (anchored) {
+    var sprite = anchored.getAttribute("data-sprite");
+    anchored.querySelectorAll("h2[id], h3[id]").forEach(function (h) {
+      var a = document.createElement("a");
+      a.className = "h-anchor";
+      a.href = "#" + h.id;
+      a.setAttribute("aria-label", "Copy link to this section");
+      a.innerHTML = '<svg class="doodle" aria-hidden="true"><use href="' + sprite + '#link"/></svg><span class="h-anchor-tip" aria-hidden="true">copied!</span>';
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var url = location.origin + location.pathname + "#" + h.id;
+        history.replaceState(null, "", "#" + h.id);
+        h.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function () {
+            a.classList.add("is-copied");
+            setTimeout(function () { a.classList.remove("is-copied"); }, 1600);
+          }).catch(function () {});
+        }
+      });
+      h.appendChild(a);
+    });
+  }
+
   // --- Footer year ---------------------------------------------------------------
   document.querySelectorAll("[data-year]").forEach(function (y) { y.textContent = new Date().getFullYear(); });
 })();

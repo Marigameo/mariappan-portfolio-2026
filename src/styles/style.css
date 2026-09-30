@@ -622,6 +622,19 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .prose { max-width: 66ch; }
 .prose p { font-size: 1.05rem; line-height: 1.7; }
 .prose h2 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin-top: var(--space-4); }
+/* Blog headings carry ids so stories can deep-link a section; clear the sticky header. */
+.prose :is(h2, h3)[id] { scroll-margin-top: 5rem; }
+/* Under 640px the nav wraps to a second row (~94px, ~122px at 320px wide). */
+@media (max-width: 639px) { .prose :is(h2, h3)[id] { scroll-margin-top: 8.5rem; } }
+/* The copy-link icon main.js adds after each blog heading: faint until the heading is
+   hovered or the icon focused, always faintly there on touch screens. */
+.h-anchor { position: relative; display: inline-flex; vertical-align: middle; margin-left: .35em; padding: .15em; color: var(--ink-faint); text-decoration: none; opacity: 0; transition: opacity .2s ease, color .2s ease; }
+.h-anchor .doodle { width: .6em; height: .6em; min-width: 1rem; min-height: 1rem; stroke-width: 2; }
+:is(h2, h3):hover > .h-anchor, .h-anchor:focus-visible, .h-anchor.is-copied { opacity: 1; }
+.h-anchor:hover, .h-anchor.is-copied { color: var(--coral); }
+@media (hover: none) { .h-anchor { opacity: .45; } }
+.h-anchor-tip { position: absolute; left: 50%; bottom: 100%; font-family: var(--font-hand); font-size: 1.05rem; font-weight: 400; letter-spacing: 0; line-height: 1; color: var(--coral); white-space: nowrap; opacity: 0; transform: translateX(-50%) rotate(-3deg); transition: opacity .2s ease; pointer-events: none; }
+.h-anchor.is-copied .h-anchor-tip { opacity: 1; }
 .prose h3 { margin-top: var(--space-3); }
 .prose img, .prose video { border: 1.5px solid var(--border); border-radius: var(--radius-wobble-3); background: var(--paper-2); }
 .prose figure { margin: var(--space-3) 0; }
@@ -683,6 +696,21 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .facts dt { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .2rem; }
 .facts dd { margin: 0; color: var(--ink); }
 .facts a { white-space: nowrap; }
+
+/* "At a glance" on a project page: the problem, my part and what shipped, as a spec sheet
+   (label left, content right) so a quick scan answers them before the slides. */
+.at-glance { margin: var(--space-3) 0 0; padding: 1.1rem 1.4rem .4rem; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble-2); box-shadow: 4px 4px 0 var(--shadow-ink); }
+.at-glance-title { margin: 0 0 .4rem; font-family: var(--font-mono); font-size: .7rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+.at-glance-row { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: .3rem 1.2rem; padding: .85rem 0; border-top: 1.5px dashed var(--line); }
+.at-glance-row h3 { margin: .15rem 0 0; font-family: var(--font-hand); font-size: 1.35rem; font-weight: 400; line-height: 1.1; letter-spacing: 0; color: var(--coral); }
+.at-glance-row p { margin: 0; color: var(--ink-soft); }
+.at-glance-row .doodle-list { margin-bottom: .5rem; }
+.at-glance-row .doodle-list > li:last-child { margin-bottom: 0; }
+.at-glance-row strong { color: var(--ink); }
+@media (max-width: 559px) {
+  .at-glance { padding-inline: 1.1rem; }
+  .at-glance-row { grid-template-columns: 1fr; }
+}
 
 /* Project-page extras: a mono flow diagram, a label/value stack grid, and the
    card that points at the (upcoming) long-form write-up. */

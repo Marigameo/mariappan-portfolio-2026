@@ -1,6 +1,7 @@
 ---
 /* A project write-up: breadcrumb, title, lede, facts, the article, and a back link.
-   Pages pass the facts as props, the lede in the "lede" slot, and the write-up as children. */
+   Pages pass the facts as props, the lede in the "lede" slot, and the write-up as children.
+   An optional "glance" slot holds .at-glance-row blocks (problem, my part, shipped) under the facts. */
 import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
@@ -56,6 +57,13 @@ const jsonLd = {
         <div><dt>Link</dt><dd><a href={link.href} rel="noopener">{link.label} <Icon name="external" class="doodle--thin" /></a></dd></div>
       </dl>
     </header>
+
+    {Astro.slots.has('glance') && (
+      <section class="at-glance" aria-labelledby="at-glance-title">
+        <h2 id="at-glance-title" class="at-glance-title">At a glance</h2>
+        <slot name="glance" />
+      </section>
+    )}
 
     {Astro.slots.has('sketch') && (
       <figure class="work-shot taped">

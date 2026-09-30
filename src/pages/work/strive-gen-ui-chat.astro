@@ -17,7 +17,7 @@ const description = "Strive AI, a chat that answers in live interfaces, and my p
 
 const lessons = [
   { miss: 'Rendered rich slots inline, in the thread.', lesson: 'Give big surfaces their own room. The container should fit the content, not the other way round.' },
-  { miss: 'Asked the model for one giant JSON per answer.', lesson: 'Make complexity additive. One bad block should never sink the whole reply.' },
+  { miss: 'Asked the model for one giant JSON per answer.', href: '/writing/generative-ui-chat-engine/#where-it-started-to-hurt', lesson: 'Make complexity additive. One bad block should never sink the whole reply.' },
   { miss: 'Worried a side panel would look like a copy.', lesson: 'Familiar is a feature. Stand out on what goes inside the pattern.' },
   { miss: 'No AI playbook on the team, me included.', lesson: 'Benchmark, borrow, break, repeat. Ship small and learn in production.' },
 ];
@@ -30,6 +30,7 @@ const lessons = [
   heading="Strive AI"
   facts={[
     { label: 'Role', value: 'Design engineer · frontend' },
+    { label: 'Team', value: '5–6 engineers · our CTO and I laid the base, so the team could build on top' },
     { label: 'Status', value: 'In production, still shipping' },
   ]}
   link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
@@ -43,17 +44,40 @@ const lessons = [
 >
   <StriveChat slot="sketch" />
 
-  <Fragment slot="lede">A marketing chat that answers in <mark class="hl">live interfaces, not paragraphs</mark>. We built it as a small team, all new to AI, and I got to play a big part on the frontend: research, prototypes, the design system and the UI we shipped. This is my side of the story.</Fragment>
+  <Fragment slot="lede">A marketing chat that answers in <mark class="hl">live interfaces, not paragraphs</mark>, and today the way customers get almost everything done in Strive. This is my side of the story.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The problem</h3>
+      <p>We wanted one way to get things done in Strive, and chat was becoming the front door to work in the AI era. So we set out to power the whole platform through chat. </p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>Research and the bet.</strong> Learnt how the frontier labs, like Anthropic and OpenAI, approach generative UI, and weighed potential ready-to-use fits such as the Vercel AI SDK and Thesys. Then <a href="/writing/generative-ui-chat-engine/#a-little-bit-of-backstory">made the case for owning the base</a>.</li>
+          <li><strong>The chat, with our CTO.</strong> The two of us built it from the ground up: UI contracts, progressive streaming, retries and failures, and chat UX designed in code.</li>
+          <li><strong>Foundations first.</strong> The design system, component registry and AI elements, with Storybook and documented contracts, were in place before any wiring.</li>
+          <li><strong>Slot types.</strong> On our CTO’s slot foundation, I designed the slot types and shared one agent UI between chat and the standalone app.</li>
+        </ul>
+        <p>Our CTO owned the backend, infra and the idea of slots. The wider team added to the base as it grew.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>In production with customers. It’s the core of Strive today: almost everything happens through chat.</p>
+    </div>
+  </Fragment>
 
   <div class="story">
     <section class="slide" aria-labelledby="s-role">
       <header class="slide-head">
         <span class="slide-num" aria-hidden="true">01</span>
-        <div><p class="slide-kicker">My role</p><h2 id="s-role">Design engineer, end to end</h2></div>
+        <div><p class="slide-kicker">How I work</p><h2 id="s-role">Build it so everyone can build</h2></div>
       </header>
       <ul class="doodle-list slide-points">
-        <li><strong>New ground for all of us.</strong> None of us came from AI, so we learned UI for AI together.</li>
-        <li><strong>Design and code, side by side.</strong> I helped carry ideas from use case to production, iterating with the team at every step.</li>
+        <li><strong>Design in code.</strong> I designed the chat UX straight in code, and built every component standalone in Storybook, so each one is easy to build and test on its own.</li>
+        <li><strong>Docs as context, for people and agents.</strong> As the team’s core frontend engineer, I set up the foundations so everyone could build interfaces with AI coding agents. The docs are their context, so I’ve kept them up to date with every version since.</li>
       </ul>
       <RoleLoop />
     </section>
@@ -80,7 +104,7 @@ const lessons = [
         <li>I bet on owning it. Chat is the core, and flexible interfaces are our moat.</li>
       </ul>
       <BuildVsOwn />
-      <p class="more-note"><a href="/writing/generative-ui-chat-engine/">There’s a lot more behind this call: what we tried, what we weighed, and why. The full story is in the <span class="nowrap">blog<Icon name="arrow-right" /></span></a></p>
+      <p class="more-note"><a href="/writing/generative-ui-chat-engine/#a-little-bit-of-backstory">There’s a lot more behind this call: what we tried, what we weighed, and why. The full story is in the <span class="nowrap">blog<Icon name="arrow-right" /></span></a></p>
     </section>
 
     <section class="slide" aria-labelledby="s-canvas">
@@ -108,11 +132,11 @@ const lessons = [
     <section class="slide" aria-labelledby="s-elements">
       <header class="slide-head">
         <span class="slide-num" aria-hidden="true">05</span>
-        <div><p class="slide-kicker">AI elements registry</p><h2 id="s-elements">New pieces for the kit</h2></div>
+        <div><p class="slide-kicker">AI elements registry</p><h2 id="s-elements">The pieces our use cases asked for</h2></div>
       </header>
       <ul class="doodle-list slide-points">
         <li><code>@strivelabs/ui-core</code> for the foundations, <code>@strivelabs/ui-blocks</code> for reusable blocks, with our AI elements across both.</li>
-        <li>Our use cases kept asking for UI that didn't exist yet, so I designed and built the variants. Five I'd pin:</li>
+        <li>Most AI kits don’t ship with these. I thought a few less common pieces would suit marketers well, so I pitched them to the team as experiments, and designed and built the ones that stuck. Five I’d pin:</li>
       </ul>
       <AiElements />
     </section>
@@ -137,7 +161,7 @@ const lessons = [
       <ul class="lessons">
         {lessons.map((l, i) => (
           <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
-            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-miss"><span>Miss</span>{l.href ? <a href={l.href}>{l.miss}</a> : l.miss}</p>
             <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
           </li>
         ))}
@@ -216,6 +240,8 @@ const lessons = [
   .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
   .lessons-miss { color: var(--ink-faint) !important; }
   .lessons-miss span { color: var(--coral); }
+  .lessons-miss a { color: inherit; }
+  .lessons-miss a:hover { color: var(--ink); }
   .lessons-learn { color: var(--ink) !important; font-weight: 500; }
   .lessons-learn span { color: var(--teal); font-weight: 400; }
   @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
