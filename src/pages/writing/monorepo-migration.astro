@@ -40,13 +40,13 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
     <figcaption>The revamped Marketplace: prominent filters, a bigger search, and more room for the apps.</figcaption>
   </figure>
 
-  <h2>Getting started</h2>
+  <h2 id="getting-started">Getting started</h2>
   <p>On February 7, 2022, <a href="https://blog.vuejs.org/posts/vue-3-as-the-new-default" rel="noopener">Vue 3 was announced</a> as the new major version for Vue.js. Having heavily invested in Vue.js since 2018, we were eager to learn about the new upgrades and advancements from this community-led project.</p>
   <p>Prior to this launch, back in February 2021, the first stable release of Vite JS caused a stir on Twitter. On one of the regular knowledge-sharing sessions we hold internally, we covered Vite and studied its potential very closely. This session prompted a proposal from one of our engineering managers to explore its use for our platform.</p>
   <p>Since then, we have actively sought opportunities to integrate Vite into our workflow. It was a pleasant surprise to discover that Vite has been adopted as the official build toolchain for Vue 3. Meanwhile, we noticed that other important tools like <a href="https://pinia.vuejs.org/" rel="noopener">Pinia</a> for state management and <a href="https://vitest.dev/" rel="noopener">Vitest</a> for testing paired up with Vue 3 after gaining popularity as the defaults in many developer toolchains. This momentum presents a promising opportunity for us to become early adopters of Vue 3 and grow together with the community.</p>
   <p>We wasted no time and began our experimentation immediately.</p>
 
-  <h2>What made this upgrade critical to us?</h2>
+  <h2 id="what-made-this-upgrade-critical-to-us">What made this upgrade critical to us?</h2>
   <blockquote>Vue 3 is faster, smaller, more maintainable and it’s easier to target native.<cite>— Evan You</cite></blockquote>
   <p>As stated earlier, Vue 3 was set to become the new default version, and it is expected that support for Vue 2 will end by December 31, 2023. Vue 3 introduces several unforeseen modifications to its fundamental principles and APIs, diverging from previous updates. This necessitates progress in all other areas of the framework, which would soon push our current toolset into maintenance mode. This, in turn, could result in a growing number of security issues that are challenging to handle. Additionally, the latest upgrade pledges significant performance enhancements and a complete shift in API methodology, further emphasizing its significance.</p>
   <p>Additionally, Vue 3 offers the following advantages that we particularly cared about:</p>
@@ -64,7 +64,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
   <p>All the above factors provided enough persuasion to take on the challenge of being an early adopter for Vue 3. As an early adopter, with few proven examples to benchmark against, we also recognized the responsibility with which we must undertake this exercise.</p>
   <p>It is important to keep in mind that there are likely to be some compatibility issues with existing code and third-party libraries during any major upgrade. It is therefore essential to conduct thorough research and take gradual steps. Also, staying current with the latest framework updates and changes is vital, as they are subject to frequent modifications from early feedback.</p>
 
-  <h2>Planning the migration</h2>
+  <h2 id="planning-the-migration">Planning the migration</h2>
   <blockquote>By failing to prepare, you are preparing to fail.</blockquote>
   <p>Before embarking on this large-scale migration, it was important to have a plan. We needed to get down to the level of tasks and their estimated timelines because we had planned marketing activity around the revamped design. The plan is particularly crucial in our case, as our repository is a monorepo that supports two distinct user experiences and therefore requires due consideration of how different components interplay across the stack.</p>
   <p>We eventually came up with the following list of high-level items as part of the migration plan:</p>
@@ -79,7 +79,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
   <p>As many of the above-listed items are relatively new to the community, the learning curve will undoubtedly be steep. Therefore, meticulous planning and prior experimentation were deemed to be necessary.</p>
   <p>Consequently, we opted to begin with a comprehensive analysis of the migration and its impact on the existing codebase. Through this process, we were able to provide an approximate estimation of the required efforts and timelines.</p>
 
-  <h3>Analysis</h3>
+  <h3 id="analysis">Analysis</h3>
   <p>Although we have compiled a list of the action items, it is crucial to examine and comprehend the following points:</p>
   <ul class="doodle-list">
     <li>How would each item benefit us?</li>
@@ -94,7 +94,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
     <li>This also provided an opportunity for our team to suggest some long-standing tech debt items that could potentially be paired if deemed relevant and beneficial.</li>
   </ul>
 
-  <h2>The experimentation</h2>
+  <h2 id="the-experimentation">The experimentation</h2>
   <blockquote>A journey of a thousand miles begins with a single step.<cite>— Chinese proverb</cite></blockquote>
   <p>Now that we had completed the analysis phase, the next step was to experiment with the code. Our Marketplace boasts over a thousand apps built by developers from around the globe. Before we rocked this boat, we decided to conduct a proof of concept (POC) prior to committing to a switch.</p>
   <p>As part of the POC, we evaluated the following factors:</p>
@@ -122,7 +122,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
   </ul>
   <p>We created a separate clone for this POC in a private repository, and our lead and architects thoroughly examined the code. We also included it as a demo item in our weekly sprint demo and collected feedback from the entire team.</p>
 
-  <h3>Outcomes of the POC</h3>
+  <h3 id="outcomes-of-the-poc">Outcomes of the POC</h3>
   <p><strong>Phase 1</strong></p>
   <ul class="doodle-list">
     <li><strong>APIs and store:</strong> Our homepage successfully utilized multiple API calls and a significant portion of our data store, covering almost all new APIs including <a href="https://vuejs.org/guide/extras/composition-api-faq.html" rel="noopener">Composition API</a>, <a href="https://pinia.vuejs.org/" rel="noopener">Pinia</a> store, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function" rel="noopener">async API calls</a>, etc. No blockers or disparities were encountered with existing features.</li>
@@ -136,7 +136,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
     <li><strong>Nuxt Bridge:</strong> <a href="https://nuxt.com/docs/bridge/overview" rel="noopener">Nuxt Bridge</a> (a forward-compatibility layer that allows you to experience many of the new Nuxt 3 features by simply installing and enabling a Nuxt module) was also evaluated but found to be unsuitable for our purpose, as it caused issues in the build process.</li>
   </ul>
 
-  <h2>Stages of migration</h2>
+  <h2 id="stages-of-migration">Stages of migration</h2>
   <p>Although we were now quite confident about the migration thanks to the learnings from the POC, it was crucial to plan the stages in which the migration would occur. As a team, we try to avoid big-bang changes and deployments unless there is no alternative available.</p>
   <p>The idea was to gradually ship the migration in stages to ensure a smooth transition without any breakage in production. The stages we came up with are laid out below.</p>
   <MigrationPhases />
@@ -145,7 +145,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
   <p><strong>Phases 3 and 4:</strong> The website experience remains unchanged until this phase, where the migration from Nuxt 2 to Nuxt 3 is carried out, similar to the in-product migration in Phase 1.</p>
   <p>Phases 3 and 4 were eventually done in parallel, building on the knowledge gained in the earlier stages to fast-track progress. The refreshed website experience can be viewed at <a href="https://www.freshworks.com/apps/" rel="noopener">freshworks.com/apps</a>.</p>
 
-  <h2>Tech debts</h2>
+  <h2 id="tech-debts">Tech debts</h2>
   <p>In addition to the aforementioned steps, we recognized the potential for improvement in other areas such as productivity, performance, and build times.</p>
   <ul class="doodle-list">
     <li><strong>Build setup:</strong> To optimize our build pipeline and accommodate our growing scale, we transitioned from a multi-branch to a single-branch repo structure, adopting the proven trunk-based development methodology for <a href="https://monorepo.tools/" rel="noopener">monorepos</a>. Our repo now consists of a single master branch, with tags created for each environment. This allows us to leverage trunk-based development and deploy changes incrementally across different environments.</li>
@@ -153,7 +153,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
     <li><strong>Security:</strong> Also as a result of this upgrade, the number of security vulnerabilities decreased significantly, with critical vulnerabilities virtually eliminated.</li>
   </ul>
 
-  <h2>Metrics on DX improvements</h2>
+  <h2 id="metrics-on-dx-improvements">Metrics on DX improvements</h2>
   <p>From a developer productivity perspective, we noticed significant gains from this upgrade, which are shared below for reference.</p>
 
   <figure class="table-wrap">
@@ -199,7 +199,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
     </table>
   </figure>
 
-  <h2>Learnings and takeaways</h2>
+  <h2 id="learnings-and-takeaways">Learnings and takeaways</h2>
   <p>Our team managed to accomplish all of these improvements within a quarter by planning and experimenting beforehand. Despite facing a steep learning curve, we succeeded in delivering by remaining focused on our goal, sticking to the plan, learning quickly together, and staying aligned as a team.</p>
   <p>For anyone planning a similarly major codebase migration, we recommend considering the following major takeaways from our experience.</p>
   <ul class="doodle-list">
@@ -210,7 +210,7 @@ const description = 'At Freshworks Marketplace, we have leveraged a single codeb
   </ul>
   <p>Good luck with your major migration!</p>
 
-  <h2>References</h2>
+  <h2 id="references">References</h2>
   <ul class="doodle-list">
     <li><a href="https://vuejs.org/guide/introduction.html" rel="noopener">Vue.js — Introduction</a></li>
     <li><a href="https://www.youtube.com/watch?v=3COrQGxnPv0&feature=youtu.be" rel="noopener">Evan You — State of the Vuenion 2020, Vue.js Amsterdam 2020</a></li>

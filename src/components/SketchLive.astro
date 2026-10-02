@@ -1,0 +1,51 @@
+---
+/* A story figure with two views: the hand-drawn sketch (the default slot) and the
+   real product, a screenshot or a short muted loop. Two small tabs switch between
+   them; main.js wires the tabs (arrow keys too) and plays the loop only while it's
+   showing, never on its own under reduced motion. Without JS the sketch shows.
+
+   <SketchLive id="slots" live={{ kind: 'image', src, width, height, alt }} caption="…">
+     <CanvasBeforeAfter />
+   </SketchLive> */
+interface Live {
+  kind: 'image' | 'video';
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  /** Still frame for a video: shown before it plays and under reduced motion. */
+  poster?: string;
+}
+interface Props {
+  /** Unique on the page; builds the tab and panel ids. */
+  id: string;
+  live: Live;
+  /** One line under the live view. */
+  caption?: string;
+}
+
+const { id, live, caption } = Astro.props;
+const t = (k: string) => `sl-${id}-${k}`;
+---
+<div class="sl" data-sketch-live>
+  <div class="sl-tabs" role="tablist" aria-label="Sketch or the real product">
+    <button class="sl-tab" type="button" role="tab" id={t('tab-sketch')} aria-controls={t('sketch')} aria-selected="true">Sketch</button>
+    <button class="sl-tab" type="button" role="tab" id={t('tab-live')} aria-controls={t('live')} aria-selected="false" tabindex="-1"><span class="sl-dot" aria-hidden="true"></span>Live</button>
+  </div>
+  <div class="sl-panel" role="tabpanel" id={t('sketch')} aria-labelledby={t('tab-sketch')}>
+    <slot />
+  </div>
+  <div class="sl-panel" role="tabpanel" id={t('live')} aria-labelledby={t('tab-live')} hidden>
+    <figure class="sl-live">
+      <div class="sl-frame">
+        {live.kind === 'video' ? (
+          <video src={live.src} poster={live.poster} width={live.width} height={live.height} muted loop playsinline preload="none" aria-label={live.alt} data-sl-video></video>
+        ) : (
+          <img src={live.src} width={live.width} height={live.height} alt={live.alt} loading="lazy" decoding="async">
+        )}
+        {live.kind === 'video' && <button class="sl-play" type="button" data-sl-play aria-pressed="false">Play</button>}
+      </div>
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
+  </div>
+</div>

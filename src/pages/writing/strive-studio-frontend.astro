@@ -105,13 +105,13 @@ const phases = [
   <p><strong>Strive Studio</strong> is where you build marketing reports in Strive. Describe what you want in chat, and you get back a live dashboard wired to your own ad, analytics and CRM data, right beside the conversation.</p>
   <blockquote>Think Claude artifacts, but the numbers never go stale.</blockquote>
 
-  <h2>A little bit of backstory</h2>
+  <h2 id="a-little-bit-of-backstory">A little bit of backstory</h2>
   <p>We already had a stable generative UI chat, <a href="/writing/generative-ui-chat-engine/">Strive AI</a>, built from the ground up. It could already put together a good first version of insights, straight from a conversation.</p>
   <p>But we soon hit real bottlenecks, and the need for a far more flexible builder came much sooner than we had planned.</p>
   <p>It started as a simple, slightly wild idea from our CTO:</p>
   <blockquote>What if we just let the agent write the code, instead of struggling with schemas and teaching it to make sense of them?</blockquote>
 
-  <h3>v1: insights, curated from chat</h3>
+  <h3 id="v1">v1: insights, curated from chat</h3>
   <p>The first version lived inside the chat. You ran an analysis, the insights came back in pieces across the thread, and you kept the pieces that mattered.</p>
 
   <StudioLoop
@@ -126,7 +126,7 @@ const phases = [
 
   <ShareInsightsSteps />
 
-  <h3>Where v1 ran out</h3>
+  <h3 id="where-v1-ran-out">Where v1 ran out</h3>
   <p>An insight doc is a snapshot. Reports asked for a lot more: large volumes of data, and numbers that stay live after you share them.</p>
   <ul class="doodle-list">
     <li><strong>The registry didn’t scale to every layout.</strong> Owning it helped in many ways, but each new layout or variant meant one more UI tool, and more context for the agent to carry.</li>
@@ -134,7 +134,7 @@ const phases = [
     <li><strong>Strict patterns drained the story out.</strong> Every time we boxed the UI into a fixed pattern, reports lost their appeal. A report should tell its story in one quick scan.</li>
   </ul>
 
-  <h2>Two ways to share, one product</h2>
+  <h2 id="two-ways-to-share-one-product">Two ways to share, one product</h2>
   <p>This was one of the more interesting problems for me as a design engineer. We were about to have two ways to make something shareable, and people needed to pick the right one without thinking about it.</p>
   <p>We couldn’t simply drop v1. Insight docs are snapshots with AI summaries you can read in a minute, and schedulable templates that bring the same outline back every week. They’re powerful, and a few customers were already happy with them. Reports needed a proper playground.</p>
   <p>So the first job was the words.</p>
@@ -155,7 +155,7 @@ const phases = [
   </ul>
   <p>I’ll admit there’s still some overlap. Building at a startup is always cost against impact, so we let people use both, and we’ll unify them once we’ve seen how they do.</p>
 
-  <h2>Why we let the agent write HTML</h2>
+  <h2 id="why-we-let-the-agent-write-html">Why we let the agent write HTML</h2>
   <p>For reports, we stopped enforcing schemas altogether. The agent gets taste and brand context instead, and you decide what goes in the report and how it’s laid out.</p>
   <p>Our CTO had been saying it from the start: leave the agent with what it already knows, and what’s already all over the internet. We’d made the same call before, choosing charting libraries, graph tools and diagram formats.</p>
   <ul class="doodle-list">
@@ -169,12 +169,12 @@ const phases = [
 
   <p>For the frontend, the job changed completely. Instead of rendering <em>our</em> components, we now had to host <em>someone else’s</em> page, safely, and still make it feel like part of the product.</p>
 
-  <h2>The one-liner</h2>
+  <h2 id="the-one-liner">The one-liner</h2>
   <p>The agent writes one HTML file. We host it in a sandbox, lend it live data through a narrow bridge, and give it enough design context to look like it belongs.</p>
 
   <StudioLoop />
 
-  <h2>Hosting a page we didn’t write</h2>
+  <h2 id="hosting-a-page-we-didnt-write">Hosting a page we didn’t write</h2>
   <p>Reports render in <code>&lt;iframe sandbox="allow-scripts"&gt;</code>, deliberately <strong>without</strong> <code>allow-same-origin</code>. That one missing token does most of the work: the report runs its own scripts and charts, but it can’t read our cookies, storage or DOM, and it can’t call our API.</p>
   <p>So when it needs data, it has to ask.</p>
 
@@ -189,10 +189,10 @@ const phases = [
   </ul>
   <blockquote>The report can ask for anything. It can’t hold anything.</blockquote>
 
-  <h2>What broke at scale</h2>
+  <h2 id="what-broke-at-scale">What broke at scale</h2>
   <p>Agent-written HTML was an instant hit. Then came the scale problems, and they taught us the most.</p>
 
-  <h3>Design context: from a stylesheet to a little taste</h3>
+  <h3 id="design-context">Design context: from a stylesheet to a little taste</h3>
   <p>At first I wrote the whole CSS context myself: 650 lines of classes matching our design system, with the skill trained on top. It became unmaintainable very quickly, and honestly it went against the whole point of moving away from fixed schemas.</p>
   <p>What the agent really needed was a small amount of taste and a few guidelines; it can work out the rest. Tailwind is a standard models already know well, so now the agent writes Tailwind classes straight into the HTML, instead of picking from a set we defined.</p>
 
@@ -208,7 +208,7 @@ const phases = [
 
   <KpiEmphasis />
 
-  <h3>Huge volumes of data</h3>
+  <h3 id="huge-volumes-of-data">Huge volumes of data</h3>
   <p>Loading everything on page load didn’t scale. On big accounts the browser stalled, and heavy pages broke outright.</p>
 
   <Versus
@@ -218,11 +218,11 @@ const phases = [
     caption="Live should never mean heavy."
   />
 
-  <h3>Less AI slop</h3>
+  <h3 id="less-ai-slop">Less AI slop</h3>
   <p>Reports shouldn’t look vibe-coded. They should carry the customer’s brand, and be easy to customise.</p>
   <p>So during onboarding we extract a brand’s design-system context and keep it in our knowledge base, where it can be edited. Several workflows plug into it, and reports are one of them. That part deserves its own post, coming soon.</p>
 
-  <h3>Multi-page exports</h3>
+  <h3 id="multi-page-exports">Multi-page exports</h3>
   <p>PDF export worked fine, until reports became interactive and multi-page. The host can’t read a sandboxed page, so only the report can snapshot itself, and then each page has to be drawn on its own.</p>
 
   <ExportFlow />
@@ -233,7 +233,7 @@ const phases = [
     <li><strong>It waits for the data</strong> before snapshotting, and the host fixes the action; the iframe only supplies HTML.</li>
   </ul>
 
-  <h2>From a studio of its own to a skill</h2>
+  <h2 id="from-a-studio-of-its-own-to-a-skill">From a studio of its own to a skill</h2>
   <p>The first Report Studio was <strong>a separate chat, on purpose</strong>. It kept the report rules out of the main chat’s prompt, and let us experiment without touching the chat everyone uses daily. Here’s how we sketched it.</p>
 
   <Whiteboard
@@ -256,7 +256,7 @@ const phases = [
 
   <EntryPoints />
 
-  <h2>The small things that make it feel native</h2>
+  <h2 id="the-small-things-that-make-it-feel-native">The small things that make it feel native</h2>
 
   <CanvasStates />
 
@@ -267,7 +267,7 @@ const phases = [
     <li><strong>“Ask about this”</strong> inside a report opens a chat that already knows which report it came from.</li>
   </ul>
 
-  <h2>What I’d keep</h2>
+  <h2 id="what-id-keep">What I’d keep</h2>
   <ol class="doodle-list doodle-list--num">
     <li><strong>Don’t throw away what works.</strong> Insights stayed. Clear names made room for both.</li>
     <li><strong>Let the model use what it already knows.</strong> HTML and Tailwind beat any vocabulary we could invent.</li>
@@ -276,11 +276,11 @@ const phases = [
     <li><strong>Build apart, then fold in.</strong> The standalone studio was how we learned fast without breaking the main chat.</li>
   </ol>
 
-  <h2>Six months on one timeline</h2>
+  <h2 id="six-months-on-one-timeline">Six months on one timeline</h2>
 
   <ArcTimeline phases={phases} caption="From insights curated out of chat, to live HTML reports in a studio of their own, then into the main chat as a skill." />
 
-  <h2>What’s next</h2>
+  <h2 id="whats-next">What’s next</h2>
   <ul class="doodle-list">
     <li><strong>Public sharable links.</strong></li>
     <li><strong>Streaming HTML into the canvas</strong> while the agent edits.</li>
@@ -290,7 +290,7 @@ const phases = [
   </ul>
   <p>The report canvas also became our first page-driven slot, and the same shape now powers briefing panels, routine previews, task details and chat artifacts. Reports were the first place we let the agent write the interface itself. They won’t be the last.</p>
 
-  <h2>Thanks</h2>
+  <h2 id="thanks">Thanks</h2>
   <p>Strive Studio is a team effort, from the data and sandboxes underneath to the agent, the skill and the checks that keep every number honest. Thanks to the whole team at Strivelabs for building it together.</p>
 
   <aside class="back-to-story callout wobbly wobbly--3" aria-label="The short version">

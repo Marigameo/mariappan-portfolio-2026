@@ -1,0 +1,95 @@
+---
+/* Before / after: the same agent-written report in Strive's default orange, then in
+   the customer's own brand kit (pulled in at onboarding). Drawn from real reports,
+   with the brand and every number swapped for made-up ones.
+   The two drawings sit on top of each other; a range input (keyboard and screen
+   reader friendly) sets --pos, which clips the "after" layer and moves the handle.
+   main.js wires the input; without JS it rests at half and half. The drawings are
+   light product UI on purpose, like screenshots, so they stay light in dark mode. */
+interface Props { caption?: string }
+const { caption = 'Drag to compare. Same report, first in our default orange, then in the customer’s own brand kit, pulled in at onboarding.' } = Astro.props;
+
+// One report layout, two themes.
+const themes = {
+  before: { page: '#f6f5f2', line: '#e6e3dc', accent: '#ef6a2e', kicker: 'AD PERFORMANCE', ink: '#1d1d24', soft: '#d9d6cf', pill: '#f1efea', hero: false },
+  after:  { page: '#eeeafb', line: '#dcd6f5', accent: '#4f46e5', kicker: 'YOUR BRAND · ADS', ink: '#1e1b4b', soft: '#d6d0f2', pill: '#f3f1fb', hero: true },
+} as const;
+const area = 'M44 292 C 90 252, 130 262, 170 270 S 240 300, 290 286 S 370 258, 410 276 S 500 300, 556 254';
+---
+<figure class="sk-fig tsw">
+  <div class="tsw-legend" aria-hidden="true">
+    <span class="tsw-tag tsw-tag--before">← Before · our orange</span>
+    <span class="tsw-tag tsw-tag--after">After · their brand →</span>
+  </div>
+  <div class="tsw-box" data-compare style="--pos: 50%">
+    {(['before', 'after'] as const).map((key) => {
+      const t = themes[key];
+      return (
+        <svg class={`tsw-layer tsw-${key}`} viewBox="0 0 600 400" aria-hidden="true">
+          <defs>
+            <linearGradient id={`tsw-hero-${key}`} x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#1e1b6b" /><stop offset="1" stop-color="#4f46e5" />
+            </linearGradient>
+          </defs>
+          <rect width="600" height="400" fill={t.page} />
+          {/* header card */}
+          <rect x="24" y="22" width="552" height="120" rx="12" fill="#fff" stroke={t.line} stroke-width="1.5" />
+          <rect x="36" y="22" width="528" height="4" rx="2" fill={t.accent} />
+          <text x="44" y="54" font-size="10" font-weight="600" letter-spacing="1.4" fill={t.accent}>{t.kicker}</text>
+          <text x="44" y="82" font-size="22" font-weight="700" fill={t.ink}>Performance overview</text>
+          <rect x="44" y="93" width="250" height="7" rx="3.5" fill={t.soft} />
+          <rect x="44" y="111" width="70" height="18" rx="5" fill={t.pill} stroke={t.line} />
+          <text x="79" y="123" font-size="8" text-anchor="middle" fill={t.ink} fill-opacity=".7">Last 90 days</text>
+          <rect x="120" y="111" width="44" height="18" rx="5" fill="#e8f7ee" stroke="#bfe6cc" />
+          <text x="142" y="123" font-size="8" text-anchor="middle" fill="#1f8a4c">● Live</text>
+          {/* the hero KPI: plain in the default theme, a brand gradient after */}
+          <rect x="24" y="158" width="552" height="150" rx="12" fill={t.hero ? `url(#tsw-hero-${key})` : '#fff'} stroke={t.hero ? 'none' : t.line} stroke-width="1.5" />
+          <text x="44" y="186" font-size="9" letter-spacing="1.2" fill={t.hero ? '#c7c3ff' : '#6b6b74'}>TOTAL SPEND</text>
+          <text x="44" y="222" font-size="32" font-weight="700" fill={t.hero ? '#fff' : t.ink}>$48,210</text>
+          <rect x="44" y="232" width="50" height="16" rx="4" fill={t.hero ? '#ffffff26' : '#e8f7ee'} />
+          <text x="69" y="243" font-size="8" text-anchor="middle" fill={t.hero ? '#fff' : '#1f8a4c'}>+8.4%</text>
+          <path d={`${area} L556 296 L44 296 Z`} fill={t.hero ? '#ffffff' : t.accent} fill-opacity={t.hero ? '.12' : '.14'} />
+          <path d={area} fill="none" stroke={t.hero ? '#c7c3ff' : t.accent} stroke-width="2" stroke-linecap="round" />
+          {/* supporting trio */}
+          {[['IMPRESSIONS', '1.2M', 24], ['CLICKS', '18.4k', 212], ['LEADS', '642', 400]].map(([label, value, x]) => (
+            <g>
+              <rect x={x} y="322" width="176" height="62" rx="10" fill="#fff" stroke={t.line} stroke-width="1.5" />
+              <text x={Number(x) + 16} y="344" font-size="8" letter-spacing="1.1" fill="#6b6b74">{label}</text>
+              <circle cx={Number(x) + 160} cy="341" r="4" fill={t.accent} fill-opacity={t.hero ? '.85' : '.25'} />
+              <text x={Number(x) + 16} y="370" font-size="18" font-weight="700" fill={t.ink}>{value}</text>
+            </g>
+          ))}
+        </svg>
+      );
+    })}
+    <input class="tsw-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare the report before and after the brand theme: move left for after, right for before" data-compare-range>
+    <span class="tsw-handle" aria-hidden="true"><span class="tsw-knob">‹ ›</span></span>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .tsw { margin: var(--space-4) 0; }
+  .tsw-box { position: relative; aspect-ratio: 600 / 400; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); touch-action: pan-y; user-select: none; }
+  .tsw-layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; font-family: var(--font-body); }
+  .tsw-after { clip-path: inset(0 0 0 var(--pos)); }
+  /* Handwritten labels above the picture, one per side. */
+  .tsw-legend { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .55rem; padding-inline: .2rem; }
+  .tsw-tag { font-family: var(--font-hand); font-size: 1.2rem; font-weight: 700; line-height: 1; }
+  .tsw-tag--before { color: #d9581f; transform: rotate(-2deg); }
+  .tsw-tag--after { color: #5b52e8; transform: rotate(2deg); }
+  :global([data-theme="dark"]) .tsw-tag--after { color: #9a94ff; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .tsw-tag--after { color: #9a94ff; } }
+  /* The drawings stay light in both themes, so the handle uses fixed colours:
+     a white line with a hairline edge, and a dark knob, readable over cream and indigo. */
+  .tsw-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 20, 30, .35); pointer-events: none; }
+  .tsw-knob { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; font-family: var(--font-mono); font-size: .85rem; font-weight: 500; color: #fff; background: #1d1d24; border: 2px solid #fff; border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 rgba(20, 20, 30, .35); transform: translate(-50%, -50%); }
+  /* The real control: an invisible range across the whole picture. */
+  .tsw-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; }
+  .tsw-range:focus-visible ~ .tsw-handle .tsw-knob { outline: 2px solid var(--coral); outline-offset: 3px; }
+  .tsw figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .tsw-tag { font-size: 1rem; }
+    .tsw-knob { width: 2rem; height: 2rem; font-size: .75rem; }
+  }
+</style>

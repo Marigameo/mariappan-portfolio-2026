@@ -21,6 +21,7 @@ export const site = {
 
 export const nav = [
   { key: 'work', href: '/#work', label: 'Work' },
+  { key: 'experiments', href: '/experiments/', label: 'Experiments' },
   { key: 'talks', href: '/#talks', label: 'Talks' },
   { key: 'writing', href: '/#writing', label: 'Writing' },
   { key: 'about', href: '/about/', label: 'About' },

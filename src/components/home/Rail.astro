@@ -2,19 +2,31 @@
 /* One chapter of work (the companies, or the indie pile): a header with prev/next arrows and a
    progress line, then a sideways scroller of <WorkCard>s in the slot. Arrows and the line
    only appear once the rail has more cards than fit on screen (src/scripts/main.js).
-   When the cards carry a `company`, the title and meta follow the card in view, so one rail
-   can hold several companies; `title`/`meta`/`live` are what shows before any scrolling. */
+   One rail can hold several companies: pass them as `chapters`, newest first, and give each
+   card the matching `company`. The header then lists every company as a stop (click to jump
+   to its first card), highlights the one in view, and swaps the meta line to its role · years.
+   Without `chapters`, `title`/`meta`/`live` are a plain, fixed header. */
 import Icon from '../Icon.astro';
+
+interface Chapter {
+  company: string;
+  meta: string;
+  live?: boolean;
+}
 
 interface Props {
   id: string;      // e.g. "rail-work"; the track becomes "<id>-track"
   icon: string;    // doodle id for the badge
-  title: string;
-  meta: string;
+  title?: string;  // ignored when `chapters` is given
+  meta?: string;
   live?: boolean;  // show the pulsing "live" dot before the meta line
+  chapters?: Chapter[];
 }
 
-const { id, icon, title, meta, live = false } = Astro.props;
+const { id, icon, chapters = [] } = Astro.props;
+const first = chapters[0];
+const meta = first?.meta ?? Astro.props.meta ?? '';
+const live = first?.live ?? Astro.props.live ?? false;
 const trackId = `${id}-track`;
 ---
 <div class="rail" data-rail>
@@ -23,7 +35,18 @@ const trackId = `${id}-track`;
       <div class="rail-title">
         <span class="rail-badge" data-rail-badge><Icon name={icon} /></span>
         <div aria-live="polite">
-          <h3 id={id}><span class="rail-swap" data-rail-name>{title}</span></h3>
+          {chapters.length ? (
+            <h3 id={id} class="rail-stops">
+              {chapters.map((c, i) => (
+                <>
+                  {i > 0 && <span class="rail-sep" aria-hidden="true">/</span>}
+                  <button class:list={['rail-stop', i === 0 && 'is-on']} type="button" data-rail-stop={c.company} aria-current={i === 0 ? 'true' : undefined} aria-controls={trackId}>{c.company}</button>
+                </>
+              ))}
+            </h3>
+          ) : (
+            <h3 id={id}><span class="rail-swap" data-rail-name>{Astro.props.title}</span></h3>
+          )}
           <p class="meta"><span class="live" aria-hidden="true" data-rail-live hidden={!live}></span><span class="rail-swap" data-rail-meta>{meta}</span></p>
         </div>
       </div>

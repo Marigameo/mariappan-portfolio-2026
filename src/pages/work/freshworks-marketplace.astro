@@ -27,6 +27,7 @@ const lessons = [
   heading="Freshworks Marketplace"
   facts={[
     { label: 'Role', value: 'Frontend · the Marketplace monorepo' },
+    { label: 'Team', value: '3 engineers · I did the hands-on work, our lead and an architect guided and reviewed' },
     { label: 'Status', value: 'Shipped, live' },
   ]}
   link={{ href: 'https://www.freshworks.com/apps/', label: 'freshworks.com/apps' }}
@@ -40,7 +41,27 @@ const lessons = [
 >
   <img slot="sketch" class="work-img" src={shot.src} alt="The revamped Freshworks Marketplace: a search bar, product filters on the left, and a grid of popular apps." width={shot.w} height={shot.h} decoding="async">
 
-  <Fragment slot="lede">One codebase, two very different experiences, and a quarter to move both onto Vue 3 — while <mark class="hl">shipping a revamp on top of it</mark>. We did it as a team, and I got to play a big part in the plan, the proof of concept and the rollout. This is the short version.</Fragment>
+  <Fragment slot="lede">One codebase, two very different experiences, and a quarter to move both onto Vue 3, while <mark class="hl">shipping a revamp on top of it</mark>. My first full project on the team, with our lead and an architect in my corner. This is the short version.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The problem</h3>
+      <p>One monorepo powers the Marketplace in two places: a gallery inside every Freshworks product, and a public website. Vue 2 was reaching end of life, a full UI revamp was due on top, and all of it had to ship in stages. This was before LLMs, so the plan had to carry the confidence.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <ul class="doodle-list">
+        <li><strong>The pitch and the plan.</strong> I shared early Vite experiments at Panchatantra Tales, our weekly knowledge-sharing session, and that got us trying it on the platform. Then I wrote up Vue 3 and Vite, audited our npm packages, and drew up a phased release plan with our lead and architect.</li>
+        <li><strong>The POC and the migration.</strong> I ran the POC, then did the migration hands-on, engine first: the same UI on Vue 3, well before Vue 2’s end of life.</li>
+        <li><strong>The revamp, page by page.</strong> I built the designer’s Figma in phases (home and listings first, then details), so a half-shipped revamp never felt odd. A few details I cared about along the way: smooth page transitions, and a fuzzy search that loads without jerks.</li>
+        <li><strong>Crayons and accessibility.</strong> I checked that Freshworks’ Crayons could replace Element UI, and <a href="https://github.com/freshworks-oss/crayons/pull/731" rel="noopener">contributed the one missing piece</a>: timing control for popover transitions. I also made sure the Marketplace was covered by the <a href="https://www.freshworks.com/apps/files/accessibility.pdf" rel="noopener">WCAG 2.1 AA accessibility report</a>.</li>
+      </ul>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>On Vue 3 before Vue 2’s end of life, then the revamp in phases. 85 of 90 audit vulnerabilities went with the old stack, and dev servers start 8 to 10 times faster.</p>
+    </div>
+  </Fragment>
 
   <div class="story">
     <section class="slide" aria-labelledby="s-setup">
@@ -84,7 +105,7 @@ const lessons = [
         <div><p class="slide-kicker">Prove it</p><h2 id="s-poc">A POC before rocking the boat</h2></div>
       </header>
       <ul class="doodle-list slide-points">
-        <li>A thousand-plus apps live on the Marketplace, so we rebuilt <strong>just the homepage</strong> on Vue 3 first: real APIs, real store, no blockers.</li>
+        <li>A thousand-plus apps live on the Marketplace, so we <a href="/writing/monorepo-migration/#the-experimentation">rebuilt <strong>just the homepage</strong> on Vue 3 first</a>: real APIs, real store, no blockers.</li>
         <li>Nuxt 3 was still a release candidate. Waiting meant <strong>keeping a Vue 2 copy of every shared component</strong>, so we took the RC instead.</li>
       </ul>
       <figure class="sk-fig">
@@ -116,14 +137,35 @@ const lessons = [
       <MigrationPhases />
     </section>
 
-    <section class="slide" aria-labelledby="s-after">
+    <section class="slide" aria-labelledby="s-details">
       <header class="slide-head">
         <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Design call · details</p><h2 id="s-details">Fix it upstream</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Smooth, even under load.</strong> Page transitions on the Nuxt website, and a fuzzy search over a large catalogue: a clear loading state, results that surface without jerks, and focus that stays where you’d expect.</li>
+        <li><strong>Fixed where it lived.</strong> Crayons popovers had no control over when they opened and closed, so menus on the Marketplace felt glitchy. So I added delay props to Crayons, modelled on the Element popover we’d used before. <a href="https://github.com/freshworks-oss/crayons/pull/731" rel="noopener">Merged in December 2022</a>, so every team on Crayons got it.</li>
+      </ul>
+      <!-- The Crayons popover docs, with one hand-drawn mark around the menu and a taped note.
+           Positions are percentages of the screenshot, so they scale with it. -->
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src="/images/work/freshworks-marketplace/crayons-popover.webp" width="1914" height="1054" loading="lazy" decoding="async" alt="The Crayons popover in Freshworks’ design system docs: a Premier Accounts button opens a menu to sort customers by account type and order, over the component’s code sample.">
+          <span class="shot-mark" style="--l: 9.2%; --t: 6.2%; --w: 25.6%; --h: 76%" aria-hidden="true"></span>
+          <span class="shot-note" style="--l: 39%; --t: 40%" aria-hidden="true">open and close delays,<br>now just a prop</span>
+        </div>
+        <figcaption>The Crayons popover, now with open and close delays. <a href="https://github.com/freshworks-oss/crayons/pull/731" rel="noopener">See the pull request</a>.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-after">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
         <div><p class="slide-kicker">The other side</p><h2 id="s-after">Faster loops, fewer holes</h2></div>
       </header>
       <ul class="doodle-list slide-points">
         <li>We paid down debt on the way: a <strong>single trunk branch</strong> with tags per environment, and a Volar-based editor setup.</li>
-        <li>The upgrade took <strong>85 of 90 audit vulnerabilities</strong> with it, and the dev loop got a lot quicker.</li>
+        <li>The upgrade took <strong>85 of 90 audit vulnerabilities</strong> with it, and <a href="/writing/monorepo-migration/#metrics-on-dx-improvements">the dev loop got a lot quicker</a>.</li>
       </ul>
       <figure class="table-wrap">
         <table>
@@ -144,7 +186,7 @@ const lessons = [
 
     <section class="slide" aria-labelledby="s-lessons">
       <header class="slide-head">
-        <span class="slide-num" aria-hidden="true">07</span>
+        <span class="slide-num" aria-hidden="true">08</span>
         <div><p class="slide-kicker">Takeaways</p><h2 id="s-lessons">What I’d carry into the next one</h2></div>
       </header>
       <ul class="lessons">
@@ -213,6 +255,20 @@ const lessons = [
   .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
   .lessons .lessons-title { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); }
   @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 06: a real screenshot, taped on, with a coral hand-drawn mark and a taped note. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-note { position: absolute; left: var(--l); top: var(--t); padding: .35rem .7rem .45rem; font-family: var(--font-hand); font-size: clamp(.95rem, 2.2vw, 1.35rem); line-height: 1.1; color: var(--coral); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 6px 10px 5px 9px / 9px 5px 10px 6px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-3deg); }
+  .shot-note::before { content: ""; position: absolute; right: 100%; top: 50%; width: 1.6rem; border-top: 2px solid var(--coral); transform: rotate(8deg); transform-origin: right; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .shot-mark { border-width: 1.5px; }
+    .shot-note { padding: .2rem .45rem .28rem; }
+    .shot-note::before { width: .9rem; }
+  }
 
   /* The big card to the long-form write-up. */
   .deep-dive { display: block; margin-top: var(--space-5); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }

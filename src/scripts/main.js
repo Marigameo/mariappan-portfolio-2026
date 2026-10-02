@@ -126,31 +126,45 @@
       if (prev) prev.disabled = track.scrollLeft < 2;
       if (next) next.disabled = track.scrollLeft > max - 2;
     }
-    function go(dir) { track.scrollBy({ left: dir * step(), behavior: reduceMotion ? "auto" : "smooth" }); }
+    // A company stop the reader clicked stays highlighted until they next move the rail
+    // themselves, even if the "in view" point below would land on a neighbouring card.
+    var pinned = false;
+    function unpin() { pinned = false; }
+    function go(dir) { unpin(); track.scrollBy({ left: dir * step(), behavior: reduceMotion ? "auto" : "smooth" }); }
     if (prev) prev.addEventListener("click", function () { go(-1); });
     if (next) next.addEventListener("click", function () { go(1); });
 
-    // Several companies in one rail: the header shows the company of the card in view.
+    // Several companies in one rail: the header highlights the company of the card in
+    // view (or swaps its name, on a rail without stops) and shows that card's role · years.
     // The "in view" point slides from the rail's left edge to its right edge as it
     // scrolls, so the first card wins at the start and the last card at the end, even
     // when two cards fit on screen at once.
     var chapters = track.querySelectorAll("[data-company]");
     var nameEl = rail.querySelector("[data-rail-name]");
+    var stops = rail.querySelectorAll("[data-rail-stop]");
     var metaEl = rail.querySelector("[data-rail-meta]");
     var liveEl = rail.querySelector("[data-rail-live]");
     var badge = rail.querySelector("[data-rail-badge]");
-    var company = nameEl ? nameEl.textContent : "";
+    var company = chapters.length ? chapters[0].dataset.company : "";
     var swapId = 0;
+    function mark(name) {
+      stops.forEach(function (s) {
+        var on = s.dataset.railStop === name;
+        s.classList.toggle("is-on", on);
+        if (on) s.setAttribute("aria-current", "true"); else s.removeAttribute("aria-current");
+      });
+    }
     function show(card) {
-      nameEl.textContent = card.dataset.company;
+      if (nameEl) nameEl.textContent = card.dataset.company;
       metaEl.textContent = card.dataset.meta || "";
       if (liveEl) liveEl.hidden = card.dataset.live !== "true";
     }
     function swap(card) {
       company = card.dataset.company;
-      if (reduceMotion || !nameEl.animate) { show(card); return; }
+      mark(company);
+      if (reduceMotion || !metaEl.animate) { show(card); return; }
       var id = ++swapId;
-      var els = [nameEl, metaEl];
+      var els = nameEl ? [nameEl, metaEl] : [metaEl];
       var gone = { opacity: 0, transform: "translateY(-.5em)", filter: "blur(3px)" };
       var here = { opacity: 1, transform: "none", filter: "blur(0)" };
       var outs = els.map(function (el, i) {
@@ -168,6 +182,7 @@
       }).catch(function () {});
     }
     function chapter() {
+      if (pinned) return;
       var max = track.scrollWidth - track.clientWidth;
       var box = track.getBoundingClientRect();
       var pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
@@ -180,9 +195,22 @@
       });
       if (pick.dataset.company !== company) swap(pick);
     }
-    if (chapters.length && nameEl && metaEl) {
+    if (chapters.length && (nameEl || stops.length) && metaEl) {
       track.addEventListener("scroll", chapter, { passive: true });
       window.addEventListener("resize", chapter);
+      ["wheel", "touchstart", "pointerdown", "focusin"].forEach(function (t) { track.addEventListener(t, unpin, { passive: true }); });
+      // A stop scrolls its company's first card to the start of the rail.
+      stops.forEach(function (s) {
+        s.addEventListener("click", function () {
+          var card = [].find.call(chapters, function (c) { return c.dataset.company === s.dataset.railStop; });
+          if (!card) return;
+          var pad = parseFloat(getComputedStyle(track).scrollPaddingLeft) || 0;
+          var left = track.scrollLeft + card.getBoundingClientRect().left - track.getBoundingClientRect().left - pad;
+          pinned = true;
+          if (card.dataset.company !== company) swap(card);
+          track.scrollTo({ left: left, behavior: reduceMotion ? "auto" : "smooth" });
+        });
+      });
     }
 
     track.addEventListener("scroll", update, { passive: true });
@@ -294,6 +322,87 @@
     // Web fonts land after first paint and change how wide the cells are.
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(resyncAll);
   }
+
+  // --- Section links on blog headings ----------------------------------------------
+  // Every h2/h3 with an id gets a small link icon. Clicking it puts the section's URL in
+  // the address bar and copies it, so a story can deep-link any part of the blog.
+  var anchored = document.querySelector("[data-anchors]");
+  if (anchored) {
+    var sprite = anchored.getAttribute("data-sprite");
+    anchored.querySelectorAll("h2[id], h3[id]").forEach(function (h) {
+      var a = document.createElement("a");
+      a.className = "h-anchor";
+      a.href = "#" + h.id;
+      a.setAttribute("aria-label", "Copy link to this section");
+      a.innerHTML = '<svg class="doodle" aria-hidden="true"><use href="' + sprite + '#link"/></svg><span class="h-anchor-tip" aria-hidden="true">copied!</span>';
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var url = location.origin + location.pathname + "#" + h.id;
+        history.replaceState(null, "", "#" + h.id);
+        h.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(function () {
+            a.classList.add("is-copied");
+            setTimeout(function () { a.classList.remove("is-copied"); }, 1600);
+          }).catch(function () {});
+        }
+      });
+      h.appendChild(a);
+    });
+  }
+
+  // --- Sketch / Live figures on the stories ------------------------------------------
+  // Two tabs swap the hand-drawn sketch for the real product. A live loop plays only
+  // while its tab is showing, and waits for a tap under reduced motion.
+  document.querySelectorAll("[data-sketch-live]").forEach(function (box) {
+    var tabs = Array.prototype.slice.call(box.querySelectorAll('[role="tab"]'));
+    var video = box.querySelector("[data-sl-video]");
+    var play = box.querySelector("[data-sl-play]");
+    function syncPlay() {
+      if (!play || !video) return;
+      var on = !video.paused;
+      play.textContent = on ? "Pause" : "Play";
+      play.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      });
+      if (video) {
+        if (tab === tabs[1] && !reduceMotion) video.play().catch(function () {});
+        else video.pause();
+      }
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () { select(tab); });
+      tab.addEventListener("keydown", function (e) {
+        var next = e.key === "ArrowRight" ? (i + 1) % tabs.length : e.key === "ArrowLeft" ? (i - 1 + tabs.length) % tabs.length : e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : -1;
+        if (next < 0) return;
+        e.preventDefault();
+        tabs[next].focus();
+        select(tabs[next]);
+      });
+    });
+    if (video && play) {
+      play.addEventListener("click", function () { if (video.paused) video.play().catch(function () {}); else video.pause(); });
+      video.addEventListener("play", syncPlay);
+      video.addEventListener("pause", syncPlay);
+    }
+  });
+
+  // --- Before / after sliders (ThemeSwap.astro) ------------------------------------
+  // The range input is the real control; its value becomes --pos, which clips the
+  // "after" drawing and moves the handle.
+  document.querySelectorAll("[data-compare]").forEach(function (box) {
+    var range = box.querySelector("[data-compare-range]");
+    if (!range) return;
+    var sync = function () { box.style.setProperty("--pos", range.value + "%"); };
+    range.addEventListener("input", sync);
+    sync();
+  });
 
   // --- Footer year ---------------------------------------------------------------
   document.querySelectorAll("[data-year]").forEach(function (y) { y.textContent = new Date().getFullYear(); });

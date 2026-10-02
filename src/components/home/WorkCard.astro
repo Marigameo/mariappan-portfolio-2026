@@ -3,23 +3,32 @@
    <svg class="sk"> drawing (see src/components/sketches/) or a real screenshot
    <img width height alt loading="lazy">. The description goes in the default slot.
    `company`, `meta` and `live` are what the rail header switches to while this card
-   is in view; leave them off on rails that are a single chapter. */
+   is in view; leave them off on rails that are a single chapter.
+   `part` and `shipped` add two labelled rows under the one-line hook, so a scan
+   answers "what did you do" and "what shipped" (the same pattern as a story's
+   "At a glance"). `shippedLabel` renames the second row, e.g. "Status".
+   `tags` double as the mono kicker above the title ("GEN UI · DESIGN SYSTEM"), so
+   the card has one line of metadata. The accent colours only that line's dash and
+   "Read the story", which sits at the bottom of the text column. */
 import Icon from '../Icon.astro';
 import type { Accent } from '../../data/talks';
 
 interface Props {
   href: string;
   accent: Accent;
-  when: string;
   title: string;
   titleLang?: string;
+  titleNote?: string; // a quiet gloss beside a non-English title, e.g. its reading and meaning
   tags: string[];
   company?: string;  // e.g. "Freshworks"
   meta?: string;     // e.g. "Senior software engineer · 2021 → 2024"
   live?: boolean;    // pulsing dot in the header: still working there
+  part?: string;     // "My part" row
+  shipped?: string;  // second row
+  shippedLabel?: string;
 }
 
-const { href, accent, when, title, titleLang, tags, company, meta, live = false } = Astro.props;
+const { href, accent, title, titleLang, titleNote, tags, company, meta, live = false, part, shipped, shippedLabel = 'Shipped' } = Astro.props;
 ---
 <li class="card" style={`--accent: var(--${accent})`} data-company={company} data-meta={meta} data-live={company ? String(live) : undefined}>
   <a class="card-link" href={href}>
@@ -27,13 +36,16 @@ const { href, accent, when, title, titleLang, tags, company, meta, live = false 
       <slot name="sketch" />
     </figure>
     <div class="card-body">
-      <p class="card-when">{company && <span class="visually-hidden">{company} · </span>}{when}</p>
-      <h4 lang={titleLang}>{title}</h4>
+      <p class="card-when">{company && <span class="visually-hidden">{company} · </span>}{tags.join(' · ')}</p>
+      <h4 lang={titleLang}>{title}{titleNote && <span class="title-note" lang="en">{titleNote}</span>}</h4>
       <p><slot /></p>
-      <div class="card-foot">
-        {tags.map((t) => <span class="tag tag--cap">{t}</span>)}
-        <span class="card-go">Read the story<Icon name="arrow-right" /></span>
-      </div>
+      {(part || shipped) && (
+        <dl class="card-rows">
+          {part && <div><dt>My part</dt><dd>{part}</dd></div>}
+          {shipped && <div><dt>{shippedLabel}</dt><dd>{shipped}</dd></div>}
+        </dl>
+      )}
+      <span class="card-go">Read the story<Icon name="arrow-right" /></span>
     </div>
   </a>
 </li>
