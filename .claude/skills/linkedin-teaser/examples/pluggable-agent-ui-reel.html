@@ -1,0 +1,255 @@
+<!doctype html>
+<!-- Pluggable UI for agents · LinkedIn teaser reel. Short and visual: six scenes, ~22s.
+     Colours follow the story's sketches: coral = what the builder writes / the bet,
+     blue = the platform and its hooks, teal = ready / done, violet = the AI edit,
+     dashed ghost = hidden internals or the old, narrow model. -->
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=block">
+<style>
+  :root { --paper:#fff9f1; --card:#fff; --sand:#eee8d2; --sand2:#e4dcc2; --ink:#060606; --soft:rgba(6,6,6,.62); --faint:rgba(6,6,6,.4); --line:rgba(6,6,6,.12);
+    --coral:#d9573f; --blue:#2f5bd8; --teal:#1a9a86; --orange:#f26b1d; --green:#16a34a; --violet:#7c5cd6; }
+  * { box-sizing:border-box; margin:0; }
+  html,body { width:1080px; height:1350px; overflow:hidden; background:var(--paper); }
+  body { font-family:"Space Grotesk",sans-serif; color:var(--ink);
+    background-image:radial-gradient(rgba(6,6,6,.07) 1.6px, transparent 1.7px); background-size:34px 34px; }
+  .scene { position:absolute; inset:0; opacity:0; }
+  .abs { position:absolute; }
+  .box { background:var(--card); border:3px solid var(--ink); box-shadow:8px 9px 0 var(--ink);
+    border-radius:22px 12px 26px 14px / 14px 26px 12px 22px; }
+  .serif { font-family:"DM Serif Display",serif; font-weight:400; letter-spacing:-.02em; }
+  .hand { font-family:"Caveat",cursive; font-weight:700; color:var(--coral); }
+  .mono { font-family:"JetBrains Mono",monospace; letter-spacing:.16em; text-transform:uppercase; }
+  .bar { height:16px; border-radius:8px; background:var(--sand2); }
+  .tag { position:absolute; left:64px; top:60px; font-size:22px; color:var(--faint); }
+  .chip { width:112px; height:56px; border-radius:28px; display:grid; place-items:center; flex:none; }
+  .field { height:34px; border:2.5px solid var(--line); border-radius:9px; }
+  svg { overflow:visible; }
+</style></head>
+<body>
+
+<!-- 1 · title -->
+<section class="scene" id="s1">
+  <svg class="abs" id="s1star" style="left:470px;top:220px" width="140" height="140" viewBox="-70 -70 140 140">
+    <path d="M0-60C4-24 24-4 60 0 24 4 4 24 0 60-4 24-24 4-60 0-24-4-4-24 0-60z" fill="#f26b1d"/>
+  </svg>
+  <svg class="abs" id="s1star2" style="left:610px;top:190px" width="50" height="50" viewBox="-25 -25 50 50">
+    <path d="M0-20C1.5-8 8-1.5 20 0 8 1.5 1.5 8 0 20-1.5 8-8 1.5-20 0-8-1.5-1.5-8 0-20z" fill="#f26b1d"/>
+  </svg>
+  <p class="mono abs" id="s1eye" style="left:0;right:0;top:410px;text-align:center;font-size:26px;color:var(--soft)">Strivelabs · the story of</p>
+  <h1 class="serif abs" id="s1title" style="left:0;right:0;top:465px;text-align:center;font-size:150px;line-height:1">Pluggable UI<br>for agents</h1>
+  <svg class="abs" style="left:190px;top:790px" width="700" height="60" viewBox="0 0 700 60">
+    <path id="s1line" d="M10 35C120 12 230 50 350 28S580 14 690 34" fill="none" stroke="var(--coral)" stroke-width="9" stroke-linecap="round"/>
+  </svg>
+  <p class="hand abs" id="s1sub" style="left:0;right:0;top:880px;text-align:center;font-size:66px">plug and play, for the UI too</p>
+</section>
+
+<!-- 2 · one command to a working agent -->
+<section class="scene" id="s2">
+  <p class="mono tag">Foundations</p>
+  <div class="box abs" id="s2term" style="left:80px;top:170px;width:920px;height:130px;display:flex;align-items:center;padding:0 44px;font-family:'JetBrains Mono',monospace;font-size:40px">
+    <span style="color:var(--coral);margin-right:24px">$</span><span id="s2type"></span><span id="s2caret" style="display:inline-block;width:4px;height:46px;background:var(--ink);margin-left:6px"></span>
+  </div>
+  <div class="box abs" id="s2tree" style="left:80px;top:370px;width:920px;height:680px;padding:0;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:20px;padding:24px 40px;border-bottom:3px solid var(--ink);background:var(--sand)">
+      <svg width="46" height="38" viewBox="0 0 46 38"><path d="M3 6h14l5 6h21v23H3z" fill="rgba(242,107,29,.3)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/></svg>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:32px">my-agent/</span>
+    </div>
+    <div id="s2rows" style="padding:22px 40px;display:grid;gap:14px"></div>
+  </div>
+  <p class="hand abs" id="s2note" style="left:0;right:0;top:1120px;text-align:center;font-size:70px;color:var(--teal)">edit three. keep the rest.</p>
+</section>
+
+<!-- 3 · the platform handles the complexity -->
+<section class="scene" id="s3">
+  <p class="mono tag">Design call · abstractions</p>
+  <div class="box abs" id="s3w0" style="left:80px;top:220px;width:280px;height:260px;border-top:10px solid var(--coral);padding:34px 30px;display:grid;gap:16px;align-content:start">
+    <div class="bar" style="width:60%"></div><div class="field"></div><div class="field"></div>
+    <div style="width:55%;height:36px;border-radius:10px;background:var(--coral)"></div>
+  </div>
+  <div class="box abs" id="s3w1" style="left:400px;top:220px;width:280px;height:260px;border-top:10px solid var(--coral);display:grid;place-items:center">
+    <svg width="200" height="140" viewBox="0 0 200 140"><g fill="none" stroke="var(--coral)" stroke-width="5" stroke-linecap="round">
+      <rect x="6" y="14" width="60" height="38" rx="9"/><rect x="6" y="88" width="60" height="38" rx="9"/><rect x="134" y="51" width="60" height="38" rx="9"/>
+      <path d="M68 33C100 33 100 70 132 70M68 107C100 107 100 70 132 70"/></g></svg>
+  </div>
+  <div class="box abs" id="s3w2" style="left:720px;top:220px;width:280px;height:260px;border-top:10px solid var(--coral);padding:34px 30px">
+    <div class="bar" style="width:50%"></div>
+    <svg width="220" height="130" viewBox="0 0 220 130" style="margin-top:22px"><path d="M0 115C40 105 60 70 95 80S150 30 180 36 210 10 220 6" fill="none" stroke="var(--coral)" stroke-width="6" stroke-linecap="round"/></svg>
+  </div>
+  <div class="abs" id="s3cut" style="left:60px;top:545px;height:0;border-top:4px dashed var(--faint);width:960px"></div>
+  <div class="abs" id="s3plat" style="left:40px;top:600px;width:1000px;height:340px;border-radius:28px;background:rgba(228,220,194,.55);overflow:hidden">
+    <div class="abs" id="s3h" style="left:40px;top:40px;width:920px;display:flex;gap:40px"></div>
+    <div class="abs" id="s3g" style="left:20px;top:200px;width:960px;height:100px"></div>
+  </div>
+  <p class="hand abs" id="s3note" style="left:0;right:0;top:1070px;text-align:center;font-size:70px;color:var(--teal)">write above the line</p>
+</section>
+
+<!-- 4 · relax the rails -->
+<section class="scene" id="s4">
+  <p class="mono tag">Design call · routes</p>
+  <p class="mono abs" id="s4la" style="left:84px;top:215px;font-size:24px;color:var(--soft)">Content agent</p>
+  <p class="mono abs" id="s4lb" style="left:84px;top:655px;font-size:24px;color:var(--soft)">Sales agent</p>
+  <div id="s4cards"></div>
+  <p class="hand abs" id="s4note" style="left:0;right:0;top:1110px;text-align:center;font-size:70px;color:var(--teal)">a shape per agent</p>
+</section>
+
+<!-- 5 · who writes the UI -->
+<section class="scene" id="s5">
+  <p class="mono tag">Today</p>
+  <h2 class="serif abs" id="s5q" style="left:0;right:0;top:130px;text-align:center;font-size:96px;line-height:1">Who writes the UI?</h2>
+  <svg class="abs" style="left:0;top:0" width="1080" height="1350" viewBox="0 0 1080 1350">
+    <g fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path id="s5arrow" d="M120 770C200 670 300 630 425 610S600 460 670 450 840 300 930 290"/>
+      <path id="s5head" d="M905 268L933 290 909 314"/>
+    </g>
+  </svg>
+  <div id="s5steps"></div>
+  <p class="hand abs" id="s5note" style="left:0;right:0;top:1150px;text-align:center;font-size:72px;color:var(--teal)">now, the agent writes it</p>
+</section>
+
+<!-- 6 · end card -->
+<section class="scene" id="s6">
+  <svg class="abs" id="s6star" style="left:470px;top:250px" width="140" height="140" viewBox="-70 -70 140 140">
+    <path d="M0-60C4-24 24-4 60 0 24 4 4 24 0 60-4 24-24 4-60 0-24-4-4-24 0-60z" fill="#f26b1d"/></svg>
+  <p class="mono abs" style="left:0;right:0;top:450px;text-align:center;font-size:26px;color:var(--soft)">Pluggable UI for agents</p>
+  <h2 class="serif abs" id="s6t" style="left:0;right:0;top:500px;text-align:center;font-size:150px;line-height:1">The full story</h2>
+  <p class="hand abs" id="s6s" style="left:0;right:0;top:700px;text-align:center;font-size:68px">the blog + the story, in the comments</p>
+  <svg class="abs" id="s6arrow" style="left:490px;top:830px" width="100" height="190" viewBox="0 0 100 190">
+    <path id="s6ap" d="M52 8C40 60 64 100 50 170M20 138l30 36 32-38" fill="none" stroke="var(--coral)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const out = x => 1 - Math.pow(1 - x, 3);
+const inout = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const back = x => { const c = 1.7; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const mk = (html, css = '') => { const d = document.createElement('div'); d.innerHTML = html; d.style.cssText = css; return d; };
+
+const SCENES = [['s1',0,3.0],['s2',3.0,7.4],['s3',7.4,11.2],['s4',11.2,15.2],['s5',15.2,19.4],['s6',19.4,99]];
+window.SCENES = SCENES;
+window.DURATION = 22.6;
+
+function pop(el, t, a, d=.5, from=.6) { const x = p(t, a, a + d); el.style.opacity = clamp(x*3); el.style.transform = `scale(${lerp(from, 1, back(x))})`; }
+function rise(el, t, a, d=.5, dy=50) { const x = out(p(t, a, a + d)); el.style.opacity = x; el.style.transform = `translateY(${(1-x)*dy}px)`; }
+function draw(path, x) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L * (1 - x); }
+
+// 2 · the scaffolded folder: coral = you edit, teal = ready as is, ghost = empty
+const FILE = '<svg width="34" height="42" viewBox="0 0 34 42" style="flex:none"><path d="M3 3h18l10 10v26H3zM21 3v10h10" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/></svg>';
+const CHIP = {
+  edit: '<span class="chip" style="background:var(--coral)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M4 20l4.5-1L19 8.5 15.5 5 5 15.5z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg></span>',
+  ready: '<span class="chip" style="background:var(--teal)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+  empty: '<span class="chip" style="border:3px dashed rgba(6,6,6,.35)"></span>',
+};
+const rows = [[0, 230, 'edit'], [1, 330, 'edit'], [1, 290, 'ready'], [1, 310, 'edit'], [0, 170, 'empty']].map(([ind, w, c]) => {
+  const r = mk(`${FILE}<div class="bar" style="width:${w}px;height:20px"></div><span style="flex:1"></span>${CHIP[c]}`,
+    `display:flex;align-items:center;gap:24px;height:96px;padding-left:${ind*60}px`);
+  $('s2rows').appendChild(r); return r; });
+
+// 3 · three hooks, and what they keep out of sight
+const hooks = ['trigger', 'output', 'reset'].map(n => { const h = mk(n,
+  `flex:1;height:100px;border:3.5px solid var(--blue);border-radius:50px;background:var(--card);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:32px;color:var(--blue)`);
+  $('s3h').appendChild(h); return h; });
+const ghosts = [...Array(6)].map((_, i) => { const g = mk(`<div class="bar" style="width:${[70,55,80,60,75,50][i]}%;height:14px"></div>`,
+  `position:absolute;left:${i*164}px;top:0;width:140px;height:90px;border:3.5px dashed rgba(6,6,6,.45);border-radius:16px;display:grid;place-items:center;background:rgba(255,249,241,.6)`);
+  $('s3g').appendChild(g); return g; });
+
+// 4 · one narrow template → a shape per agent
+const INNER = {
+  form: '<div class="bar" style="width:60%"></div><div class="field"></div><div class="field"></div><div style="width:50%;height:32px;border-radius:9px;background:var(--sand2)"></div>',
+  queue: [...Array(4)].map(() => '<div style="display:flex;gap:12px;align-items:center"><i style="width:16px;height:16px;border-radius:50%;background:var(--blue);display:block;flex:none"></i><div class="bar" style="flex:1"></div></div>').join(''),
+  draft: '<div class="bar" style="width:90%"></div><div class="bar" style="width:75%"></div><div style="height:16px;border-radius:8px;width:85%;background:rgba(124,92,214,.45)"></div><div class="bar" style="width:80%"></div><div class="bar" style="width:55%"></div>',
+  review: ['var(--teal)', 'var(--teal)', 'var(--coral)'].map(c => `<div style="display:flex;gap:12px;align-items:center"><b style="color:${c};font-size:26px;line-height:1">${c.includes('teal') ? '✓' : '✕'}</b><div class="bar" style="flex:1"></div></div>`).join(''),
+  out: '<div class="bar" style="width:45%"></div><div style="height:48px;width:60%;border-radius:10px;background:var(--sand2)"></div><div class="bar" style="width:85%"></div><div class="bar" style="width:70%"></div>',
+};
+const TONES = ['var(--ink)', 'var(--blue)', 'var(--violet)', 'var(--teal)'];
+const contentCards = ['form', 'queue', 'draft', 'review'].map(k => { const c = mk(`<div class="k" style="display:grid;gap:16px">${INNER[k]}</div>`); $('s4cards').appendChild(c); return c; });
+const salesCards = [0, 1, 2].map(() => { const c = mk(`<div class="k" style="display:grid;gap:16px">${INNER.out}</div>`); $('s4cards').appendChild(c); return c; });
+function card(el, x, y, w, solid, top) {
+  el.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${w}px;height:300px;padding:28px 24px;border-radius:18px;overflow:hidden;
+    background:${solid ? '#fff' : 'transparent'};border:${solid ? '3px solid var(--ink)' : '3.5px dashed rgba(6,6,6,.38)'};
+    ${solid ? `border-top:10px solid ${top};box-shadow:6px 7px 0 var(--ink);` : ''}`;
+  el.firstChild.style.opacity = solid ? 1 : .45;
+}
+
+// 5 · who writes the UI: developers → coding agents → gen UI chat → the agent
+const CODE = c => `<span style="font-family:'JetBrains Mono',monospace;font-size:58px;font-weight:500;color:${c}">&lt;/&gt;</span>`;
+const SPARK = (c, s) => `<svg width="${s}" height="${s}" viewBox="-25 -25 50 50"><path d="M0-20C1.5-8 8-1.5 20 0 8 1.5 1.5 8 0 20-1.5 8-8 1.5-20 0-8-1.5-1.5-8 0-20z" fill="${c}"/></svg>`;
+const STEPS = [
+  { label: 'Developers', tone: 'var(--sand2)', art: CODE('var(--ink)') },
+  { label: 'Coding agents', tone: 'var(--blue)', art: `<span style="position:relative">${CODE('var(--blue)')}<span style="position:absolute;right:-30px;top:-18px">${SPARK('var(--blue)', 34)}</span></span>` },
+  { label: 'Gen UI chat', tone: 'var(--teal)', art: `<svg width="140" height="100" viewBox="0 0 140 100"><path d="M10 6h90a12 12 0 0 1 12 12v12a12 12 0 0 1-12 12H30l-14 10V42h-6a8 8 0 0 1-8-8V14a8 8 0 0 1 8-8z" fill="var(--sand)" stroke="var(--ink)" stroke-width="2.5"/><rect x="40" y="58" width="96" height="40" rx="8" fill="#fff" stroke="var(--teal)" stroke-width="3.5"/><g fill="var(--teal)"><rect x="54" y="80" width="12" height="12" rx="2"/><rect x="72" y="72" width="12" height="20" rx="2"/><rect x="90" y="66" width="12" height="26" rx="2"/><rect x="108" y="76" width="12" height="16" rx="2"/></g></svg>` },
+  { label: 'The agent', tone: 'var(--coral)', art: `<svg width="140" height="100" viewBox="0 0 140 100"><rect x="14" y="6" width="112" height="88" rx="12" fill="#fff" stroke="var(--coral)" stroke-width="4" stroke-dasharray="10 8"/><g transform="translate(70 50)"><path d="M0-26C2-10 10-2 26 0 10 2 2 10 0 26-2 10-10 2-26 0-10-2-2-10 0-26z" fill="var(--coral)"/></g></svg>` },
+];
+const stepEls = STEPS.map((s, i) => {
+  const x = 70 + i*245, y = 840 - i*160;
+  const box = mk(s.art, `position:absolute;left:${x}px;top:${y}px;width:220px;height:180px;background:#fff;border:3px solid var(--ink);border-top:10px solid ${s.tone};
+    border-radius:18px;box-shadow:7px 8px 0 var(--ink);display:grid;place-items:center;transform-origin:50% 100%`);
+  const lab = mk(s.label, `position:absolute;left:${x - 20}px;top:${y + 200}px;width:260px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:23px;letter-spacing:.12em;text-transform:uppercase;color:${i === 3 ? 'var(--coral)' : 'var(--soft)'}`);
+  $('s5steps').append(box, lab); return [box, lab];
+});
+
+const CMD = 'pnpm clone-agent-template';
+
+window.seek = function (t) {
+  for (const [id, a, b] of SCENES) { const el = $(id); const v = p(t, a, a + .4) * (1 - p(t, b - .4, b)); el.style.opacity = v; el.style.visibility = v ? 'visible' : 'hidden'; }
+
+  // 1 · title
+  pop($('s1star'), t, .1, .7, .2); $('s1star').style.rotate = `${t*40}deg`;
+  pop($('s1star2'), t, .35, .6, .2);
+  rise($('s1eye'), t, .3); rise($('s1title'), t, .45, .6, 70);
+  draw($('s1line'), inout(p(t, 1.0, 1.6)));
+  rise($('s1sub'), t, 1.4, .5);
+
+  // 2 · one command, a working agent
+  const T2 = 3.0;
+  rise($('s2term'), t, T2 + .2, .45, 60);
+  $('s2type').textContent = CMD.slice(0, Math.round(CMD.length * p(t, T2 + .5, T2 + 1.4)));
+  $('s2caret').style.opacity = t < T2 + 1.6 ? (Math.floor(t * 3) % 2 ? 1 : .15) : 0;
+  rise($('s2tree'), t, T2 + 1.45, .5, 80);
+  rows.forEach((r, i) => { rise(r, t, T2 + 1.75 + i*.14, .35, 24);
+    pop(r.querySelector('.chip'), t, T2 + 2.5 + i*.1, .4, .3); });
+  rise($('s2note'), t, T2 + 3.0, .5);
+
+  // 3 · builders write above the line, the platform owns the rest
+  const T3 = 7.4;
+  ['s3w0', 's3w1', 's3w2'].forEach((id, i) => pop($(id), t, T3 + .25 + i*.12, .5, .7));
+  $('s3cut').style.width = 960 * inout(p(t, T3 + .9, T3 + 1.4)) + 'px';
+  hooks.forEach((h, i) => pop(h, t, T3 + 1.2 + i*.12, .45, .6));
+  rise($('s3plat'), t, T3 + 1.0, .45, 40);
+  ghosts.forEach((g, i) => { const a = out(p(t, T3 + 1.5 + i*.05, T3 + 1.9 + i*.05)), sink = inout(p(t, T3 + 2.1 + i*.06, T3 + 2.8 + i*.06));
+    g.style.opacity = a; g.style.transform = `translateY(${(1-a)*30 + sink*118}px)`; });
+  rise($('s3note'), t, T3 + 2.5, .5);
+
+  // 4 · one narrow model → a shape per agent
+  const T4 = 11.2, m = inout(p(t, T4 + 1.3, T4 + 2.2)), solid = m > .5;
+  rise($('s4la'), t, T4 + .2, .4, 20); rise($('s4lb'), t, T4 + .3, .4, 20);
+  contentCards.forEach((el, i) => {
+    card(el, lerp([120, 410, 700, 700][i], 80 + i*240, m), 270, lerp(260, 200, m), solid, TONES[i]);
+    const a = i < 3 ? out(p(t, T4 + .35 + i*.1, T4 + .75 + i*.1)) : p(m, .3, .8);
+    el.style.opacity = a; el.style.transform = `translateY(${i < 3 ? (1-a)*40 : 0}px)`; });
+  salesCards.forEach((el, i) => {
+    card(el, lerp([120, 410, 700][i], 410, m), 710, 260, solid && i === 1, 'var(--ink)');
+    const a = out(p(t, T4 + .45 + i*.1, T4 + .85 + i*.1));
+    el.style.opacity = i === 1 ? a : a * (1 - p(m, .3, .8)); el.style.transform = `translateY(${(1-a)*40}px)`; });
+  rise($('s4note'), t, T4 + 2.4, .5);
+
+  // 5 · each step hands a little more of the UI to the agent
+  const T5 = 15.2;
+  rise($('s5q'), t, T5 + .2, .5, 50);
+  draw($('s5arrow'), inout(p(t, T5 + .6, T5 + 2.1)));
+  draw($('s5head'), out(p(t, T5 + 2.05, T5 + 2.3)));
+  stepEls.forEach(([box, lab], i) => { pop(box, t, T5 + .55 + i*.42, .5, .5); rise(lab, t, T5 + .75 + i*.42, .4, 16); });
+  rise($('s5note'), t, T5 + 2.5, .5);
+
+  // 6 · end card
+  const T6 = 19.4;
+  pop($('s6star'), t, T6 + .2, .7, .2); $('s6star').style.rotate = `${t*40}deg`;
+  rise($('s6t'), t, T6 + .4, .6, 70); rise($('s6s'), t, T6 + 1.0, .5);
+  draw($('s6ap'), out(p(t, T6 + 1.4, T6 + 2.0)));
+  $('s6arrow').style.transform = `translateY(${Math.sin((t - T6) * 5) * 10 * p(t, T6 + 2, T6 + 2.3)}px)`;
+};
+seek(0);
+</script>
+</body></html>

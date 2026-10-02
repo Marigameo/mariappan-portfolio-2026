@@ -1,0 +1,115 @@
+<!doctype html>
+<!-- Teaser reel template. Copy to <slug>-teaser/reel.html, replace every TODO, and
+     draw the four highlights (scenes 2–5) by hand (see references/reel.md and examples/strive-studio-reel.html).
+     Rendered frame by frame: everything must be a pure function of t inside seek(t). -->
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=block">
+<style>
+  :root { --paper:#fff9f1; --card:#fff; --sand:#eee8d2; --sand2:#e4dcc2; --ink:#060606; --soft:rgba(6,6,6,.62); --faint:rgba(6,6,6,.4); --line:rgba(6,6,6,.12);
+    --coral:#d9573f; --blue:#2f5bd8; --teal:#1a9a86; --orange:#f26b1d; --green:#16a34a; --violet:#7c5cd6; }
+  * { box-sizing:border-box; margin:0; }
+  html,body { width:1080px; height:1350px; overflow:hidden; background:var(--paper); }
+  body { font-family:"Space Grotesk",sans-serif; color:var(--ink);
+    background-image:radial-gradient(rgba(6,6,6,.07) 1.6px, transparent 1.7px); background-size:34px 34px; }
+  .scene { position:absolute; inset:0; opacity:0; }
+  .abs { position:absolute; }
+  .box { background:var(--card); border:3px solid var(--ink); box-shadow:8px 9px 0 var(--ink);
+    border-radius:22px 12px 26px 14px / 14px 26px 12px 22px; }
+  .ghost { background:transparent; border:4px dashed rgba(6,6,6,.4); border-radius:22px; }
+  .serif { font-family:"DM Serif Display",serif; font-weight:400; letter-spacing:-.02em; }
+  .hand { font-family:"Caveat",cursive; font-weight:700; color:var(--coral); }
+  .mono { font-family:"JetBrains Mono",monospace; letter-spacing:.16em; text-transform:uppercase; }
+  .bar { height:16px; border-radius:8px; background:var(--sand2); }
+  .tag { position:absolute; left:64px; top:60px; font-size:22px; color:var(--faint); }
+  svg { overflow:visible; }
+</style></head>
+<body>
+
+<!-- 1 · title (fixed shape) -->
+<section class="scene" id="s1">
+  <svg class="abs" id="s1star" style="left:470px;top:300px" width="140" height="140" viewBox="-70 -70 140 140">
+    <path d="M0-60C4-24 24-4 60 0 24 4 4 24 0 60-4 24-24 4-60 0-24-4-4-24 0-60z" fill="#f26b1d"/>
+  </svg>
+  <svg class="abs" id="s1star2" style="left:610px;top:270px" width="50" height="50" viewBox="-25 -25 50 50">
+    <path d="M0-20C1.5-8 8-1.5 20 0 8 1.5 1.5 8 0 20-1.5 8-8 1.5-20 0-8-1.5-1.5-8 0-20z" fill="#f26b1d"/>
+  </svg>
+  <p class="mono abs" id="s1eye" style="left:0;right:0;top:500px;text-align:center;font-size:26px;color:var(--soft)">TODO Org · the story of</p>
+  <!-- Long names: drop font-size to ~130px, or break onto two lines and move the line/sub down. -->
+  <h1 class="serif abs" id="s1title" style="left:0;right:0;top:560px;text-align:center;font-size:170px;line-height:1">TODO Name</h1>
+  <svg class="abs" style="left:190px;top:750px" width="700" height="60" viewBox="0 0 700 60">
+    <path id="s1line" d="M10 35C120 12 230 50 350 28S580 14 690 34" fill="none" stroke="var(--coral)" stroke-width="9" stroke-linecap="round"/>
+  </svg>
+  <p class="hand abs" id="s1sub" style="left:0;right:0;top:850px;text-align:center;font-size:66px">TODO the one-liner, 5–6 words</p>
+</section>
+
+<!-- 2–5 · four highlights: one drawing that moves each, a note of ~5 words (TODO) -->
+<section class="scene" id="s2">
+  <p class="mono tag">TODO Kicker</p>
+  <div class="box abs" id="s2main" style="left:80px;top:220px;width:920px;height:760px;padding:44px">
+    <div class="bar" style="width:220px"></div>
+  </div>
+  <p class="hand abs" id="s2note" style="left:0;right:0;top:1110px;text-align:center;font-size:70px;color:var(--teal)">TODO ~5 words</p>
+</section>
+<section class="scene" id="s3"><p class="mono tag">TODO Kicker</p></section>
+<section class="scene" id="s4"><p class="mono tag">TODO Kicker</p></section>
+<section class="scene" id="s5"><p class="mono tag">TODO Kicker</p></section>
+
+<!-- 6 · end card (fixed shape) -->
+<section class="scene" id="s6">
+  <svg class="abs" id="s6star" style="left:470px;top:250px" width="140" height="140" viewBox="-70 -70 140 140">
+    <path d="M0-60C4-24 24-4 60 0 24 4 4 24 0 60-4 24-24 4-60 0-24-4-4-24 0-60z" fill="#f26b1d"/></svg>
+  <p class="mono abs" style="left:0;right:0;top:450px;text-align:center;font-size:26px;color:var(--soft)">TODO Name</p>
+  <h2 class="serif abs" id="s6t" style="left:0;right:0;top:500px;text-align:center;font-size:150px;line-height:1">The full story</h2>
+  <p class="hand abs" id="s6s" style="left:0;right:0;top:700px;text-align:center;font-size:68px">the blog + the story, in the comments</p>
+  <svg class="abs" id="s6arrow" style="left:490px;top:830px" width="100" height="190" viewBox="0 0 100 190">
+    <path id="s6ap" d="M52 8C40 60 64 100 50 170M20 138l30 36 32-38" fill="none" stroke="var(--coral)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const out = x => 1 - Math.pow(1 - x, 3);
+const inout = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const back = x => { const c = 1.7; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+
+// [id, start, end]. The last scene's end is 99 so it holds until DURATION.
+const SCENES = [['s1',0,3.0],['s2',3.0,7.4],['s3',7.4,11.2],['s4',11.2,15.2],['s5',15.2,19.4],['s6',19.4,99]];
+window.SCENES = SCENES;
+window.DURATION = 22.6;
+
+function show(el, t, a, b, dy=40) { // fade + rise in at a, fade out ending at b
+  const i = out(p(t, a, a + .45)), o = p(t, b - .35, b);
+  el.style.opacity = i * (1 - o);
+  el.style.transform = `translateY(${(1 - i) * dy - o * 30}px)`;
+}
+function pop(el, t, a, d=.5, from=.6) { const x = p(t, a, a + d); el.style.opacity = clamp(x*3); el.style.transform = `scale(${lerp(from, 1, back(x))})`; }
+function rise(el, t, a, d=.5, dy=50) { const x = out(p(t, a, a + d)); el.style.opacity = x; el.style.transform = `translateY(${(1-x)*dy}px)`; }
+function draw(path, x) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L * (1 - x); }
+
+window.seek = function (t) {
+  for (const [id, a, b] of SCENES) { const el = $(id); const v = p(t, a, a + .4) * (1 - p(t, b - .4, b)); el.style.opacity = v; el.style.visibility = v ? 'visible' : 'hidden'; }
+
+  // 1 · title
+  pop($('s1star'), t, .1, .7, .2); $('s1star').style.rotate = `${t*40}deg`;
+  pop($('s1star2'), t, .35, .6, .2);
+  rise($('s1eye'), t, .3); rise($('s1title'), t, .45, .6, 70);
+  draw($('s1line'), inout(p(t, 1.0, 1.7)));
+  rise($('s1sub'), t, 1.6, .6);
+
+  // 2 · TODO (3–5 the same way: tag first, drawing builds over ~2.5s, note last, 1s+ hold)
+  const T2 = 3.0;
+  rise($('s2main'), t, T2 + .3, .6, 100);
+  rise($('s2note'), t, T2 + 3.0, .5);
+
+  // 6 · end card
+  const T6 = 19.4;
+  pop($('s6star'), t, T6 + .2, .7, .2); $('s6star').style.rotate = `${t*40}deg`;
+  rise($('s6t'), t, T6 + .4, .6, 70); rise($('s6s'), t, T6 + 1.0, .5);
+  draw($('s6ap'), out(p(t, T6 + 1.4, T6 + 2.0)));
+  $('s6arrow').style.transform = `translateY(${Math.sin((t - T6) * 5) * 10 * p(t, T6 + 2, T6 + 2.3)}px)`;
+};
+seek(0);
+</script>
+</body></html>

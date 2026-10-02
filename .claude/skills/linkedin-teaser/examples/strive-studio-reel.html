@@ -1,0 +1,300 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=block">
+<style>
+  :root { --paper:#fff9f1; --card:#fff; --sand:#eee8d2; --sand2:#e4dcc2; --ink:#060606; --soft:rgba(6,6,6,.62); --faint:rgba(6,6,6,.4); --line:rgba(6,6,6,.12);
+    --coral:#d9573f; --blue:#2f5bd8; --teal:#1a9a86; --orange:#f26b1d; --green:#16a34a; }
+  * { box-sizing:border-box; margin:0; }
+  html,body { width:1080px; height:1350px; overflow:hidden; background:var(--paper); }
+  body { font-family:"Space Grotesk",sans-serif; color:var(--ink);
+    background-image:radial-gradient(rgba(6,6,6,.07) 1.6px, transparent 1.7px); background-size:34px 34px; }
+  .scene { position:absolute; inset:0; opacity:0; }
+  .abs { position:absolute; }
+  .box { background:var(--card); border:3px solid var(--ink); box-shadow:8px 9px 0 var(--ink);
+    border-radius:22px 12px 26px 14px / 14px 26px 12px 22px; }
+  .serif { font-family:"DM Serif Display",serif; font-weight:400; letter-spacing:-.02em; }
+  .hand { font-family:"Caveat",cursive; font-weight:700; color:var(--coral); }
+  .mono { font-family:"JetBrains Mono",monospace; letter-spacing:.16em; text-transform:uppercase; }
+  .bar { height:16px; border-radius:8px; background:var(--sand2); }
+  .tag { position:absolute; left:64px; top:60px; font-size:22px; color:var(--faint); }
+  svg { overflow:visible; }
+</style></head>
+<body>
+
+<!-- 1 · title -->
+<section class="scene" id="s1">
+  <svg class="abs" id="s1star" style="left:470px;top:300px" width="140" height="140" viewBox="-70 -70 140 140">
+    <path d="M0-60C4-24 24-4 60 0 24 4 4 24 0 60-4 24-24 4-60 0-24-4-4-24 0-60z" fill="#f26b1d"/>
+  </svg>
+  <svg class="abs" id="s1star2" style="left:610px;top:270px" width="50" height="50" viewBox="-25 -25 50 50">
+    <path d="M0-20C1.5-8 8-1.5 20 0 8 1.5 1.5 8 0 20-1.5 8-8 1.5-20 0-8-1.5-1.5-8 0-20z" fill="#f26b1d"/>
+  </svg>
+  <p class="mono abs" id="s1eye" style="left:0;right:0;top:500px;text-align:center;font-size:26px;color:var(--soft)">Strivelabs · the story of</p>
+  <h1 class="serif abs" id="s1title" style="left:0;right:0;top:560px;text-align:center;font-size:170px;line-height:1">Strive Studio</h1>
+  <svg class="abs" style="left:190px;top:750px" width="700" height="60" viewBox="0 0 700 60">
+    <path id="s1line" d="M10 35C120 12 230 50 350 28S580 14 690 34" fill="none" stroke="var(--coral)" stroke-width="9" stroke-linecap="round"/>
+  </svg>
+  <p class="hand abs" id="s1sub" style="left:0;right:0;top:850px;text-align:center;font-size:66px">live reports, written by an agent</p>
+</section>
+
+<!-- 2 · chat in, live report out -->
+<section class="scene" id="s2">
+  <p class="mono tag">Strive Studio</p>
+  <div class="abs" id="s2bubble" style="right:80px;top:150px;white-space:nowrap;padding:30px 38px;font-size:40px;line-height:1.3;background:var(--sand);border:3px solid var(--ink);border-radius:34px 34px 8px 34px">
+    <span id="s2type"></span><span id="s2caret" style="display:inline-block;width:4px;height:44px;background:var(--ink);vertical-align:-6px;margin-left:4px"></span>
+  </div>
+  <div class="box abs" id="s2report" style="left:80px;top:390px;width:920px;height:720px;padding:0;overflow:hidden">
+    <div style="height:10px;background:var(--orange)"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:34px 44px 0">
+      <div><div class="bar" style="width:170px;background:rgba(242,107,29,.6);height:14px"></div>
+        <div style="font-size:44px;font-weight:700;margin-top:16px">Google Ads · this week</div></div>
+      <div id="s2live" style="display:flex;align-items:center;gap:12px;padding:10px 22px;border-radius:30px;border:2.5px solid rgba(22,163,74,.55);background:rgba(22,163,74,.1);color:var(--green);font-weight:700;font-size:26px">
+        <i id="s2dot" style="width:16px;height:16px;border-radius:50%;background:var(--green);display:block"></i>LIVE</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:26px;padding:34px 44px 0">
+      <div id="s2k0" style="border:3px solid var(--ink);border-radius:18px;padding:22px 26px;border-top:9px solid var(--coral)">
+        <div class="bar" style="width:90px;height:12px"></div>
+        <div style="font-size:70px;font-weight:700;margin-top:12px" id="s2n0">₹0</div>
+        <div id="s2d0" style="color:var(--teal);font-family:'JetBrains Mono';font-size:26px">▲ 18%</div></div>
+      <div id="s2k1" style="border:2.5px solid var(--line);border-radius:18px;padding:22px 26px">
+        <div class="bar" style="width:80px;height:12px"></div>
+        <div style="font-size:54px;font-weight:700;margin-top:16px" id="s2n1">0</div></div>
+      <div id="s2k2" style="border:2.5px solid var(--line);border-radius:18px;padding:22px 26px">
+        <div class="bar" style="width:60px;height:12px"></div>
+        <div style="font-size:54px;font-weight:700;margin-top:16px" id="s2n2">0%</div></div>
+    </div>
+    <svg class="abs" style="left:44px;top:420px" width="832" height="260" viewBox="0 0 832 260">
+      <g stroke="var(--line)" stroke-width="2"><line x1="0" y1="60" x2="832" y2="60"/><line x1="0" y1="130" x2="832" y2="130"/><line x1="0" y1="200" x2="832" y2="200"/></g>
+      <g id="s2bars" fill="var(--sand2)"></g>
+      <path id="s2path" d="M0 200C60 190 90 150 140 160S230 120 280 130 380 70 430 90 520 120 570 80 680 40 730 50 800 20 832 22" fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round"/>
+      <circle id="s2end" cx="832" cy="22" r="12" fill="var(--coral)"/>
+    </svg>
+  </div>
+  <p class="hand abs" id="s2note" style="left:0;right:0;top:1170px;text-align:center;font-size:66px">chat in → live report out</p>
+</section>
+
+<!-- 3 · let the agent write HTML -->
+<section class="scene" id="s3">
+  <p class="mono tag">The bet</p>
+  <h2 class="serif abs" id="s3q" style="left:80px;right:80px;top:150px;font-size:96px;line-height:1.02">What if the agent just <span style="color:var(--coral)">wrote the HTML?</span></h2>
+  <div class="box abs" id="s3file" style="left:120px;top:470px;width:840px;height:620px;padding:0;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:14px;padding:22px 30px;border-bottom:3px solid var(--ink);background:var(--sand)">
+      <i style="width:20px;height:20px;border-radius:50%;border:3px solid var(--ink);display:block"></i>
+      <i style="width:20px;height:20px;border-radius:50%;border:3px solid var(--ink);display:block"></i>
+      <span style="font-family:'JetBrains Mono';font-size:30px;margin-left:12px">report.html</span></div>
+    <div id="s3code" style="padding:34px 40px;display:grid;gap:22px"></div>
+  </div>
+  <p class="hand abs" id="s3note" style="left:0;right:0;top:1150px;text-align:center;font-size:66px;color:var(--teal)">no schemas. just a page.</p>
+</section>
+
+<!-- 4 · sandbox bridge -->
+<section class="scene" id="s4">
+  <p class="mono tag">Security</p>
+  <div class="abs" id="s4a" style="left:60px;top:190px;width:290px;height:170px;border:4px dashed var(--coral);border-radius:22px;background:var(--card);display:grid;place-items:center;text-align:center">
+    <div><svg width="54" height="60" viewBox="0 0 54 60"><rect x="5" y="26" width="44" height="30" rx="7" fill="none" stroke="var(--coral)" stroke-width="5"/><path d="M15 26V17a12 12 0 0 1 24 0v9" fill="none" stroke="var(--coral)" stroke-width="5"/></svg>
+    <div style="font-size:40px;font-weight:700;color:var(--coral)">Report</div></div></div>
+  <div class="box abs" id="s4b" style="left:395px;top:190px;width:290px;height:170px;display:grid;place-items:center;font-size:40px;font-weight:700;color:var(--blue)">Host</div>
+  <div class="box abs" id="s4c" style="left:730px;top:190px;width:290px;height:170px;display:grid;place-items:center;text-align:center">
+    <div><svg width="60" height="62" viewBox="0 0 60 62"><ellipse cx="30" cy="12" rx="25" ry="9" fill="none" stroke="var(--teal)" stroke-width="5"/><path d="M5 12v38c0 5 11 9 25 9s25-4 25-9V12M5 31c0 5 11 9 25 9s25-4 25-9" fill="none" stroke="var(--teal)" stroke-width="5"/></svg>
+    <div style="font-size:40px;font-weight:700;color:var(--teal)">Your data</div></div></div>
+  <svg class="abs" style="left:0;top:0" width="1080" height="1350" viewBox="0 0 1080 1350">
+    <g stroke="var(--faint)" stroke-width="3" stroke-dasharray="10 10" id="s4lines">
+      <line x1="205" y1="380" x2="205" y2="1080"/><line x1="540" y1="380" x2="540" y2="1080"/><line x1="875" y1="380" x2="875" y2="1080"/></g>
+    <g id="s4arrows" fill="none" stroke-width="5" stroke-linecap="round">
+      <path id="s4r1" d="M205 480H540" stroke="var(--coral)"/>
+      <path id="s4r3" d="M540 760H875" stroke="var(--blue)"/>
+      <path id="s4r4" d="M875 870H540" stroke="var(--teal)"/>
+      <path id="s4r5" d="M540 980H205" stroke="var(--blue)"/>
+    </g>
+    <circle id="s4p" r="18" fill="var(--coral)"/>
+  </svg>
+  <div class="abs" id="s4chk" style="left:400px;top:570px;width:280px;height:120px;border:3.5px solid var(--blue);border-radius:18px;background:var(--card);display:flex;align-items:center;justify-content:center;gap:26px;font-size:54px;color:var(--blue);font-weight:700">
+    <span id="s4c0">✓</span><span id="s4c1">✓</span><span id="s4c2">✓</span></div>
+  <p class="hand abs" id="s4k" style="left:230px;top:405px;font-size:46px;color:var(--ink)">asks, holding no keys</p>
+  <p class="hand abs" id="s4note" style="left:0;right:0;top:1140px;text-align:center;font-size:66px">it can ask for anything,<br>it can’t hold anything</p>
+</section>
+
+<!-- 5 · less AI slop -->
+<section class="scene" id="s5">
+  <p class="mono tag">Design context</p>
+  <div class="abs" style="left:0;right:0;top:230px;text-align:center">
+    <span class="hand" id="s5l1" style="font-size:72px;color:var(--soft);position:relative;display:inline-block">the AI-dashboard tell
+      <svg class="abs" style="left:-10px;top:40px" width="580" height="30" viewBox="0 0 580 30"><path id="s5strike" d="M0 18C150 8 400 26 580 10" fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round"/></svg></span>
+  </div>
+  <div id="s5cards"></div>
+  <p class="hand abs" id="s5l2" style="left:0;right:0;top:1060px;text-align:center;font-size:72px;color:var(--teal)">one hero, a few supporters</p>
+</section>
+
+<!-- 6 · build apart, fold in -->
+<section class="scene" id="s6">
+  <p class="mono tag">Shipping it</p>
+  <div class="box abs" id="s6chat" style="left:60px;top:330px;width:440px;height:620px;padding:0;overflow:hidden">
+    <div style="padding:18px 26px;border-bottom:3px solid var(--ink);font-weight:700;font-size:30px;background:var(--sand)">Chat</div>
+    <div style="padding:28px;display:grid;gap:20px">
+      <div style="justify-self:end;width:250px;height:64px;border-radius:24px 24px 6px 24px;background:var(--sand)"></div>
+      <div class="bar" style="width:320px"></div><div class="bar" style="width:260px"></div><div class="bar" style="width:300px"></div>
+      <div style="justify-self:end;width:200px;height:64px;border-radius:24px 24px 6px 24px;background:var(--sand)"></div>
+      <div class="bar" style="width:280px"></div>
+    </div>
+  </div>
+  <div class="box abs" id="s6studio" style="left:580px;top:330px;width:440px;height:620px;padding:0;overflow:hidden">
+    <div id="s6shead" style="padding:18px 26px;border-bottom:3px solid var(--ink);font-weight:700;font-size:30px;background:#fde7da;color:var(--coral)">Studio</div>
+    <div style="height:8px;background:var(--orange)"></div>
+    <div style="padding:26px;display:grid;gap:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="height:110px;border:3px solid var(--ink);border-radius:14px;border-top:8px solid var(--coral)"></div>
+        <div style="height:110px;border:2.5px solid var(--line);border-radius:14px"></div></div>
+      <svg width="380" height="170" viewBox="0 0 380 170"><path d="M0 150C60 140 80 100 130 110S210 50 260 70 330 20 380 14" fill="none" stroke="var(--coral)" stroke-width="6" stroke-linecap="round"/></svg>
+      <div class="bar" style="width:300px"></div><div class="bar" style="width:220px"></div>
+    </div>
+  </div>
+  <p class="hand abs" id="s6l1" style="left:0;right:0;top:190px;text-align:center;font-size:72px">build apart…</p>
+  <p class="hand abs" id="s6l2" style="left:0;right:0;top:1040px;text-align:center;font-size:72px;color:var(--teal)">…then fold it in</p>
+</section>
+
+<!-- 7 · end card -->
+<section class="scene" id="s7">
+  <svg class="abs" id="s7star" style="left:470px;top:250px" width="140" height="140" viewBox="-70 -70 140 140">
+    <path d="M0-60C4-24 24-4 60 0 24 4 4 24 0 60-4 24-24 4-60 0-24-4-4-24 0-60z" fill="#f26b1d"/></svg>
+  <p class="mono abs" style="left:0;right:0;top:450px;text-align:center;font-size:26px;color:var(--soft)">Strive Studio</p>
+  <h2 class="serif abs" id="s7t" style="left:0;right:0;top:500px;text-align:center;font-size:150px;line-height:1">The full story</h2>
+  <p class="hand abs" id="s7s" style="left:0;right:0;top:700px;text-align:center;font-size:68px">the blog + the story, in the comments</p>
+  <svg class="abs" id="s7arrow" style="left:490px;top:830px" width="100" height="190" viewBox="0 0 100 190">
+    <path id="s7ap" d="M52 8C40 60 64 100 50 170M20 138l30 36 32-38" fill="none" stroke="var(--coral)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</section>
+
+<script>
+const $ = id => document.getElementById(id);
+const clamp = (v, a=0, b=1) => Math.min(b, Math.max(a, v));
+const p = (t, a, b) => clamp((t - a) / (b - a));
+const out = x => 1 - Math.pow(1 - x, 3);
+const inout = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+const back = x => { const c = 1.7; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow(x-1,2); };
+const lerp = (a, b, x) => a + (b - a) * x;
+
+const SCENES = [['s1',0,3.4],['s2',3.4,8.8],['s3',8.8,12.4],['s4',12.4,16.8],['s5',16.8,20.4],['s6',20.4,24.2],['s7',24.2,99]];
+window.SCENES = SCENES;
+window.DURATION = 28;
+
+function show(el, t, a, b, dy=40) { // fade + rise in at a, fade out ending at b
+  const i = out(p(t, a, a + .45)), o = p(t, b - .35, b);
+  el.style.opacity = i * (1 - o);
+  el.style.transform = `translateY(${(1 - i) * dy - o * 30}px)`;
+}
+function pop(el, t, a, d=.5, from=.6) { const x = p(t, a, a + d); el.style.opacity = clamp(x*3); el.style.transform = `scale(${lerp(from, 1, back(x))})`; }
+function rise(el, t, a, d=.5, dy=50) { const x = out(p(t, a, a + d)); el.style.opacity = x; el.style.transform = `translateY(${(1-x)*dy}px)`; }
+function draw(path, x) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L * (1 - x); }
+
+// build dynamic bits
+const bars = $('s2bars'); [70,110,90,140,120,170,150,190].forEach((h,i) => {
+  const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  r.setAttribute('x', 30 + i*100); r.setAttribute('width', 44); r.setAttribute('rx', 8); r.dataset.h = h; bars.appendChild(r); });
+const codeRows = [[['var(--blue)',120],['var(--coral)',260]],[['var(--blue)',90],['var(--sand2)',380]],[['var(--teal)',200],['var(--sand2)',240],['var(--coral)',120]],
+  [['var(--sand2)',60],['var(--blue)',150],['var(--sand2)',320]],[['var(--sand2)',60],['var(--coral)',220],['var(--teal)',160]],[['var(--blue)',140],['var(--sand2)',300]],
+  [['var(--teal)',180],['var(--sand2)',200],['var(--blue)',100]],[['var(--blue)',110]]];
+codeRows.forEach((row, i) => { const d = document.createElement('div'); d.style.cssText = `display:flex;gap:16px;padding-left:${[0,1,2,3,3,2,1,0][i]*40}px`;
+  row.forEach(([c, w]) => { const s = document.createElement('i'); s.style.cssText = `display:block;height:22px;border-radius:11px;background:${c};width:${w}px;transform-origin:left`; d.appendChild(s); });
+  $('s3code').appendChild(d); });
+const cards = []; for (let i = 0; i < 4; i++) { const c = document.createElement('div'); c.className = 'abs';
+  c.innerHTML = i === 0 ? `<div class="bar" style="width:120px;height:14px"></div><div class="h" style="font-size:118px;font-weight:700;line-height:1;margin-top:22px">₹312</div><div class="h" style="font-family:'JetBrains Mono';font-size:34px;color:var(--teal);margin-top:14px">▲ 18% vs last week</div><svg class="h" width="470" height="150" viewBox="0 0 470 150" style="margin-top:30px"><path d="M0 130C60 120 90 90 140 100S230 60 280 70 380 20 470 12" fill="none" stroke="var(--coral)" stroke-width="7" stroke-linecap="round"/></svg>`
+    : `<div class="bar" style="width:110px;height:14px"></div><div class="blk" style="width:120px;height:34px;border-radius:10px;background:#cfc6b0;margin-top:26px"></div>`;
+  $('s5cards').appendChild(c); cards.push(c); }
+
+const PROMPT = 'Weekly Google Ads recap, CPL trend';
+
+window.seek = function (t) {
+  for (const [id, a, b] of SCENES) { const el = $(id); const v = p(t, a, a + .4) * (1 - p(t, b - .4, b)); el.style.opacity = v; el.style.visibility = v ? 'visible' : 'hidden'; }
+
+  // 1
+  pop($('s1star'), t, .1, .7, .2); $('s1star').style.rotate = `${t*40}deg`;
+  pop($('s1star2'), t, .35, .6, .2);
+  rise($('s1eye'), t, .3); rise($('s1title'), t, .45, .6, 70);
+  draw($('s1line'), inout(p(t, 1.0, 1.7)));
+  rise($('s1sub'), t, 1.6, .6);
+
+  // 2
+  const T2 = 3.4;
+  rise($('s2bubble'), t, T2 + .3, .45);
+  const n = Math.round(PROMPT.length * p(t, T2 + .6, T2 + 1.9)); $('s2type').textContent = PROMPT.slice(0, n);
+  $('s2caret').style.opacity = t < T2 + 2.1 ? (Math.floor(t * 3) % 2 ? 1 : .15) : 0;
+  rise($('s2report'), t, T2 + 2.0, .6, 120);
+  const c = out(p(t, T2 + 2.5, T2 + 3.5));
+  $('s2n0').textContent = '₹' + Math.round(312 * c); $('s2n1').textContent = Math.round(4704 * c).toLocaleString('en-IN');
+  $('s2n2').textContent = (3.8 * c).toFixed(1) + '%'; $('s2d0').style.opacity = p(t, T2 + 3.3, T2 + 3.6);
+  [...bars.children].forEach((r, i) => { const h = r.dataset.h * out(p(t, T2 + 2.8 + i*.06, T2 + 3.4 + i*.06)); r.setAttribute('y', 230 - h); r.setAttribute('height', h); });
+  draw($('s2path'), inout(p(t, T2 + 2.9, T2 + 3.9))); pop($('s2end'), t, T2 + 3.9, .35, 0); $('s2end').style.transformOrigin = '832px 22px';
+  $('s2dot').style.opacity = .35 + .65 * Math.abs(Math.sin(t * 4));
+  rise($('s2note'), t, T2 + 3.9, .5);
+
+  // 3
+  const T3 = 8.8;
+  rise($('s3q'), t, T3 + .3, .55, 60);
+  rise($('s3file'), t, T3 + 1.0, .55, 100);
+  [...$('s3code').children].forEach((row, i) => [...row.children].forEach((s, j) => {
+    const x = out(p(t, T3 + 1.4 + i*.14 + j*.07, T3 + 1.7 + i*.14 + j*.07)); s.style.transform = `scaleX(${x})`; s.style.opacity = x ? 1 : 0; }));
+  rise($('s3note'), t, T3 + 2.6, .5);
+
+  // 4
+  const T4 = 12.4;
+  pop($('s4a'), t, T4 + .3, .5); pop($('s4b'), t, T4 + .45, .5); pop($('s4c'), t, T4 + .6, .5);
+  $('s4lines').style.opacity = p(t, T4 + .8, T4 + 1.1);
+  const legs = [['s4r1', 1.1, 1.7], ['s4r3', 2.5, 2.95], ['s4r4', 2.95, 3.35], ['s4r5', 3.35, 3.8]];
+  const dot = $('s4p'); dot.style.opacity = 0;
+  for (const [id, a, b] of legs) { const path = $(id), x = p(t, T4 + a, T4 + b); draw(path, inout(x));
+    if (x > 0 && x < 1) { const L = path.getTotalLength(), pt = path.getPointAtLength(L * inout(x)); dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y); dot.setAttribute('fill', path.getAttribute('stroke')); dot.style.opacity = 1; } }
+  rise($('s4k'), t, T4 + 1.4, .4, 20);
+  pop($('s4chk'), t, T4 + 1.75, .4, .7); ['s4c0','s4c1','s4c2'].forEach((id, i) => pop($(id), t, T4 + 1.95 + i*.15, .35, 0));
+  rise($('s4note'), t, T4 + 3.7, .5);
+
+  // 5
+  const T5 = 16.8;
+  rise($('s5l1'), t, T5 + .2, .4, 30);
+  const m = inout(p(t, T5 + 1.6, T5 + 2.3));
+  cards.forEach((el, i) => {
+    const row = { x: 60 + i * 250, y: 440, w: 210, h: 280 };
+    const fin = i === 0 ? { x: 70, y: 420, w: 560, h: 520 } : { x: 670, y: 420 + (i-1) * 180, w: 340, h: 160 };
+    const x = lerp(row.x, fin.x, m), y = lerp(row.y, fin.y, m), w = lerp(row.w, fin.w, m), h = lerp(row.h, fin.h, m);
+    const hero = i === 0 && m > 0;
+    el.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;padding:${i===0?lerp(30,44,m):30}px;overflow:hidden;
+      border-radius:22px;background:${m>.5?'#fff':'transparent'};border:${m>.5?(i===0?'4px solid var(--ink)':'3px solid rgba(6,6,6,.25)'):'4px dashed rgba(6,6,6,.4)'};
+      ${i===0&&m>.5?'border-top:12px solid var(--coral);box-shadow:8px 9px 0 var(--ink);':''}`;
+    const a = out(p(t, T5 + .4 + i*.12, T5 + .8 + i*.12)); el.style.opacity = a; el.style.transform = `translateY(${(1-a)*40}px)`;
+    el.querySelectorAll('.h').forEach(h => h.style.opacity = p(t, T5 + 2.2, T5 + 2.6));
+    if (i > 0) { el.style.display = 'flex'; el.style.flexDirection = m > .5 ? 'row' : 'column'; el.style.justifyContent = m > .5 ? 'space-between' : 'flex-start'; el.style.alignItems = m > .5 ? 'center' : 'flex-start';
+      const blk = el.querySelector('.blk'); blk.style.marginTop = m > .5 ? '0' : '26px'; blk.style.width = m > .5 ? '80px' : '120px'; }
+  });
+  draw($('s5strike'), out(p(t, T5 + 1.2, T5 + 1.6)));
+  $('s5l1').style.opacity = Math.min(+$('s5l1').style.opacity, 1 - .5 * p(t, T5 + 1.6, T5 + 2));
+  rise($('s5l2'), t, T5 + 2.4, .5);
+
+  // 6
+  const T6 = 20.4;
+  rise($('s6l1'), t, T6 + .2, .4, 30);
+  rise($('s6chat'), t, T6 + .3, .5, 80);
+  const f = inout(p(t, T6 + 1.4, T6 + 2.3));
+  const studioIn = out(p(t, T6 + .45, T6 + .95));
+  const st = $('s6studio'), head = $('s6shead');
+  const HH = 77; // header height incl. border
+  st.style.opacity = studioIn;
+  st.style.left = lerp(580, 503, f) + 'px'; st.style.top = lerp(330, 330 + HH, f) + 'px';
+  st.style.width = lerp(440, 514, f) + 'px'; st.style.height = lerp(620, 620 - HH - 3, f) + 'px';
+  st.style.transform = `translateY(${(1-studioIn)*80}px) rotate(${lerp(1.5, 0, f)}deg)`;
+  const docked = f > .97;
+  st.style.border = docked ? '0' : ''; st.style.borderLeft = docked ? '3px solid var(--ink)' : '';
+  st.style.boxShadow = `${lerp(8,0,f)}px ${lerp(9,0,f)}px 0 var(--ink)`;
+  st.style.borderRadius = docked ? '0 0 20px 0' : '';
+  head.style.marginTop = (-HH * f) + 'px'; head.style.opacity = 1 - f;
+  $('s6chat').style.width = lerp(440, 960, f) + 'px';
+  $('s6l1').style.opacity = Math.min(+$('s6l1').style.opacity, 1 - .55 * p(t, T6 + 2, T6 + 2.4));
+  rise($('s6l2'), t, T6 + 2.3, .5);
+
+  // 7
+  const T7 = 24.2;
+  pop($('s7star'), t, T7 + .2, .7, .2); $('s7star').style.rotate = `${t*40}deg`;
+  rise($('s7t'), t, T7 + .4, .6, 70); rise($('s7s'), t, T7 + 1.0, .5);
+  draw($('s7ap'), out(p(t, T7 + 1.4, T7 + 2.0)));
+  $('s7arrow').style.transform = `translateY(${Math.sin((t - T7) * 5) * 10 * p(t, T7 + 2, T7 + 2.3)}px)`;
+};
+seek(0);
+</script>
+</body></html>
