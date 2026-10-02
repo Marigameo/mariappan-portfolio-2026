@@ -45,7 +45,7 @@ const sides = [left, right];
   .vs-col li::before { content: "–"; position: absolute; left: 0; font-weight: 700; }
   .vs-col li.is-plus::before { content: "+"; color: var(--teal); }
   .vs-dots li::before, .vs-dots li.is-plus::before { content: "•"; color: var(--c); }
-  .vs-stamp { padding: .15rem .45rem; border: 1.5px solid var(--c); border-radius: 4px; font-family: var(--font-hand); font-size: .95rem; letter-spacing: 0; text-transform: none; transform: rotate(-6deg); }
+  .vs-stamp { flex: none; white-space: nowrap; padding: .15rem .45rem; border: 1.5px solid var(--c); border-radius: 4px; font-family: var(--font-hand); font-size: .95rem; letter-spacing: 0; text-transform: none; transform: rotate(-6deg); }
   @media (max-width: 559px) {
     .vs { grid-template-columns: 1fr; }
     .vs-mid { text-align: center; }

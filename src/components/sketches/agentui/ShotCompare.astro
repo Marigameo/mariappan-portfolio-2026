@@ -1,0 +1,90 @@
+---
+/* Before / after with two real screenshots: the same agent view on its own page,
+   then inside the chat as a slot. Drawn like ThemeSwap: the two images sit on
+   top of each other, an invisible range input (keyboard and screen reader
+   friendly) sets --pos, which clips the "after" layer and moves the handle;
+   main.js wires every [data-compare]. The corner button opens the same compare,
+   bigger, in a dialog of its own. Screenshots stay light in dark mode, so the
+   handle uses fixed colours. */
+import Icon from '../../Icon.astro';
+
+interface Shot { label: string; src: string; width: number; height: number; alt: string }
+interface Props { id: string; before: Shot; after: Shot; caption?: string }
+
+const { id, before, after, caption = 'Drag to compare. Same agent, same UI. Now it opens beside the conversation that asked for it.' } = Astro.props;
+const label = `Compare ${before.label} with ${after.label}: move left to see more of the after, right for the before`;
+---
+<figure class="sk-fig scm" data-scm>
+  <div class="scm-legend" aria-hidden="true">
+    <span class="scm-tag scm-tag--before">← {before.label}</span>
+    <span class="scm-tag scm-tag--after">{after.label} →</span>
+  </div>
+
+  <div class="scm-stage">
+    <div class="scm-box" data-compare style={`--pos: 50%; --ar: ${before.width} / ${before.height}`}>
+      <img class="scm-layer" src={before.src} width={before.width} height={before.height} alt={before.alt} loading="lazy" decoding="async">
+      <img class="scm-layer scm-after" src={after.src} width={after.width} height={after.height} alt={after.alt} loading="lazy" decoding="async">
+      <input class="scm-range" type="range" min="0" max="100" value="50" step="1" aria-label={label} data-compare-range>
+      <span class="scm-handle" aria-hidden="true"><span class="scm-knob">‹ ›</span></span>
+    </div>
+    <button class="scm-open rail-btn" type="button" data-scm-open aria-label="Open the comparison full screen" aria-controls={`scm-${id}`}><Icon name="zoom-in" /></button>
+  </div>
+  <figcaption>{caption}</figcaption>
+
+  <dialog class="scm-dialog" id={`scm-${id}`} aria-label="Before and after, full screen" data-scm-dialog>
+    <button class="lightbox-close rail-btn" type="button" data-scm-close aria-label="Close"><Icon name="close" /></button>
+    <div class="scm-legend scm-legend--big" aria-hidden="true">
+      <span class="scm-tag scm-tag--before">← {before.label}</span>
+      <span class="scm-tag scm-tag--after">{after.label} →</span>
+    </div>
+    <div class="scm-box scm-box--big" data-compare style={`--pos: 50%; --ar: ${before.width} / ${before.height}`}>
+      <img class="scm-layer" src={before.src} width={before.width} height={before.height} alt="" loading="lazy" decoding="async">
+      <img class="scm-layer scm-after" src={after.src} width={after.width} height={after.height} alt="" loading="lazy" decoding="async">
+      <input class="scm-range" type="range" min="0" max="100" value="50" step="1" aria-label={label} data-compare-range>
+      <span class="scm-handle" aria-hidden="true"><span class="scm-knob">‹ ›</span></span>
+    </div>
+  </dialog>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-scm]').forEach((fig) => {
+    const dialog = fig.querySelector<HTMLDialogElement>('[data-scm-dialog]');
+    const open = fig.querySelector('[data-scm-open]');
+    if (!dialog || !open || typeof dialog.showModal !== 'function') { open?.setAttribute('hidden', ''); return; }
+    open.addEventListener('click', () => dialog.showModal());
+    dialog.querySelector('[data-scm-close]')?.addEventListener('click', () => dialog.close());
+    // backdrop click: the dialog itself is the target only outside its content
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  });
+</script>
+
+<style>
+  .scm { margin: var(--space-4) 0; }
+  .scm-legend { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .55rem; padding-inline: .5rem; }
+  .scm-tag { font-family: var(--font-hand); font-size: 1.2rem; font-weight: 700; line-height: 1; }
+  .scm-tag--before { color: var(--ink-soft); transform: rotate(-2deg); }
+  .scm-tag--after { color: var(--coral); transform: rotate(2deg); }
+  .scm-stage { position: relative; }
+  .scm-box { position: relative; aspect-ratio: var(--ar); overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); touch-action: pan-y; user-select: none; }
+  .scm-layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: left top; }
+  .scm-after { clip-path: inset(0 0 0 var(--pos)); }
+  .scm-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 0 1px rgba(20, 20, 30, .35); pointer-events: none; }
+  .scm-knob { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; font-family: var(--font-mono); font-size: .85rem; font-weight: 500; color: #fff; background: #1d1d24; border: 2px solid #fff; border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 rgba(20, 20, 30, .35); transform: translate(-50%, -50%); }
+  .scm-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; -webkit-appearance: none; appearance: none; }
+  .scm-range:focus-visible ~ .scm-handle .scm-knob { outline: 2px solid var(--coral); outline-offset: 3px; }
+  /* Above the range, so it takes the click instead of moving the handle. */
+  .scm-open { position: absolute; top: .55rem; right: .55rem; z-index: 2; background: var(--paper-2); }
+  .scm-open :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+  .scm figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+
+  .scm-dialog { width: min(96vw, calc(84vh * 1.69)); max-width: none; max-height: 96vh; border: 0; padding: 0; background: transparent; overflow: visible; }
+  .scm-dialog::backdrop { background: rgba(6, 6, 6, .82); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  .scm-legend--big { padding-right: 3.2rem; }
+  .scm-legend--big .scm-tag--before { color: #f3efe6; }
+  .scm-legend--big .scm-tag--after { color: #ff9a76; }
+  .scm-box--big { width: 100%; }
+  @media (max-width: 559px) {
+    .scm-tag { font-size: 1rem; }
+    .scm-knob { width: 2rem; height: 2rem; font-size: .75rem; }
+  }
+</style>

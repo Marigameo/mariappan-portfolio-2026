@@ -1,0 +1,102 @@
+---
+/* One of the first agents built on screens, the Google Ads campaign analyser,
+   drawn as two wireframes from the real prototype: the empty state that starts
+   an audit, and the finished audit with its category rail, KPI tiles and a
+   hand-off to chat. Made-up bars, no real numbers. Coral is the one action on
+   each screen. Side by side, stacked on a phone with the arrow turning down. */
+import Icon from '../../Icon.astro';
+
+const categories = ['Overview', 'Critical issues', 'Dropping impressions', 'Post-click drop-off', 'Strong performance'];
+const kpis = [
+  { w: 62, up: true }, { w: 54, up: true }, { w: 30, up: false },
+  { w: 70, up: false }, { w: 40, up: false },
+];
+
+interface Props { caption?: string }
+const { caption = 'One of the first agents on screens, the Google Ads campaign analyser: an empty state to start, a full audit when it’s done.' } = Astro.props;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ca" role="img" aria-label="Two screens of the Google Ads campaign analyser, one of the first agents built on screens. Idle, the trigger screen: an empty state that says start your next campaign audit, with a start analysis button and a configure button in the corner, since configuration is a screen of its own. Completed, the output screen: a rail of categories such as overview, critical issues, dropping impressions, post-click drop-off and strong performance; a one-line headline of what changed; a grid of KPI tiles with their change against the moving average; and a strip at the bottom inviting you to dive deeper in chat.">
+    <div class="ca-col">
+      <p class="sk-hdr ca-hdr">Idle<code>TriggerScreen</code></p>
+      <div class="sk-box sk-lean-1 ca-win" aria-hidden="true">
+        <div class="ca-top"><i class="ca-crumb"></i><span class="ca-ghost-btn"><Icon name="asterisk" />Configure</span></div>
+        <div class="ca-empty">
+          <strong>Start your next campaign audit</strong>
+          <i class="ca-line"></i><i class="ca-line ca-line--short"></i>
+          <span class="ca-cta"><Icon name="arrow-right" />Start analysis</span>
+        </div>
+      </div>
+      <p class="ca-note sk-hand">configure is a screen of its own</p>
+    </div>
+
+    <span class="sk-arrow ca-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+
+    <div class="ca-col">
+      <p class="sk-hdr ca-hdr ca-hdr--teal">Completed<code>OutputScreen</code></p>
+      <div class="sk-box sk-box--teal sk-lean-2 ca-win" aria-hidden="true">
+        <div class="ca-top"><i class="ca-crumb"></i><span class="ca-ghost-btn">+ New analysis</span></div>
+        <div class="ca-out">
+          <ul class="ca-rail">
+            {categories.map((c, i) => <li class:list={[i === 0 && 'is-on']}>{c}</li>)}
+          </ul>
+          <div class="ca-main">
+            <i class="ca-pill"></i>
+            <i class="ca-head"></i><i class="ca-head ca-head--short"></i>
+            <div class="ca-kpis">
+              {kpis.map((k) => <span><i style={`width:${k.w}%`}></i><b class:list={[k.up ? 'is-up' : 'is-down']}></b></span>)}
+            </div>
+            <span class="ca-chat"><i></i><em>Chat now</em></span>
+          </div>
+        </div>
+      </div>
+      <p class="ca-note sk-hand ca-note--teal">a way into chat, early on</p>
+    </div>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .ca { display: grid; grid-template-columns: minmax(0, .85fr) auto minmax(0, 1.15fr); align-items: center; gap: .9rem; }
+  .ca-col { display: grid; gap: .5rem; align-content: start; }
+  .ca-hdr { font-size: .64rem; margin: 0 !important; color: var(--ink); }
+  .ca-hdr--teal { color: var(--teal); }
+  .ca-hdr code { display: block; margin-top: .2rem; font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); background: none; padding: 0; text-transform: none; letter-spacing: 0; }
+  .ca-win { padding: .5rem; display: grid; gap: .45rem; }
+  .ca-win i, .ca-win b { display: block; }
+  .ca-top { display: flex; align-items: center; justify-content: space-between; gap: .4rem; padding-bottom: .35rem; border-bottom: 1.5px solid var(--line); }
+  .ca-crumb { width: 40%; height: .3rem; border-radius: 99px; background: var(--line); }
+  .ca-ghost-btn { display: inline-flex; align-items: center; gap: .2rem; padding: .1rem .35rem; border: 1px solid var(--line); border-radius: 4px; font-size: .58rem; color: var(--ink-faint); white-space: nowrap; }
+  .ca-ghost-btn :global(.doodle) { width: .6rem; height: .6rem; }
+  .ca-empty { display: grid; gap: .3rem; margin: .6rem .4rem .7rem; padding: .7rem; border: 1.5px solid var(--line); border-radius: 6px; background: var(--paper); }
+  .ca-empty strong { font-size: .78rem; font-weight: 500; line-height: 1.25; color: var(--ink); }
+  .ca-line { height: .26rem; border-radius: 99px; background: var(--line); }
+  .ca-line--short { width: 70%; }
+  .ca-cta { justify-self: start; display: inline-flex; align-items: center; gap: .2rem; margin-top: .3rem; padding: .18rem .45rem; border-radius: 4px; background: var(--coral); font-size: .6rem; color: #fff; }
+  .ca-cta :global(.doodle) { width: .6rem; height: .6rem; stroke-width: 2.4; }
+  .ca-out { display: grid; grid-template-columns: 34% minmax(0, 1fr); gap: .45rem; }
+  .ca-rail { list-style: none; margin: 0; padding: 0; display: grid; gap: .22rem; align-content: start; }
+  .ca-rail li { padding: .12rem .3rem; border-radius: 4px; font-size: .54rem; line-height: 1.3; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ca-rail li.is-on { background: var(--paper); border: 1px solid var(--line); color: var(--ink); }
+  .ca-main { display: grid; gap: .28rem; align-content: start; padding: .4rem; border-radius: 6px; background: var(--paper); }
+  .ca-pill { width: 34%; height: .38rem; border-radius: 99px; border: 1px solid var(--line); }
+  .ca-head { height: .4rem; border-radius: 99px; background: var(--ink-faint); opacity: .55; }
+  .ca-head--short { width: 72%; }
+  .ca-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: .15rem; border: 1px solid var(--line); border-radius: 4px; }
+  .ca-kpis span { display: flex; align-items: center; gap: .2rem; padding: .3rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .ca-kpis span:nth-child(3n) { border-right: 0; }
+  .ca-kpis span:nth-child(n+4) { border-bottom: 0; }
+  .ca-kpis i { height: .38rem; border-radius: 99px; background: var(--ink-faint); opacity: .5; }
+  .ca-kpis b { width: .7rem; height: .26rem; border-radius: 99px; }
+  .ca-kpis b.is-up { background: var(--teal); }
+  .ca-kpis b.is-down { background: var(--coral); }
+  .ca-chat { display: flex; align-items: center; justify-content: space-between; gap: .3rem; margin-top: .15rem; padding: .25rem .3rem; border-radius: 4px; background: color-mix(in srgb, var(--coral) 8%, var(--paper)); }
+  .ca-chat i { width: 50%; height: .26rem; border-radius: 99px; background: var(--line); }
+  .ca-chat em { padding: .06rem .3rem; border: 1px solid var(--coral); border-radius: 3px; font-style: normal; font-size: .54rem; color: var(--coral); white-space: nowrap; }
+  .ca-note { margin: .2rem 0 0 !important; max-width: none; text-align: center; color: var(--coral); }
+  .ca-note--teal { color: var(--teal); }
+  @media (max-width: 599px) {
+    .ca { grid-template-columns: 1fr; }
+    .ca-arrow { justify-self: center; transform: rotate(90deg); }
+  }
+</style>

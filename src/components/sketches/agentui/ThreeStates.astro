@@ -1,0 +1,89 @@
+---
+/* The three screens every scaffolded agent moves through, drawn as tiny
+   wireframes in the same parts: a form, a step list, an output card. Arrows
+   between them; a handwritten note for the reset back to the start. Blue is
+   the in-flight state, teal the result. Stacks on a phone, arrows turning down. */
+import Icon from '../../Icon.astro';
+
+const states = [
+  { state: 'Idle', screen: 'TriggerScreen', note: 'a validated form', tone: '', kind: 'form' },
+  { state: 'Loading', screen: 'LoadingScreen', note: 'the same step progress', tone: 'blue', kind: 'steps' },
+  { state: 'Completed', screen: 'OutputScreen', note: 'output, copy, try again', tone: 'teal', kind: 'output' },
+];
+
+interface Props { caption?: string }
+const { caption = 'The easiest path is the consistent one.' } = Astro.props;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ts" role="img" aria-label="Every scaffolded agent moves through three screens built from the same parts. Idle shows the trigger screen, a validated form. Loading shows the same step-by-step progress on every agent. Completed shows the output screen, with the output, a copy button and try again. Try again resets the agent back to Idle.">
+    <ol class="ts-row">
+      {states.map((s, i) => (
+        <>
+          {i > 0 && <li class="sk-arrow ts-arrow" aria-hidden="true"><Icon name="arrow-right" /></li>}
+          <li class:list={['sk-box', s.tone && `sk-box--${s.tone}`, `sk-lean-${i + 1}`, 'ts-card']}>
+            <p class="sk-hdr ts-hdr">{s.state}<code>{s.screen}</code></p>
+            <div class="ts-wire" aria-hidden="true">
+              {s.kind === 'form' && (
+                <>
+                  <i class="ts-label"></i><i class="ts-input"></i>
+                  <i class="ts-label ts-label--short"></i><i class="ts-input"></i>
+                  <i class="ts-btn"></i>
+                </>
+              )}
+              {s.kind === 'steps' && (
+                <>
+                  <span class="ts-step is-done"><b></b><i></i></span>
+                  <span class="ts-step is-done"><b></b><i></i></span>
+                  <span class="ts-step is-now"><b></b><i></i></span>
+                  <span class="ts-step"><b></b><i></i></span>
+                </>
+              )}
+              {s.kind === 'output' && (
+                <>
+                  <i class="ts-line"></i><i class="ts-line"></i><i class="ts-line ts-line--short"></i>
+                  <span class="ts-actions"><i class="ts-chip"></i><i class="ts-chip ts-chip--ghost"></i></span>
+                </>
+              )}
+            </div>
+            <span class="ts-note">{s.note}</span>
+          </li>
+        </>
+      ))}
+    </ol>
+    <p class="ts-reset sk-hand"><Icon name="arrow-curly" /> try again resets it to Idle</p>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .ts-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: .6rem; }
+  .ts-card { display: grid; align-content: start; gap: .55rem; padding: .7rem .75rem .8rem; }
+  .ts-hdr { font-size: .64rem; margin: 0 !important; color: var(--c); }
+  .ts-hdr code { display: block; margin-top: .2rem; font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); background: none; padding: 0; text-transform: none; letter-spacing: 0; }
+  .ts-arrow { align-self: center; }
+  .ts-wire { display: grid; gap: .32rem; min-height: 5.4rem; padding: .55rem; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); }
+  .ts-wire i, .ts-wire b { display: block; }
+  .ts-label { width: 40%; height: .3rem; border-radius: 99px; background: var(--ink-faint); opacity: .5; }
+  .ts-label--short { width: 28%; }
+  .ts-input { height: .85rem; border: 1.5px solid var(--line); border-radius: 4px; }
+  .ts-btn { width: 45%; height: .9rem; margin-top: .15rem; border-radius: 5px; background: var(--coral); }
+  .ts-step { display: flex; align-items: center; gap: .4rem; }
+  .ts-step b { flex: none; width: .7rem; height: .7rem; border-radius: 50%; border: 1.5px solid var(--line); }
+  .ts-step i { height: .3rem; width: 60%; border-radius: 99px; background: var(--line); }
+  .ts-step.is-done b { border-color: var(--teal); background: color-mix(in srgb, var(--teal) 30%, var(--paper)); }
+  .ts-step.is-now b { border-color: var(--blue); border-style: dashed; }
+  .ts-step.is-now i { background: color-mix(in srgb, var(--blue) 55%, var(--paper)); }
+  .ts-line { height: .3rem; border-radius: 99px; background: var(--line); }
+  .ts-line--short { width: 60%; }
+  .ts-actions { display: flex; gap: .3rem; margin-top: .25rem; }
+  .ts-chip { width: 2.2rem; height: .8rem; border-radius: 5px; background: color-mix(in srgb, var(--teal) 35%, var(--paper)); }
+  .ts-chip--ghost { background: none; border: 1.5px dashed var(--ink-faint); }
+  .ts-note { font-size: .78rem; line-height: 1.35; color: var(--ink-faint); }
+  .ts-reset { margin: 1rem 0 0 !important; max-width: none; text-align: right; color: var(--teal); }
+  .ts-reset :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1); }
+  @media (max-width: 599px) {
+    .ts-row { grid-template-columns: 1fr; }
+    .ts-arrow { justify-self: center; transform: rotate(90deg); }
+    .ts-reset { text-align: center; }
+  }
+</style>
