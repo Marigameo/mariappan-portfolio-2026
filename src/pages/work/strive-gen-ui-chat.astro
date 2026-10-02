@@ -12,6 +12,7 @@ import BuildVsOwn from '../../components/sketches/strive/BuildVsOwn.astro';
 import CanvasBeforeAfter from '../../components/sketches/strive/CanvasBeforeAfter.astro';
 import AiElements from '../../components/sketches/strive/AiElements.astro';
 import ParserContracts from '../../components/sketches/strive/ParserContracts.astro';
+import SketchLive from '../../components/SketchLive.astro';
 
 const description = "Strive AI, a chat that answers in live interfaces, and my part in building it with a small team: the foundations, the bet on owning the chat, moving the canvas beside the thread, and the AI elements, parser and contracts underneath.";
 
@@ -79,7 +80,9 @@ const lessons = [
         <li><strong>Design in code.</strong> I designed the chat UX straight in code, and built every component standalone in Storybook, so each one is easy to build and test on its own.</li>
         <li><strong>Docs as context, for people and agents.</strong> As the team’s core frontend engineer, I set up the foundations so everyone could build interfaces with AI coding agents. The docs are their context, so I’ve kept them up to date with every version since.</li>
       </ul>
-      <RoleLoop />
+      <SketchLive id="storybook" live={{ kind: 'image', src: '/images/work/strive-ai/storybook.webp', width: 1800, height: 935, alt: 'Our Storybook: the component list on the left, and the docs page for TabbedChart showing a chart with reference lines, areas and dots, with a Show code button.' }} caption="The real thing: a chart in our Storybook, built and documented on its own.">
+        <RoleLoop />
+      </SketchLive>
     </section>
 
     <section class="slide" aria-labelledby="s-found">
@@ -116,7 +119,9 @@ const lessons = [
         <li>Answers can be <strong>rich surfaces</strong>: artifacts, an editor, whole pre-built agent interfaces.</li>
         <li>We first rendered them inline. It worked, but it kept hurting my taste, so I redesigned slots to <strong>open in a right-hand panel</strong>.</li>
       </ul>
-      <CanvasBeforeAfter />
+      <SketchLive id="slots" live={{ kind: 'image', src: '/images/work/strive-ai/slot-panel.webp', width: 1800, height: 1069, alt: 'Strive AI in use: the chat on the left starts the blog refresh agent, and its full interface opens in the right-hand panel, a table of blog posts with their keywords, status and review actions.' }} caption="The real thing: the blog refresh agent’s full interface, open beside the thread.">
+        <CanvasBeforeAfter />
+      </SketchLive>
       <aside class="qa sk-box sk-lean-2" aria-label="The debate">
         <div class="qa-row qa-row--team">
           <span class="qa-av qa-av--team" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -138,7 +143,9 @@ const lessons = [
         <li><code>@strivelabs/ui-core</code> for the foundations, <code>@strivelabs/ui-blocks</code> for reusable blocks, with our AI elements across both.</li>
         <li>Most AI kits don’t ship with these. I thought a few less common pieces would suit marketers well, so I pitched them to the team as experiments, and designed and built the ones that stuck. Five I’d pin:</li>
       </ul>
-      <AiElements />
+      <SketchLive id="elements" live={{ kind: 'video', src: '/images/work/strive-ai/ai-elements-charts.mp4', poster: '/images/work/strive-ai/ai-elements-charts-poster.webp', width: 1600, height: 950, alt: 'Screen recording of Strive AI: an impressions and spend chart with a launch line, a spend target, a peak dot and a shaded promo period, with series toggled from the legend; then an editable keyword list grouped by match type, with edit and delete on each row.' }} caption="The real thing: two of the five, a chart with markers and the editable list, in a live chat.">
+        <AiElements />
+      </SketchLive>
     </section>
 
     <section class="slide" aria-labelledby="s-under">

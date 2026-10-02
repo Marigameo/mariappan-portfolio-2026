@@ -11,8 +11,9 @@ import Versus from '../../components/sketches/studio/Versus.astro';
 import ShareInsightsSteps from '../../components/sketches/studio/ShareInsightsSteps.astro';
 import TwoKindsOfUI from '../../components/sketches/studio/TwoKindsOfUI.astro';
 import SandboxBridge from '../../components/sketches/studio/SandboxBridge.astro';
-import DesignContext from '../../components/sketches/studio/DesignContext.astro';
+import ThemeSwap from '../../components/sketches/studio/ThemeSwap.astro';
 import StudioToChat from '../../components/sketches/studio/StudioToChat.astro';
+import SketchLive from '../../components/SketchLive.astro';
 
 const description = "Strive Studio: describe a marketing report in chat and get back a live dashboard wired to your own data. How we let the agent write the report as HTML, host it safely in a sandbox, and fold it into the main chat, told from the frontend side.";
 
@@ -50,7 +51,7 @@ const lessons = [
   <Fragment slot="glance">
     <div class="at-glance-row">
       <h3>The problem</h3>
-      <p>Our intial Insights were snapshots, and reports asked for more: big volumes of data, numbers that stay live after you share them, and a story you get in one scan. A new schema and UI tool for every layout wasn’t going to scale.</p>
+      <p>Our initial Insights were snapshots, and reports asked for more: big volumes of data, numbers that stay live after you share them, and a story you get in one scan. A new schema and UI tool for every layout wasn’t going to scale.</p>
     </div>
     <div class="at-glance-row">
       <h3>My part</h3>
@@ -143,7 +144,7 @@ const lessons = [
         <li>I first wrote <strong>650 lines of CSS</strong> for the agent to learn. It didn’t scale, and fought the point of dropping schemas.</li>
         <li>Now it’s <strong>a little taste plus Tailwind</strong>, which models already write fluently, and brand context pulled in at onboarding.</li>
       </ul>
-      <DesignContext />
+      <ThemeSwap />
     </section>
 
     <section class="slide" aria-labelledby="s-data">
@@ -172,7 +173,9 @@ const lessons = [
         <li><strong>v1 was its own chat</strong>, to keep report rules out of the main prompt and experiment undisturbed. The price: a separate history.</li>
         <li><strong>v2 made it a skill</strong> in the main chat, with the report in a canvas beside the thread. One chat, one history.</li>
       </ul>
-      <StudioToChat />
+      <SketchLive id="studio" live={{ kind: 'video', src: '/images/work/report-builder/studio-demo.mp4', poster: '/images/work/report-builder/studio-demo-poster.webp', width: 1600, height: 950, alt: 'Screen recording of Strive Studio: a report is asked for in chat with the Report Builder skill, the canvas opens beside the thread while the agent works, then the finished Google Ads dashboard paints in and is explored through its Overview, Campaigns and Trends tabs, the code view and full screen.' }} caption="The real thing: from a prompt in chat to a live report in the canvas, then its tabs, its code and full screen.">
+        <StudioToChat />
+      </SketchLive>
     </section>
 
     <section class="slide" aria-labelledby="s-canvas">

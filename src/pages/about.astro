@@ -56,82 +56,7 @@ const wins = [
       <p class="lede">By day I design and build interfaces for AI products at <a href={site.links.strivelabs}>Strivelabs</a>. Off the clock, it looks something like this. <span class="hand ink-coral">Currently compiling curiosity…</span></p>
     </header>
 
-    <section class="section before-wave" style="padding-top: var(--space-2)" id="into" aria-labelledby="into-title">
-      <div class="wrap">
-        <div class="dayoff-head">
-          <p class="eyebrow">Off the clock</p>
-          <h2 id="into-title">Thenga’s day off.</h2>
-        </div>
-        <!-- One board per pastime, from src/data/offclock.ts: Thenga and the words, then a reel of
-             picks big enough to enjoy in place (the rail script in main.js drives the arrows), and
-             an Instagram card for the rest. Tapping a pick still opens it in the lightbox below. -->
-        <!-- Without JS nothing would clear .is-developing, so show the photos straight away. -->
-        <noscript><style>.polaroid.is-developing img { opacity: 1; filter: none; } .polaroid-developing, .polaroid-photo::after { display: none; }</style></noscript>
-        <ol class="boards">
-          {pastimes.map((p, i) => {
-            const cta = p.more ?? (p.picks.length ? 'More on' : 'Meanwhile, it’s all on');
-            return (
-              <li class="board" id={p.id} style={`--accent: var(--${p.accent}); --m-delay: -${(i * 0.7).toFixed(1)}s`} aria-labelledby={`${p.id}-title`}>
-                <div class="board-head">
-                  <div class="board-who">
-                    <Thenga hobby={p.hobby} />
-                    <p class="board-doing" aria-hidden="true">{p.doing}</p>
-                  </div>
-                  <div class="board-main">
-                    <h3 id={`${p.id}-title`}>{p.title}</h3>
-                    <p>{p.text}</p>
-                    {p.picks.length === 0 && (p.link ? (
-                      <a class="ig-card ig-card--inline" href={p.link.href} rel="noopener">
-                        <Icon name="instagram" /><span>{cta}</span><strong>{p.link.label}</strong><Icon name="arrow-right" class="ig-go" />
-                      </a>
-                    ) : (
-                      <p class="board-aside">{p.aside}</p>
-                    ))}
-                  </div>
-                </div>
-                {p.picks.length > 0 && (
-                  <div class="reel" data-rail>
-                    <div class="rail-controls reel-controls">
-                      <button class="rail-btn" type="button" data-prev aria-label="Previous" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
-                      <span class="rail-progress" aria-hidden="true"><i data-thumb></i></span>
-                      <button class="rail-btn" type="button" data-next aria-label="Next" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
-                    </div>
-                    <ul class="rail-track reel-track" id={`${p.id}-reel`} data-track aria-label={`${p.title}: a few picks`}>
-                      {p.picks.map((x) => (
-                        <li class="reel-item">
-                          <button class="polaroid is-developing" type="button" data-full={x.src} data-develop aria-label={`View full size: ${x.alt}`}>
-                            <span class="polaroid-photo" style={thumb(x.src) ? `background-image: url(${thumb(x.src).lqip})` : undefined}>
-                              <img src={thumb(x.src)?.sm ?? x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
-                              <span class="polaroid-developing" aria-hidden="true">developing…</span>
-                            </span>
-                            {x.caption && <span class="polaroid-caption" aria-hidden="true">{x.caption}</span>}
-                          </button>
-                        </li>
-                      ))}
-                      {p.link && (
-                        <li class="reel-item reel-item--cta">
-                          <a class="ig-card" href={p.link.href} rel="noopener">
-                            <Icon name="instagram" />
-                            <span>{cta}</span>
-                            <strong set:html={p.link.label.replaceAll('.', '.<wbr>')} />
-                            <Icon name="arrow-right" class="ig-go" />
-                          </a>
-                        </li>
-                      )}
-                      {!p.link && p.aside && (
-                        <li class="reel-item reel-item--cta"><p class="ig-card ig-card--note">{p.aside}</p></li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-    </section>
-
-    <section class="section section--sand has-wave before-wave" id="journey" aria-labelledby="journey-title">
+    <section class="section section--sand has-wave before-wave" style="margin-top: var(--wave-h)" id="journey" aria-labelledby="journey-title">
       <div class="wave" aria-hidden="true"></div>
       <div class="wrap">
         <div class="section-head">
@@ -210,6 +135,82 @@ const wins = [
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+
+    <section class="section" id="into" aria-labelledby="into-title">
+      <div class="wrap">
+        <hr class="rule" style="margin-bottom: var(--space-5)">
+        <div class="dayoff-head">
+          <p class="eyebrow">Off the clock</p>
+          <h2 id="into-title">Thenga’s day off.</h2>
+        </div>
+        <!-- One board per pastime, from src/data/offclock.ts: Thenga and the words, then a reel of
+             picks big enough to enjoy in place (the rail script in main.js drives the arrows), and
+             an Instagram card for the rest. Tapping a pick still opens it in the lightbox below. -->
+        <!-- Without JS nothing would clear .is-developing, so show the photos straight away. -->
+        <noscript><style>.polaroid.is-developing img { opacity: 1; filter: none; } .polaroid-developing, .polaroid-photo::after { display: none; }</style></noscript>
+        <ol class="boards">
+          {pastimes.map((p, i) => {
+            const cta = p.more ?? (p.picks.length ? 'More on' : 'Meanwhile, it’s all on');
+            return (
+              <li class="board" id={p.id} style={`--accent: var(--${p.accent}); --m-delay: -${(i * 0.7).toFixed(1)}s`} aria-labelledby={`${p.id}-title`}>
+                <div class="board-head">
+                  <div class="board-who">
+                    <Thenga hobby={p.hobby} />
+                    <p class="board-doing" aria-hidden="true">{p.doing}</p>
+                  </div>
+                  <div class="board-main">
+                    <h3 id={`${p.id}-title`}>{p.title}</h3>
+                    <p>{p.text}</p>
+                    {p.picks.length === 0 && (p.link ? (
+                      <a class="ig-card ig-card--inline" href={p.link.href} rel="noopener">
+                        <Icon name="instagram" /><span>{cta}</span><strong>{p.link.label}</strong><Icon name="arrow-right" class="ig-go" />
+                      </a>
+                    ) : (
+                      <p class="board-aside">{p.aside}</p>
+                    ))}
+                  </div>
+                </div>
+                {p.picks.length > 0 && (
+                  <div class="reel" data-rail>
+                    <div class="rail-controls reel-controls">
+                      <button class="rail-btn" type="button" data-prev aria-label="Previous" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
+                      <span class="rail-progress" aria-hidden="true"><i data-thumb></i></span>
+                      <button class="rail-btn" type="button" data-next aria-label="Next" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
+                    </div>
+                    <ul class="rail-track reel-track" id={`${p.id}-reel`} data-track aria-label={`${p.title}: a few picks`}>
+                      {p.picks.map((x) => (
+                        <li class="reel-item">
+                          <button class="polaroid is-developing" type="button" data-full={x.src} data-develop aria-label={`View full size: ${x.alt}`}>
+                            <span class="polaroid-photo" style={thumb(x.src) ? `background-image: url(${thumb(x.src).lqip})` : undefined}>
+                              <img src={thumb(x.src)?.sm ?? x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
+                              <span class="polaroid-developing" aria-hidden="true">developing…</span>
+                            </span>
+                            {x.caption && <span class="polaroid-caption" aria-hidden="true">{x.caption}</span>}
+                          </button>
+                        </li>
+                      ))}
+                      {p.link && (
+                        <li class="reel-item reel-item--cta">
+                          <a class="ig-card" href={p.link.href} rel="noopener">
+                            <Icon name="instagram" />
+                            <span>{cta}</span>
+                            <strong set:html={p.link.label.replaceAll('.', '.<wbr>')} />
+                            <Icon name="arrow-right" class="ig-go" />
+                          </a>
+                        </li>
+                      )}
+                      {!p.link && p.aside && (
+                        <li class="reel-item reel-item--cta"><p class="ig-card ig-card--note">{p.aside}</p></li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </section>
 

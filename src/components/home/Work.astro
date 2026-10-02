@@ -2,7 +2,9 @@
 /* Things I've built. One <Rail> per chapter, one <WorkCard> per project.
    To add a project: add a <WorkCard> to the right rail (and a page in src/pages/work/).
    Company work shares one rail, newest first: give each card its company, role · years
-   and `live` if it's the current job, and the rail header follows the card in view.
+   and `live` if it's the current job (spread one of the objects below), and add that
+   object to the rail's `chapters`. The header lists every company and highlights the
+   one whose card is in view.
    To add a chapter: add another <Rail>. */
 import Rail from './Rail.astro';
 import WorkCard from './WorkCard.astro';
@@ -25,7 +27,7 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
     </div>
   </div>
 
-  <Rail id="rail-work" icon="briefcase" title="Strivelabs" meta="Design engineer · 2024 → now" live>
+  <Rail id="rail-work" icon="briefcase" chapters={[strive, freshworks]}>
     <WorkCard {...strive} href="/work/strive-gen-ui-chat/" accent="coral" title="Strive AI" tags={['Gen UI', 'Design system']}
       part="The base, with our CTO: streaming engine, contracts, design system" shipped="Live · how customers use almost all of Strive">
       <StriveChat slot="sketch" />
@@ -43,7 +45,7 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
     </WorkCard>
   </Rail>
 
-  <Rail id="rail-indie" icon="lightbulb" title="Indie builds" meta="Side quests, solo. Idea → pixels → payments.">
+  <Rail id="rail-indie" icon="lightbulb" title="Side builds" meta="Solo, outside the day job. Idea → pixels → payments.">
     <WorkCard href="/work/thatpam/" accent="teal" title="தட்பம்" titleLang="ta" titleNote="thatpam, Tamil for “coolness”" tags={['Teaching', '0 → 1']}
       part="All of it, from the pixels to the payments" shipped="Paused · the students went pro" shippedLabel="Status">
       <Thatpam slot="sketch" />
