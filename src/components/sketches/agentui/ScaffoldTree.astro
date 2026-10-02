@@ -1,0 +1,65 @@
+---
+/* One command on the left, the folder it writes on the right. Each file carries
+   a chip: coral for the few places the builder edits, teal for what works as
+   is. The point is how little is coral. Stacks on a phone, with the arrow
+   turning down. */
+import Icon from '../../Icon.astro';
+
+const files = [
+  { name: 'constants/index.ts', what: 'node IDs and the steps for the progress view', tag: 'you set', tone: 'coral' },
+  { name: 'screens/TriggerScreen.tsx', what: 'a validated form that starts the run', tag: 'you change', tone: 'coral' },
+  { name: 'screens/LoadingScreen.tsx', what: 'live, step-by-step progress', tag: 'ready', tone: 'teal' },
+  { name: 'screens/OutputScreen.tsx', what: 'output, errors, try again, copy', tag: 'you shape', tone: 'coral' },
+  { name: 'assets/', what: 'room for the agent’s own images', tag: 'empty', tone: 'ghost' },
+];
+
+interface Props { caption?: string }
+const { caption = 'One command, a working agent. The builder edits three files and keeps the rest.' } = Astro.props;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet st" role="img" aria-label="Running pnpm clone-agent-template with an agent name writes a new agent folder. Constants hold the node IDs and the progress steps, which the builder sets. The trigger screen is a validated form that starts the run, which the builder changes. The loading screen shows live step-by-step progress and works as is. The output screen shows the output, errors, a try again button and copy, which the builder shapes. An empty assets folder holds the agent’s own images. The agent works on its very first run.">
+    <div class="sk-box sk-lean-1 st-cmd">
+      <p class="sk-hdr">Terminal</p>
+      <code><span aria-hidden="true">$ </span>pnpm clone-agent-template my-agent</code>
+    </div>
+    <span class="sk-arrow st-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+    <div class="sk-box sk-box--blue sk-lean-2 st-tree">
+      <p class="sk-hdr">src/agents/my-agent/</p>
+      <ul>
+        {files.map((f) => (
+          <li>
+            <code>{f.name}</code>
+            <span class="st-what">{f.what}</span>
+            <span class:list={['st-tag', `st-tag--${f.tone}`]}>{f.tag}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <p class="st-note sk-hand"><Icon name="arrow-curly" /> a working agent on the very first run</p>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .st { display: grid; grid-template-columns: minmax(0, .8fr) auto minmax(0, 1.5fr); align-items: center; gap: .9rem; }
+  .st-cmd code { display: block; font-family: var(--font-mono); font-size: .78rem; line-height: 1.5; color: var(--ink); background: none; padding: 0; word-break: break-word; }
+  .st-cmd code span { color: var(--coral); }
+  .st .sk-hdr { font-size: .64rem; }
+  .st-tree .sk-hdr { color: var(--blue); }
+  .st-tree ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+  .st-tree li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: .6rem; align-items: baseline; padding-bottom: .5rem; border-bottom: 1.5px dashed var(--line); }
+  .st-tree li:last-child { padding-bottom: 0; border-bottom: 0; }
+  .st-tree code { font-family: var(--font-mono); font-size: .74rem; color: var(--ink); background: none; padding: 0; }
+  .st-what { grid-column: 1; font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .st-tag { grid-column: 2; grid-row: 1 / span 2; align-self: center; padding: .15rem .5rem; border-radius: 999px; font-size: .68rem; white-space: nowrap; }
+  .st-tag--coral { color: var(--coral); background: color-mix(in srgb, var(--coral) 12%, var(--paper-2)); }
+  .st-tag--teal { color: var(--teal); background: color-mix(in srgb, var(--teal) 12%, var(--paper-2)); }
+  .st-tag--ghost { color: var(--ink-faint); border: 1px dashed var(--ink-faint); }
+  .st-note { grid-column: 1 / -1; margin: .4rem 0 0 !important; max-width: none; text-align: right; color: var(--teal); }
+  .st-note :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1); }
+  @media (max-width: 599px) {
+    .st { grid-template-columns: 1fr; }
+    .st-arrow { justify-self: center; transform: rotate(90deg); }
+    .st-note { text-align: center; }
+  }
+</style>

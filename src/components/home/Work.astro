@@ -10,6 +10,7 @@ import Rail from './Rail.astro';
 import WorkCard from './WorkCard.astro';
 import StriveChat from '../sketches/StriveChat.astro';
 import ReportBuilder from '../sketches/ReportBuilder.astro';
+import AgentUI from '../sketches/AgentUI.astro';
 import Thatpam from '../sketches/Thatpam.astro';
 import DforDoubts from '../sketches/DforDoubts.astro';
 import Stash from './Stash.astro';
@@ -37,6 +38,11 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
       part="Studio designed in code, the report skill, the sandbox bridge" shipped="Live for all customers · one of the most used">
       <ReportBuilder slot="sketch" />
       Lovable for marketing reports, with numbers that never go stale.
+    </WorkCard>
+    <WorkCard {...strive} href="/work/pluggable-agent-ui/" accent="violet" title="Pluggable UI for agents" tags={['DX', 'Agent UI']}
+      part="The framework on our CTO’s screens idea: scaffold, hooks, docs" shipped="~13+ agents, still growing · now slots in chat">
+      <AgentUI slot="sketch" />
+      One command to a minimal, working agent UI on our framework and UX guidelines. Write the core logic, and the agent is ready.
     </WorkCard>
     <WorkCard {...freshworks} href="/work/freshworks-marketplace/" accent="teal" title="Freshworks Marketplace" tags={['Vue 3', 'Accessibility']}
       part="The pitch, the plan, the POC and the hands-on migration" shipped="In stages, before Vue 2’s end of life · WCAG 2.1 AA">

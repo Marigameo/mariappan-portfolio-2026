@@ -1,0 +1,115 @@
+---
+/* A queue-style content agent on the shared route layout, drawn as four
+   wireframes from the real prototype: the trigger form, the output queue,
+   a result (the draft, with an inline AI edit) and the review of suggested
+   changes. Numbered in the order you move through them; every one has its own
+   URL. Made-up bars, no real content. Two by two, one column on a phone. */
+const views = [
+  { n: '1', name: 'Trigger', sub: 'a URL and keywords to refresh', tone: '', kind: 'form' },
+  { n: '2', name: 'Output', sub: 'the queue, with a status per brief', tone: 'blue', kind: 'queue' },
+  { n: '3', name: 'Result', sub: 'the draft, with an AI edit inline', tone: 'violet', kind: 'draft' },
+  { n: '4', name: 'Review', sub: 'approve or reject each suggestion', tone: 'teal', kind: 'review' },
+];
+
+interface Props { caption?: string }
+const { caption = 'One content agent, four views, one shared layout. If a view matters, it deserves a URL.' } = Astro.props;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet cf" role="img" aria-label="Four views of a content refresher agent, all on one shared layout, each with its own URL. One, trigger: a form for a blog post URL, primary keywords and an optional focus angle, with buttons to view earlier requests or start the analysis. Two, output: the queue of briefs, showing how many are done and a table with a status for each, such as done or draft generated, and a link to view it. Three, result: the generated draft with an outline tab, where you select a passage and describe an AI edit inline. Four, review: a preview of the refreshed post beside a list of approval items, each with a reason and approve or reject buttons.">
+    <ol class="cf-grid">
+      {views.map((v, i) => (
+        <li class:list={['sk-box', v.tone && `sk-box--${v.tone}`, `sk-lean-${i + 1}`]}>
+          <p class="cf-hdr"><span class="cf-n">{v.n}</span><strong>{v.name}</strong><span class="cf-sub">{v.sub}</span></p>
+          <div class="cf-wire" aria-hidden="true">
+            {v.kind === 'form' && (
+              <>
+                <i class="cf-label"></i><i class="cf-input"></i>
+                <i class="cf-label cf-label--short"></i><i class="cf-input cf-input--plus"></i>
+                <i class="cf-label"></i><i class="cf-input cf-input--tall"></i>
+                <span class="cf-btns"><i class="cf-btn cf-btn--ghost"></i><i class="cf-btn"></i></span>
+              </>
+            )}
+            {v.kind === 'queue' && (
+              <>
+                <span class="cf-count"><b>4</b><em>/ 4 done</em><i class="cf-btn cf-btn--ghost cf-btn--sm"></i></span>
+                <span class="cf-row cf-row--head"><i></i><i></i><i></i></span>
+                {['teal', 'violet', 'violet', 'violet'].map((t) => <span class="cf-row"><i></i><b class={`cf-chip cf-chip--${t}`}></b><i class="cf-link"></i></span>)}
+              </>
+            )}
+            {v.kind === 'draft' && (
+              <>
+                <span class="cf-tabs"><i class="is-on"></i><i></i></span>
+                <i class="cf-title"></i>
+                <i class="cf-line"></i><i class="cf-line cf-line--short"></i>
+                <span class="cf-pick"><i class="cf-line"></i><i class="cf-line"></i></span>
+                <span class="cf-pop"><b>AI edit</b><i class="cf-input"></i><i class="cf-btn cf-btn--violet cf-btn--sm"></i></span>
+              </>
+            )}
+            {v.kind === 'review' && (
+              <span class="cf-split">
+                <span class="cf-doc"><i class="cf-title"></i><i class="cf-line cf-line--dot"></i><i class="cf-line cf-line--dot"></i><i class="cf-line cf-line--dot cf-line--short"></i><i class="cf-line cf-line--dot"></i></span>
+                <span class="cf-items"><b>Approval items</b><span class="cf-card"><i class="cf-line"></i><i class="cf-line cf-line--short"></i><span class="cf-btns"><i class="cf-btn cf-btn--ghost cf-btn--sm"></i><i class="cf-btn cf-btn--sm"></i></span></span></span>
+              </span>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+    <p class="cf-note sk-hand">every view has its own URL: share it, refresh it, come back to it</p>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .cf-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .cf-grid > li { display: grid; gap: .5rem; align-content: start; padding: .65rem .7rem .75rem; }
+  .cf-hdr { display: grid; grid-template-columns: auto 1fr; column-gap: .45rem; align-items: baseline; margin: 0 !important; max-width: none; }
+  .cf-n { grid-row: span 2; align-self: center; display: grid; place-items: center; width: 1.3rem; height: 1.3rem; font-family: var(--font-hand); font-size: 1rem; line-height: 1; color: var(--paper-2); background: var(--c); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .cf-hdr strong { font-family: var(--font-mono); font-size: .64rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  .cf-sub { font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .cf-wire { position: relative; display: grid; gap: .3rem; align-content: start; min-height: 7.4rem; padding: .55rem; border: 1.5px solid var(--line); border-radius: 8px; background: var(--paper); }
+  .cf-wire i, .cf-wire b { display: block; }
+  .cf-label { width: 32%; height: .26rem; border-radius: 99px; background: var(--ink-faint); opacity: .5; }
+  .cf-label--short { width: 24%; }
+  .cf-input { height: .75rem; border: 1.5px solid var(--line); border-radius: 4px; }
+  .cf-input--plus { position: relative; }
+  .cf-input--plus::after { content: "+"; position: absolute; right: .25rem; top: 50%; transform: translateY(-52%); font-size: .6rem; line-height: 1; color: var(--ink-faint); }
+  .cf-input--tall { height: 1.4rem; }
+  .cf-btns { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; margin-top: .15rem; }
+  .cf-btn { height: .8rem; border-radius: 4px; background: var(--coral); }
+  .cf-btn--ghost { background: none; border: 1.5px solid color-mix(in srgb, var(--coral) 55%, var(--paper)); }
+  .cf-btn--violet { background: var(--violet); }
+  .cf-btn--sm { height: .6rem; width: 2.2rem; }
+  .cf-count { display: flex; align-items: baseline; gap: .25rem; padding-bottom: .3rem; }
+  .cf-count b { font-family: var(--font-display); font-size: 1.15rem; line-height: 1; color: var(--ink); }
+  .cf-count em { font-style: normal; font-size: .62rem; color: var(--ink-faint); }
+  .cf-count .cf-btn { margin-left: auto; align-self: center; }
+  .cf-row { display: grid; grid-template-columns: 1.4fr 1fr .8fr; align-items: center; gap: .4rem; padding: .18rem 0; border-top: 1px solid var(--line); }
+  .cf-row i { height: .26rem; border-radius: 99px; background: var(--line); }
+  .cf-row--head i { background: var(--ink-faint); opacity: .45; width: 60%; }
+  .cf-chip { width: 70%; height: .5rem; border-radius: 99px; }
+  .cf-chip--teal { background: color-mix(in srgb, var(--teal) 35%, var(--paper)); }
+  .cf-chip--violet { background: color-mix(in srgb, var(--violet) 30%, var(--paper)); }
+  .cf-link { background: color-mix(in srgb, var(--violet) 45%, var(--paper)) !important; }
+  .cf-tabs { justify-self: end; display: flex; gap: .15rem; padding: .1rem; border-radius: 4px; background: var(--line); }
+  .cf-tabs i { width: 1.2rem; height: .4rem; border-radius: 3px; }
+  .cf-tabs i.is-on { background: var(--paper-2); }
+  .cf-title { width: 70%; height: .45rem; border-radius: 99px; background: var(--ink-faint); opacity: .6; }
+  .cf-line { height: .26rem; border-radius: 99px; background: var(--line); }
+  .cf-line--short { width: 65%; }
+  .cf-line--dot { background: none; border-bottom: 1.5px dotted color-mix(in srgb, var(--coral) 60%, var(--paper)); height: .2rem; border-radius: 0; }
+  .cf-pick { display: grid; gap: .25rem; padding: .2rem; border-radius: 3px; background: color-mix(in srgb, var(--violet) 18%, var(--paper)); }
+  .cf-pop { position: absolute; right: .5rem; bottom: .45rem; display: grid; gap: .2rem; width: 46%; padding: .3rem; border: 1.5px solid var(--violet); border-radius: 5px; background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); }
+  .cf-pop b { font-size: .55rem; font-weight: 500; color: var(--violet); }
+  .cf-pop .cf-input { border-color: color-mix(in srgb, var(--violet) 60%, var(--paper)); height: .6rem; }
+  .cf-pop .cf-btn { justify-self: end; }
+  .cf-split { display: grid; grid-template-columns: 1.3fr 1fr; gap: .4rem; }
+  .cf-doc, .cf-items, .cf-card { display: grid; gap: .28rem; align-content: start; }
+  .cf-items b { font-size: .55rem; font-weight: 500; color: var(--ink); }
+  .cf-card { padding: .3rem; border: 1px solid var(--line); border-radius: 4px; background: var(--paper-2); }
+  .cf-card .cf-btns { grid-template-columns: auto auto; justify-content: end; }
+  .cf-note { margin: 1rem 0 0 !important; max-width: none; text-align: center; color: var(--blue); }
+  @media (max-width: 559px) {
+    .cf-grid { grid-template-columns: 1fr; }
+  }
+</style>

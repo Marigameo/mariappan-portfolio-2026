@@ -1,0 +1,72 @@
+---
+// Card sketch for the pluggable agent UI project.
+// Hand-drawn product sketch: the platform shell with an agent rail on the left, a
+// scaffolded agent's trigger form in the middle and its step progress on the right.
+// Colours come from the .sk rules in src/styles/style.css so it follows the theme;
+// the fixed hex value is the product's own brand orange.
+---
+<svg class="sk" viewBox="0 0 600 440" preserveAspectRatio="xMinYMin slice" role="img" aria-label="Sketch of an agent plugged into the platform: a rail of agents on the left with one highlighted, the agent's trigger form with two fields and a run button, and a step progress list beside it with two steps done and one in flight">
+  <rect width="600" height="440" class="f-page"/>
+  <rect width="600" height="30" class="f-card"/>
+  <line x1="0" y1="30.5" x2="600" y2="30.5" class="s-line"/>
+  <circle cx="18" cy="15" r="5" fill="#f26b1d"/>
+  <text x="30" y="19.5" font-size="11" font-weight="600">Agents</text>
+
+  <rect y="31" width="150" height="409" class="f-tint"/>
+  <line x1="150.5" y1="31" x2="150.5" y2="440" class="s-line"/>
+  <rect x="14" y="52" width="122" height="28" rx="8" fill="#f26b1d" fill-opacity=".1" stroke="#f26b1d" stroke-opacity=".5" stroke-width="1.2"/>
+  <rect x="24" y="61" width="10" height="10" rx="3" fill="#f26b1d"/>
+  <rect x="42" y="63" width="70" height="6" rx="3" fill="#f26b1d" fill-opacity=".7"/>
+  <rect x="24" y="97" width="10" height="10" rx="3" class="f-bar"/>
+  <rect x="42" y="99" width="78" height="6" rx="3" class="f-bar-2"/>
+  <rect x="24" y="127" width="10" height="10" rx="3" class="f-bar"/>
+  <rect x="42" y="129" width="60" height="6" rx="3" class="f-bar-2"/>
+  <rect x="24" y="157" width="10" height="10" rx="3" class="f-bar"/>
+  <rect x="42" y="159" width="84" height="6" rx="3" class="f-bar-2"/>
+  <rect x="24" y="187" width="10" height="10" rx="3" class="f-bar"/>
+  <rect x="42" y="189" width="54" height="6" rx="3" class="f-bar-2"/>
+  <path d="M29 412v-10m-5 5h10" class="s-ink" stroke-opacity=".5"/>
+  <rect x="42" y="404" width="64" height="6" rx="3" class="f-bar-2"/>
+
+  <text x="170" y="64" font-size="15" font-weight="600">SEO audit</text>
+  <rect x="170" y="74" width="170" height="6" rx="3" class="f-bar-2"/>
+
+  <g class="sk-lift">
+    <rect x="170" y="98" width="230" height="226" rx="10" class="f-card s-soft" stroke-width="1.5"/>
+    <rect x="186" y="116" width="48" height="5" rx="2.5" class="f-bar"/>
+    <rect x="186" y="128" width="198" height="30" rx="7" class="f-page s-soft" stroke-width="1.3"/>
+    <rect x="198" y="140" width="110" height="6" rx="3" class="f-bar-2"/>
+    <rect x="186" y="176" width="62" height="5" rx="2.5" class="f-bar"/>
+    <rect x="186" y="188" width="198" height="30" rx="7" class="f-page s-soft" stroke-width="1.3"/>
+    <rect x="198" y="200" width="86" height="6" rx="3" class="f-bar-2"/>
+    <rect x="186" y="236" width="198" height="6" rx="3" class="f-bar-2"/>
+    <rect x="186" y="248" width="140" height="6" rx="3" class="f-bar-2"/>
+    <rect x="186" y="276" width="96" height="30" rx="8" fill="#f26b1d"/>
+    <path d="M206 284l8 7-8 7z" class="f-paper"/>
+    <rect x="220" y="288" width="44" height="6" rx="3" class="f-paper"/>
+  </g>
+
+  <g class="sk-lift">
+    <rect x="414" y="98" width="166" height="226" rx="10" class="f-card s-soft" stroke-width="1.5"/>
+    <rect x="430" y="116" width="70" height="5" rx="2.5" class="f-bar"/>
+    <circle cx="440" cy="148" r="9" fill="#16a34a" fill-opacity=".15"/>
+    <path d="M435.5 148l3 3 6-6" stroke="#16a34a" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="458" y="145" width="90" height="6" rx="3" class="f-bar-2"/>
+    <line x1="440" y1="158" x2="440" y2="178" class="s-line"/>
+    <circle cx="440" cy="188" r="9" fill="#16a34a" fill-opacity=".15"/>
+    <path d="M435.5 188l3 3 6-6" stroke="#16a34a" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="458" y="185" width="76" height="6" rx="3" class="f-bar-2"/>
+    <line x1="440" y1="198" x2="440" y2="218" class="s-line"/>
+    <circle cx="440" cy="228" r="9" fill="none" stroke="#f26b1d" stroke-width="1.6" stroke-dasharray="14 6"/>
+    <rect x="458" y="225" width="96" height="6" rx="3" fill="#f26b1d" fill-opacity=".55"/>
+    <line x1="440" y1="238" x2="440" y2="258" class="s-line" stroke-dasharray="3 4"/>
+    <circle cx="440" cy="268" r="9" class="s-soft" fill="none" stroke-width="1.5"/>
+    <rect x="458" y="265" width="64" height="6" rx="3" class="f-bar-2"/>
+  </g>
+
+  <rect x="170" y="344" width="410" height="80" rx="10" class="f-card s-soft" fill-opacity=".45" stroke-width="1.5" stroke-dasharray="5 5"/>
+  <path d="M192 372h18v20h-18zM196 372v-6m10 6v-6" class="s-ink" stroke-opacity=".55"/>
+  <path d="M201 392v8" class="s-ink" stroke-opacity=".55"/>
+  <text x="226" y="380" font-size="12" class="t-soft">pnpm clone-agent-template</text>
+  <rect x="226" y="392" width="150" height="6" rx="3" class="f-bar-2"/>
+</svg>

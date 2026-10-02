@@ -1,0 +1,57 @@
+---
+/* Three bands, top to bottom: what the builder writes (coral), the three hooks
+   they call (blue), and what those hooks keep out of sight (ghost). A dashed
+   line with a handwritten note marks where builders stop. Already one column,
+   so it only tightens on a phone. */
+const write = ['The form', 'The data mapping', 'The output view'];
+const hooks = [
+  { name: 'useAgentWorkflowTrigger', does: 'start a run' },
+  { name: 'useAgentOutput', does: 'read its output' },
+  { name: 'useAgentReset', does: 'start over' },
+];
+const hidden = ['The Zustand store', 'Workflow APIs', 'Polling', 'Execution IDs', 'Agent states', 'Default error alerts'];
+
+interface Props { caption?: string }
+const { caption = 'Builders write above the line. The platform owns everything below it.' } = Astro.props;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet hl-sheet" role="img" aria-label="Three layers. On top, what the agent builder writes: the form, the data mapping and the output view. In the middle, the three platform hooks they call: useAgentWorkflowTrigger to start a run, useAgentOutput to read its output, and useAgentReset to start over. Below a dashed line, what the hooks handle out of sight: the Zustand store, workflow APIs, polling, execution IDs, agent states and default error alerts. Builders never reach below the line.">
+    <div class="sk-box sk-box--coral sk-lean-1 hl-band">
+      <p class="sk-hdr">You write</p>
+      <p class="hl-chips">{write.map((w) => <span>{w}</span>)}</p>
+    </div>
+    <ul class="hl-hooks">
+      {hooks.map((h, i) => (
+        <li class:list={['sk-box', 'sk-box--blue', `sk-lean-${i + 2}`]}>
+          <code>{h.name}</code>
+          <span>{h.does}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="hl-line sk-hand" aria-hidden="true"><span></span>builders never reach below this line<span></span></p>
+    <div class="sk-box sk-box--ghost sk-lean-4 hl-band">
+      <p class="sk-hdr">Handled for you</p>
+      <p class="hl-chips hl-chips--ghost">{hidden.map((w) => <span>{w}</span>)}</p>
+    </div>
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .hl-sheet { display: grid; gap: .9rem; }
+  .hl-band .sk-hdr { font-size: .64rem; color: var(--c); }
+  .sk-box--ghost.hl-band .sk-hdr { color: var(--ink-faint); }
+  .hl-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 !important; max-width: none; }
+  .hl-chips span { padding: .22rem .6rem; border-radius: 999px; background: color-mix(in srgb, var(--coral) 12%, var(--paper-2)); font-size: .78rem; color: var(--ink); }
+  .hl-chips--ghost span { background: none; border: 1px dashed var(--ink-faint); color: var(--ink-faint); }
+  .hl-hooks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
+  .hl-hooks li { display: grid; gap: .2rem; padding: .6rem .7rem .65rem; }
+  .hl-hooks code { font-family: var(--font-mono); font-size: .72rem; color: var(--blue); background: none; padding: 0; word-break: break-all; }
+  .hl-hooks span { font-size: .78rem; color: var(--ink-faint); }
+  .hl-line { display: flex; align-items: center; gap: .7rem; margin: .1rem 0 !important; max-width: none; color: var(--coral); white-space: nowrap; }
+  .hl-line span { flex: 1; border-top: 1.5px dashed var(--coral); }
+  @media (max-width: 559px) {
+    .hl-hooks { grid-template-columns: 1fr; }
+    .hl-line { white-space: normal; text-align: center; font-size: 1rem; }
+  }
+</style>

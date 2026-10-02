@@ -1,0 +1,343 @@
+---
+/* How building UI for agents evolved on the Strive platform: a scaffold and
+   platform hooks for agent builders, rails that coding agents could follow,
+   the turn to one chat with generated UI, and agents writing their own UI in
+   Strive Studio. The short, picture-first version is the project page at
+   /work/pluggable-agent-ui/. New figures live in
+   ../../components/sketches/agentui/; the rest are reused from studio/ and genui/. */
+import PostLayout from '../../layouts/PostLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Snippet from '../../components/sketches/genui/Snippet.astro';
+import ProseTable from '../../components/sketches/genui/ProseTable.astro';
+import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import TwoKindsOfUI from '../../components/sketches/studio/TwoKindsOfUI.astro';
+import ScaffoldTree from '../../components/sketches/agentui/ScaffoldTree.astro';
+import HookLayer from '../../components/sketches/agentui/HookLayer.astro';
+import ThreeStates from '../../components/sketches/agentui/ThreeStates.astro';
+import AgentContext from '../../components/sketches/agentui/AgentContext.astro';
+import CampaignAnalyser from '../../components/sketches/agentui/CampaignAnalyser.astro';
+import ContentFlow from '../../components/sketches/agentui/ContentFlow.astro';
+import ShotCompare from '../../components/sketches/agentui/ShotCompare.astro';
+import SketchLive from '../../components/SketchLive.astro';
+
+const description =
+  'How building UI for agents evolved on the Strive platform: a scaffold and three hooks for agent builders, rails that coding agents could follow, the turn to one chat, and agents writing their own UI.';
+
+/* Who writes the UI, step by step. Same steps as the story's last slide. */
+const ladder = [
+  { kicker: 'Scaffold', label: 'Developers write the screens', sub: 'on our hooks and ui-core', tone: '' },
+  { kicker: 'Routes', label: 'Coding agents write them too', sub: 'following the guide and a similar agent', tone: 'blue' },
+  { kicker: 'Gen UI chat', label: 'The agent composes our components', sub: 'one chat, generated UI', tone: 'teal' },
+  { kicker: 'Studio', label: 'The agent writes its own UI', sub: 'HTML in a sandboxed canvas', tone: 'coral' },
+];
+
+/* Code samples, pre-escaped so comments and strings can carry a colour. They
+   show the shape of the thing, not the production source. */
+const wholeRun = `<span class="c">// TriggerScreen: start a run</span>
+const { trigger, isLoading } = useAgentWorkflowTrigger();
+trigger({
+  data: [{ data: formValues, scenario: <span class="s">&quot;default&quot;</span> }],
+  callbacks: { onSuccess: (executionId) =&gt; { <span class="c">/* agent-specific */</span> } },
+});
+
+<span class="c">// OutputScreen: read only the node you care about</span>
+const { getNodeOutput, hasData, error } = useAgentOutput({
+  targetNodeIds: [nodeIds.TARGET_NODE],
+  transformOutput: (raw) =&gt; toRows(raw),
+});
+
+<span class="c">// “New session”: back to the form</span>
+const { resetAgent } = useAgentReset();`;
+
+const routes = `<span class="c">// App.tsx: above the generic route, or the generic layout catches it first</span>
+&lt;Route path=<span class="s">&quot;/ui/agent/my-agent/*&quot;</span> element={&lt;MyAgentLayout /&gt;} /&gt;
+&lt;Route path=<span class="s">&quot;/ui/agent/:agentId&quot;</span> element={&lt;AgentLayout /&gt;} /&gt;
+
+<span class="c">// a queue-style agent: a short wrapper around the shared layout</span>
+&lt;BlogContentAgentLayout
+  agentShortName=<span class="s">&quot;my-agent&quot;</span>
+  routes={ROUTES}
+  bucketConfig={buckets}
+  screens={{ Trigger, Output, Result, Review }}
+/&gt;`;
+
+const phases = [
+  {
+    label: 'One UI per agent · built by people',
+    tone: 'grey' as const,
+    items: [
+      { period: 'Jun 2025', title: 'The scaffold', detail: 'One standard way to put a UI on an agent: pnpm clone-agent-template, three platform hooks, ui-core only, and a handover guide' },
+      { period: 'Jul 2025', title: 'Relaxed to routes', detail: 'Content and sales agents pull in different directions; path-based routing and a shared layout for queue-style agents' },
+      { period: 'Jul 2025', title: 'Skills for coding agents', detail: 'One more layer of abstraction, so builders and their coding agents can leave the platform’s UI concepts to the skill' },
+    ],
+  },
+  {
+    label: 'One chat · generated UI',
+    tone: 'coral' as const,
+    items: [
+      { period: 'Sep 2025', title: 'Strive AI', detail: 'A chat that answers in generated UI, built from our own components', pivot: true },
+      { period: 'Feb to Mar 2026', title: 'Slots and skills', detail: 'Report preview and content editor slots open beside the thread' },
+    ],
+  },
+  {
+    label: 'The agent writes its own UI',
+    tone: 'teal' as const,
+    items: [
+      { period: '26 Apr 2026', title: 'HTML in a sandbox', detail: 'First agent-written HTML report, hosted in a sandboxed iframe' },
+      { period: '11 Jun 2026', title: 'Folded into chat', detail: 'Strive Studio becomes a skill, with the report in a canvas beside the thread' },
+    ],
+  },
+];
+---
+<PostLayout
+  title="Who writes the UI? How agent interfaces evolved in Strive"
+  description={description}
+  ogDescription="From a scaffold and three hooks, to rails for coding agents, to one chat, to agents writing their own UI."
+  heading="Who writes the UI? How agent interfaces evolved in Strive"
+  eyebrow="Strivelabs engineering · Agent UI"
+  published="2026-10-02"
+  publishedLabel="October 2026"
+  keywords="agent UI, developer experience, scaffolding, React hooks, design systems, coding agents, generative UI, AI chat, design engineering, Strive"
+  facts={[
+    { label: 'Stack', value: 'React · TypeScript · React Router · Zustand' },
+    { label: 'Read', value: '~12 minutes' },
+  ]}
+>
+  <Fragment slot="lede">How we went from writing a UI for every agent to <mark class="hl">letting the agent write its own</mark>. A scaffold and three hooks for agent builders, rails that coding agents could follow, the turn to one chat, and what we learned at each step.</Fragment>
+
+  <p>Every agent on <strong>Strive</strong> needs a way to reach the people who use it: a page to set it up, a way to start it, and somewhere to review what it did.</p>
+  <p>This post is the journey of how we built those interfaces, from June 2025 to today, and how the answer to “who writes the UI?” kept changing.</p>
+  <blockquote>Each step handed a little more of the UI to the agent.</blockquote>
+
+  <h2 id="the-one-liner">The one-liner</h2>
+  <p>We went from developers writing every screen, to coding agents writing them on our rails, to a chat that answers in generated UI, to agents writing their own.</p>
+
+  <StudioLoop
+    steps={ladder}
+    note="each step hands a little more of the UI to the agent"
+    caption="Four answers to “who writes the UI?”, in the order we gave them."
+    alt="Four steps in who writes an agent’s UI. Scaffold: developers write the screens on our hooks and ui-core. Routes: coding agents write them too, following the guide and a similar agent. Gen UI chat: the agent composes our components in one chat. Studio: the agent writes its own UI as HTML in a sandboxed canvas. Each step hands a little more of the UI to the agent."
+  />
+
+  <h2 id="a-little-bit-of-backstory">A little bit of backstory</h2>
+  <p>It started in <strong>June 2025</strong>. As a team, we were building agent prototypes for different use cases, from our early clients and friends.</p>
+  <p>We already had a solid backend for orchestrating workflows quickly. Almost anything you can do in n8n, you could do on our platform. So the idea was simple: build a UI for each workflow fast, demo it to customers, validate the idea, and find product-market fit.</p>
+  <p>It began with a tip from our CTO: come up with one standard way of putting a UI on an agent. The backend was already plug and play. Agent builders could drop components into a DAG and have a workflow ready in no time. The challenge was doing the same for the UI.</p>
+
+  <Versus
+    left={{ title: 'The backend · already plug and play', tone: 'blue', items: ['Components dropped into a DAG', 'Almost anything n8n can do', 'A workflow ready in no time'] }}
+    right={{ title: 'The UI · the same idea', stamp: 'the tip', tone: 'coral', items: ['Screens every agent shares', 'Layouts and hooks from a scaffold', 'Builders wire data, nothing else'] }}
+    mid="&"
+    marks="dot"
+    alt="The backend was already plug and play: components dropped into a DAG, almost anything n8n can do, and a workflow ready in no time. The UI had to follow the same idea: screens every agent shares, layouts and hooks from a scaffold, and builders who only wire data."
+    caption="If the backend is plug and play, the UI should be too."
+  />
+
+  <p>Most agents needed the same few pages: one to configure the agent, one to install it, and one to review what it did and check its status. Configuration-driven UI was the long-term goal, but it wasn’t ready for the first agents, and we weren’t going to wait for it.</p>
+  <p>So our CTO proposed <strong>screens</strong>: a standard set of pages every agent plugs into. I formulated the framework around it, in React. I wrote the doc, built the abstractions over the router and the store, and made the scaffold, the hooks and everything around them. The rest of the team used the framework to build their agents.</p>
+
+  <h3 id="a-builder-for-us-not-for-everyone">A builder for us, not for everyone</h3>
+  <p>At first we pictured this becoming our external developer experience too. A lightweight agent-builder framework, where anyone could build agents on Strive the same way we did. To get there, we’d build more agents ourselves, improve the DX over time, and open it up once it was stable.</p>
+  <p>But we didn’t want to enter the agent-builder space. It was already crowded, with n8n, Lindy, Make and Relevance AI, and we wouldn’t have had a real reason to stand out.</p>
+
+  <Versus
+    left={{ title: 'A public agent builder', tone: 'ghost', items: ['A lightweight agent-builder framework for anyone', 'A crowded space already', 'No clear way to stand out'] }}
+    right={{ title: 'Internal DX · reliable agents', stamp: 'the call', tone: 'coral', items: ['Our own builders, moving fast', 'Interfaces we could open up later', 'Agents that do the job, with no slop'] }}
+    alt="The path not taken: a public agent builder, with a lightweight agent-builder framework for anyone, in a space that was already crowded and with no clear way to stand out. The call: internal developer experience and reliable agents, with our own builders moving fast, interfaces we could open up later, and agents that do the job with no slop."
+    caption="Compete on the agents, not on the builder."
+  />
+
+  <p>It wasn’t that we lacked the pieces. We had everything. We knew how to build one; we’d done it before, and we could power it later if the demand came. For now, we wanted to stand out in a crowded agent space with agents that were effective and reliable.</p>
+  <p>So the focus became our own developer experience: helping the team build agent UIs fast. The line at the end of the handover guide sums it up:</p>
+  <blockquote>The platform handles the complexity. You focus on the business logic that’s specific to your agent.</blockquote>
+
+  <h2 id="one-command-to-a-working-agent">One command to a working agent</h2>
+  <p>The simplest way to make agent interfaces pluggable was a good scaffold. If it came with every capability wired up and a working example, builders could focus on the agent and fill in the interface.</p>
+  <p>So <code>pnpm clone-agent-template &lt;agent-name&gt;</code> writes a new folder under <code>src/agents/</code> with a minimal agent that already triggers a workflow, shows progress and renders output.</p>
+
+  <SketchLive id="scaffold" live={{ kind: 'video', src: '/images/work/pluggable-agent-ui/scaffold-demo.mp4', poster: '/images/work/pluggable-agent-ui/scaffold-demo-poster.webp', width: 1600, height: 912, alt: 'Screen recording in VS Code: pnpm clone-agent-template runs in the terminal for a new LinkedIn post generator agent and prints its next steps, then the file tree opens the new agent folder under src/agents to show its constants and the three screens: LoadingScreen, OutputScreen and TriggerScreen.' }} caption="The real thing: one command, then the new agent’s folder, with its constants and three screens.">
+    <ScaffoldTree />
+  </SketchLive>
+
+  <ProseTable caption="What each generated file gives the builder">
+    <thead>
+      <tr><th scope="col">File</th><th scope="col">What’s in it</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row"><code>constants/index.ts</code></th><td>A target node ID placeholder, and a two-node list the progress view reads</td></tr>
+      <tr><th scope="row"><code>TriggerScreen.tsx</code></th><td>A <code>react-hook-form</code> and <code>zod</code> form with two sample fields and validation, whose submit starts the workflow</td></tr>
+      <tr><th scope="row"><code>LoadingScreen.tsx</code></th><td>A card around <code>StepLoadingProgress</code>, fed by the node list</td></tr>
+      <tr><th scope="row"><code>OutputScreen.tsx</code></th><td>Loading and error states, “Try again”, a copy button and a JSON preview of the result, ready to be replaced</td></tr>
+    </tbody>
+  </ProseTable>
+
+  <p>After it runs, the script prints the next steps: set the node IDs, change the form fields, shape the output view. Nobody starts from a blank folder.</p>
+  <p>Builders only needed to know how to call the backend and wire its data to the screens. No new components, no thinking about padding or colours, and no need to learn React Router or how state works in Zustand.</p>
+
+  <h2 id="the-platform-handles-the-complexity">The platform handles the complexity</h2>
+  <p>An agent’s run has three moments: start a workflow, read its output, start over. I gave each one a hook, and made the hooks the only way in.</p>
+
+  <HookLayer />
+
+  <p>Here’s an agent’s whole run, from the builder’s side.</p>
+
+  <Snippet caption="Start, read, start over" code={wholeRun} />
+
+  <ul class="doodle-list">
+    <li><strong><code>useAgentWorkflowTrigger</code> owns the start.</strong> It checks there’s an active workflow instance, calls the trigger, stores the execution ID, moves the agent to Loading, shows a default error and resets on failure. Each part can be overridden when an agent really needs it.</li>
+    <li><strong><code>useAgentOutput</code> owns the result.</strong> It finds the latest completed run, polls node state, pulls out only the nodes asked for and runs an optional transform. It also lists past runs, for a report switcher.</li>
+    <li><strong><code>useAgentReset</code> owns “new session”.</strong> It clears the execution ID and takes the agent back to Idle.</li>
+  </ul>
+
+  <p>Agent-specific behaviour goes in the callbacks. Anything else an agent needed later, like configuration, approvals or reading task queues, got a hook of its own, so builders kept calling hooks instead of reaching into the store.</p>
+  <blockquote>Make the right way the short way.</blockquote>
+
+  <h2 id="consistent-by-default">Consistent by default</h2>
+  <p>Consistency was the part I cared about most as a design engineer. Agents built by different people could easily end up as different products.</p>
+  <p>So the template uses only our component registry, <code>@strivelabs/ui-core</code>, and <code>lucide-react</code> icons, and every agent moves through the same three screens.</p>
+
+  <ThreeStates />
+
+  <ul class="doodle-list">
+    <li><strong>One set of parts.</strong> Cards, buttons, inputs, tabs and the rest come from <code>ui-core</code>. A new agent looks like the rest of the platform on its first run.</li>
+    <li><strong>One way to show progress.</strong> <code>StepLoadingProgress</code> walks through the workflow’s nodes while a run is in flight, on every agent.</li>
+    <li><strong>One way to validate.</strong> <code>react-hook-form</code> with <code>zod</code>, already wired into the template.</li>
+    <li><strong>Small shared utilities.</strong> Copy to clipboard with feedback, and one logger instead of <code>console.*</code>.</li>
+    <li><strong>Data apart from presentation.</strong> Shape the payload in the trigger screen and the result in <code>transformOutput</code>, never in the JSX.</li>
+  </ul>
+  <p>Here’s one of the first agents built that way, the Google Ads campaign analyser. Like most of them, it was a rapid prototype I designed straight in code.</p>
+
+  <CampaignAnalyser />
+
+  <blockquote>The easiest path should be the consistent one.</blockquote>
+
+  <h2 id="relax-the-rails">Relax the rails</h2>
+  <p>Within a month, the screens felt too restrictive. They kept every agent inside one narrow model of a UI, just as we started building agents that went in completely different directions.</p>
+  <p>A couple of content agents needed rich, multi-view flows. A sales agent needed far less, and none of those components. Squeezing both into the same set of screens helped neither of them.</p>
+  <p>The screen tree was part of the problem. It picked a screen from a state in the store and loaded it by folder name. That kept things simple, but you couldn’t share a view, refresh it or come back to it.</p>
+
+  <Versus
+    left={{ title: 'Before · a screen tree', tone: 'ghost', items: ['A screen picked from store state', 'Loaded by folder name', 'One URL for the whole agent'] }}
+    right={{ title: 'Now · route-based', stamp: 'routes', tone: 'coral', items: ['Every view has its own URL', 'Share, refresh, deep-link, go back', 'One shared layout for queue agents'] }}
+    alt="Before, a screen tree: a screen picked from state in the store, loaded by folder name, with one URL for the whole agent. Now, route-based: every view has its own URL, so views can be shared, refreshed, deep-linked and navigated with back and forward, and queue-style agents share one layout."
+    caption="If a view matters, it deserves a URL."
+  />
+
+  <p>So in July 2025, I relaxed it. Path-based routing took the one-model limit away: each new agent registers its own routes, declares its views and a layout, and adds one line to <code>App.tsx</code>. Agents that work through a queue of tasks, like the content agents, share one layout, so a new one is only a short wrapper.</p>
+  <p>It worked because of who was building by then. The team was building with coding agents, which could put together an interface that fits from our primitives, as long as the rails were clear. More on that in the next section.</p>
+  <blockquote>Fit the interface to the use case, not the use case to the interface.</blockquote>
+
+  <Snippet caption="One route, or one wrapper" code={routes} />
+
+  <p>Here’s one of the content agents on that shared layout. Four views, one short wrapper, and a URL for each.</p>
+
+  <ContentFlow caption="The content refresher: trigger, output, result and review, on one shared layout." />
+
+  <ul class="doodle-list">
+    <li><strong>Two data shapes, one set of hooks.</strong> Some agents run one workflow per submit and read one node’s output. Others work through a queue of tasks, with a table that refreshes every 15 seconds and no loading screen at all.</li>
+    <li><strong>Order matters.</strong> An agent’s route has to sit above the generic one, or the generic layout catches it first.</li>
+    <li><strong>Chat could link straight in.</strong> Once every view had a URL, a link from chat could land on the right page of an agent.</li>
+  </ul>
+  <p>Both patterns still live side by side, on the same hooks and the same backend. Only rendering and navigation differ.</p>
+
+  <h2 id="when-coding-agents-became-builders-too">When coding agents became builders too</h2>
+  <p>By this time, agentic coding had become far more accessible, and far better. Our team was using coding agents heavily to write frontend code.</p>
+  <p>They were comfortable building rough prototypes with just the primitives: the design system and standard React guidelines. A coding agent could follow the design system, read a similar agent in the codebase and build a rich UI on its own.</p>
+  <p>So at the same time, I added skills for coding agents: one more layer of abstraction. Builders didn’t need to keep the platform’s UI concepts in their heads, or in their coding agent’s context. The skills carry what the handover guide tells a developer: the hooks, the components, the rules and the pitfalls.</p>
+
+  <AgentContext />
+
+  <p>Most of the rules were already there for people. They just mattered more once something was following them literally: use the platform hooks, don’t write to the store, build only from <code>ui-core</code>, follow the existing agents’ patterns.</p>
+
+  <h2 id="where-it-started-to-hurt">Where it started to hurt</h2>
+  <p>Thirteen agents were built on this foundation. Five have their own routes, and seven still use the screen tree. Writing it all down for this post turned up a few honest gaps.</p>
+
+  <h3 id="the-scaffold-fell-behind">The scaffold fell behind</h3>
+  <p>We moved new agents to routes, but the scaffold still writes the old screen tree. So a brand new agent starts on the pattern we’re moving away from.</p>
+
+  <h3 id="the-guide-lived-in-three-places">The guide lived in three places</h3>
+  <p>The handover guide moved, and the copies drifted. Hook names changed in one place and not the others. People can spot a stale doc. A coding agent follows it faithfully.</p>
+
+  <h3 id="quiet-contracts">Quiet contracts</h3>
+  <p>The trigger expects an array of <code>{'{ data, scenario }'}</code> items. The starter form passed a plain object, and the hook quietly replaced it with an empty array. Every agent copied from the template inherited that.</p>
+
+  <h3 id="thirteen-uis-to-keep-in-step">Thirteen UIs to keep in step</h3>
+  <p>Every fix to the shared parts was easy. Everything else, every new screen and every change of pattern, had to happen thirteen times.</p>
+
+  <p>Read together, those aren’t four bugs. They’re one: every agent still had its own UI, and every one of them was ours to keep in step.</p>
+
+  <h2 id="agents-cant-work-in-silos">Agents can’t work in silos</h2>
+  <p>From there, we realised something bigger. These agents couldn’t keep working in silos.</p>
+  <p>The agentic world was moving in a different direction too. Tasks weren’t siloed any more, and agents needed to work together. Chat was emerging as the natural way to reach everything agents can do.</p>
+  <p>Looking back, the hint was there early. The campaign analyser already ended with “Want to dive deeper? Chat now”.</p>
+  <p>We sensed it, and started moving to generative UI right away: <a href="/writing/generative-ui-chat-engine/">Strive AI</a>, one chat that answers in generated UI.</p>
+
+  <Versus
+    left={{ title: 'Before · each agent in its own UI', tone: 'ghost', items: ['A new set of screens for every agent', 'Tasks split across separate agents', 'More UI to own with every agent'] }}
+    right={{ title: 'Now · one chat, agents together', stamp: 'the bet', tone: 'coral', items: ['Agents work together in one chat', 'Generated UI from our own components', 'Slots for big, dedicated tasks'] }}
+    alt="Before, each agent in its own UI: a new set of screens for every agent, tasks split across separate agents, and more UI to own with every new agent. Now, one chat where agents work together: it answers in generated UI built from our own components, and big, dedicated tasks open in slots."
+    caption="Agents stopped working alone, so their UIs couldn’t either."
+  />
+
+  <p>Nothing was thrown away. We knew some complex, dedicated tasks still need a much wider experience than a chat reply, like refreshing a piece of content or writing a draft. The draft view you saw earlier is one of them.</p>
+  <p>That’s how we landed on <strong>agent slots</strong>: agent views that open beside the thread, with one agent UI shared between chat and the standalone app. The design system became the base of the chat’s blocks, and the routes we’d added meant chat could deep-link straight into an agent.</p>
+  <p>Here’s the content refresher, before and after.</p>
+
+  <ShotCompare
+    id="slot"
+    before={{ label: 'Before · its own page', src: '/images/work/pluggable-agent-ui/refresh-queue.webp', width: 1800, height: 1064, alt: 'The content refresher on its own page: a count of blog posts ready for refresh, an add new blog post button, and a table of blog post URLs with their keywords, status, date and a view or review action.' }}
+    after={{ label: 'Now · a slot in chat', src: '/images/work/strive-ai/slot-panel.webp', width: 1800, height: 1069, alt: 'The same content refresher inside Strive AI: the chat on the left starts the blog refresh agent, and the same table of blog posts, keywords, status and review actions opens in a panel beside the thread.' }}
+  />
+
+  <blockquote>Nothing was thrown away. It moved into the chat.</blockquote>
+  <p>How we built that engine is a story of its own, and <a href="/writing/generative-ui-chat-engine/">it has its own post</a>.</p>
+
+  <h2 id="let-the-agent-write-its-own-ui">Let the agent write its own UI</h2>
+  <p>Chat composes UI from our own components, which is right where consistency matters. Reports needed something looser: big volumes of data, layouts nobody could predict, and a story you get in one scan.</p>
+  <p>So for reports we went one step further, and let the agent write the interface itself, as HTML in a sandboxed canvas.</p>
+
+  <TwoKindsOfUI />
+
+  <p>That one is <a href="/writing/strive-studio-frontend/">the story of Strive Studio</a>. For this post, what matters is the shape of the whole journey. My job moved from writing screens, to writing the rails others build on, to writing the taste an agent builds with.</p>
+  <p>And reports are only the start. Letting the agent write its own code is where we’re heading.</p>
+
+  <h2 id="what-id-keep">What I’d keep</h2>
+  <ol class="doodle-list doodle-list--num">
+    <li><strong>Compete where you can stand out.</strong> We put our effort into reliable agents, not into one more agent builder.</li>
+    <li><strong>Make the right way the short way.</strong> Builders called hooks instead of touching the store, because hooks were less work.</li>
+    <li><strong>The easiest path should be the consistent one.</strong> Only <code>ui-core</code> in the template meant consistency came for free.</li>
+    <li><strong>Relax the rails before they break.</strong> A content agent and a sales agent don’t need the same shape.</li>
+    <li><strong>Write the guide for every reader.</strong> People and coding agents read the same page, and agents follow it literally.</li>
+    <li><strong>Move the template the day the pattern moves.</strong> The scaffold is the doc people actually copy.</li>
+    <li><strong>Abstractions buy speed, not scale.</strong> Once agents had to work together, the answer was one surface, not a faster way to build many.</li>
+  </ol>
+
+  <h2 id="on-one-timeline">On one timeline</h2>
+
+  <ArcTimeline phases={phases} caption="From one UI per agent, built by people and then coding agents, to one chat with generated UI, to agents writing their own." />
+
+  <h2 id="whats-next">What’s next</h2>
+  <ul class="doodle-list">
+    <li><strong>Custom apps.</strong> People building their own apps inside Strive, not just reports, to solve their own problems and automate their work.</li>
+    <li><strong>Agents as a team.</strong> Agents working together, not in silos.</li>
+    <li><strong>A multiplayer agentic Marketing OS.</strong> Where all of it comes together.</li>
+  </ul>
+  <p>We started by making agent UIs cheap to build. We ended up letting the agent build them. We’re already in that final stage, and excited for what’s ahead.</p>
+
+  <h2 id="thanks">Thanks</h2>
+  <p>Agent UI on Strive is a team effort, from the workflows and agents underneath to the people who built on the scaffold and told us where it hurt. Thanks to our CTO for the idea of screens that started it all, and to the whole team at Strivelabs for building it together.</p>
+
+  <aside class="back-to-story callout wobbly wobbly--3" aria-label="The short version">
+    <Icon name="slides" />
+    <div>
+      <strong>The short version</strong>
+      <p>One slide per chapter, a drawing on each: <a href="/work/pluggable-agent-ui/">Pluggable UI for agents on the work page</a>.</p>
+    </div>
+  </aside>
+</PostLayout>
+
+<style>
+  .back-to-story { margin-top: var(--space-4); }
+</style>

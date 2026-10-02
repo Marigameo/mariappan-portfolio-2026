@@ -1,0 +1,291 @@
+---
+/* Pluggable UI for agents, told as my part in it: the scaffold, the hooks and the
+   rails that give the team (and later coding agents) plug and play UI for
+   their agents, then the turn towards one chat. Same deck as the Strive AI and
+   Strive Studio stories. The journey in full lives in
+   /writing/agent-ui-evolution/, linked from the big card at the end.
+   New figures live in ../../components/sketches/agentui/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import AgentUI from '../../components/sketches/AgentUI.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import ScaffoldTree from '../../components/sketches/agentui/ScaffoldTree.astro';
+import HookLayer from '../../components/sketches/agentui/HookLayer.astro';
+import CampaignAnalyser from '../../components/sketches/agentui/CampaignAnalyser.astro';
+import ContentFlow from '../../components/sketches/agentui/ContentFlow.astro';
+import ShotCompare from '../../components/sketches/agentui/ShotCompare.astro';
+import SketchLive from '../../components/SketchLive.astro';
+import AgentContext from '../../components/sketches/agentui/AgentContext.astro';
+
+const description = "Pluggable UI for agents: one command to a minimal, working agent UI on the Strive platform’s framework and UX guidelines, so builders write only the core logic. Then the turn towards one chat, told from the tooling side.";
+
+/* Who writes the UI, step by step. Shared with the blog's one-liner. */
+const ladder = [
+  { kicker: 'Scaffold', label: 'Developers write the screens', sub: 'on our hooks and ui-core', tone: '' },
+  { kicker: 'Routes', label: 'Coding agents write them too', sub: 'following the guide and a similar agent', tone: 'blue' },
+  { kicker: 'Gen UI chat', label: 'The agent composes our components', sub: 'one chat, generated UI', tone: 'teal' },
+  { kicker: 'Studio', label: 'The agent writes its own UI', sub: 'HTML in a sandboxed canvas', tone: 'coral' },
+];
+
+const lessons = [
+  { miss: 'Fit every agent into one template of screens.', lesson: 'Relax the rails before they break. A content agent and a sales agent don’t need the same shape.' },
+  { miss: 'Moved new agents to routes, but left the scaffold on the old screen tree.', lesson: 'The template is the real doc. Move it the day the pattern moves.' },
+  { miss: 'Let the guide live in three places, with hook names drifting apart.', lesson: 'One source of truth, for people and coding agents alike. Both follow a stale guide faithfully.' },
+  { miss: 'Kept making it cheaper to build one UI per agent.', lesson: 'Abstractions buy speed, not scale. Once agents had to work together, the answer was one surface.' },
+];
+---
+<WorkLayout
+  title="Pluggable UI for agents — scaffolds, hooks and rails for agent builders"
+  description={description}
+  ogDescription="Plug and play UI for agents: one command to a minimal, working agent UI on our framework and UX guidelines. The tooling side."
+  eyebrow="Strivelabs · Design engineer · 2025 → now"
+  heading="Pluggable UI for agents"
+  facts={[
+    { label: 'Role', value: 'Design engineer · frontend tooling' },
+    { label: 'Team', value: 'Concept by our CTO · framework by me · agents by the team' },
+    { label: 'Status', value: '~13+ agents, still growing · now slots in chat' },
+  ]}
+  link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
+  schema={{
+    name: 'Pluggable UI for agents',
+    url: 'https://strivelabs.ai/',
+    description: 'Plug and play UI for agents: a scaffold, platform hooks and a shared design system that give agent builders, and later coding agents, a minimal, working agent UI on the Strive platform’s framework and UX guidelines.',
+    inLanguage: 'en',
+    keywords: 'agent UI, developer experience, scaffolding, React hooks, design systems, coding agents, generative UI, design engineering, UX for AI',
+  }}
+>
+  <AgentUI slot="sketch" />
+
+  <Fragment slot="lede"><mark class="hl">Plug and play UI for agents</mark>: one command scaffolds a minimal, working agent UI on our platform framework and UX guidelines, with the internals out of sight. Builders write the core logic, and the agent is ready. The concept was our CTO’s; I built the framework, so the team, and later coding agents, could ship agent UIs fast.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The problem</h3>
+      <p>We were prototyping agents for early clients and friends, to validate ideas and find product-market fit. The backend already let builders plug a workflow together in no time. The UI had to plug in the same way.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The scaffold.</strong> <code>pnpm clone-agent-template</code>, which writes a working agent: a form, live progress and an output view.</li>
+          <li><strong>The abstractions.</strong> Our CTO’s concept of screens, formulated into a framework in React: three hooks for an agent’s whole run, so builders never touch the underlying details.</li>
+          <li><strong>Consistent by default.</strong> Only components from our registry and one icon set, so new agents look like ours from the first run.</li>
+          <li><strong>The doc and the rails.</strong> The handover guide, the route-based pattern, a shared layout and skills for coding agents.</li>
+        </ul>
+        <p>Our CTO proposed the concept of screens. The rest of the team used the framework to build their agents.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>~13+ agents built on it, and still growing. Its patterns now live on in chat, where agent views open as slots beside the thread.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Plug and play, for the UI too</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>In June 2025 we were prototyping agents for early clients and friends. Our backend let builders <strong>plug components into a DAG</strong> and have a workflow ready in no time.</li>
+        <li>Our CTO proposed <strong>screens</strong>: one standard set every agent shares, like configure, install and review. I formulated the framework around it, in React.</li>
+      </ul>
+      <Versus
+        left={{ title: 'The backend · already plug and play', tone: 'blue', items: ['Components dropped into a DAG', 'Almost anything n8n can do', 'A workflow ready in no time'] }}
+        right={{ title: 'The UI · the same idea', stamp: 'the tip', tone: 'coral', items: ['Screens every agent shares', 'Layouts and hooks from a scaffold', 'Builders wire data, nothing else'] }}
+        mid="&"
+        marks="dot"
+        alt="The backend was already plug and play: components dropped into a DAG, almost anything n8n can do, and a workflow ready in no time. The UI had to follow the same idea: screens every agent shares, layouts and hooks from a scaffold, and builders who only wire data."
+        caption="If the backend is plug and play, the UI should be too."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-scope">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Design call · scope</p><h2 id="s-scope">A builder for us, not for everyone</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>One day, we pictured it as <strong>a lightweight agent-builder framework</strong>, where anyone could build agents the way we did. But the agent-builder space was already crowded.</li>
+        <li>So we kept the DX internal, and put our effort into <strong>reliable agents that do the job, with no slop</strong>.</li>
+      </ul>
+      <Versus
+        left={{ title: 'A public agent builder', tone: 'ghost', items: ['A lightweight agent-builder framework for anyone', 'A crowded space already', 'No clear way to stand out'] }}
+        right={{ title: 'Internal DX · reliable agents', stamp: 'the call', tone: 'coral', items: ['Our own builders, moving fast', 'Interfaces we could open up later', 'Agents that do the job, with no slop'] }}
+        alt="The path not taken: a public agent builder, with a lightweight agent-builder framework for anyone, in a space that was already crowded and with no clear way to stand out. The call: internal developer experience and reliable agents, with our own builders moving fast, interfaces we could open up later, and agents that do the job with no slop."
+        caption="Compete on the agents, not on the builder."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-scaffold">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Foundations</p><h2 id="s-scaffold">One command to a working agent</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><code>pnpm clone-agent-template</code> writes an agent that <strong>already triggers a workflow, shows progress and renders output</strong>.</li>
+        <li>Builders only wire the backend’s data to the screens. <strong>No new components, no padding or colours</strong>, no React Router or Zustand to learn.</li>
+      </ul>
+      <SketchLive id="scaffold" live={{ kind: 'video', src: '/images/work/pluggable-agent-ui/scaffold-demo.mp4', poster: '/images/work/pluggable-agent-ui/scaffold-demo-poster.webp', width: 1600, height: 912, alt: 'Screen recording in VS Code: pnpm clone-agent-template runs in the terminal for a new LinkedIn post generator agent and prints its next steps, then the file tree opens the new agent folder under src/agents to show its constants and the three screens: LoadingScreen, OutputScreen and TriggerScreen.' }} caption="The real thing: one command, then the new agent’s folder, with its constants and three screens.">
+        <ScaffoldTree />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-hooks">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · abstractions</p><h2 id="s-hooks">The platform handles the complexity</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Three hooks cover an agent’s whole run: <strong>start a workflow, read its output, start over</strong>.</li>
+        <li>So builders never write to the store, poll a run or juggle execution IDs. <a href="/writing/agent-ui-evolution/#the-platform-handles-the-complexity">Agent-specific behaviour goes in callbacks</a>.</li>
+      </ul>
+      <HookLayer />
+    </section>
+
+    <section class="slide" aria-labelledby="s-consistent">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design call · consistency</p><h2 id="s-consistent">Consistent by default</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The template uses <strong>only our component registry (<code>ui-core</code>) and <code>lucide-react</code> icons</strong>, so a new agent looks like the rest of the platform from its first run.</li>
+        <li>Every agent moves through the same screens, from an empty state to the result. I designed the first ones as <strong>rapid prototypes, straight in code</strong>.</li>
+      </ul>
+      <CampaignAnalyser caption="Rapid prototypes, designed in code, on the same parts. The Google Ads campaign analyser, from an empty state to a full audit." />
+    </section>
+
+    <section class="slide" aria-labelledby="s-routes">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Design call · routes</p><h2 id="s-routes">Relax the rails</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Screens kept every agent inside <strong>one narrow UI model</strong>. Within a month it felt too restrictive: content agents needed rich, multi-view flows, while a sales agent needed far less.</li>
+        <li>So I relaxed it. With <strong>path-based routing</strong>, and a team now building with coding agents, each agent gets the interface its use case needs, instead of fitting into one model.</li>
+      </ul>
+      <ContentFlow />
+    </section>
+
+    <section class="slide" aria-labelledby="s-agents">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Coding agents</p><h2 id="s-agents">Rails a coding agent can follow</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>By then the team was <strong>writing frontend code heavily with coding agents</strong>. Rough prototypes needed only the design system and standard React guidelines.</li>
+        <li>So in July 2025 I added <strong>skills</strong>, one more layer of abstraction. Builders didn’t need the platform’s UI concepts in their heads, or in their coding agent’s context.</li>
+      </ul>
+      <AgentContext />
+    </section>
+
+    <section class="slide" aria-labelledby="s-turn">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">The turn</p><h2 id="s-turn">Agents can’t work in silos</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Tasks stopped being siloed, and <strong>agents needed to work together</strong>. Chat was emerging as the natural way in.</li>
+        <li>So we moved to generated UI in <a href="/work/strive-gen-ui-chat/">Strive AI</a> right away. Nothing was thrown away: <strong>big, dedicated tasks became agent slots</strong>, like refreshing content or writing a draft.</li>
+      </ul>
+      <ShotCompare
+        id="slot"
+        before={{ label: 'Before · its own page', src: '/images/work/pluggable-agent-ui/refresh-queue.webp', width: 1800, height: 1064, alt: 'The content refresher on its own page: a count of blog posts ready for refresh, an add new blog post button, and a table of blog post URLs with their keywords, status, date and a view or review action.' }}
+        after={{ label: 'Now · a slot in chat', src: '/images/work/strive-ai/slot-panel.webp', width: 1800, height: 1069, alt: 'The same content refresher inside Strive AI: the chat on the left starts the blog refresh agent, and the same table of blog posts, keywords, status and review actions opens in a panel beside the thread.' }}
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-today">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">Today</p><h2 id="s-today">Hand the UI to the agent</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Chat answers with <strong>our components</strong>, where consistency matters. Reports went further: in <a href="/work/report-builder/">Strive Studio</a>, the agent writes its own HTML.</li>
+        <li>Next, people build <strong>their own apps, not just reports</strong>, with agents working together as a team: a multiplayer agentic Marketing OS.</li>
+      </ul>
+      <StudioLoop
+        steps={ladder}
+        note="each step hands a little more of the UI to the agent"
+        caption="From writing screens to writing the rails."
+        alt="Four steps in who writes an agent’s UI. Scaffold: developers write the screens on our hooks and ui-core. Routes: coding agents write them too, following the guide and a similar agent. Gen UI chat: the agent composes our components in one chat. Studio: the agent writes its own UI as HTML in a sandboxed canvas. Each step hands a little more of the UI to the agent."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What thirteen agents taught us</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">We started by making agent UIs cheap to build. We ended up letting the agent build them.</blockquote>
+
+    <a class="deep-dive wobbly wobbly--2" href="/writing/agent-ui-evolution/">
+      <span class="deep-dive-shot taped ink-shot">
+        <AgentUI />
+      </span>
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="pen" />Deep dive · ~12 min read</span>
+        <strong>Who writes the UI? How agent interfaces evolved in Strive</strong>
+        <span class="deep-dive-sub">From a scaffold and three hooks, to rails for coding agents, to one chat, to agents writing their own UI.</span>
+        <span class="deep-dive-go">Read the full story<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+  </div>
+
+</WorkLayout>
+
+<style>
+  /* Same deck styles as the Strive AI and Strive Studio stories. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  .closer { margin-top: var(--space-5); }
+
+  /* The big card to the long-form write-up. The card sketch stands in for a photo. */
+  .deep-dive { display: block; margin-top: var(--space-4); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-shot { display: block; aspect-ratio: 16 / 7; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--paper); transform: rotate(-.6deg); transition: transform .25s ease; }
+  .deep-dive:hover .deep-dive-shot { transform: rotate(0); }
+  .deep-dive-shot :global(.sk) { display: block; width: 100%; height: 100%; }
+  .deep-dive-body { display: grid; gap: .45rem; padding: 1.2rem .3rem .2rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+</style>

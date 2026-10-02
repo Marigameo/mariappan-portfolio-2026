@@ -1,0 +1,56 @@
+---
+/* What a coding agent reads before it builds an agent's UI, gathered into one
+   result. Drawn like the report entry-points figure: inputs stacked on the
+   left, a bracket, one destination on the right. Coral is the agent-built
+   result. Stacked on a phone, with the bracket turning into a down arrow. */
+import Icon from '../../Icon.astro';
+
+const inputs = [
+  { label: 'The handover guide', sub: 'hooks, components, rules and pitfalls' },
+  { label: '@strivelabs/ui-core', sub: 'the design system, and nothing else' },
+  { label: 'A similar agent', sub: 'a working pattern to copy from' },
+  { label: 'The route recipe', sub: 'a layout, ROUTES and one App.tsx line' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ac" role="img" aria-label="Four things a coding agent reads before building an agent’s UI: the handover guide with the hooks, components, rules and pitfalls; the ui-core design system; a similar agent with a working pattern to copy; and the route recipe of a layout, a ROUTES object and one App.tsx line. Together they lead to a rich agent UI that looks like the rest of the platform, on the same hooks and components, with its own URL. The guide is written for people and coding agents alike.">
+    <ol class="ac-in">
+      {inputs.map((w, i) => (
+        <li class:list={['sk-box', 'sk-box--blue', `sk-lean-${i + 1}`]}>
+          <strong>{w.label}</strong>
+          <span>{w.sub}</span>
+        </li>
+      ))}
+    </ol>
+    <div class="ac-join" aria-hidden="true"><span></span><i class="sk-arrow"><Icon name="arrow-right" /></i></div>
+    <div class="ac-dest">
+      <div class="sk-box sk-box--coral sk-lean-2">
+        <p class="sk-hdr">Built by a coding agent</p>
+        <strong>A rich agent UI that looks like ours</strong>
+        <span>Same hooks, same components, its own URL.</span>
+      </div>
+      <p class="ac-note sk-hand">written for people and coding agents alike</p>
+    </div>
+  </div>
+  <figcaption>Good rails work for any builder. The guide, the design system and one good example were enough to keep a coding agent on them.</figcaption>
+</figure>
+
+<style>
+  .ac { display: grid; grid-template-columns: minmax(0, 1fr) 3rem minmax(0, 1fr); align-items: center; gap: .6rem; }
+  .ac-in { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+  .ac-in li, .ac-dest .sk-box { display: grid; gap: .1rem; padding: .55rem .75rem .6rem; }
+  .ac-in strong { font-family: var(--font-mono); font-size: .76rem; font-weight: 500; color: var(--ink); }
+  .ac-in span, .ac-dest span { font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .ac-join { position: relative; height: 85%; display: flex; align-items: center; justify-content: flex-end; }
+  .ac-join span { position: absolute; left: 0; top: 0; bottom: 0; width: .8rem; border: 1.5px dashed var(--ink-faint); border-left: 0; border-radius: 0 12px 12px 0; }
+  .ac-dest .sk-box { padding: .85rem .95rem .95rem; }
+  .ac-dest .sk-hdr { font-size: .64rem; color: var(--coral); margin-bottom: .35rem !important; }
+  .ac-dest strong { font-size: .95rem; font-weight: 500; color: var(--ink); }
+  .ac-note { margin: .9rem 0 0 !important; max-width: none; text-align: center; color: var(--coral); }
+  @media (max-width: 599px) {
+    .ac { grid-template-columns: 1fr; }
+    .ac-join { height: 2.4rem; justify-content: center; }
+    .ac-join span { display: none; }
+    .ac-join .sk-arrow { transform: rotate(90deg); }
+  }
+</style>
