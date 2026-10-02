@@ -26,28 +26,33 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
   </div>
 
   <Rail id="rail-work" icon="briefcase" title="Strivelabs" meta="Design engineer · 2024 → now" live>
-    <WorkCard {...strive} href="/work/strive-gen-ui-chat/" accent="coral" when="Generative UI chat" title="Strive AI" tags={['Gen UI', 'Streaming']}>
+    <WorkCard {...strive} href="/work/strive-gen-ui-chat/" accent="coral" title="Strive AI" tags={['Gen UI', 'Design system']}
+      part="The base, with our CTO: streaming engine, contracts, design system" shipped="Live · how customers use almost all of Strive">
       <StriveChat slot="sketch" />
-      The gateway to everything at Strivelabs, a chat agent that answers in interfaces, not paragraphs. I own the frontend, the streaming engine, and the design system it runs on.
+      A marketing chat that answers in live interfaces, not paragraphs.
     </WorkCard>
-    <WorkCard {...strive} href="/work/report-builder/" accent="blue" when="Report Builder" title="Strive Studio" tags={['Gen UI', 'Agentic']}>
+    <WorkCard {...strive} href="/work/report-builder/" accent="blue" title="Strive Studio" tags={['Gen UI', 'Design in code']}
+      part="Studio designed in code, the report skill, the sandbox bridge" shipped="Live for all customers · one of the most used">
       <ReportBuilder slot="sketch" />
-      Lovable for marketing, before artifacts were a thing. Chat to build live reports wired to your warehouse — no static exports, no dashboards to babysit.
+      Lovable for marketing reports, with numbers that never go stale.
     </WorkCard>
-    <WorkCard {...freshworks} href="/work/freshworks-marketplace/" accent="teal" when="Vue 3 migration" title="Freshworks Marketplace" tags={['Vue 3', 'Monorepo']}>
+    <WorkCard {...freshworks} href="/work/freshworks-marketplace/" accent="teal" title="Freshworks Marketplace" tags={['Vue 3', 'Accessibility']}
+      part="The pitch, the plan, the POC and the hands-on migration" shipped="In stages, before Vue 2’s end of life · WCAG 2.1 AA">
       <img slot="sketch" style="object-position: left top" src="/images/work/freshworks-marketplace/marketplace-home.webp" alt="The revamped Freshworks Marketplace: a search bar, product filters on the left, and a grid of popular apps." width="1800" height="890" loading="lazy" decoding="async">
-      One codebase, two very different experiences, and a quarter to move both onto Vue 3 — while shipping a revamp on top of it.
+      One codebase, two experiences, moved to Vue 3 with a revamp on top.
     </WorkCard>
   </Rail>
 
   <Rail id="rail-indie" icon="lightbulb" title="Indie builds" meta="Side quests, solo. Idea → pixels → payments.">
-    <WorkCard href="/work/thatpam/" accent="teal" when="Solo build · Experiment" title="தட்பம்" titleLang="ta" tags={['Ed-tech', '0 → 1']}>
+    <WorkCard href="/work/thatpam/" accent="teal" title="தட்பம்" titleLang="ta" titleNote="thatpam, Tamil for “coolness”" tags={['Teaching', '0 → 1']}
+      part="All of it, from the pixels to the payments" shipped="Paused · the students went pro" shippedLabel="Status">
       <Thatpam slot="sketch" />
-      A one-person ed-tech experiment born in lockdown — startup life, taught cohorts, multiple hats. Cohorts are paused now, but the students went pro. Lots of fun & lessons to carry forward.
+      Frontend, taught in Tamil, in tiny cohorts.
     </WorkCard>
-    <WorkCard href="/work/dfordoubts/" accent="violet" when="OPERATIONAL . EDTECH" title="DforDoubts" tags={['E-learning', 'Full-stack']}>
+    <WorkCard href="/work/dfordoubts/" accent="violet" title="DforDoubts" tags={['Full-stack', 'Payments']}
+      part="Solo developer, from a one-line brief to payments" shipped="Live, now a registered company">
       <DforDoubts slot="sketch" />
-      A live e-learning platform that helps learners find experts, and answers. Took it from idea to pixels to production.
+      An e-learning marketplace for educators and learners.
     </WorkCard>
   </Rail>
 

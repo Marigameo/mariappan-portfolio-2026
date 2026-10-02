@@ -16,6 +16,8 @@ interface Props {
   heading: string;
   /** BCP-47 language of the heading when it is not English (e.g. "ta"). */
   headingLang?: string;
+  /** A quiet gloss beside a non-English heading, e.g. its reading and meaning. */
+  headingNote?: string;
   /** Small mono label above the heading, e.g. "Strive Labs · 2024 → now". */
   eyebrow?: string;
   facts: { label: string; value: string }[];
@@ -31,7 +33,7 @@ interface Props {
   };
 }
 
-const { title, description, ogDescription, heading, headingLang, eyebrow, facts, link, schema } = Astro.props;
+const { title, description, ogDescription, heading, headingLang, headingNote, eyebrow, facts, link, schema } = Astro.props;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -50,7 +52,7 @@ const jsonLd = {
     <header class="page-hero">
       <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-      <h1 lang={headingLang}>{heading}</h1>
+      <h1 lang={headingLang}>{heading}{headingNote && <span class="title-note" lang="en">{headingNote}</span>}</h1>
       <p class="lede"><slot name="lede" /></p>
       <dl class="facts">
         {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
