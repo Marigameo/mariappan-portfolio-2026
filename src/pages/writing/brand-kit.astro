@@ -1,0 +1,292 @@
+---
+/* The brand kit extractor story: how a client's nudge became a design spec read off every
+   customer's website at onboarding, kept as one knowledge-base file any agent
+   can read, with reports as its first reader. Reading a brand off a page, the
+   checks that keep a guessed colour out, why the kit is a file and not a prompt,
+   and the page where customers make it theirs. The short, picture-first version
+   is the project page at /work/brand-kit/. New figures live in
+   ../../components/sketches/brandkit/; the rest are reused from studio/ and genui/.
+   The Claude Design screenshot lives in /public/images/writing/brand-kit/. */
+import PostLayout from '../../layouts/PostLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Snippet from '../../components/sketches/genui/Snippet.astro';
+import Whiteboard from '../../components/sketches/genui/Whiteboard.astro';
+import ProseTable from '../../components/sketches/genui/ProseTable.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import ThemeSwap from '../../components/sketches/studio/ThemeSwap.astro';
+import BrandKitHub from '../../components/sketches/brandkit/BrandKitHub.astro';
+import KitPage from '../../components/sketches/brandkit/KitPage.astro';
+import SketchLive from '../../components/SketchLive.astro';
+
+const description =
+  'How a client’s nudge became a brand kit for the whole Strive platform: reading a brand off a customer’s website, the checks that keep a guessed colour out of a report, why the kit is a file and not a prompt, and the page where customers make it their own.';
+
+/* The shape of a kit, pre-escaped so comments and strings can carry a colour.
+   A made-up brand, not a real customer's file. */
+const kit = `<span class="c">---</span>
+display_name: Design Page
+source: extracted                       <span class="c"># default · extracted · custom</span>
+extracted_from: yourbrand.com
+theme: light
+brand_primary_hex: <span class="s">&quot;#4F46E5&quot;</span>
+brand_primary_rgb: <span class="s">&quot;79, 70, 229&quot;</span>        <span class="c"># derived on the server</span>
+brand_primary_strong_hex: <span class="s">&quot;#3932A5&quot;</span>     <span class="c"># derived, 28% darker</span>
+brand_secondary_hex: <span class="s">&quot;#0EA5E9&quot;</span>
+brand_accent_hex: null                  <span class="c"># dropped: too close to primary</span>
+background_hex: <span class="s">&quot;#FAFAFF&quot;</span>
+text_hex: <span class="s">&quot;#1E1B4B&quot;</span>
+font_primary: Manrope
+font_heading: null                      <span class="c"># empty → Inter</span>
+border_radius: lg
+logo_url: https://yourbrand.com/logo.svg
+<span class="c">---</span>
+<span class="k">## Colors</span>
+Indigo leads every call to action, and nothing else.
+Sky blue supports charts, never buttons.`;
+
+/* The extraction, in the same four-box shape as the report loop. */
+const pipeline = [
+  { kicker: 'Onboarding', label: 'A domain on record', sub: 'from the brand details we already keep', tone: '' },
+  { kicker: 'Scrape', label: 'The raw page', sub: 'head, styles and stylesheets intact', tone: 'blue' },
+  { kicker: 'One LLM call', label: 'A spec in a strict schema', sub: 'tokens, plus written usage rules', tone: 'coral' },
+  { kicker: 'Checks', label: 'Saved, or not at all', sub: 'as brand/design.md in the knowledge base', tone: 'teal' },
+];
+
+const gates = [
+  { kicker: 'Shape', label: 'A strict schema', sub: 'parsed, then validated again on the server', tone: '' },
+  { kicker: 'Confidence', label: 'Is it sure?', sub: 'a low-confidence primary is thrown away', tone: 'blue' },
+  { kicker: 'Grounding', label: 'Is it on the page?', sub: 'every colour checked against the census', tone: 'teal' },
+  { kicker: 'Contrast', label: 'Does it hold on white?', sub: '2.2:1, or a darker shade, or nothing', tone: 'coral' },
+];
+---
+<PostLayout
+  title="Read once, used everywhere: a brand kit for every Strive customer"
+  description={description}
+  ogDescription="How a client’s nudge became a brand kit for the whole Strive platform: read off a customer’s website once, checked on the server, and kept as a file any agent can read."
+  heading="Read once, used everywhere: a brand kit for every Strive customer"
+  eyebrow="Strivelabs engineering · Design systems"
+  published="2026-10-03"
+  publishedLabel="October 2026"
+  keywords="brand kit, design systems, design tokens, brand extraction, LLM, knowledge base, generative UI, AI reports, personalisation, design engineering, UX for AI, Strive"
+  facts={[
+    { label: 'Stack', value: 'React 19 · TypeScript · scrape.do · Firecrawl · one LLM call' },
+    { label: 'Read', value: '~10 minutes' },
+  ]}
+>
+  <Fragment slot="lede">How a client’s nudge turned into a <mark class="hl">brand kit</mark> for the whole platform. Reading a brand off a website, the checks that keep a guessed colour out of a report, why the kit is a file and not a prompt, and the page where customers make it their own.</Fragment>
+
+  <p>The <strong>brand kit extractor</strong> is how Strive learns what a customer’s brand looks like. During onboarding we read their website, and keep its colours, type, corners and the rules for using them as one file in our knowledge base. Any agent can read it. Reports were the first to.</p>
+  <blockquote>Extract once, read anywhere.</blockquote>
+
+  <h2 id="a-little-bit-of-backstory">A little bit of backstory</h2>
+  <p>Every report <a href="/writing/strive-studio-frontend/">Strive Studio</a> wrote came out in our own brand: orange <code>#F97316</code>, slate surfaces and Inter. Not by choice. The report skill’s 411-line prompt had them hardcoded.</p>
+  <p>Then one of our clients told us, a little vaguely, that the artifacts they’d made with Claude looked better than our reports. On checking, we felt that applying their brand context would close most of that gap.</p>
+  <p>So I benchmarked how a similar product builds its brand kits, read through the open-source tools, and designed the experience end to end, from onboarding to the page where a customer edits their kit. I got to build all of it too: the client, the server, the design and the prompt engineering in the skill. Our CTO reviewed the code and helped sharpen the backend along the way.</p>
+
+  <ThemeSwap caption="What we were after. Drag to compare: the same report in our orange, then in a customer’s own brand kit." />
+
+  <h2 id="the-one-liner">The one-liner</h2>
+  <p>Read the customer’s website once, at onboarding. Turn it into a small design spec with one LLM call, check every value on the server, and save it as a knowledge-base file that any agent can read.</p>
+
+  <StudioLoop
+    steps={pipeline}
+    note="any agent reads it, like any other file in the knowledge base"
+    caption="Two phases meet at one file. Something writes it; anything can read it."
+    alt="Onboarding already keeps the customer’s domain in their brand details. The server scrapes the raw page with its head, styles and stylesheets intact. One LLM call turns it into a spec in a strict schema: tokens, plus written usage rules. A set of checks then saves it as brand/design.md in the knowledge base, or saves nothing at all. Any agent reads that file like any other file in the knowledge base."
+  />
+
+  <p>It’s a plain server pipeline rather than one more agent task in onboarding. Nothing unpredictable sits between the scrape and the write, and the same code serves onboarding and the refresh button.</p>
+
+  <h2 id="a-platform-module-not-a-reports-feature">A platform module, not a reports feature</h2>
+  <p>It would have been easy to build this as a report setting. But nothing about a brand is specific to reports. A chat answer, an artifact or an email should look like the customer just as much.</p>
+  <p>So the kit is a standard knowledge-base file, <code>brand/design.md</code>, and the file is the entire interface.</p>
+  <ul class="doodle-list">
+    <li><strong>The writer and the reader never meet.</strong> A seeder writes the file, and the report agent reads it from its sandbox like any other knowledge-base file. The seeder can fail, or never run, and reports still work.</li>
+    <li><strong>Brand, not craft.</strong> The kit holds brand tokens only. Layout archetypes, KPI recipes, grids and chart conventions stay in the report skill.</li>
+    <li><strong>Ready for the next reader.</strong> Logo, dark logo and favicon live in the kit even though reports don’t draw them yet, so emails, embeds or decks can pick them up without another schema change.</li>
+  </ul>
+
+  <BrandKitHub detailed />
+
+  <h2 id="reading-a-brand-off-a-website">Reading a brand off a website</h2>
+  <p>This was the hardest part to get right, and where I learned the most.</p>
+
+  <h3 id="let-the-model-read">Let the model read, not a parser</h3>
+  <p>The obvious first idea is to parse the CSS. It finds hundreds of hex codes, and it can’t tell a button fill from a border. A model can, if you tell it where to look.</p>
+  <p>So one LLM call reads the raw page and its stylesheets, with a confidence rule borrowed from <a href="https://github.com/dembrandt/dembrandt">dembrandt</a>: colours on the logo or a call to action count most, the nav counts a little, and browser chrome doesn’t count at all.</p>
+
+  <Versus
+    left={{ title: 'CSS heuristics', tone: 'ghost', items: ['Hundreds of hex codes per page', 'A button fill looks like a border', 'No idea how the brand uses them'] }}
+    right={{ title: 'One LLM call · anchored', stamp: 'the call', tone: 'coral', items: ['Reads the page and its stylesheets', 'Weighs the logo and CTAs over the chrome', 'Writes how the brand uses each colour'] }}
+    alt="The path not taken: CSS heuristics, which find hundreds of hex codes per page, can’t tell a button fill from a border, and have no idea how the brand uses them. The call: one LLM call, anchored by evidence, which reads the page and its stylesheets, weighs the logo and calls to action over the chrome, and writes how the brand uses each colour."
+    caption="A parser counts colours. A model can tell you which one is the brand."
+  />
+
+  <h3 id="count-every-colour">Count every colour on the page</h3>
+  <p>My first pipeline sliced the page before the model saw it. That held until one of our clients’ sites, built on Framer, shipped a 616 KB <code>&lt;head&gt;</code> inside a 2.9 MB document. The slice sent the model <strong>zero colours</strong>, and it confidently invented a jade green for a blue brand.</p>
+  <p>So the server now counts every literal colour (<code>#hex</code>, <code>rgb()</code> and <code>hsl()</code>) across the whole document and its stylesheets, and hands the model the ranked list. The head and body are found in the full page and trimmed afterwards, never sliced first. The same count later became the evidence every returned colour is checked against.</p>
+  <blockquote>Hand the model the evidence, not a prefix.</blockquote>
+
+  <h3 id="logos-hide-in-odd-places">Logos hide in odd places</h3>
+  <p>Sites that draw their mark as an inline SVG have no logo-like <code>&lt;img&gt;</code> at all. So logo candidates are ranked: the site’s own JSON-LD <code>Organization.logo</code> first, then logo-like images, then <code>og:image</code> last, with a warning in the prompt that share images are usually banners.</p>
+
+  <h3 id="fetching-the-page-as-it-really-is">Fetching the page as it really is</h3>
+  <p>Our existing scrape action cleaned the HTML, which stripped exactly the <code>&lt;head&gt;</code>, styles and stylesheet links this needed. So I added a second action, <code>scrape_raw_website</code>, to the same app, reached through the app manager like every other app action. Importing the scraper straight into the server would have been quicker, and would have broken the boundary the apps exist for.</p>
+  <p>Under it, <a href="https://scrape.do/">scrape.do</a> with rendering goes first: it runs the page’s JavaScript, only bills for successful calls, and worked out about four to five times cheaper. <a href="https://www.firecrawl.dev/">Firecrawl</a> is the fallback.</p>
+
+  <h3 id="what-we-passed-on">What we passed on</h3>
+  <p>A few ready-made options came close. None of them was the whole answer.</p>
+
+  <ProseTable caption="Ready-made options we weighed">
+    <thead>
+      <tr><th scope="col">Option</th><th scope="col">What it does</th><th scope="col">Why we passed</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row"><a href="https://github.com/dembrandt/dembrandt">dembrandt</a></th><td>An open-source CLI that extracts a site’s tokens and can write a DESIGN.md</td><td>Needs a Playwright browser our server doesn’t have, and still needs an LLM pass after. Its confidence tiers and DESIGN.md sections inspired our prompt</td></tr>
+      <tr><th scope="row"><a href="https://www.context.dev/">Context.dev</a></th><td>A brand API: logo, colours and fonts from a domain</td><td>Pricing was fine. Coverage of long-tail small-business domains was the worry, and it didn’t beat a live scrape on reliability. A trial is parked for later</td></tr>
+      <tr><th scope="row"><a href="https://brandfetch.com/">Brandfetch</a></th><td>Logo and colour lookup by domain</td><td>No usage rules, and one more vendor for a subset of what one LLM call already returns</td></tr>
+    </tbody>
+  </ProseTable>
+
+  <h2 id="a-guessed-colour-never-ships">A guessed colour never ships</h2>
+  <p>A wrong brand colour is worse than no brand colour. Our orange at least looks intentional. So between the model and the file sit a few checks, and any of them can say no.</p>
+
+  <StudioLoop
+    steps={gates}
+    note="any check says no: nothing is written, and our default stays"
+    caption="Better our orange than a wrong brand."
+    alt="Four checks between the model and the file. Shape: a strict schema, parsed and then validated again on the server. Confidence: a primary colour the model isn’t sure of is thrown away. Grounding: every colour is checked against the count of colours on the page. Contrast: the primary must hold 2.2:1 on white, or a darker shade is tried, or nothing is saved. If any check says no, nothing is written and the default kit stays."
+  />
+
+  <ul class="doodle-list">
+    <li><strong>Never trust the model’s arithmetic.</strong> It returns one hex. The server derives the RGB triple the charts need and the darker shade for hovers.</li>
+    <li><strong>Make honesty cheap.</strong> The schema makes the model say which tier its primary came from, and the prompt tells it a low answer is discarded, not shipped.</li>
+    <li><strong>Every colour must exist on the page.</strong> An invented primary rejects the whole extraction. An invented secondary is dropped, and the rest of the kit still lands.</li>
+    <li><strong>Contrast catches the classic mistake.</strong> Picking a near-white background as “the brand colour” fails on white, so a darker shade is tried, and if that fails too, nothing is written.</li>
+  </ul>
+
+  <h3 id="degrade-dont-reject">Degrade, don’t reject</h3>
+  <p>The same rules run again on every write to the file, whether it comes from the seeder, the editor or the API. That way a report can trust the kit at rest, instead of every reader re-checking it.</p>
+  <ul class="doodle-list">
+    <li><strong>Series colours.</strong> A secondary or accent must hold on white and differ from the colours already in a slot. Otherwise it’s stored as empty, and charts fall back to their own palette.</li>
+    <li><strong>The surface pair.</strong> Background and text are adopted together: only on a light site, only when the background stays close to white, and only when the text clears WCAG AA on it. Any failure drops both, so a report never prints dark ink on dark paper.</li>
+    <li><strong>Fonts.</strong> Family names are limited to letters, numbers and spaces, because a report copies them into CSS, a script and a Google Fonts URL. Anything else drops to the default.</li>
+    <li><strong>The primary.</strong> The one value that can refuse a save, because every accent and chart stroke depends on it.</li>
+  </ul>
+  <blockquote>Degrade, don’t reject. Only the primary can fail a write.</blockquote>
+
+  <h3 id="the-stylesheet-fetch">The stylesheet fetch</h3>
+  <p>One miss worth owning. My first version had our server fetch the stylesheet links it found in the scraped page. Those URLs come from a page the customer controls, and the bytes flowed into the prompt and could come back out through the saved usage rules.</p>
+  <p>Now both fetches happen inside the scrape action, so the server never fetches a page-supplied URL itself. Every stylesheet link also passes the same URL safety check our blog crawler already used, which blocks private ranges and cloud metadata endpoints.</p>
+
+  <h3 id="customised-kits-are-left-alone">Customised kits are left alone</h3>
+  <p>A kit marked <code>custom</code> is never overwritten by an automated run. It’s checked before the scrape, so a customer who has made it theirs costs us nothing, and checked again inside the writer. Every rejection path is tested, along with the status it records.</p>
+
+  <h2 id="a-file-not-a-prompt">A file, not a prompt</h2>
+  <p>My first version composed the report skill per customer when it loaded, baking their tokens into the prompt. It worked, until I remembered skills are also mirrored into each sandbox as <code>SKILL.md</code>. The copy the agent could see showed our orange, while the one we served showed the customer’s brand.</p>
+  <p>So the skill went back to being one static document, with one new section: read <code>knowledge_hub/brand/design.md</code> before writing the report, and here’s how to map what you find.</p>
+
+  <Versus
+    left={{ title: 'Composed per customer', tone: 'ghost', items: ['Tokens baked into the prompt at load', 'The sandbox copy says something else', 'A function’s output, hard to review'] }}
+    right={{ title: 'A static skill reads the file', stamp: 'the fix', tone: 'coral', items: ['One document, the same for everyone', 'The kit read like any other file', 'Diffable, with a default for every gap'] }}
+    alt="The first version: a skill composed per customer, with tokens baked into the prompt at load, a sandbox copy that says something else, and a function’s output that is hard to review. The fix: a static skill that reads the file, one document the same for everyone, with the kit read like any other file, diffable, and with a default for every gap."
+    caption="Deliver context the way you deliver knowledge: as a file the agent reads."
+  />
+
+  <p>The section is explicit about the three cases, because a vague instruction here means a report that stalls or asks:</p>
+  <ul class="doodle-list">
+    <li><strong>No file, or an unreadable one.</strong> Use the documented defaults. Never block, never ask, never mention it in the report.</li>
+    <li><strong>A token is empty.</strong> Default that token only. The kit isn’t all or nothing.</li>
+    <li><strong>A token has a value.</strong> Apply it as it is. Values in the file are already checked, so don’t lighten or “improve” them.</li>
+  </ul>
+  <p>Tokens drive the report’s CSS. The prose under them, in <code>## Colors</code>, <code>## Typography</code> and <code>## Logo usage</code> sections loosely following the DESIGN.md convention, tells the agent how the brand actually uses them. Here’s the shape of a kit:</p>
+
+  <Snippet caption="brand/design.md, roughly" code={kit} editor />
+
+  <p>The usage rules apply inside the skill’s own visual contract, which wins on a conflict. Brand colour still goes in four places and no more, and no customer rule can widen that.</p>
+
+  <h2 id="make-it-the-platforms">Make it the platform’s, not the feature’s</h2>
+  <p>The backend went through the same lesson. My first cut gave the feature its own router, its own status endpoint and an environment flag. Each was reasonable on its own. Together they made a brand kit a special case.</p>
+  <ul class="doodle-list">
+    <li><strong>One seed route.</strong> <code>POST /knowledge_hub/seed</code> takes a path, and a path-to-seeder map does the rest. The next derived file is a registry entry, not a router.</li>
+    <li><strong>Status lives on the file.</strong> The seeder lays down our default kit first, then marks its row processing, processed or failed. No side channel: the knowledge base reads it from the row it already has.</li>
+    <li><strong>Outcomes, not errors.</strong> A rejected extraction is a 200 with a status like <code>rejected_low_contrast</code>. Nothing broke, and the customer keeps the kit they had. The client turns each status into a plain-language toast.</li>
+    <li><strong>Safety in the seeder, not a flag.</strong> It ships on for everyone. A customised kit is never overwritten without <code>force</code>, and every failure leaves the default in place.</li>
+  </ul>
+  <p>Onboarding runs it as a background job, which retries only infrastructure failures, never a rejection, since that would repeat the same answer at full cost. A refresh from the page runs it on demand, in about 15 to 40 seconds.</p>
+
+  <h2 id="the-page-where-a-brand-becomes-yours">The page where a brand becomes yours</h2>
+  <p>This was my favourite part to design. A kit read off a website is a good first guess. The page is where a customer makes it right.</p>
+  <p>I designed the page the way I’d whiteboard today: in code, in Claude Design, with our design system loaded and a live report beside every tweak.</p>
+
+  <Whiteboard
+    src="/images/writing/brand-kit/claude-design.webp"
+    width={2400}
+    height={1252}
+    ink={false}
+    alt="A Claude Design session exploring the brand kit editor. On the left, the chat with Claude, working on the StriveLabs design system and summarising its latest fixes to button text and the report preview. On the right, the canvas shows a design page live for agents: a palette of primary, secondary, accent, background and text colours, each with a note on where it is used and an add colour button, typeface pickers for headings and body, a refresh from website button, and a live preview with report, email and kit tabs showing a paid performance report in the brand’s colours. Controls above the canvas switch the default surface, the preview width and guidelines."
+    caption="Modern whiteboarding: exploring the kit editor in Claude Design, with report, email and kit previews a step ahead of what shipped."
+  />
+
+
+  <SketchLive id="kit" live={{ kind: 'image', src: '/images/work/brand-kit/design-page.webp', width: 1800, height: 1342, alt: 'The Design Page in Strive’s knowledge base, for a customised kit. On the left, colour rows with swatches and hex fields: an orange primary, a magenta secondary, an empty accent, a white background and a near-black text colour; then type and shape rows with Figtree for headings, Inter for the body, a medium corner radius and a light theme, and the start of a logos section. On the right, a live preview of a weekly Google Ads recap wears those colours: an orange rule and kicker, a spend card with an orange trend line, a weekly signups chart with blue, magenta and orange bars, and a spend-by-campaign table. A line at the bottom says the preview updates as you edit, and applies to new reports after saving.' }} caption="The real thing: a customised kit on the left, and a sample report wearing it on the right.">
+    <KitPage detailed />
+  </SketchLive>
+
+  <ul class="doodle-list">
+    <li><strong>A live preview beside the form.</strong> A sample report repaints in your colours, fonts and corners as you edit, and new reports pick them up once you save.</li>
+    <li><strong>Every token explains itself.</strong> A short help tip on each row says what reports use it for.</li>
+    <li><strong>Honest about the default.</strong> Until a kit is extracted, the page says plainly that this is the platform’s design system, not your brand. If extraction failed, an amber note says so and points to editing or retrying.</li>
+    <li><strong>Edited inline, like Notion.</strong> Every property is a row, with a native colour picker beside a hex input, drafting into a floating save bar. The usage rules are editable too.</li>
+    <li><strong>The preview tells the truth.</strong> It runs the same checks as the server, so a token that won’t survive is shown as kept but not applied, instead of painted. A dark site previews light, because reports are light for now.</li>
+    <li><strong>The form can’t let through what the server will refuse.</strong> Hex, font and URL fields validate inline, and a pasted URL without a scheme becomes <code>https://</code> on blur.</li>
+    <li><strong>Refresh asks first.</strong> If the kit carries your edits, refreshing from the website confirms before overwriting them. Leaving with unsaved edits asks too.</li>
+  </ul>
+  <p>Adding a second standardised page also forced a small client refactor: six places hardcoded the brand-details page, and now one registry does. It fixed a latent bug on the way, where the new page’s placeholder row would have opened brand details instead.</p>
+  <p>Existing customers weren’t backfilled. They start on the default kit, and can fill theirs in from this page, or refresh it from their website, whenever they like.</p>
+
+  <h2 id="what-id-keep">What I’d keep</h2>
+  <ol class="doodle-list doodle-list--num">
+    <li><strong>Build it for the platform, ship it for one reader.</strong> Reports read the kit first; anything else can read the same file tomorrow.</li>
+    <li><strong>Measure the whole page before you trim it.</strong> A prefix once handed the model zero colours, and it filled the gap with a guess.</li>
+    <li><strong>Let the model judge, never let it count.</strong> It picks the brand colour. The server derives the rest and checks it.</li>
+    <li><strong>Degrade, don’t reject.</strong> One bad token drops to empty, and the rest of the brand still lands.</li>
+    <li><strong>Context belongs in a file, not a prompt.</strong> The skill stays one reviewable document, and the agent reads the kit like any other knowledge.</li>
+    <li><strong>Make the preview tell the truth.</strong> Run the server’s checks in the editor, so what you see is what the report gets.</li>
+  </ol>
+
+  <h2 id="whats-next">What’s next</h2>
+  <ul class="doodle-list">
+    <li><strong>More readers.</strong> Chat answers, artifacts, emails and decks can pick up the kit the day they need it.</li>
+    <li><strong>Logos in reports.</strong> Once we have stable public asset URLs to point at.</li>
+    <li><strong>Dark reports.</strong> The theme is stored, but reports stay light for now. Dark means re-deriving the whole neutral ramp.</li>
+    <li><strong>Saying when a brand was dropped.</strong> On the report itself, not only on the design page.</li>
+    <li><strong>Safer concurrent saves.</strong> Two tabs still resolve last write wins.</li>
+  </ul>
+  <p>Reports just happened to ask first. Every surface that comes after gets the brand for free.</p>
+
+  <h2 id="thanks">Thanks</h2>
+  <p>Thanks to the client whose nudge started this, and to our CTO for the careful reviews that made the backend sharper than I’d have managed alone. And to the whole team at Strivelabs, for building the platform this plugs into.</p>
+
+  <aside class="back-to-story callout wobbly wobbly--3" aria-label="The short version">
+    <Icon name="slides" />
+    <div>
+      <strong>The short version</strong>
+      <p>One slide per chapter, a drawing on each: <a href="/work/brand-kit/">Brand kit extractor on the work page</a>.</p>
+    </div>
+  </aside>
+
+  <!-- The Claude Design screenshot opens in here. -->
+  <dialog class="lightbox" data-lightbox aria-label="Claude Design screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img />
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</PostLayout>
+
+<style>
+  .back-to-story { margin-top: var(--space-4); }
+</style>

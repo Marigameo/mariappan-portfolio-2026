@@ -11,6 +11,7 @@ import WorkCard from './WorkCard.astro';
 import StriveChat from '../sketches/StriveChat.astro';
 import ReportBuilder from '../sketches/ReportBuilder.astro';
 import AgentUI from '../sketches/AgentUI.astro';
+import BrandKit from '../sketches/BrandKit.astro';
 import Thatpam from '../sketches/Thatpam.astro';
 import DforDoubts from '../sketches/DforDoubts.astro';
 import Stash from './Stash.astro';
@@ -38,6 +39,11 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
       part="Studio designed in code, the report skill, the sandbox bridge" shipped="Live for all customers · one of the most used">
       <ReportBuilder slot="sketch" />
       Lovable for marketing reports, with numbers that never go stale.
+    </WorkCard>
+    <WorkCard {...strive} href="/work/brand-kit/" accent="teal" title="Brand kit extractor" tags={['Design systems', 'LLM']}
+      part="End to end: the experience, the extraction, the kit page and the skill" shipped="Live for all customers · reports read it first">
+      <BrandKit slot="sketch" />
+      Read a customer’s brand off their website once, and every surface after that can wear it.
     </WorkCard>
     <WorkCard {...strive} href="/work/pluggable-agent-ui/" accent="violet" title="Pluggable UI for agents" tags={['DX', 'Agent UI']}
       part="The framework on our CTO’s screens idea: scaffold, hooks, docs" shipped="~13+ agents, still growing · now slots in chat">

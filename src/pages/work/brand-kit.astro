@@ -1,0 +1,246 @@
+---
+/* Brand kit extractor, told as my part in it: a design spec read off every customer's
+   website at onboarding, kept as one knowledge-base file any agent can read,
+   with reports as its first reader. Same deck as the Strive AI, Strive Studio
+   and pluggable UI stories. The journey in full lives in /writing/brand-kit/,
+   linked from the big card at the end. New figures live in
+   ../../components/sketches/brandkit/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import BrandKit from '../../components/sketches/BrandKit.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import ThemeSwap from '../../components/sketches/studio/ThemeSwap.astro';
+import BrandKitHub from '../../components/sketches/brandkit/BrandKitHub.astro';
+import KitPage from '../../components/sketches/brandkit/KitPage.astro';
+import SketchLive from '../../components/SketchLive.astro';
+
+const description = "Brand kit extractor: Strive reads each customer’s website at onboarding and keeps their colours, type and usage rules as one knowledge-base file any agent can read. Reports were the first reader. Designed and built end to end, from the extraction to the page where customers edit it.";
+
+/* The four checks between the model and the file. Shared with the blog. */
+const gates = [
+  { kicker: 'Shape', label: 'A strict schema', sub: 'parsed, then validated again', tone: '' },
+  { kicker: 'Confidence', label: 'Is it sure?', sub: 'a low-confidence primary is thrown away', tone: 'blue' },
+  { kicker: 'Grounding', label: 'Is it on the page?', sub: 'every colour checked against the count', tone: 'teal' },
+  { kicker: 'Contrast', label: 'Does it hold on white?', sub: '2.2:1, or a darker shade, or nothing', tone: 'coral' },
+];
+
+const lessons = [
+  { miss: 'Sliced the page before reading it. One site sent the model zero colours, and it invented a jade green for a blue brand.', lesson: 'Measure the whole page, then trim. Hand the model the evidence, not a prefix.' },
+  { miss: 'Composed the report skill per customer. The copy in the sandbox and the one we served drifted apart.', lesson: 'Context belongs in a file the agent reads. Keep the prompt one reviewable document.' },
+  { miss: 'Let our server fetch stylesheet links that the scraped page supplied.', lesson: 'A page-supplied URL is untrusted. Fetch it behind the app boundary, through the same safety check.' },
+  { miss: 'Gave the feature its own router, status endpoint and environment flag.', lesson: 'Make it the platform’s, not the feature’s. One seed route, status on the file, safety in the seeder.' },
+];
+---
+<WorkLayout
+  title="Brand kit extractor — a design system for every customer, read from their website"
+  description={description}
+  ogDescription="Strive reads each customer’s website at onboarding and keeps their brand as one file any agent can read. Reports were the first reader."
+  eyebrow="Strivelabs · Design engineer · Aug 2026"
+  heading="Brand kit extractor"
+  facts={[
+    { label: 'Role', value: 'Design engineer · end to end' },
+    { label: 'Team', value: 'Designed and built by me · code review by our CTO' },
+    { label: 'Status', value: 'Live for all customers' },
+  ]}
+  link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
+  schema={{
+    name: 'Brand kit extractor — per-customer design system',
+    url: 'https://strivelabs.ai/',
+    description: 'A design spec read off each customer’s website at onboarding: one LLM call anchored by a count of every colour on the page, server-side checks that keep a guessed colour out, and one knowledge-base file any agent can read, with reports as the first reader.',
+    inLanguage: 'en',
+    keywords: 'brand kit, design systems, design tokens, brand extraction, LLM, knowledge base, generative UI, personalisation, design engineering, UX for AI',
+  }}
+>
+  <BrandKit slot="sketch" />
+
+  <Fragment slot="lede">Share your website at onboarding, and Strive works out <mark class="hl">your brand kit</mark>: colours, type, corners and the rules for how you use them. It lives in the knowledge base as one file you can edit, so anything the agent makes can look like yours. Reports were the first to use it.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The problem</h3>
+      <p>Every report came out in Strive’s orange, slate and Inter, because the report skill hardcoded them. Then a client told us the artifacts they’d made with Claude looked better, and we felt their brand was the gap.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The experience.</strong> Benchmarked how a similar product builds brand kits, and designed the flow from onboarding to the page where a customer edits theirs.</li>
+          <li><strong>The extraction.</strong> A raw scrape, one LLM call anchored by a count of every colour on the page, and checks that keep a guessed colour out.</li>
+          <li><strong>The kit page.</strong> Inline editing, a preview that runs the server’s own checks, and a refresh from the website.</li>
+          <li><strong>The skill.</strong> The prompt engineering that teaches the report agent to read the kit, with a default for every gap.</li>
+        </ul>
+        <p>Our CTO reviewed the code and helped sharpen the backend.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>Live for all customers. New customers get a kit at onboarding; existing ones start on the default and fill theirs in from the design page. Chat, artifacts and more can read the same file the day they need it.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Every report wore our orange</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The <a href="/work/report-builder/">Strive Studio</a> report skill <strong>hardcoded our orange, slate and Inter</strong>, so every customer’s report looked like ours.</li>
+        <li>Then a client said the artifacts they’d made with Claude looked better. On checking, we felt <strong>their brand was the gap</strong>.</li>
+      </ul>
+      <ThemeSwap caption="Drag to compare. The same report in our orange, then in a customer’s own brand kit." />
+    </section>
+
+    <section class="slide" aria-labelledby="s-bet">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">The bet</p><h2 id="s-bet">Extract once, read anywhere</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Nothing about a brand is specific to reports. So we read it off the customer’s website at onboarding, and keep it as <strong>one file in the knowledge base</strong>.</li>
+        <li>Reports read it first. Chat, artifacts or emails can <a href="/writing/brand-kit/#a-platform-module-not-a-reports-feature">read the same file</a> the day they need it.</li>
+      </ul>
+      <BrandKitHub />
+    </section>
+
+    <section class="slide" aria-labelledby="s-read">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Design call · extraction</p><h2 id="s-read">Let the model read, then check it</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Parsing CSS finds <strong>hundreds of hex codes</strong>, and can’t tell a button from a border. A model can.</li>
+        <li>So one LLM call reads the raw page, handed <strong>a count of every colour on it</strong>, so the real brand colour can’t be missed.</li>
+      </ul>
+      <Versus
+        left={{ title: 'CSS heuristics', tone: 'ghost', items: ['Hundreds of hex codes per page', 'A button fill looks like a border', 'No idea how the brand uses them'] }}
+        right={{ title: 'One LLM call · anchored', stamp: 'the call', tone: 'coral', items: ['Reads the page and its stylesheets', 'Weighs the logo and CTAs over the chrome', 'Writes how the brand uses each colour'] }}
+        alt="The path not taken: CSS heuristics, which find hundreds of hex codes per page, can’t tell a button fill from a border, and have no idea how the brand uses them. The call: one LLM call, anchored by evidence, which reads the page and its stylesheets, weighs the logo and calls to action over the chrome, and writes how the brand uses each colour."
+        caption="A parser counts colours. A model can tell you which one is the brand."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-trust">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Trust</p><h2 id="s-trust">A guessed colour never ships</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The model says how sure it is, and <strong>every colour it returns must exist on the page</strong> and hold up on white.</li>
+        <li>If any check says no, nothing is written. <a href="/writing/brand-kit/#a-guessed-colour-never-ships">The customer keeps our default</a> rather than a wrong brand.</li>
+      </ul>
+      <StudioLoop
+        steps={gates}
+        note="any check says no: nothing is written, and our default stays"
+        caption="Better our orange than a wrong brand."
+        alt="Four checks between the model and the file. Shape: a strict schema, parsed and then validated again. Confidence: a primary colour the model isn’t sure of is thrown away. Grounding: every colour is checked against the count of colours on the page. Contrast: the primary must hold 2.2:1 on white, or a darker shade is tried, or nothing is saved. If any check says no, nothing is written and the default kit stays."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-file">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design call · delivery</p><h2 id="s-file">A file, not a prompt</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I first composed the report skill per customer. <strong>The copy in the sandbox and the one we served drifted apart.</strong></li>
+        <li>So the skill stays one static document that tells the agent to <strong>read the kit like any other file</strong>, with a default for every gap.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Composed per customer', tone: 'ghost', items: ['Tokens baked into the prompt at load', 'The sandbox copy says something else', 'A function’s output, hard to review'] }}
+        right={{ title: 'A static skill reads the file', stamp: 'the fix', tone: 'coral', items: ['One document, the same for everyone', 'The kit read like any other file', 'A default for every gap'] }}
+        alt="The first version: a skill composed per customer, with tokens baked into the prompt at load, a sandbox copy that says something else, and a function’s output that is hard to review. The fix: a static skill that reads the file, one document the same for everyone, with the kit read like any other file and a default for every gap."
+        caption="Deliver context the way you deliver knowledge: as a file the agent reads."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-page">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Design call · the page</p><h2 id="s-page">Your brand, editable</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The kit has its own knowledge-base page. Every token is <strong>an inline row</strong>, beside <strong>a live report preview</strong> that repaints as you edit.</li>
+        <li>The preview runs <strong>the same checks as the server</strong>, so what you see is what a report gets. A refresh never overwrites your edits without asking.</li>
+      </ul>
+      <SketchLive id="kit" live={{ kind: 'image', src: '/images/work/brand-kit/design-page.webp', width: 1800, height: 1342, alt: 'The Design Page in Strive’s knowledge base, for a customised kit. On the left, colour rows with swatches and hex fields: an orange primary, a magenta secondary, an empty accent, a white background and a near-black text colour; then type and shape rows with Figtree for headings, Inter for the body, a medium corner radius and a light theme, and the start of a logos section. On the right, a live preview of a weekly Google Ads recap wears those colours: an orange rule and kicker, a spend card with an orange trend line, a weekly signups chart with blue, magenta and orange bars, and a spend-by-campaign table. A line at the bottom says the preview updates as you edit, and applies to new reports after saving.' }} caption="The real thing: a customised kit on the left, and a sample report wearing it on the right.">
+        <KitPage />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What the first brands taught us</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">Read the brand once, at onboarding. Every surface that comes after gets it for free.</blockquote>
+
+    <a class="deep-dive wobbly wobbly--2" href="/writing/brand-kit/">
+      <span class="deep-dive-shot taped ink-shot">
+        <BrandKit />
+      </span>
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="pen" />Deep dive · ~10 min read</span>
+        <strong>Read once, used everywhere: a brand kit for every Strive customer</strong>
+        <span class="deep-dive-sub">Reading a brand off a website, the checks that keep a guessed colour out, why it’s a file and not a prompt, and the page that makes it yours.</span>
+        <span class="deep-dive-go">Read the full story<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+  </div>
+
+</WorkLayout>
+
+<style>
+  /* Same deck styles as the Strive AI, Strive Studio and pluggable UI stories. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  .closer { margin-top: var(--space-5); }
+
+  /* The big card to the long-form write-up. The card sketch stands in for a photo. */
+  .deep-dive { display: block; margin-top: var(--space-4); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-shot { display: block; aspect-ratio: 16 / 7; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--paper); transform: rotate(-.6deg); transition: transform .25s ease; }
+  .deep-dive:hover .deep-dive-shot { transform: rotate(0); }
+  .deep-dive-shot :global(.sk) { display: block; width: 100%; height: 100%; }
+  .deep-dive-body { display: grid; gap: .45rem; padding: 1.2rem .3rem .2rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .3rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+</style>

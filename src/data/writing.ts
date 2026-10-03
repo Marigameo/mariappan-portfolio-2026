@@ -36,6 +36,7 @@ export const shelves: Shelf[] = [
       { href: '/writing/generative-ui-chat-engine/', title: 'From answers to UI: how we built Strive’s generative UI engine', spine: "Strive's gen-UI engine", colour: 'violet', bh: '14rem', bw: '3.2rem' },
       { href: '/writing/strive-studio-frontend/', title: 'Building live reports inside Strive: the story of Strive Studio', spine: 'Building Strive Studio', colour: 'blue', bh: '13rem', bw: '2.9rem' },
       { href: '/writing/agent-ui-evolution/', title: 'Who writes the UI? How agent interfaces evolved in Strive', spine: 'Who writes the UI?', colour: 'teal', bh: '13.5rem', bw: '2.8rem' },
+      { href: '/writing/brand-kit/', title: 'Read once, used everywhere: a brand kit for every Strive customer', spine: 'A brand kit, read once', colour: 'coral', bh: '12.5rem', bw: '2.8rem' },
     ],
   },
   {

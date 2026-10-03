@@ -1,0 +1,179 @@
+---
+/* The knowledge-base page where a brand kit lives, drawn after the real one with
+   a made-up brand: every token as an editable row on the left, a live report
+   preview on the right that repaints as you edit, and a floating save bar. The
+   chrome is tokens; only the swatches and the preview carry the made-up brand's
+   hex values, the way the real preview shows a light report in either theme.
+   `detailed` adds the header with refresh, and the logo and usage-rules
+   sections, for the blog. Two columns, stacked on a phone. */
+import Icon from '../../Icon.astro';
+
+interface Props { detailed?: boolean; caption?: string }
+const {
+  detailed = false,
+  caption = 'Edit a token, and the report beside it repaints. What you see is what a report gets.',
+} = Astro.props;
+
+const brand = { primary: '#4F46E5', secondary: '#0EA5E9' };
+const colours = [
+  { name: 'Primary', hex: brand.primary },
+  { name: 'Secondary', hex: brand.secondary },
+  { name: 'Accent', hex: '' },
+  { name: 'Background', hex: '#FAFAFF' },
+  { name: 'Text', hex: '#1E1B4B' },
+];
+const shape = [
+  { name: 'Heading font', value: 'Manrope' },
+  { name: 'Body font', value: 'Inter' },
+  { name: 'Corner radius', value: 'lg', select: true },
+  { name: 'Theme', value: 'Light', select: true },
+];
+const bars = [
+  { h: 34, c: '' }, { h: 58, c: brand.secondary }, { h: 26, c: '' }, { h: 48, c: '' },
+  { h: 80, c: brand.primary }, { h: 40, c: '' }, { h: 96, c: brand.primary },
+];
+const rules = ['Indigo leads every call to action, and nothing else.', 'Sky blue supports charts, never buttons.'];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet kp" role="img" aria-label={`A wireframe of the brand kit page in the knowledge base, for a made-up brand.${detailed ? ' A header names the design page, with a refresh from website button.' : ''} On the left, every token is an editable row: primary indigo and secondary sky blue swatches with hex fields, an empty accent, a near-white background and a deep navy text colour, then the heading and body fonts, the corner radius and the theme.${detailed ? ' Below them sit the logo and the usage rules, written as plain sentences.' : ''} On the right, a live preview shows a small report in the same colours: a header with an indigo rule, a spend card with an indigo trend line, and a weekly bar chart with sky blue and indigo bars. A floating save bar shows two unsaved changes.`}>
+    {detailed && (
+      <div class="kp-top">
+        <span class="kp-icon" aria-hidden="true"><Icon name="book" /></span>
+        <strong class="kp-title">Design Page</strong>
+        <span class="kp-chip">Brand</span>
+        <span class="kp-btn">↻ Refresh from website</span>
+      </div>
+    )}
+
+    <div class="kp-grid">
+      <div class="sk-box sk-lean-1 kp-form">
+        <p class="sk-hdr kp-hdr">Colours</p>
+        <ul class="kp-rows">
+          {colours.map((c) => (
+            <li>
+              <span class="kp-label">{c.name}</span>
+              <span class:list={['kp-sw', !c.hex && 'kp-sw--empty']} style={c.hex ? `background:${c.hex}` : undefined}>{!c.hex && '–'}</span>
+              <code class:list={['kp-field', !c.hex && 'kp-field--empty']}>{c.hex || 'empty'}</code>
+            </li>
+          ))}
+        </ul>
+        <p class="sk-hdr kp-hdr kp-hdr--gap">Type and shape</p>
+        <ul class="kp-rows">
+          {shape.map((s) => (
+            <li>
+              <span class="kp-label">{s.name}</span>
+              <span class:list={['kp-field', 'kp-field--wide', s.select && 'kp-field--select']}>{s.value}</span>
+            </li>
+          ))}
+        </ul>
+        {detailed && (
+          <>
+            <p class="sk-hdr kp-hdr kp-hdr--gap">Logos</p>
+            <ul class="kp-rows">
+              <li><span class="kp-label">Logo</span><span class="kp-logo" aria-hidden="true"><i></i></span><code class="kp-field">yourbrand.com/logo.svg</code></li>
+            </ul>
+            <p class="sk-hdr kp-hdr kp-hdr--gap">Usage rules <span class="kp-edit"><Icon name="pen" /> Edit</span></p>
+            <ul class="kp-rules">{rules.map((r) => <li>{r}</li>)}</ul>
+          </>
+        )}
+      </div>
+
+      <div class="sk-box sk-lean-2 kp-preview">
+        <p class="sk-hdr kp-hdr">Live preview</p>
+        <div class="kp-report">
+          <div class="kp-card kp-head">
+            <span class="kp-kicker">Weekly recap</span>
+            <strong>Google Ads, this week</strong>
+            <span class="kp-pills"><i>Last 7 days</i><i class="kp-live">● Live</i></span>
+          </div>
+          <div class="kp-card">
+            <span class="kp-kicker kp-kicker--soft">Total spend</span>
+            <strong class="kp-big">$48,210</strong>
+            <svg class="kp-spark" viewBox="0 0 120 30" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 26 L20 22 L38 24 L58 15 L78 18 L98 8 L120 4 L120 30 L0 30 Z" fill={brand.primary} fill-opacity=".1" />
+              <path d="M0 26 L20 22 L38 24 L58 15 L78 18 L98 8 L120 4" fill="none" stroke={brand.primary} stroke-width="1.6" />
+            </svg>
+          </div>
+          <div class="kp-card">
+            <span class="kp-kicker kp-kicker--soft">Weekly signups</span>
+            <span class="kp-bars" aria-hidden="true">{bars.map((b) => <i style={`height:${b.h}%;${b.c ? `background:${b.c}` : ''}`}></i>)}</span>
+          </div>
+        </div>
+        <p class="kp-foot"><span aria-hidden="true">●</span> Live · updates as you edit</p>
+      </div>
+    </div>
+
+    <div class="kp-bar">
+      <span>2 unsaved changes</span>
+      <span class="kp-bar-ghost">Discard</span>
+      <span class="kp-bar-save">Save</span>
+    </div>
+  </div>
+  <p class="kp-note sk-hand" aria-hidden="true"><Icon name="arrow-curly" /> the preview runs the server’s checks</p>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .kp { display: grid; gap: 1rem; }
+  .kp-top { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; }
+  .kp-icon { display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 7px; background: var(--coral-soft); color: var(--coral); }
+  .kp-icon :global(.doodle) { width: 1rem; height: 1rem; }
+  .kp-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 400; color: var(--ink); }
+  .kp-chip { padding: .1rem .5rem; border: 1px solid var(--line); border-radius: 6px; font-size: .68rem; color: var(--ink-soft); }
+  .kp-btn { margin-left: auto; padding: .3rem .7rem; border-radius: 7px; font-size: .74rem; font-weight: 500; color: var(--paper); background: var(--ink); }
+
+  .kp-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1rem; align-items: start; }
+  .kp-hdr { margin-bottom: .5rem !important; font-size: .62rem; }
+  .kp-hdr--gap { margin-top: 1rem !important; }
+
+  .kp-form { padding: .8rem .9rem .9rem; }
+  .kp-rows { list-style: none; margin: 0; padding: 0; display: grid; }
+  .kp-rows li { display: flex; align-items: center; gap: .5rem; padding: .32rem 0; border-top: 1px dashed var(--line); }
+  .kp-rows li:first-child { border-top: 0; }
+  .kp-label { flex: 0 0 6.2rem; font-size: .78rem; color: var(--ink-soft); }
+  .kp-sw { flex: none; display: grid; place-items: center; width: 1.3rem; height: 1.3rem; border: 1.5px solid var(--ink); border-radius: 5px 6px 4px 6px; font-size: .7rem; color: var(--ink-faint); }
+  .kp-sw--empty { border: 1.5px solid var(--line); }
+  .kp-field { flex: 1; min-width: 0; padding: .2rem .45rem; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-family: var(--font-mono); font-size: .68rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kp-field--empty { color: var(--ink-faint); }
+  .kp-field--wide { font-family: var(--font-body); font-size: .74rem; }
+  .kp-field--select { flex: 0 0 5rem; position: relative; }
+  .kp-field--select::after { content: "⌄"; position: absolute; right: .45rem; top: -.05rem; color: var(--ink-faint); }
+  .kp-logo { flex: none; display: grid; place-items: center; width: 1.3rem; height: 1.3rem; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); }
+  .kp-logo i { width: .65rem; height: .65rem; border-radius: 2px; background: #4F46E5; }
+  .kp-edit { float: right; display: inline-flex; align-items: center; gap: .25rem; letter-spacing: .08em; color: var(--ink-soft); }
+  .kp-edit :global(.doodle) { width: .8rem; height: .8rem; }
+  .kp-rules { margin: 0; padding-left: 1.1rem; display: grid; gap: .2rem; }
+  .kp-rules li { font-size: .76rem; line-height: 1.4; color: var(--ink-soft); }
+
+  /* The preview is a light product surface on purpose, like the real one. */
+  .kp-preview { padding: .8rem .9rem .7rem; }
+  .kp-report { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; padding: .5rem; border-radius: 8px; background: #FAFAFF; }
+  .kp-card { display: grid; gap: .2rem; align-content: start; padding: .5rem .55rem; border: 1px solid #e4e2f3; border-radius: 9px; background: #fff; color: #1E1B4B; }
+  .kp-head { grid-column: 1 / -1; border-top: 3px solid #4F46E5; }
+  .kp-head strong { font-size: .82rem; font-weight: 600; }
+  .kp-kicker { font-family: var(--font-mono); font-size: .52rem; letter-spacing: .12em; text-transform: uppercase; color: #4F46E5; }
+  .kp-kicker--soft { color: #6b6b80; }
+  .kp-pills { display: flex; gap: .3rem; }
+  .kp-pills i { padding: .05rem .35rem; border-radius: 4px; background: #f1f0f8; font-style: normal; font-size: .55rem; color: #55536e; }
+  .kp-pills .kp-live { background: #e8f7ee; color: #1f8a4c; }
+  .kp-big { font-size: .95rem; font-weight: 700; }
+  .kp-spark { width: 100%; height: 1.6rem; }
+  .kp-bars { display: flex; align-items: flex-end; gap: .2rem; height: 2.6rem; }
+  .kp-bars i { flex: 1; border-radius: 2px 2px 0 0; background: #ecebf6; }
+  .kp-foot { margin: .55rem 0 0 !important; max-width: none; font-size: .7rem; color: var(--ink-faint); }
+  .kp-foot span { color: var(--teal); }
+
+  /* The floating save bar, inked like a toast. */
+  .kp-bar { justify-self: center; display: flex; align-items: center; gap: .7rem; padding: .4rem .5rem .4rem .9rem; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--paper-2); box-shadow: 3px 3px 0 var(--shadow-ink); font-size: .76rem; color: var(--ink-soft); }
+  .kp-bar-ghost { color: var(--ink-faint); }
+  .kp-bar-save { padding: .2rem .8rem; border-radius: 999px; background: var(--coral); color: #fff; font-weight: 500; }
+
+  .kp-note { margin: .7rem 0 0 !important; max-width: none; text-align: right; }
+  .kp-note :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1); }
+
+  @media (max-width: 639px) {
+    .kp-grid { grid-template-columns: 1fr; }
+    .kp-btn { margin-left: 0; }
+    .kp-note { text-align: center; }
+  }
+</style>

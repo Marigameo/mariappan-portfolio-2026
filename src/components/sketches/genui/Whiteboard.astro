@@ -4,7 +4,8 @@
    with a glowing pill over the bottom-right corner to say so — the small line of
    handwriting it replaced was easy to read past.
    `.ink-shot` is what flips the scan in dark mode; the dialog carries the matching
-   `.lightbox--ink` so the enlarged copy looks the same. */
+   `.lightbox--ink` so the enlarged copy looks the same. Pass `ink={false}` for a
+   screenshot, which keeps its own colours in both themes. */
 import Icon from '../../Icon.astro';
 
 interface Props {
@@ -13,12 +14,14 @@ interface Props {
   width: number;
   height: number;
   caption: string;
+  /** A photographed whiteboard (flipped in dark mode); false for a screenshot. */
+  ink?: boolean;
 }
 
-const { src, alt, width, height, caption } = Astro.props;
+const { src, alt, width, height, caption, ink = true } = Astro.props;
 ---
 <figure class="sk-fig wb">
-  <button class="wb-shot ink-shot" type="button" data-full={src} aria-label={`View full size: ${alt}`}>
+  <button class:list={['wb-shot', ink && 'ink-shot']} type="button" data-full={src} aria-label={`View full size: ${alt}`}>
     <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
     <!-- Decorative: the button's aria-label already says what this does. -->
     <span class="wb-cta" aria-hidden="true"><Icon name="zoom-in" />Tap to enlarge</span>
