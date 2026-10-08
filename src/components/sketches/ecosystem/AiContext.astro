@@ -1,0 +1,62 @@
+---
+/* Where the agents' context comes from: three inputs from the code (blue), one
+   script (coral), and the files it writes (teal, stamped "generated"), each with
+   the one job it does, taken from the doc's "For AI agents" page. Three columns
+   with arrows, stacked on a phone with the arrows turned down. */
+import Icon from '../../Icon.astro';
+
+const inputs = ['Component source', 'Storybook stories', 'Platform token CSS'];
+const files = [
+  { name: 'llms.txt', job: 'a tiny router: which file answers which question' },
+  { name: 'DESIGN.md', job: 'the rules and tokens, in prose an agent can quote' },
+  { name: 'components/<slug>.md', job: 'one page per component, with its props' },
+  { name: 'components.json', job: 'the catalogue, for tools and validators' },
+  { name: 'tokens.json', job: 'every token, for quick lookups' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ac" role="img" aria-label="Three inputs from the code: the component source, the Storybook stories and the platform token CSS. They feed one script, gen-ai-context: run it and commit the result. It writes the files for coding agents, all generated: llms.txt, a tiny router that says which file answers which question; DESIGN.md, the rules and tokens in prose an agent can quote; one markdown page per component with its props; components.json, the catalogue for tools and validators; and tokens.json, every token for quick lookups. A handwritten note says: don’t hand-edit, regenerate.">
+    <ul class="ac-in">
+      {inputs.map((x, i) => <li class:list={['sk-box', 'sk-box--blue', `sk-lean-${i + 1}`]}>{x}</li>)}
+    </ul>
+    <span class="sk-arrow ac-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+    <div class="sk-box sk-box--coral sk-lean-2 ac-script">
+      <p class="sk-hdr">One script</p>
+      <code>gen-ai-context</code>
+      <span>run it, commit the result</span>
+    </div>
+    <span class="sk-arrow ac-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+    <div class="sk-box sk-box--teal sk-lean-3 ac-out">
+      <p class="sk-hdr ac-hdr">For coding agents<span class="ac-stamp">generated</span></p>
+      <ul>
+        {files.map((f) => <li><code>{f.name}</code><span>{f.job}</span></li>)}
+      </ul>
+    </div>
+    <p class="sk-hand ac-note"><Icon name="arrow-curly" /> don’t hand-edit. regenerate.</p>
+  </div>
+  <figcaption>Generated from the code, so it can’t drift from the code.</figcaption>
+</figure>
+
+<style>
+  .ac { display: grid; grid-template-columns: .8fr auto .8fr auto 1.5fr; align-items: center; gap: .7rem; }
+  .ac-in { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+  .ac-in li { padding: .5rem .7rem; font-size: .82rem; color: var(--ink); }
+  .ac-arrow :global(.doodle) { width: 1.3rem; height: 1.3rem; }
+  .ac-script { display: grid; gap: .3rem; padding: .75rem .85rem .85rem; }
+  .ac-script .sk-hdr, .ac-out .sk-hdr { margin: 0 !important; font-size: .62rem; color: var(--c); }
+  .ac-script code { font-family: var(--font-mono); font-size: .82rem; color: var(--ink); background: none; padding: 0; }
+  .ac-script span { font-size: .74rem; color: var(--ink-faint); }
+  .ac-out { padding: .75rem .9rem .85rem; }
+  .ac-hdr { display: flex; align-items: center; gap: .5rem; }
+  .ac-stamp { font-family: var(--font-hand); font-size: 1.05rem; letter-spacing: 0; text-transform: none; color: var(--teal); padding: 0 .4rem; border: 1.5px solid currentColor; border-radius: 6px; transform: rotate(-6deg); }
+  .ac-out ul { list-style: none; margin: .55rem 0 0; padding: 0; display: grid; gap: .45rem; }
+  .ac-out li { display: grid; gap: .05rem; font-size: .76rem; line-height: 1.35; color: var(--ink-faint); }
+  .ac-out code { font-family: var(--font-mono); font-size: .74rem; color: var(--ink); background: none; padding: 0; }
+  .ac-note { grid-column: 1 / -1; margin: .4rem 0 0 !important; max-width: none; text-align: right; }
+  .ac-note :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1); }
+  @media (max-width: 719px) {
+    .ac { grid-template-columns: 1fr; }
+    .ac-arrow { justify-self: center; transform: rotate(90deg); }
+    .ac-note { text-align: center; }
+  }
+</style>

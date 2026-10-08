@@ -806,6 +806,12 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .sl-live { margin: 0; max-width: none; }
 .sl-frame { position: relative; overflow: hidden; background: #fff; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
 .sl-frame img, .sl-frame video { display: block; width: 100%; height: auto; }
+/* A tall page that scrolls in place: readable width, short frame, a fade at the foot. */
+.sl-frame--scroll::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3.5rem; background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff); pointer-events: none; }
+.sl-scroll { max-height: min(34rem, 70vh); overflow-y: auto; overscroll-behavior: contain; }
+.sl-scroll:focus-visible { outline: 2px solid var(--coral); outline-offset: -2px; }
+.sl-hint { margin: .6rem .4rem 0 !important; max-width: none; text-align: right; color: var(--coral); }
+.sl-hint + figcaption { margin-top: .4rem; }
 .sl-play { position: absolute; right: .7rem; bottom: .7rem; padding: .35rem .8rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: rgba(20, 20, 24, .78); border: 0; border-radius: 999px; cursor: pointer; }
 .sl-play:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
 .sl-live figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }

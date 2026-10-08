@@ -1,0 +1,251 @@
+---
+/* The component registry story: how patterns we kept rebuilding across
+   experiments became two workspace packages, @strivelabs/ui-core and
+   @strivelabs/ui-blocks, that now power the whole platform client. The split,
+   why I never published them, picking a bundler for a library rather than an
+   app, and the swap from tsup to tsdown. Its wider setting, from the first theme
+   to the design system doc, is the story at /work/design-ecosystem/. Figures are
+   reused from strive/, studio/ and genui/; the Storybook screenshot is shared with
+   that story, in /public/images/work/design-ecosystem/. */
+import PostLayout from '../../layouts/PostLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Snippet from '../../components/sketches/genui/Snippet.astro';
+import ProseTable from '../../components/sketches/genui/ProseTable.astro';
+import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import FoundationStack from '../../components/sketches/strive/FoundationStack.astro';
+import SketchLive from '../../components/SketchLive.astro';
+
+const description =
+  'How patterns we kept rebuilding across experiments became a small component registry that now powers the whole Strive platform: why it’s two packages and not one, why I never published it, picking a bundler for a library rather than an app, and swapping that bundler when its maintenance slowed.';
+
+/* The build config, pre-escaped so comments and strings can carry a colour.
+   The shape of the thing from the tsup days, not the production file. */
+const config = `<span class="k">import</span> { defineConfig } <span class="k">from</span> <span class="s">&quot;tsup&quot;</span>;
+
+<span class="k">export default</span> defineConfig({
+  entry: [<span class="s">&quot;src/index.ts&quot;</span>],
+  format: [<span class="s">&quot;cjs&quot;</span>, <span class="s">&quot;esm&quot;</span>],         <span class="c">// both, for every kind of consumer</span>
+  dts: <span class="k">true</span>,                      <span class="c">// types come for free</span>
+  external: [<span class="s">&quot;react&quot;</span>, <span class="s">&quot;react-dom&quot;</span>],  <span class="c">// the app brings its own React</span>
+  treeshake: <span class="k">true</span>,
+  sourcemap: <span class="k">true</span>,
+  clean: <span class="k">true</span>,
+});`;
+
+/* The registry, bottom up as slabs (top first here). What we borrowed is ghosted. */
+const layers = [
+  { name: 'Apps & agents', pkg: 'the platform client', eg: ['Chat', 'Studio', 'Agent screens'], tone: 'violet' },
+  { name: 'Blocks', pkg: '@strivelabs/ui-blocks', eg: ['Rich text editor', 'Command search', 'Drag and drop', 'Charts', 'Chat pieces'], tone: 'teal' },
+  { name: 'Primitives', pkg: '@strivelabs/ui-core', eg: ['Button', 'Input', 'Dialog', 'Table', 'Dropdown', 'cn()'], tone: 'blue' },
+  { name: 'Borrowed, not reinvented', pkg: '', eg: ['shadcn/ui', 'Radix', 'Tailwind preset'], tone: 'ghost' },
+];
+
+const loop = [
+  { kicker: 'Edit', label: 'Change a component', sub: 'in ui-core or ui-blocks', tone: '' },
+  { kicker: 'Watch', label: 'The package rebuilds', sub: 'a dev script, in watch mode', tone: 'blue' },
+  { kicker: 'Workspace', label: 'Every app picks it up', sub: 'linked with workspace:*, nothing published', tone: 'teal' },
+  { kicker: 'Storybook', label: 'See what already exists', sub: 'and build the next one on its own', tone: 'coral' },
+];
+
+const phases = [
+  {
+    label: 'Before · patterns rebuilt per experiment',
+    tone: 'grey' as const,
+    items: [
+      { period: '2024', title: 'A theme, not a library', detail: 'Micro-SaaS apps and our website on shadcn/ui, a Tailwind preset and a short doc of base design choices' },
+      { period: 'Before Apr 2025', title: 'Agents, and the same parts again', detail: 'A marketing assistant, an engineering Slack partner and more, each rebuilding similar buttons, editors and chat bits' },
+    ],
+  },
+  {
+    label: 'The registry · two packages in the workspace',
+    tone: 'coral' as const,
+    items: [
+      { period: 'Apr 2025', title: 'Two shelves', detail: '@strivelabs/ui-core for primitives and @strivelabs/ui-blocks for composed blocks, bundled with tsup', pivot: true },
+      { period: 'Jun 2025', title: 'The agent scaffold', detail: 'Every new agent UI built from ui-core only, so it looks like the platform on its first run' },
+      { period: 'Aug 2025', title: 'tsup to tsdown', detail: 'Moved to a drop-in replacement built on Rolldown, in about a minute' },
+    ],
+  },
+  {
+    label: 'After · the platform runs on it',
+    tone: 'teal' as const,
+    items: [
+      { period: 'Sep 2025 →', title: 'Chat blocks join the shelf', detail: 'The generative UI chat’s components live in ui-blocks' },
+      { period: 'Today', title: 'A to Z', detail: 'The whole platform client, with a Storybook playground beside it' },
+    ],
+  },
+];
+---
+<PostLayout
+  title="Bones before blocks: how I set up Strive’s component registry"
+  description={description}
+  ogDescription="How patterns we kept rebuilding became two small workspace packages that now power the whole Strive platform, and how I picked, and later swapped, the bundler behind them."
+  heading="Bones before blocks: how I set up Strive’s component registry"
+  eyebrow="Strivelabs engineering · Design systems"
+  published="2026-10-08"
+  publishedLabel="October 2026"
+  keywords="component registry, component library, design systems, shadcn/ui, Radix, Tailwind, tsup, tsdown, Rolldown, monorepo, pnpm workspaces, Turborepo, React, design engineering, Strive"
+  facts={[
+    { label: 'Stack', value: 'React · TypeScript · shadcn/ui · Radix · Tailwind · tsdown · pnpm + Turborepo' },
+    { label: 'Read', value: '~8 minutes' },
+  ]}
+>
+  <Fragment slot="lede">How patterns we kept rebuilding across experiments became a small <mark class="hl">component registry</mark> that now powers the whole platform. Why it’s two packages and not one, why we never published it, picking a bundler for a library rather than an app, and swapping that bundler when its maintenance slowed.</Fragment>
+
+  <p>The <strong>component registry</strong> is two packages in our monorepo. <code>@strivelabs/ui-core</code> holds the foundational components, and <code>@strivelabs/ui-blocks</code> holds the bigger, ready-made blocks built from them. Every app and agent on the Strive platform pulls from both.</p>
+  <blockquote>Not a public UI library. A shelf for what we’ve already built.</blockquote>
+  <p>This post covers the journey and the technical calls behind it: where it came from, how it’s split, how it’s built, and the one tool I swapped along the way.</p>
+
+  <h2 id="a-little-bit-of-backstory">A little bit of backstory</h2>
+  <p>The first plan for Strive was a few AI-centric micro-SaaS apps on different marketplaces, plus a website for the brand. From day zero the plan was platform first, so I was clear that anything I built had to be modular: components, design tokens and layouts.</p>
+  <p>I didn’t think we needed a component library of our own right away. shadcn/ui, themed to Strive with a modular Tailwind preset, solved most of it. Building only what’s critical was the rule. (How that base came together, from the first doc of design choices, is part of <a href="/work/design-ecosystem/">the design ecosystem story</a>.)</p>
+  <p>Then we started building AI agents: a marketing assistant, an engineering Slack partner and a few more. The idea was to experiment quickly, break things and learn. And every agent kept needing the same things: the same buttons, the same editors, the same bits of chat.</p>
+
+  <h3 id="patterns-before-a-library">Patterns before a library</h3>
+  <p>So around <strong>April 2025</strong> I started collecting those patterns into the monorepo. The goal wasn’t a well-documented public UI library. I was convinced that if I gathered what we’d already built across agents, picking the right pieces for the next use case would get easier, and so would standardising and reusing them.</p>
+  <p>The registry also became a playground for understanding the design dynamics at Strive: what we kept reaching for, what we kept reinventing, and what only one agent ever needed.</p>
+
+  <h2 id="the-one-liner">The one-liner</h2>
+  <p>Themed shadcn/ui components at the bottom, composed blocks on top, and every app pulls both straight from the workspace. Nothing is published, and nothing is copied between apps.</p>
+
+  <FoundationStack
+    layers={layers}
+    note="every app pulls from the shelf, nothing gets published"
+    alt="The component registry as four layers, bottom up. At the bottom, what we borrowed rather than reinvented: shadcn/ui, Radix and our Tailwind preset. On top of that, the primitives in @strivelabs/ui-core, such as buttons, inputs, dialogs, tables, dropdowns and the cn helper. Above them, the blocks in @strivelabs/ui-blocks: a rich text editor, command search, drag and drop, charts and chat pieces. At the top, the apps and agents of the platform client, which pull both packages through the workspace without anything being published."
+    caption="Two shelves on borrowed ground. Each layer only reaches down, never up."
+  />
+
+  <h2 id="two-shelves-not-one">Two shelves, not one</h2>
+  <p>I split the registry by altitude. Primitives change rarely and get used everywhere. Blocks change more often and carry more opinion. Keeping them apart meant a new rich text editor never had to ride along with a button fix.</p>
+
+  <SketchLive id="storybook" live={{ kind: 'image', src: '/images/work/design-ecosystem/storybook.webp', width: 1800, height: 940, alt: 'Our Storybook: the component list on the left, with cards, chat elements, content and ui-blocks groups, and the introduction page for the Strivelabs UI component library, which describes the two packages. ui-core holds core components built with Radix UI and Tailwind CSS, like buttons, inputs, dialogs, cards, tables and dropdowns. ui-blocks holds higher-level blocks like charts, a rich text editor, drag and drop, command search and CSV upload.' }} caption="The real thing: both shelves in our Storybook.">
+    <Versus
+      left={{ title: '@strivelabs/ui-core', tone: 'blue', items: ['Core components: buttons, inputs, dialogs, cards, tables, dropdowns', 'shadcn/ui on Radix and Tailwind, themed to Strive', 'Small helpers like cn() for class merging'] }}
+      right={{ title: '@strivelabs/ui-blocks', tone: 'teal', items: ['Ready-made blocks built from ui-core', 'Charts, a rich text editor, drag and drop, command search, CSV upload', 'Chat components and utility hooks'] }}
+      mid="&"
+      marks="dot"
+      alt="Two packages side by side. @strivelabs/ui-core holds core components such as buttons, inputs, dialogs, cards, tables and dropdowns, built on shadcn/ui with Radix and Tailwind and themed to Strive, plus small helpers like cn for class merging. @strivelabs/ui-blocks holds ready-made blocks built from ui-core: charts, a rich text editor, drag and drop, command search, CSV upload, chat components and utility hooks."
+      caption="Primitives change rarely. Blocks change often. Keep them on separate shelves."
+    />
+  </SketchLive>
+
+  <p>Both shelves follow the same rule:</p>
+  <ul class="doodle-list">
+    <li><strong>No app state, no business logic.</strong> Components are presentational. They take props and render, and they don’t know which agent, store or API sits behind them.</li>
+    <li><strong>Brand first.</strong> Everything follows the Strive theme, so a block dropped into a new agent already looks like the platform.</li>
+    <li><strong>Extend when there’s a need.</strong> A custom component or block joins the shelf when we spot the same pattern twice, not when we imagine we might need it.</li>
+  </ul>
+  <p>That first rule is the one that paid off most. Because blocks never reach into an app, the chat components from our <a href="/writing/generative-ui-chat-engine/">generative UI engine</a> could live in <code>ui-blocks</code> and be reused by anything else.</p>
+
+  <h2 id="build-apart-consume-as-a-whole">Build apart, consume as a whole</h2>
+  <p>We had no plans to offer a builder experience on the platform, so I saw no good reason to publish these packages anywhere. Living in the workspace was enough.</p>
+  <p>Each app lists them as <code>"@strivelabs/ui-core": "workspace:*"</code>. pnpm links the local package, Turborepo knows the order to build things in, and a change shows up in every consuming app without publishing or manual linking.</p>
+
+  <StudioLoop
+    steps={loop}
+    note="no publish, no npm link, …and round again"
+    caption="Develop in isolation, consume as a whole."
+    alt="The local loop. Edit: change a component in ui-core or ui-blocks. Watch: the package rebuilds through a dev script in watch mode. Workspace: every app picks the change up, because it is linked with workspace star and nothing is published. Storybook: see what already exists and build the next component on its own. Then round again, with no publishing and no manual linking."
+  />
+
+  <p>Later I set up a Storybook playground beside the packages, so developers can see what already exists and build components on their own before they reach any app.</p>
+  <p>It’s also why the <a href="/writing/agent-ui-evolution/">agent scaffold</a> could be so strict from June 2025: every new agent UI is built from <code>ui-core</code> only, so it looks like the rest of the platform on its first run.</p>
+
+  <h2 id="a-bundler-for-a-library-not-an-app">A bundler for a library, not an app</h2>
+  <p>Workspace packages still need building. Apps want plain JavaScript and type definitions, not raw TSX. So before choosing a tool I looked at how the bigger open-source design systems ship theirs.</p>
+
+  <ProseTable caption="How popular design systems build">
+    <thead>
+      <tr><th scope="col">Design system</th><th scope="col">Builds with</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Material UI (MUI)</th><td>Rollup and Babel</td></tr>
+      <tr><th scope="row">Chakra UI</th><td>tsup, close to what I picked</td></tr>
+      <tr><th scope="row">Radix UI</th><td>esbuild directly</td></tr>
+      <tr><th scope="row">Ant Design</th><td>Webpack and gulp</td></tr>
+      <tr><th scope="row">Shopify Polaris</th><td>Rollup and TypeScript</td></tr>
+    </tbody>
+  </ProseTable>
+
+  <p>I went with <a href="https://tsup.egoist.dev/">tsup</a>, which builds on esbuild. It had the best developer experience for a TypeScript library:</p>
+  <ul class="doodle-list">
+    <li><strong>Zero config.</strong> TypeScript works out of the box, and the whole build fits in a dozen lines.</li>
+    <li><strong>Types for free.</strong> Declaration files come out of the same build, so apps get autocompletion.</li>
+    <li><strong>Fast.</strong> About 10x faster than a traditional Rollup or Webpack setup.</li>
+    <li><strong>Both formats.</strong> ESM and CommonJS from one command.</li>
+    <li><strong>Tree-shaking.</strong> Unused code gets dropped.</li>
+  </ul>
+
+  <Snippet caption="The whole build, roughly" code={config} editor />
+
+  <h3 id="why-not-vite">Why not Vite?</h3>
+  <p>It’s possible, and I love Vite for apps. But for a library it adds about 100 KB of runtime helpers, it’s tuned for apps rather than tree-shaking, and it gives less control over type generation and output.</p>
+  <p>Three lines from people who build these tools stuck with me while choosing:</p>
+  <ul class="doodle-list">
+    <li><strong>Rich Harris, creator of Svelte.</strong> “Use the simplest tool that meets your needs: tsup for TS libraries, Vite for apps.”</li>
+    <li><strong>Jared Palmer, Turborepo.</strong> “Dual package format is non-negotiable for modern libraries.”</li>
+    <li><strong>Mark Erikson, Redux.</strong> “Peer dependencies prevent version hell in component ecosystems.”</li>
+  </ul>
+  <blockquote>Apps get a dev server. Libraries get a bundler.</blockquote>
+
+  <h2 id="small-rules-that-keep-it-light">Small rules that keep it light</h2>
+  <p>Most of the work wasn’t the bundler. It was a handful of package settings that the industry has mostly agreed on, and that I followed from the start.</p>
+  <ul class="doodle-list">
+    <li><strong>Ship ESM and CommonJS.</strong> 92% of surveyed open-source libraries need the dual format (State of JS, 2024). ESM serves modern frameworks, CommonJS serves Node and older tooling.</li>
+    <li><strong>Ship types.</strong> 98% of the top 1,000 npm libraries do. Ours point editors straight at the generated declarations.</li>
+    <li><strong>React is a peer, not a passenger.</strong> 100% of React component libraries use peer dependencies for React. The app brings its own React 18 or 19, there’s only ever one copy (so context doesn’t break), and the bundle comes out about 98% smaller than one with React inside.</li>
+    <li><strong>Declare no side effects.</strong> With <code>sideEffects: false</code> and ESM output, apps only keep what they import, as 89% of modern libraries allow.</li>
+    <li><strong>Ship only the build.</strong> The package exposes its <code>dist</code> folder and nothing else.</li>
+  </ul>
+  <p>None of this is new. That’s the point: a new teammate, or a coding agent, finds exactly what they’d expect.</p>
+
+  <h2 id="when-the-tool-goes-quiet">When the tool goes quiet</h2>
+  <p>tsup worked smoothly for us. But by mid-2025 it looked like it wasn’t being actively maintained any more. The maintainer had moved on to other work, and fixes had mostly stopped.</p>
+  <p>The community pointed to <a href="https://tsdown.dev/">tsdown</a>, an easy-to-migrate, drop-in replacement built on <a href="https://rolldown.rs/">Rolldown</a> instead of esbuild, which makes it faster and more capable.</p>
+  <p>I also considered moving to a conventional bundler like Vite, or to Rolldown itself. But the reason I picked tsup in the first place was the zero-config experience, and keeping library builds as light as possible. tsdown kept both.</p>
+
+  <Versus
+    left={{ title: 'Vite or Rolldown directly', tone: 'ghost', items: ['Built for apps, library mode on top', 'Config to write and keep up', 'A real migration for every package'] }}
+    right={{ title: 'tsdown · drop-in', stamp: 'the call', tone: 'coral', items: ['The same zero-config shape as tsup', 'Built on Rolldown, faster', 'One migrate command, about a minute'] }}
+    alt="The paths not taken: moving to Vite or Rolldown directly, which are built for apps with library mode on top, need config to write and keep up, and would mean a real migration for every package. The call: tsdown as a drop-in replacement, with the same zero-config shape as tsup, built on Rolldown and faster, and migrated with one command in about a minute."
+    caption="Zero config going in made zero config going out."
+  />
+
+  <p>So in <strong>August 2025</strong> I moved both packages over. The <a href="https://tsdown.dev/guide/migrate-from-tsup">migration guide</a> comes with a migrate command, and the whole thing took hardly more than a minute. With an app-style bundler it could have taken a lot longer.</p>
+  <blockquote>Pick tools you can leave in a minute.</blockquote>
+
+  <h2 id="where-it-stands-today">Where it stands today</h2>
+  <p>The proudest part is how these two packages grew over time and held up. Today they power the entire platform client, from the first agent screens to chat, Studio and everything after.</p>
+  <p>The list I wrote at the start (more foundational components, AI-first generative UI components, a Storybook, unit tests, a theme system, accessibility) is now mostly ticked off.</p>
+  <p>I’ll admit it didn’t stay tidy on its own. As we moved from micro-SaaS apps to agents to a marketing OS, and I worked with a different designer on each pivot, the registry and our Tailwind config grew several versions of the same thing, and Storybook got confusing.</p>
+  <p>Sorting that out, with our designer, turned into a design system doc for people and coding agents. The registry is its source: what agents read about each component is generated from the component source, the Storybook stories and the platform token CSS. That part is <a href="/work/design-ecosystem/">a story of its own</a>.</p>
+
+  <h2 id="what-id-keep">What I’d keep</h2>
+  <ol class="doodle-list doodle-list--num">
+    <li><strong>Collect before you curate.</strong> The registry started as patterns we’d already built twice, not a library we planned up front.</li>
+    <li><strong>Keep components free of app state.</strong> It’s why chat blocks could move into a shared package and be reused untouched.</li>
+    <li><strong>Split by altitude.</strong> Primitives and blocks change at different speeds, so they live on different shelves.</li>
+    <li><strong>Use a library tool for a library.</strong> Vite for apps, tsup and then tsdown for packages.</li>
+    <li><strong>Let the app own React.</strong> A peer dependency means one copy, the app’s version, and a much smaller bundle.</li>
+    <li><strong>Pick tools you can leave.</strong> Zero config made the move from tsup to tsdown take a minute, not a sprint.</li>
+  </ol>
+
+  <h2 id="from-a-theme-to-the-whole-platform">From a theme to the whole platform</h2>
+  <ArcTimeline phases={phases} caption="From a theme and rebuilt parts, to two shelves in the workspace, to the ground the whole platform client stands on." />
+
+  <h2 id="thanks">Thanks</h2>
+  <p>The registry is a team effort. Every agent, chat block and screen that needed a new part helped shape it. Thanks to the whole team at Strivelabs for building on it, poking holes in it and making it better together.</p>
+
+  <aside class="back-to-story callout wobbly wobbly--3" aria-label="The bigger picture">
+    <Icon name="slides" />
+    <div>
+      <strong>The bigger picture</strong>
+      <p>Where these packages sit, from the first theme to a doc for coding agents: <a href="/work/design-ecosystem/">Strive’s design ecosystem on the work page</a>.</p>
+    </div>
+  </aside>
+</PostLayout>
+
+<style>
+  .back-to-story { margin-top: var(--space-4); }
+</style>

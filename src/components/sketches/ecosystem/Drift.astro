@@ -1,0 +1,48 @@
+---
+/* How the registry drifted: one column per pivot, each keeping what came
+   before and adding its own versions. Plain chips are the originals; coral
+   chips are the extra versions and presets each pivot left behind, so the
+   last column is the loudest. Three across with arrows, stacked on a phone. */
+import Icon from '../../Icon.astro';
+
+const pivots = [
+  { label: 'Micro SaaS apps', chips: [['Button', 0], ['Card', 0], ['preset · saas', 0]] },
+  { label: 'Agents', chips: [['Button', 0], ['Button v2', 1], ['Card', 0], ['preset · saas', 0], ['preset · agents', 1]] },
+  { label: 'Marketing OS', chips: [['Button', 0], ['Button v2', 1], ['Icon Button v2', 1], ['Card', 0], ['Kbd v2', 1], ['preset · saas', 0], ['preset · agents', 1], ['preset · os', 1]] },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet dr" role="img" aria-label="Three pivots in a row. Micro SaaS apps had a Button, a Card and one Tailwind preset. Agents kept those and added a Button v2 and an agents preset. The marketing OS kept everything and added an Icon Button v2, a Kbd v2 and an OS preset. A handwritten note asks: which Button do I use?">
+    <ol class="dr-row">
+      {pivots.map((p, i) => (
+        <>
+          {i > 0 && <li class="sk-arrow dr-arrow" aria-hidden="true"><Icon name="arrow-right" /></li>}
+          <li class:list={['sk-box', `sk-lean-${i + 1}`, 'dr-col']}>
+            <p class="sk-hdr">{p.label}</p>
+            <p class="dr-chips">{p.chips.map(([c, extra]) => <span class:list={[extra && 'is-extra']}>{c}</span>)}</p>
+          </li>
+        </>
+      ))}
+    </ol>
+    <p class="sk-hand dr-note"><Icon name="arrow-curly" /> which Button do I use?</p>
+  </div>
+  <figcaption>Every pivot left a version behind.</figcaption>
+</figure>
+
+<style>
+  .dr-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: .6rem; }
+  .dr-col { padding: .7rem .8rem .85rem; }
+  .dr-col .sk-hdr { font-size: .62rem; }
+  .dr-arrow { align-self: center; }
+  .dr-arrow :global(.doodle) { width: 1.3rem; height: 1.3rem; }
+  .dr-chips { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0 !important; max-width: none; }
+  .dr-chips span { padding: .2rem .55rem; border-radius: 999px; background: var(--sand-2); font-family: var(--font-mono); font-size: .66rem; color: var(--ink-soft); }
+  .dr-chips .is-extra { color: var(--coral); background: color-mix(in srgb, var(--coral) 12%, var(--paper-2)); border: 1px dashed color-mix(in srgb, var(--coral) 60%, transparent); }
+  .dr-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .dr-note :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1); }
+  @media (max-width: 719px) {
+    .dr-row { grid-template-columns: 1fr; }
+    .dr-arrow { justify-self: center; transform: rotate(90deg); }
+    .dr-note { text-align: center; }
+  }
+</style>

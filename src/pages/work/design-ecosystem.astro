@@ -1,0 +1,301 @@
+---
+/* Strive’s design ecosystem, told as my part in it: the base choices written
+   down early, a theme on shadcn, two shared packages and Storybook, the drift
+   our pivots left behind, and the design system doc for people and coding
+   agents. Same deck as the other Strive stories, without a blog: it is linked
+   from the highlights on /experiments/. Real screenshots and the doc tour sit
+   behind each figure's Live tab. New figures live in
+   ../../components/sketches/ecosystem/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import DesignEcosystem from '../../components/sketches/DesignEcosystem.astro';
+import SketchLive from '../../components/SketchLive.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import FoundationStack from '../../components/sketches/strive/FoundationStack.astro';
+import SpecSheet from '../../components/sketches/ecosystem/SpecSheet.astro';
+import Drift from '../../components/sketches/ecosystem/Drift.astro';
+import CommonGround from '../../components/sketches/ecosystem/CommonGround.astro';
+import AiContext from '../../components/sketches/ecosystem/AiContext.astro';
+
+const description = 'Strive’s design ecosystem: a theme on shadcn, two shared packages, Storybook, and a design system doc written for people and coding agents alike. Told from the design engineering side.';
+
+/* The packages, bottom up as slabs (top first here). */
+const packages = [
+  { name: 'Every app and agent', pkg: '', eg: ['Micro SaaS apps', 'Agents', 'The platform client'], tone: 'coral' },
+  { name: 'Blocks', pkg: '@strivelabs/ui-blocks', eg: ['Rich text editor', 'Command search', 'Drag and drop', 'AI chat', 'Hooks'], tone: 'teal' },
+  { name: 'Foundations', pkg: '@strivelabs/ui-core', eg: ['Button', 'Input', 'Dialog', 'Tabs'], tone: 'blue' },
+  { name: 'shadcn/ui, themed to Strive', pkg: 'Tailwind presets', eg: ['Font', 'Colours', 'Icons', 'Tokens'], tone: 'ghost' },
+];
+
+/* A lesson can stand on its own, without a miss. */
+const lessons: { miss?: string; lesson: string }[] = [
+  { miss: 'Let each pivot add its own version of a component.', lesson: 'Write down the drift early. It’s cheaper to see the mess than to guess it.' },
+  { miss: 'Let Storybook grow a variant per experiment.', lesson: 'A playground helps only when you can find the one to use.' },
+  { miss: 'Kept the base doc for myself.', lesson: 'Write it for the team, and now for the agents too.' },
+  { miss: 'Tried to support every way of doing the same thing.', lesson: 'Put a hard stop. We skipped Claude Design completely, and didn’t automate the Figma sync right away.' },
+];
+---
+<WorkLayout
+  title="Strive’s design ecosystem — a design system for people and agents"
+  description={description}
+  ogDescription="A theme on shadcn, two shared packages, Storybook, and a design system doc for people and coding agents. The design engineering side."
+  eyebrow="Strivelabs · Design engineer · 2024 → now"
+  heading="Strive’s design ecosystem"
+  facts={[
+    { label: 'Role', value: 'Design engineer · design systems' },
+    { label: 'Team', value: 'With our designers, across each pivot' },
+    { label: 'Status', value: 'Powers the platform, with live customers' },
+  ]}
+  link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
+  schema={{
+    name: 'Strive’s design ecosystem',
+    url: 'https://strivelabs.ai/',
+    description: 'A design system that grew with Strivelabs’ pivots: a theme on shadcn/ui with modular Tailwind presets, the @strivelabs/ui-core and @strivelabs/ui-blocks packages, a Storybook playground, and a design system doc with AI context generated from code for coding agents.',
+    inLanguage: 'en',
+    keywords: 'design systems, design tokens, shadcn/ui, Tailwind CSS, Storybook, llms.txt, coding agents, Figma, design engineering, UX for AI',
+  }}
+>
+  <DesignEcosystem slot="sketch" />
+
+  <Fragment slot="lede">How design found a <mark class="hl">common ground</mark> at Strive: a theme on shadcn, two shared packages, Storybook, and a design system doc written for people and coding agents alike. Nobody asked for it. A few problems kept me restless, so I wrote things down and kept going, with the designers I paired with along the way.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The problem</h3>
+      <p>We moved fast: micro SaaS apps, then agents, then a marketing OS. A working v1 usually came first, and visual design later. But we couldn’t afford to feel like anything less on experience, and how we design wasn’t written down anywhere.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The base.</strong> A theme on shadcn/ui, modular Tailwind presets and a reason for every choice, in use since 2024.</li>
+          <li><strong>The packages.</strong> <code>@strivelabs/ui-core</code> and <code>@strivelabs/ui-blocks</code>, with a Storybook playground for developers.</li>
+          <li><strong>The doc.</strong> One source of truth for people and coding agents, with the agents’ context generated from code.</li>
+          <li><strong>The Figma file.</strong> Generated from the doc and the registry, so it can be regenerated just as fast.</li>
+        </ul>
+        <p>Our designer wrote the first draft of the doc. I polished it for people and for agents.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>The packages power the whole platform client today, with live customers. The doc, Storybook and Figma give the team, and their coding agents, one place to start.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Write it down before the wild ride</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The plan was a few AI micro SaaS apps on different marketplaces and a website, with a platform to come. We had <strong>a well thought-through logo</strong>, and not much else written down.</li>
+        <li>So before the quick prototypes, I wrote down my base choices: <strong>font, colours, icons and a component library</strong>. Nothing new, just sure. The Storybook TODO at the end was the long game.</li>
+      </ul>
+      <SketchLive id="doc" live={{ kind: 'image', src: '/images/work/design-ecosystem/ui-harmonization-doc.webp', width: 1400, height: 5737, scroll: 'scroll the real doc', alt: 'The real doc, UI Harmonization Initiative: building a unified theme with shadcn UI for Strivelabs. It covers the logo in light and dark themes, Inter as the font with weight 538 for headings, F97316 as the primary colour and white as the secondary, an orange gradient, Tailwind text classes, lucide-react icons, shadcn/ui components with brand customisations and a Figma community link, a TODO to add a Storybook version soon, and Tailwind CSS tokens.' }} caption="The real thing: my base choices, in use since 2024.">
+        <SpecSheet />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-base">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Design call · base</p><h2 id="s-base">Borrow the components, own the tokens</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We were building towards a platform, so <strong>everything had to be modular</strong>: components, tokens and layouts.</li>
+        <li>So no component library of our own yet. We themed shadcn/ui, standard and widely used, to Strive, with <strong>modular Tailwind presets</strong> from the start. Set up for the long term, build only what today needs.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Our own component library', tone: 'ghost', items: ['Built before we need it', 'Ours to maintain, from day one', 'No clear reason why, yet'] }}
+        right={{ title: 'shadcn/ui, themed to Strive', stamp: 'the call', tone: 'coral', items: ['Standard and widely used', 'Modular Tailwind presets from the start', 'Only what today’s apps need'] }}
+        alt="The path not taken: our own component library, built before we need it, ours to maintain from day one, with no clear reason why yet. The call: shadcn/ui themed to Strive, standard and widely used, with modular Tailwind presets from the start, and only what today’s apps need."
+        caption="Every choice needs a why, or it doesn’t go in."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-packages">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Foundations</p><h2 id="s-packages">Two packages, one playground</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Then came the agents: a marketing assistant, an engineering partner in Slack and more. I gathered the patterns into <strong><code>@strivelabs/ui-core</code> for the foundations, and <code>@strivelabs/ui-blocks</code> for bigger blocks</strong>.</li>
+        <li>Not a public library. Just everything in one place, so the next use case could pick it up, with <strong>a Storybook playground</strong> for developers to see what exists and build on their own.</li>
+      </ul>
+      <SketchLive id="storybook" live={{ kind: 'image', src: '/images/work/design-ecosystem/storybook.webp', width: 1800, height: 940, alt: 'Our Storybook: the component list on the left, with cards, chat elements, content and ui-blocks groups, and the introduction page for the Strivelabs UI component library, which describes the two packages. ui-core holds core components built with Radix UI and Tailwind CSS, like buttons, inputs, dialogs, cards, tables and dropdowns. ui-blocks holds higher-level blocks like charts, a rich text editor, drag and drop, command search and CSV upload.' }} caption="The real thing: our Storybook, with both packages.">
+        <FoundationStack
+          layers={packages}
+          note="the same parts, from the first app to the whole platform"
+          alt="Four layers, bottom up: shadcn/ui themed to Strive with Tailwind presets for font, colours, icons and tokens; @strivelabs/ui-core for foundations like button, input, dialog and tabs; @strivelabs/ui-blocks for a rich text editor, command search, drag and drop, AI chat and hooks; and on top, every app and agent, from the micro SaaS apps to the platform client."
+        />
+      </SketchLive>
+      <p class="more-note"><a href="/writing/component-registry/">There’s more behind these two packages: the split, why we never published them, and the bundler swap. The full story is in the <span class="nowrap">blog<Icon name="arrow-right" /></span></a></p>
+    </section>
+
+    <section class="slide" aria-labelledby="s-drift">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Where it hurt</p><h2 id="s-drift">One button, three versions</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>From micro SaaS apps to agents to a marketing OS, <strong>I worked with a different designer on each pivot</strong>, and each experiment needed its own look.</li>
+        <li>So the registry and the presets outgrew themselves. I kept <strong>versions of the same component</strong> alive for each one, and Storybook got confusing.</li>
+      </ul>
+      <Drift />
+    </section>
+
+    <section class="slide" aria-labelledby="s-scope">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design call · scope</p><h2 id="s-scope">A knowledge base, not a showcase</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We had no plans for a builder experience anytime soon, so there was <strong>no reason to publish any of it</strong>.</li>
+        <li>So I paired with our designer on something minimal: <strong>a knowledge base for the team and their coding agents</strong>, mess included, to see how alarming it was.</li>
+      </ul>
+      <Versus
+        left={{ title: 'A public design system site', tone: 'ghost', items: ['Polished for the outside world', 'Made for a builder we don’t plan', 'Hides the mess we need to see'] }}
+        right={{ title: 'A knowledge base', stamp: 'the call', tone: 'coral', items: ['Minimal, for the team', 'Written for coding agents too', 'Everything in one place, mess included'] }}
+        alt="The path not taken: a public design system site, polished for the outside world, made for a builder we don’t plan, and hiding the mess we need to see. The call: a knowledge base, minimal and for the team, written for coding agents too, with everything in one place, mess included."
+        caption="See the mess before you fix it."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-ground">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Common ground</p><h2 id="s-ground">One source, three readers</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Our designer did a good first pass: a Claude artifact documenting what was in our codebase. I polished it into <strong>one source of truth</strong>: foundations, patterns, components, and links to Storybook, Figma and a cheat sheet.</li>
+        <li>Now designers use the doc, Figma or Storybook, and developers use the playground. <strong>Coding agents read the doc as context</strong>, because we can’t really leave the agents out.</li>
+      </ul>
+      <SketchLive id="tour" live={{ kind: 'video', src: '/images/work/design-ecosystem/design-doc-tour.mp4', poster: '/images/work/design-ecosystem/design-doc-tour-poster.webp', width: 1600, height: 900, alt: 'A short silent tour of the Strive design system doc. The overview says every foundation, component and pattern is rendered from the real ui-core and ui-blocks components, and documents only what is actually adopted in the product. Then the foundations, from colour and typography to motion and accessibility; the interaction patterns, like AI chat conversation and agent workflow; the empty, loading, error and streaming states every surface shares; and the button variants, where each preview is the real component. It ends with the files coding agents read: llms.txt, DESIGN.md, components.json and tokens.json.' }} caption="The real thing: a quick tour of the doc.">
+        <CommonGround />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-agents">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">For agents</p><h2 id="s-agents">Generated, not hand-kept</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Agents get their own way in: <strong><code>llms.txt</code>, a tiny router</strong> that points to <code>DESIGN.md</code>, a page per component, and JSON catalogues of components, patterns and tokens.</li>
+        <li>Almost none of it is written by hand. A script builds it <strong>from the component source, the Storybook stories and the platform token CSS</strong>. Change a component, run <code>gen-ai-context</code>, commit the result.</li>
+      </ul>
+      <AiContext />
+    </section>
+
+    <section class="slide" aria-labelledby="s-figma">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Design call · Figma</p><h2 id="s-figma">Sync it when it hurts</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Nobody asked for any of this, so every call weighed cost against impact. Does Figma still make sense when we design in code? Our designer’s answer: yes, as <strong>a playground for quick, specific changes</strong>.</li>
+        <li>Based on that, we <strong>generated one version in Figma, straight from code</strong>: the doc and the registry, through Claude and the Figma MCP. The sync isn’t automated end to end yet. It regenerates just as fast.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-2" aria-label="Does Figma still make sense?">
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-q"><span>Me</span>“Does Figma still make sense, now that we design in code?”</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
+        <div class="qa-row">
+          <span class="qa-av" aria-hidden="true"><i></i></span>
+          <p class="qa-bubble qa-a"><span>Our designer</span>“It’s still my comfortable playground for anything specific and quick. Imagine prompting a coding agent just to change a hex.”</p>
+        </div>
+      </aside>
+      <SketchLive id="figma" live={{ kind: 'image', src: '/images/work/design-ecosystem/figma-color-themes.webp', width: 1800, height: 1092, alt: 'The Strive Design System file in Figma, on the Color and Themes page: brand orange swatches from brand 50 to brand 800, surface, text and border tokens, each named after its code token, and a themes section showing the same card with its primary action in two modes.' }} caption="The real thing: colour and themes, generated from the doc.">
+        <Versus
+          left={{ title: 'A code-to-Figma sync, now', tone: 'ghost', items: ['A pipeline to build and keep running', 'Before many people touch the file', 'Bandwidth away from the product'] }}
+          right={{ title: 'One version from code, sync later', stamp: 'the call', tone: 'coral', items: ['Generated from the doc and the registry', 'Regenerated just as fast', 'A pipeline once people need one'] }}
+          alt="The path not taken: a code-to-Figma sync now, a pipeline to build and keep running before many people touch the file, and bandwidth away from the product. The call: one version from code, and the sync later. The file is generated from the doc and the registry, can be regenerated just as fast, and gets a pipeline once people need one."
+          caption="Hit the bottleneck first. Then you know people are using it."
+        />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-changed">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">What changed</p><h2 id="s-changed">Audits, then a cleanup</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Writing it all down worked like an audit: <strong>where we were inconsistent</strong>, what to build, and what not to reinvent.</li>
+        <li>So we <strong>unified pages that used to look different</strong> from each other, and cleaned up a big chunk of tokens. Agents now have fewer variants to choose between.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Before', tone: 'ghost', items: ['Pages that looked different from each other', 'Tokens and presets piling up per pivot', 'Agents guessing between variants'] }}
+        right={{ title: 'Now', tone: 'teal', items: ['Pages that look like one product', 'A standard set of tokens, in use', 'One answer for people and agents'] }}
+        alt="Before: pages that looked different from each other, tokens and presets piling up per pivot, and agents guessing between variants. Now: pages that look like one product, a standard set of tokens that are actually in use, and one answer for people and agents."
+        caption="Less to choose from, for people and for agents."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What our pivots taught the system</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">We didn’t set out to build a design system. We kept writing things down, and one grew.</blockquote>
+  </div>
+
+</WorkLayout>
+
+<style>
+  /* Same deck styles as the other Strive stories. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  /* A handwritten aside under a figure. */
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+
+  /* My question and our designer's answer, as a chat. A drawn face stands in for a photo. */
+  .qa { margin-top: var(--space-3); padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .9rem; }
+  .qa-row { display: flex; align-items: flex-end; gap: .65rem; }
+  .qa-row--me { justify-content: flex-end; }
+  .qa-bubble { margin: 0 !important; max-width: min(36rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; color: var(--ink) !important; background: var(--sand); border: 1.5px solid var(--line); border-radius: 14px 14px 14px 4px; }
+  .qa-bubble span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--violet); }
+  .qa-q { color: var(--ink-soft) !important; font-style: italic; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border-color: color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 4px 14px; }
+  .qa-q span { font-style: normal; color: var(--teal); }
+  .qa-av--me { object-fit: cover; }
+  .qa-av { position: relative; flex: none; width: 2.4rem; height: 2.4rem; overflow: hidden; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--sand-2); }
+  .qa-av i { position: absolute; left: 50%; bottom: -.45rem; width: 1.5rem; height: 1.9rem; transform: translateX(-50%); border-radius: 50% 50% 40% 40%; border: 1.5px solid var(--ink); background: var(--violet); }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  .closer { margin-top: var(--space-5); }
+</style>

@@ -1,0 +1,51 @@
+---
+/* One doc, three kinds of reader. The readers sit in a row on top, each with
+   the door they use, and arrows run down into the one coral doc they share.
+   Stacks on a phone, with the arrows still pointing down. */
+import Icon from '../../Icon.astro';
+
+const readers = [
+  { who: 'Designers', how: 'the doc, Figma, or straight in Storybook', tone: 'violet' },
+  { who: 'Developers', how: 'the Storybook playground', tone: 'blue' },
+  { who: 'Coding agents', how: 'the doc as context, through llms.txt and DESIGN.md', tone: 'teal' },
+];
+const parts = ['Foundations', 'Patterns', 'Components', 'Resources'];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet cg" role="img" aria-label="Three readers share one doc. Designers use the doc, Figma, or work straight in Storybook. Developers use the Storybook playground. Coding agents read the doc as context, through llms.txt and DESIGN.md. All three point down to one source of truth: the Strive design system doc, with foundations, patterns, components and resources, and links to Storybook, Figma and a cheat sheet.">
+    <ul class="cg-readers">
+      {readers.map((r, i) => (
+        <li class:list={['sk-box', `sk-box--${r.tone}`, `sk-lean-${i + 1}`]}>
+          <p class="sk-hdr cg-who">{r.who}</p>
+          <span>{r.how}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="cg-arrows" aria-hidden="true">{readers.map(() => <span class="sk-arrow"><Icon name="arrow-down" /></span>)}</p>
+    <div class="sk-box sk-box--coral sk-lean-4 cg-doc">
+      <p class="sk-hdr cg-who">One source of truth</p>
+      <strong>The Strive design system doc</strong>
+      <p class="cg-parts">{parts.map((p) => <span>{p}</span>)}</p>
+      <span class="cg-sub">with links to Storybook, Figma and a cheat sheet</span>
+    </div>
+  </div>
+  <figcaption>Designers, developers and agents, all on the same page.</figcaption>
+</figure>
+
+<style>
+  .cg-readers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .cg-readers li { display: grid; align-content: start; gap: .3rem; padding: .7rem .85rem .8rem; font-size: .84rem; line-height: 1.4; color: var(--ink-soft); }
+  .cg-who { margin: 0 !important; font-size: .62rem; color: var(--c); }
+  .cg-arrows { display: grid; grid-template-columns: repeat(3, 1fr); justify-items: center; margin: .5rem 0 !important; max-width: none; }
+  .cg-arrows :global(.doodle) { width: 1.4rem; height: 1.4rem; }
+  .cg-doc { display: grid; gap: .35rem; padding: .85rem 1rem 1rem; }
+  .cg-doc strong { font-size: 1rem; font-weight: 500; color: var(--ink); }
+  .cg-parts { display: flex; flex-wrap: wrap; gap: .35rem; margin: .2rem 0 0 !important; max-width: none; }
+  .cg-parts span { padding: .2rem .55rem; border-radius: 999px; background: var(--sand-2); font-size: .74rem; color: var(--ink-soft); }
+  .cg-sub { font-size: .78rem; color: var(--ink-faint); }
+  @media (max-width: 559px) {
+    .cg-readers { grid-template-columns: 1fr; }
+    .cg-arrows { grid-template-columns: 1fr; }
+    .cg-arrows span:not(:first-child) { display: none; }
+  }
+</style>

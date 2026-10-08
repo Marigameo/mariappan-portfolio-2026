@@ -1,0 +1,90 @@
+---
+/* The first doc, redrawn as a spec sheet: six small cards for the base choices
+   (logo, font, colour, icons, components, tokens), then the Storybook TODO on a
+   sticky note, because that line was the long game. The swatches are the real
+   brand values from the doc, so they stay fixed in both themes. Three across,
+   two on a phone. */
+import Icon from '../../Icon.astro';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ss" role="img" aria-label="A spec sheet of the first base choices. Logo: the Strivelabs mark, in light and dark. Font: Inter, weight 538 for headings. Colour: primary orange F97316, white as the secondary, and an orange gradient. Icons: lucide-react. Components: shadcn/ui with brand customisations. Tokens: Tailwind CSS, with text-orange-600 and dark text-orange-400 for text. A sticky note at the end reads: TODO, add a Storybook version soon. A handwritten note says it was the long game, from day one.">
+    <div class="ss-grid">
+      <div class="sk-box sk-lean-1 ss-card">
+        <p class="sk-hdr">Logo</p>
+        <span class="ss-logo" aria-hidden="true"><i></i><i></i></span>
+        <span class="ss-sub">light · dark</span>
+      </div>
+      <div class="sk-box sk-lean-2 ss-card">
+        <p class="sk-hdr">Font</p>
+        <span class="ss-aa">Aa</span>
+        <span class="ss-sub">Inter · 538 for headings</span>
+      </div>
+      <div class="sk-box sk-lean-3 ss-card">
+        <p class="sk-hdr">Colour</p>
+        <span class="ss-swatches" aria-hidden="true"><i class="ss-orange"></i><i class="ss-white"></i><i class="ss-grad"></i></span>
+        <span class="ss-sub"><code>#F97316</code> · white · a gradient</span>
+      </div>
+      <div class="sk-box sk-lean-4 ss-card">
+        <p class="sk-hdr">Icons</p>
+        <span class="ss-icons" aria-hidden="true"><Icon name="star" /><Icon name="sparkles" /><Icon name="pin" /><Icon name="mail" /></span>
+        <span class="ss-sub">lucide-react</span>
+      </div>
+      <div class="sk-box sk-lean-1 ss-card">
+        <p class="sk-hdr">Components</p>
+        <span class="ss-btns" aria-hidden="true"><i class="ss-btn-a"></i><i class="ss-btn-b"></i></span>
+        <span class="ss-sub">shadcn/ui, with our brand</span>
+      </div>
+      <div class="sk-box sk-lean-2 ss-card">
+        <p class="sk-hdr">Tokens</p>
+        <span class="ss-chips"><code>text-orange-600</code><code>dark:text-orange-400</code></span>
+        <span class="ss-sub">Tailwind CSS</span>
+      </div>
+    </div>
+    <div class="ss-todo">
+      <p class="ss-note"><span>Todo</span>Add a Storybook version soon</p>
+      <p class="sk-hand ss-hand"><Icon name="arrow-curly" /> the long game, from day one</p>
+    </div>
+  </div>
+  <figcaption>Nothing new. Just sure of every little choice.</figcaption>
+</figure>
+
+<style>
+  .ss-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .ss-card { display: grid; align-content: start; gap: .5rem; min-height: 7.5rem; }
+  .ss-card .sk-hdr { margin: 0 !important; font-size: .62rem; }
+  .ss-sub { font-size: .76rem; line-height: 1.35; color: var(--ink-faint); }
+  .ss-sub code, .ss-chips code { font-family: var(--font-mono); font-size: .66rem; background: none; padding: 0; color: var(--ink-soft); }
+
+  /* The mark: two crossing strokes in the logo's gradient. */
+  .ss-logo { position: relative; width: 2.6rem; height: 2.6rem; }
+  .ss-logo i { position: absolute; left: 50%; top: 50%; width: 2.6rem; height: .75rem; border-radius: 3px; background: linear-gradient(90deg, #F34D13, #F6A509); }
+  .ss-logo i:nth-child(1) { transform: translate(-50%, -50%) translateY(.2rem) rotate(-8deg); }
+  .ss-logo i:nth-child(2) { transform: translate(-50%, -50%) translateX(-.15rem) rotate(82deg); opacity: .85; }
+
+  .ss-aa { font-family: Inter, var(--font-body); font-size: 2rem; font-weight: 538; line-height: 1; color: var(--ink); }
+
+  .ss-swatches { display: flex; gap: .35rem; }
+  .ss-swatches i { width: 1.9rem; height: 1.9rem; border-radius: 6px; border: 1.5px solid var(--ink); }
+  .ss-orange { background: #F97316; }
+  .ss-white { background: #fff; }
+  .ss-grad { width: 3.2rem !important; background: linear-gradient(135deg, #F34D13, #F6A509); }
+
+  .ss-icons { display: flex; gap: .55rem; color: var(--ink); }
+  .ss-icons :global(.doodle) { width: 1.35rem; height: 1.35rem; }
+
+  .ss-btns { display: flex; gap: .4rem; }
+  .ss-btns i { width: 3.4rem; height: 1.4rem; border-radius: 6px; }
+  .ss-btn-a { background: linear-gradient(135deg, #F34D13, #F6A509); }
+  .ss-btn-b { border: 1.5px solid #F97316; background: #fff; }
+
+  .ss-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .ss-chips code { padding: .15rem .45rem !important; border-radius: 999px; background: var(--sand-2) !important; }
+
+  .ss-todo { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.2rem; margin-top: 1.3rem; }
+  .ss-note { margin: 0 !important; max-width: none; padding: .55rem .9rem .65rem; font-size: .92rem; color: var(--ink); background: color-mix(in srgb, var(--yellow) 32%, var(--paper-2)); border: 1.5px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow-ink); border-radius: 6px 12px 5px 10px / 10px 5px 12px 6px; transform: rotate(-1.2deg); }
+  .ss-note span { display: block; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--coral); }
+  .ss-hand { margin: 0 !important; max-width: none; }
+  .ss-hand :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleX(-1); }
+
+  @media (max-width: 719px) { .ss-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>

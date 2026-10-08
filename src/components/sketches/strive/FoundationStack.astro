@@ -1,25 +1,35 @@
 ---
 /* The four layers I set up before features piled on. Drawn as slabs, widest at
-   the bottom, each layer only building on the ones below it. */
-const layers = [
-  { name: 'Screens & layouts', pkg: '', eg: ['Chat', 'Canvas panel', 'Workspace'], tone: 'violet' },
-  { name: 'Blocks', pkg: '@strivelabs/ui-blocks', eg: ['Table', 'Chart', 'Form', 'Artifact card'], tone: 'teal' },
-  { name: 'AI elements', pkg: 'AI-native pieces', eg: ['Streaming text', 'Suggestions', 'Section editor'], tone: 'coral' },
-  { name: 'Primitives', pkg: '@strivelabs/ui-core', eg: ['Button', 'Input', 'Tabs', 'Popover'], tone: 'blue' },
-];
+   the bottom, each layer only building on the ones below it. Other stacks pass
+   their own `layers` (top first), `note`, `alt` and an optional `caption`. */
+interface Layer { name: string; pkg: string; eg: string[]; tone: string }
+interface Props { layers?: Layer[]; note?: string; alt?: string; caption?: string }
+
+const {
+  layers = [
+    { name: 'Screens & layouts', pkg: '', eg: ['Chat', 'Canvas panel', 'Workspace'], tone: 'violet' },
+    { name: 'Blocks', pkg: '@strivelabs/ui-blocks', eg: ['Table', 'Chart', 'Form', 'Artifact card'], tone: 'teal' },
+    { name: 'AI elements', pkg: 'AI-native pieces', eg: ['Streaming text', 'Suggestions', 'Section editor'], tone: 'coral' },
+    { name: 'Primitives', pkg: '@strivelabs/ui-core', eg: ['Button', 'Input', 'Tabs', 'Popover'], tone: 'blue' },
+  ],
+  note = 'the ground our block concept stands on',
+  alt = 'Four layers, bottom up: primitives in @strivelabs/ui-core, AI elements, blocks in @strivelabs/ui-blocks, then screens and layouts. Together they are the base of the block concept.',
+  caption,
+} = Astro.props;
 ---
 <figure class="sk-fig">
-  <div class="sk-sheet fs" role="img" aria-label="Four layers, bottom up: primitives in @strivelabs/ui-core, AI elements, blocks in @strivelabs/ui-blocks, then screens and layouts. Together they are the base of the block concept.">
+  <div class="sk-sheet fs" role="img" aria-label={alt}>
     <ol class="fs-stack">
       {layers.map((l, i) => (
-        <li class:list={['sk-box', `sk-box--${l.tone}`, `sk-lean-${i + 1}`]} style={`--w:${70 + i * 10}%`}>
+        <li class:list={['sk-box', `sk-box--${l.tone}`, `sk-lean-${i + 1}`]} style={`--w:${100 - (layers.length - 1 - i) * 10}%`}>
           <p class="fs-head"><strong>{l.name}</strong>{l.pkg && <code>{l.pkg}</code>}</p>
           <p class="fs-eg">{l.eg.map((e) => <span>{e}</span>)}</p>
         </li>
       ))}
     </ol>
-    <p class="fs-note sk-hand">the ground our block concept stands on</p>
+    <p class="fs-note sk-hand">{note}</p>
   </div>
+  {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
 <style>

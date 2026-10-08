@@ -6,7 +6,8 @@
    To add one: push an entry onto the right shelf. Keep it scannable: a one-line
    `hook` for the card, then a few short `sections` of points for the panel,
    `found` for what I took away, and links or a screenshot if they still exist.
-   `id` is the #hash that opens it directly, e.g. /experiments/#quickfix. */
+   `id` is the #hash that opens it directly, e.g. /experiments/#quickfix.
+   Experiments that grew into a story of their own go in `highlights` instead. */
 
 /** Thenga's poses: `hero` is the mascot itself, the rest are outcomes. */
 export type Mood = 'hero' | 'sprouted' | 'cracked' | 'moonshot';
@@ -29,6 +30,32 @@ export interface Experiment {
   /** A small aside in my own voice, shown in handwriting. */
   note?: string;
 }
+
+/** A highlight: an experiment big enough to get a story of its own. Shown above
+    the shelves as a wide card that links straight to the story. `sketch` picks
+    the card drawing in src/pages/experiments.astro. */
+export interface Highlight {
+  href: string;
+  title: string;
+  /** Mono line under the title, e.g. "Strivelabs · 2024 → now". */
+  context: string;
+  hook: string;
+  tags: string[];
+  accent: 'coral' | 'blue' | 'teal' | 'violet';
+  sketch: 'design-ecosystem';
+}
+
+export const highlights: Highlight[] = [
+  {
+    href: '/work/design-ecosystem/',
+    title: 'Strive’s design ecosystem',
+    context: 'Strivelabs · 2024 → now',
+    hook: 'A design system nobody asked for: a theme on shadcn, two shared packages, Storybook, and a doc for people and coding agents.',
+    tags: ['Design systems', 'Agents'],
+    accent: 'coral',
+    sketch: 'design-ecosystem',
+  },
+];
 
 export interface Shelf {
   id: string;

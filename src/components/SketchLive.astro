@@ -6,7 +6,10 @@
 
    <SketchLive id="slots" live={{ kind: 'image', src, width, height, alt }} caption="…">
      <CanvasBeforeAfter />
-   </SketchLive> */
+   </SketchLive>
+
+   A tall image (a full-page doc) can pass `scroll: 'scroll the real doc'`: it keeps its
+   readable width inside a short frame that scrolls, with a fade and that hint below. */
 interface Live {
   kind: 'image' | 'video';
   src: string;
@@ -15,6 +18,8 @@ interface Live {
   alt: string;
   /** Still frame for a video: shown before it plays and under reduced motion. */
   poster?: string;
+  /** Tall images only: scroll inside a short frame, with this hint below it. */
+  scroll?: string;
 }
 interface Props {
   /** Unique on the page; builds the tab and panel ids. */
@@ -37,14 +42,19 @@ const t = (k: string) => `sl-${id}-${k}`;
   </div>
   <div class="sl-panel" role="tabpanel" id={t('live')} aria-labelledby={t('tab-live')} hidden>
     <figure class="sl-live">
-      <div class="sl-frame">
-        {live.kind === 'video' ? (
+      <div class:list={['sl-frame', live.scroll && 'sl-frame--scroll']}>
+        {live.scroll ? (
+          <div class="sl-scroll" tabindex="0" role="region" aria-label={`${live.alt} Scrolls.`}>
+            <img src={live.src} width={live.width} height={live.height} alt={live.alt} loading="lazy" decoding="async">
+          </div>
+        ) : live.kind === 'video' ? (
           <video src={live.src} poster={live.poster} width={live.width} height={live.height} muted loop playsinline preload="none" aria-label={live.alt} data-sl-video></video>
         ) : (
           <img src={live.src} width={live.width} height={live.height} alt={live.alt} loading="lazy" decoding="async">
         )}
         {live.kind === 'video' && <button class="sl-play" type="button" data-sl-play aria-pressed="false">Play</button>}
       </div>
+      {live.scroll && <p class="sl-hint sk-hand" aria-hidden="true">{live.scroll} ↓</p>}
       {caption && <figcaption>{caption}</figcaption>}
     </figure>
   </div>
