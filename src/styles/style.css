@@ -891,6 +891,14 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .mascot .m-pack-pocket { fill: color-mix(in srgb, var(--coral-soft) 70%, #000); stroke-width: 1.8; }
 .mascot .m-strap { fill: none; stroke: #7a4c2e; stroke-width: 4; stroke-linecap: round; }
 .mascot .m-stick { fill: none; stroke: #7a4c2e; stroke-width: 4.5; stroke-linecap: round; }
+.mascot :is(.m-beret, .m-palette, .m-ferrule, .m-tip) { stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.mascot .m-beret { fill: #b8433a; }
+.mascot .m-palette { fill: #e6bf86; }
+.mascot .m-blob { stroke: var(--ink); stroke-width: 1.4; }
+.mascot .m-brush { fill: none; stroke: #7a4c2e; stroke-width: 3.5; stroke-linecap: round; }
+.mascot .m-ferrule { fill: #b7c0ca; stroke-width: 1.6; }
+.mascot .m-tip { fill: var(--coral-soft); }
+.mascot .m-paint { fill: none; stroke: var(--coral-soft); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 40; }
 
 /* Idle loops, one per mood, a few pixels each. Origins are in the 160×160
    viewBox. Set --m-delay (negative) on a wrapper to take a mascot out of step
@@ -929,12 +937,16 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .mascot--pot .m-a-stir { transform-origin: 114px 104px; animation: m-stir 2s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
 .mascot--pot .m-a-steam { animation: m-steam 2.6s ease-out infinite; animation-delay: var(--m-delay, 0s); }
 .mascot--backpack .m-a-plane { animation: m-plane 4s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--brush .m-a-dab { transform-origin: 122px 100px; animation: m-dab 2.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+.mascot--brush .m-a-splat { animation: m-splat 2.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
 @keyframes m-strum { 0%, 40%, 100% { transform: rotate(0); } 46%, 58%, 70% { transform: rotate(9deg); } 52%, 64% { transform: rotate(-3deg); } }
 @keyframes m-notes { 0% { transform: translateY(6px); opacity: 0; } 30%, 70% { opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
 @keyframes m-flash { 0%, 62%, 100% { opacity: 0; transform: scale(.6); } 66% { opacity: 1; transform: scale(1.1); } 76% { opacity: 0; transform: scale(1.2); } }
 @keyframes m-write { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-3px, 1px); } 50% { transform: translate(1px, -1px); } 75% { transform: translate(-2px, 2px); } }
 @keyframes m-stir { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-10deg); } }
 @keyframes m-steam { 0% { transform: translateY(4px); opacity: 0; } 35% { opacity: .9; } 100% { transform: translateY(-8px); opacity: 0; } }
+@keyframes m-dab { 0%, 30%, 100% { transform: rotate(0); } 40% { transform: rotate(-10deg); } 52% { transform: rotate(-3deg); } 64% { transform: rotate(-8deg); } }
+@keyframes m-splat { 0%, 36% { stroke-dashoffset: 40; opacity: 1; } 66%, 84% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
 @keyframes m-plane { 0%, 100% { transform: translate(0, 0) rotate(0); } 50% { transform: translate(-6px, 4px) rotate(-4deg); } }
 
 @keyframes m-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }

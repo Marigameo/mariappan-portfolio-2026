@@ -1,0 +1,98 @@
+---
+// Artboard sketch for the KB homepage story (the studio, Experiments page).
+// The redesigned page: the platform sidebar and the files sidebar both open,
+// the page title and description where every other page has them, and the graph
+// of the tenant's files below, as soft pills around the tenant, with an expand
+// button in its corner. On hover a cursor drags one branch a few pixels: the
+// graph is a surface you move, not a picture. Strive orange is the one fixed
+// colour; the rest follows the theme through the .sk rules.
+interface Props { label: string }
+const { label } = Astro.props;
+---
+<svg class="sk kb" viewBox="0 0 600 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
+  <rect width="600" height="440" class="f-card"/>
+
+  <!-- Platform sidebar: the entities, the knowledge base active. -->
+  <rect width="100" height="440" class="f-tint"/>
+  <line x1="100.5" y1="0" x2="100.5" y2="440" class="s-line"/>
+  <rect x="16" y="18" width="16" height="16" rx="5" fill="#f26b1d"/>
+  <rect x="38" y="23" width="40" height="6" rx="3" class="f-bar"/>
+  <g>
+    <rect x="16" y="58" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="60" width="44" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="82" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="84" width="36" height="6" rx="3" class="f-bar-2"/>
+    <rect x="10" y="102" width="82" height="22" rx="6" fill="#f26b1d" fill-opacity=".12"/>
+    <rect x="16" y="108" width="10" height="10" rx="3" fill="#f26b1d"/><rect x="32" y="110" width="48" height="6" rx="3" fill="#f26b1d" fill-opacity=".55"/>
+    <rect x="16" y="134" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="136" width="40" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="158" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="160" width="30" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="182" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="184" width="42" height="6" rx="3" class="f-bar-2"/>
+  </g>
+  <circle cx="24" cy="414" r="9" class="f-bar"/><rect x="38" y="411" width="40" height="6" rx="3" class="f-bar-2"/>
+
+  <!-- Files sidebar: folders and the .md files inside them. -->
+  <line x1="214.5" y1="0" x2="214.5" y2="440" class="s-line"/>
+  <text x="114" y="31" font-size="10.5" font-weight="600">Knowledge base</text>
+  <g class="kb-tree">
+    <path d="M114 56h8l2 2h8v8h-18z" class="kb-folder"/><rect x="138" y="58" width="40" height="6" rx="3" class="f-bar"/>
+    <rect x="128" y="74" width="8" height="10" rx="1.5" class="kb-file"/><rect x="142" y="76" width="44" height="6" rx="3" class="f-bar-2"/>
+    <rect x="128" y="94" width="8" height="10" rx="1.5" class="kb-file"/><rect x="142" y="96" width="34" height="6" rx="3" class="f-bar-2"/>
+    <path d="M114 118h8l2 2h8v8h-18z" class="kb-folder"/><rect x="138" y="120" width="48" height="6" rx="3" class="f-bar"/>
+    <rect x="128" y="136" width="8" height="10" rx="1.5" class="kb-file"/><rect x="142" y="138" width="38" height="6" rx="3" class="f-bar-2"/>
+    <path d="M114 160h8l2 2h8v8h-18z" class="kb-folder"/><rect x="138" y="162" width="52" height="6" rx="3" class="f-bar"/>
+    <path d="M114 184h8l2 2h8v8h-18z" class="kb-folder"/><rect x="138" y="186" width="36" height="6" rx="3" class="f-bar"/>
+    <path d="M114 208h8l2 2h8v8h-18z" class="kb-folder"/><rect x="138" y="210" width="44" height="6" rx="3" class="f-bar"/>
+  </g>
+
+  <!-- The page: title and description where every page keeps them. -->
+  <text x="232" y="40" font-size="20" class="t-display">Knowledge base</text>
+  <rect x="232" y="52" width="190" height="6" rx="3" class="f-bar-2"/>
+  <rect x="232" y="64" width="130" height="6" rx="3" class="f-bar-2"/>
+
+  <!-- The graph surface, with its expand button. -->
+  <rect x="232" y="88" width="352" height="336" rx="12" class="f-page s-soft" stroke-width="1.5"/>
+  <rect x="552" y="98" width="22" height="22" rx="6" class="f-card s-soft" stroke-width="1.2"/>
+  <path d="M558 108v-4h4M568 110v4h-4M558 104l4 4M568 114l-4-4" class="s-ink" stroke-width="1.3"/>
+
+  <g class="kb-links">
+    <path d="M408 262C380 240 350 214 318 196"/>
+    <path d="M408 262C420 230 418 190 408 156"/>
+    <path d="M408 262C440 290 470 320 498 344"/>
+    <path d="M408 262C380 292 350 318 318 340"/>
+    <path d="M318 196C300 180 290 160 290 142"/>
+    <path d="M318 196C300 210 290 230 288 250"/>
+    <path d="M318 340C318 360 320 376 326 390"/>
+    <path d="M498 344C510 364 514 378 516 392"/>
+  </g>
+
+  <!-- The tenant in the middle, branches as pills, files as smaller pills. -->
+  <circle cx="408" cy="262" r="26" class="kb-root"/>
+  <text x="408" y="266" font-size="10.5" font-weight="600" text-anchor="middle">Acme</text>
+
+  <g class="kb-node"><rect x="282" y="185" width="72" height="22" rx="11"/><text x="318" y="200" font-size="9.5" text-anchor="middle">Brand</text></g>
+  <g class="kb-node"><rect x="368" y="145" width="80" height="22" rx="11"/><text x="408" y="160" font-size="9.5" text-anchor="middle">Voice</text></g>
+  <g class="kb-node"><rect x="270" y="329" width="96" height="22" rx="11"/><text x="318" y="344" font-size="9.5" text-anchor="middle">Competitors</text></g>
+  <g class="kb-leaf"><rect x="260" y="126" width="60" height="18" rx="9"/><text x="290" y="138" font-size="8.5" text-anchor="middle">logo.md</text></g>
+  <g class="kb-leaf"><rect x="256" y="242" width="64" height="18" rx="9"/><text x="288" y="254" font-size="8.5" text-anchor="middle">colours.md</text></g>
+  <g class="kb-leaf"><rect x="294" y="382" width="64" height="18" rx="9"/><text x="326" y="394" font-size="8.5" text-anchor="middle">rivals.md</text></g>
+
+  <!-- The branch a cursor drags on hover. -->
+  <g class="kb-drag">
+    <g class="kb-node"><rect x="458" y="333" width="80" height="22" rx="11"/><text x="498" y="348" font-size="9.5" text-anchor="middle">Audience</text></g>
+    <g class="kb-leaf"><rect x="482" y="384" width="68" height="18" rx="9"/><text x="516" y="396" font-size="8.5" text-anchor="middle">personas.md</text></g>
+    <path d="M520 346l0 17 4.5-4.5 3.5 7.5 3-1.4-3.5-7.3 6.3-.3z" class="kb-cursor"/>
+  </g>
+</svg>
+
+<style>
+  /* Subtle, easy-going node colours: a wash of the theme's teal, never solid. */
+  .kb .kb-links path { fill: none; stroke: var(--ink); stroke-opacity: .16; stroke-width: 1.4; }
+  .kb .kb-root { fill: var(--teal); fill-opacity: .16; stroke: var(--teal); stroke-opacity: .55; stroke-width: 1.5; }
+  .kb .kb-node rect { fill: var(--paper-2); stroke: var(--teal); stroke-opacity: .5; stroke-width: 1.3; }
+  .kb .kb-leaf rect { fill: var(--teal); fill-opacity: .07; stroke: var(--ink); stroke-opacity: .14; stroke-width: 1.1; }
+  .kb .kb-leaf text { fill: var(--ink-soft); }
+  .kb .kb-folder { fill: var(--ink); fill-opacity: .16; }
+  .kb .kb-file { fill: none; stroke: var(--ink); stroke-opacity: .3; stroke-width: 1.2; }
+  .kb .kb-cursor { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; opacity: 0; transition: opacity .2s ease; }
+  .kb .kb-drag { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+  :global(.art-link:hover) .kb .kb-drag, :global(.art-link:focus-visible) .kb .kb-drag { transform: translate(-10px, -8px); }
+  :global(.art-link:hover) .kb .kb-cursor, :global(.art-link:focus-visible) .kb .kb-cursor { opacity: 1; }
+</style>

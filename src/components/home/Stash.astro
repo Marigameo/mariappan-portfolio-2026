@@ -5,10 +5,15 @@
    coconuts' mood loops play while the card is hovered (.m-hover-host). The scene
    is decorative (aria-hidden); the card's label says where it goes.
    Entries live in src/data/experiments.ts; `floaters` picks which ones float,
-   with a short tag so the names stay readable at thumbnail size. */
+   with a short tag so the names stay readable at thumbnail size. Up top, the
+   studio's painter (Thenga with a brush) floats with the latest studio story.
+   The card is one big link to /experiments/ ("Step inside" stretches over it),
+   with the three rooms as their own small links in the foot, straight into each. */
 import Icon from '../Icon.astro';
 import Thenga from '../mascots/Thenga.astro';
-import { moods, shelves, experiments, experimentCount } from '../../data/experiments';
+import { moods, experiments, experimentCount } from '../../data/experiments';
+import { studio } from '../../data/studio';
+import { rooms, roomHref } from '../../data/rooms';
 
 // Order matters: phones show only 1, 2, 5 and 6, so those four cover all three moods.
 const floaters = [
@@ -22,14 +27,17 @@ const floaters = [
   .map((f) => ({ ...f, item: experiments.find((x) => x.id === f.id) }))
   .filter((f) => f.item);
 
-const filled = shelves.filter((s) => s.items.length);
 ---
 <div class="wrap">
-  <a class="stash-card m-hover-host" href="/experiments/" aria-label={`Thenga’s yard: ${experimentCount} experiments, and what I found inside each`}>
+  <div class="stash-card m-hover-host">
     <span class="stash-shot taped" aria-hidden="true">
       <span class="float-hero">
         <Thenga />
         <span class="float-count">{experimentCount} on the pile</span>
+      </span>
+      <span class="floater floater--studio">
+        <Thenga hobby="brush" />
+        <span class="floater-tag">KB homepage</span>
       </span>
       {floaters.map((f, i) => (
         <span class:list={['floater', `floater--${i + 1}`]}>
@@ -38,19 +46,21 @@ const filled = shelves.filter((s) => s.items.length);
         </span>
       ))}
     </span>
-    <span class="stash-body">
-      <span class="stash-eyebrow">Thenga’s yard · {experimentCount} on the pile</span>
+    <div class="stash-body">
+      <span class="stash-eyebrow"><span><span>Thenga’s studio + yard</span> · <span>{studio.length} on the easel</span> · <span>{experimentCount} on the pile</span></span></span>
       <strong class="stash-title">Every coconut’s a keeper.</strong>
-      <span class="stash-text">The yard where I keep piling up experiments. Not all of them became palms, but every one cracked open with something worth keeping.</span>
+      <span class="stash-text">In the studio, I take apart screens I’ve redesigned and show what changed. Out in the yard, experiments keep piling up. Not all of them became palms, but every one cracked open with something worth keeping.</span>
       <span class="stash-moods">
         {Object.values(moods).map((m) => <span class="tag">{m.label}</span>)}
       </span>
-      <span class="stash-foot">
-        <span class="stash-shelves">{filled.map((s) => `${s.name} · ${s.items.length}`).join('  /  ')}</span>
-        <span class="stash-go">Visit the yard<Icon name="arrow-right" /></span>
-      </span>
-    </span>
-  </a>
+      <div class="stash-foot">
+        <nav class="stash-rooms" aria-label="Rooms">
+          {rooms.map((r) => <a class="stash-room" href={roomHref(r.id)}>{r.name}<span>{r.count}</span></a>)}
+        </nav>
+        <a class="stash-go" href="/experiments/" aria-label={`Step inside Thenga’s studio + yard: ${studio.length} UI ${studio.length === 1 ? 'story' : 'stories'} and ${experimentCount} experiments, and what I found inside each`}>Step inside<Icon name="arrow-right" /></a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -79,6 +89,8 @@ const filled = shelves.filter((s) => s.items.length);
   .floater--4 { --x: 73%; --y: 50%; --t: 5s; --d: -3.2s; --r: -3deg; }
   .floater--5 { --x: 14%; --y: 80%; --t: 4.8s; --d: -1.8s; --r: -2deg; }
   .floater--6 { --x: 86%; --y: 80%; --t: 5.4s; --d: -.9s; --r: 4deg; }
+  /* The studio's painter, above Thenga's head. */
+  .floater--studio { --x: 50%; --y: 14%; --t: 5.6s; --d: -2s; --r: -2deg; }
   @keyframes thenga-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-3deg); } }
 
   .stash-body { display: grid; gap: .6rem; min-width: 0; }
@@ -88,8 +100,19 @@ const filled = shelves.filter((s) => s.items.length);
   .stash-text { font-size: 1rem; color: var(--ink-soft); max-width: 52ch; }
   .stash-moods { display: flex; flex-wrap: wrap; gap: .45rem; }
   .stash-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: .4rem; padding-top: .8rem; border-top: 1.5px dashed var(--line); }
-  .stash-shelves { font-family: var(--font-hand); font-size: 1.2rem; color: var(--ink-soft); white-space: pre-wrap; }
-  .stash-go { margin-left: auto; display: inline-flex; align-items: center; gap: .3rem; font-size: .95rem; font-weight: 500; color: var(--coral); white-space: nowrap; }
+  /* Long eyebrow: wrap between the pieces, never inside one. */
+  .stash-eyebrow > span > span { white-space: nowrap; }
+  /* The rooms: small links that sit above the card's stretched link. */
+  .stash-rooms { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .4rem; }
+  .stash-room { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .7rem; font-size: .86rem; font-weight: 500; white-space: nowrap; text-decoration: none; color: var(--ink); background: var(--paper); border: 1.5px solid var(--border); border-radius: 999px; transition: border-color .15s ease, color .15s ease; }
+  .stash-room span { font-family: var(--font-mono); font-size: .66rem; font-weight: 400; color: var(--ink-faint); }
+  .stash-room:hover { color: var(--coral); border-color: var(--coral); }
+  .stash-room:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+  .stash-go { margin-left: auto; display: inline-flex; align-items: center; gap: .3rem; font-size: .95rem; font-weight: 500; color: var(--coral); white-space: nowrap; text-decoration: none; }
+  .stash-go::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-wobble-2); }
+  .stash-go:hover { color: var(--coral); }
+  .stash-go:focus-visible { outline: none; }
+  .stash-card:has(.stash-go:focus-visible) { outline: 2px solid var(--ink); outline-offset: 4px; }
   .stash-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
   .stash-card:hover .stash-go :global(.doodle) { transform: translateX(4px); }
 
@@ -111,5 +134,6 @@ const filled = shelves.filter((s) => s.items.length);
     .floater--2 { --x: 80%; --y: 22%; }
     .floater--5 { --x: 20%; --y: 74%; }
     .floater--6 { --x: 80%; --y: 74%; }
+    .floater--studio { --y: 13%; }
   }
 </style>

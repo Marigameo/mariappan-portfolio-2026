@@ -1,0 +1,73 @@
+---
+/* The three doors into Thenga's place: the studio, the stories and the yard.
+   Each is a card with its Thenga, the room's name and count, and one line.
+   `tabs` (the Experiments page): the doors are the room tabs. They start as jump
+   links (#studio…) and the page script makes them tabs and marks the open one.
+   `links` (anywhere else): plain links to /experiments/#<room>. Thenga moves
+   while its door is hovered or focused. Rooms come from src/data/rooms.ts. */
+import Icon from './Icon.astro';
+import Thenga from './mascots/Thenga.astro';
+import { rooms, roomHref } from '../data/rooms';
+
+interface Props {
+  mode?: 'tabs' | 'links';
+  /** Accessible name for the group. */
+  label?: string;
+}
+const { mode = 'links', label = 'Rooms' } = Astro.props;
+const tabs = mode === 'tabs';
+---
+<nav class:list={['doors', tabs && 'doors--tabs']} aria-label={label} data-doors={tabs ? '' : undefined}>
+  <div class="doors-row">
+    {rooms.map((r) => (
+      <a class="door m-hover-host" href={tabs ? `#${r.id}` : roomHref(r.id)} data-room={tabs ? r.id : undefined}>
+        <span class="door-thenga" aria-hidden="true"><Thenga hobby={r.thenga.hobby} mood={r.thenga.mood} /></span>
+        <span class="door-body">
+          <span class="door-name">{r.name}<span class="door-count">{r.count}</span></span>
+          <span class="door-blurb">{r.blurb}</span>
+        </span>
+        <span class="door-state" aria-hidden="true">
+          <span class="door-here">You’re here</span>
+          <span class="door-go">Step in<Icon name="arrow-right" /></span>
+        </span>
+      </a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .doors { container-type: inline-size; }
+  .doors-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .door { position: relative; display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); grid-template-areas: "thenga body" "thenga state"; align-items: center; gap: .2rem .9rem; padding: .9rem 1rem .85rem .8rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 12px 6px 14px 7px / 7px 14px 6px 12px; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease, background .2s ease; }
+  .door:nth-child(2) { border-radius: 7px 14px 6px 12px / 12px 6px 14px 7px; }
+  .door:hover { color: var(--ink); transform: translateY(-3px) rotate(-.4deg); box-shadow: 5px 6px 0 var(--shadow-ink); }
+  .door:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+  .door-thenga { grid-area: thenga; display: block; }
+  .door-thenga :global(.mascot) { display: block; width: 100%; }
+  .door-body { grid-area: body; display: grid; gap: .25rem; min-width: 0; }
+  .door-name { display: flex; align-items: baseline; gap: .5rem; font-family: var(--font-display); font-size: 1.4rem; line-height: 1.1; letter-spacing: -.01em; }
+  .door-count { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; color: var(--ink-faint); }
+  .door-blurb { font-size: .86rem; line-height: 1.4; color: var(--ink-soft); }
+  .door-state { grid-area: state; display: flex; margin-top: .35rem; font-size: .85rem; font-weight: 500; }
+  .door-here { display: none; align-items: center; gap: .4rem; font-family: var(--font-hand); font-size: 1.15rem; font-weight: 400; color: var(--coral); }
+  .door-here::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: var(--coral); }
+  .door-go { display: inline-flex; align-items: center; gap: .3rem; color: var(--coral); }
+  .door-go :global(.doodle) { width: .95rem; height: .95rem; stroke-width: 2; transition: transform .2s ease; }
+  .door:hover .door-go :global(.doodle) { transform: translateX(4px); }
+
+  /* The open room's door: inked in and settled, "You're here" instead of "Step in". */
+  .door[aria-selected="true"] { background: var(--sand); border-color: var(--ink); box-shadow: 3px 3px 0 var(--coral); transform: none; }
+  .door[aria-selected="true"] .door-here { display: inline-flex; }
+  .door[aria-selected="true"] .door-go { display: none; }
+
+  /* Narrow spaces (phones, the story column): the doors stack as slim rows, all still in view. */
+  @container (max-width: 52rem) {
+    .doors-row { grid-template-columns: 1fr; gap: .6rem; }
+    .door { grid-template-columns: 3rem minmax(0, 1fr) auto; grid-template-areas: "thenga body state"; padding: .6rem .8rem .6rem .6rem; }
+    .door-name { font-size: 1.2rem; }
+    .door-blurb { font-size: .8rem; }
+    .door-state { margin-top: 0; }
+    .door-go { font-size: 0; gap: 0; }
+    .door-go :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+  }
+</style>

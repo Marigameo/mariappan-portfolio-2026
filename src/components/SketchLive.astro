@@ -9,7 +9,9 @@
    </SketchLive>
 
    A tall image (a full-page doc) can pass `scroll: 'scroll the real doc'`: it keeps its
-   readable width inside a short frame that scrolls, with a fade and that hint below. */
+   readable width inside a short frame that scrolls, with a fade and that hint below.
+   `start="live"` opens on the real product instead (the studio stories lead with it);
+   a video still waits for its Play button. */
 interface Live {
   kind: 'image' | 'video';
   src: string;
@@ -27,20 +29,23 @@ interface Props {
   live: Live;
   /** One line under the live view. */
   caption?: string;
+  /** Which tab shows first. Defaults to the sketch. */
+  start?: 'sketch' | 'live';
 }
 
-const { id, live, caption } = Astro.props;
+const { id, live, caption, start = 'sketch' } = Astro.props;
+const onLive = start === 'live';
 const t = (k: string) => `sl-${id}-${k}`;
 ---
 <div class="sl" data-sketch-live>
   <div class="sl-tabs" role="tablist" aria-label="Sketch or the real product">
-    <button class="sl-tab" type="button" role="tab" id={t('tab-sketch')} aria-controls={t('sketch')} aria-selected="true">Sketch</button>
-    <button class="sl-tab" type="button" role="tab" id={t('tab-live')} aria-controls={t('live')} aria-selected="false" tabindex="-1"><span class="sl-dot" aria-hidden="true"></span>Live</button>
+    <button class="sl-tab" type="button" role="tab" id={t('tab-sketch')} aria-controls={t('sketch')} aria-selected={onLive ? 'false' : 'true'} tabindex={onLive ? '-1' : undefined}>Sketch</button>
+    <button class="sl-tab" type="button" role="tab" id={t('tab-live')} aria-controls={t('live')} aria-selected={onLive ? 'true' : 'false'} tabindex={onLive ? undefined : '-1'}><span class="sl-dot" aria-hidden="true"></span>Live</button>
   </div>
-  <div class="sl-panel" role="tabpanel" id={t('sketch')} aria-labelledby={t('tab-sketch')}>
+  <div class="sl-panel" role="tabpanel" id={t('sketch')} aria-labelledby={t('tab-sketch')} hidden={onLive}>
     <slot />
   </div>
-  <div class="sl-panel" role="tabpanel" id={t('live')} aria-labelledby={t('tab-live')} hidden>
+  <div class="sl-panel" role="tabpanel" id={t('live')} aria-labelledby={t('tab-live')} hidden={!onLive}>
     <figure class="sl-live">
       <div class:list={['sl-frame', live.scroll && 'sl-frame--scroll']}>
         {live.scroll ? (

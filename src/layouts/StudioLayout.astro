@@ -1,0 +1,89 @@
+---
+/* A studio story: one UI experiment, told as a short deck (the problem, what I
+   changed, old against new, the smudges and what dried). Like WorkLayout, but it
+   lives under the Experiments page: the breadcrumb goes back to the studio, and
+   the foot walks to the previous and next story in src/data/studio.ts, then
+   shows the three rooms' doors (RoomDoors) so the rest of the place is a click away.
+   Pages pass the lede in the "lede" slot, the opening figure in "hero", and the
+   deck as children. */
+import BaseLayout from './BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import RoomDoors from '../components/RoomDoors.astro';
+import { site } from '../data/site';
+import { studio, studioHref } from '../data/studio';
+
+interface Props {
+  /** Browser/OG title, e.g. "Redesigning the KB homepage" (suffix added here). */
+  title: string;
+  description: string;
+  ogDescription?: string;
+  /** Which entry in src/data/studio.ts this page tells. */
+  slug: string;
+  /** Small mono label above the heading, e.g. "Strivelabs · Knowledge base". */
+  eyebrow: string;
+  facts: { label: string; value: string }[];
+  keywords: string;
+}
+
+const { title, description, ogDescription, slug, eyebrow, facts, keywords } = Astro.props;
+const i = studio.findIndex((p) => p.slug === slug);
+const piece = studio[i];
+const prev = i > 0 ? studio[i - 1] : null;
+const next = i < studio.length - 1 ? studio[i + 1] : null;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: piece.title,
+  url: `${site.url}${studioHref(piece)}`,
+  description,
+  author: { '@type': 'Person', name: site.name, url: `${site.url}/` },
+  inLanguage: 'en',
+  keywords,
+};
+---
+<BaseLayout title={`${title} | Studio | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="experiments" jsonLd={jsonLd}>
+  <main id="main" class="wrap wrap--narrow">
+    <header class="page-hero">
+      <a class="breadcrumb" href="/experiments/#studio"><Icon name="arrow-right" />The studio</a>
+      <p class="eyebrow">{eyebrow}</p>
+      <h1>{piece.title}</h1>
+      <p class="lede"><slot name="lede" /></p>
+      <dl class="facts">
+        {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+      </dl>
+    </header>
+
+    {Astro.slots.has('hero') && <div class="studio-hero"><slot name="hero" /></div>}
+
+    <article class="prose">
+      <slot />
+    </article>
+
+    <nav class="studio-walk" aria-label="More from the studio">
+      {prev
+        ? <a class="studio-step" href={studioHref(prev)}><Icon name="arrow-right" style="transform:scaleX(-1)" /><span><small>Previous</small>{prev.title}</span></a>
+        : <span />}
+      {next
+        ? <a class="studio-step studio-step--next" href={studioHref(next)}><span><small>Next</small>{next.title}</span><Icon name="arrow-right" /></a>
+        : <a class="pill" href="/experiments/#studio"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to the studio</a>}
+    </nav>
+
+    <section class="studio-rooms" aria-labelledby="studio-rooms-t">
+      <p class="eyebrow" id="studio-rooms-t">Thenga’s studio + yard</p>
+      <RoomDoors label="Rooms in Thenga’s studio + yard" />
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .studio-hero { margin: var(--space-3) 0 var(--space-2); }
+  .studio-walk { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .studio-step { display: inline-flex; align-items: center; gap: .55rem; max-width: 48%; text-decoration: none; color: var(--ink); }
+  .studio-step--next { margin-left: auto; text-align: right; }
+  .studio-step span { display: grid; font-weight: 500; }
+  .studio-step small { font-family: var(--font-mono); font-size: .62rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .studio-step :global(.doodle) { flex: none; width: 1.1rem; height: 1.1rem; stroke-width: 2; color: var(--coral); }
+  .studio-step:hover { color: var(--coral); }
+  .studio-rooms { margin-top: var(--space-4); }
+</style>

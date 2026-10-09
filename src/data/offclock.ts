@@ -10,7 +10,7 @@
 import { site } from './site';
 
 /** Thenga's props on its day off (src/components/mascots/Thenga.astro). */
-export type Hobby = 'guitar' | 'camera' | 'pen' | 'pot' | 'backpack';
+export type Hobby = 'guitar' | 'camera' | 'pen' | 'pot' | 'backpack' | 'brush';
 
 export interface Pick {
   src: string;

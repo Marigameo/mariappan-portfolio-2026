@@ -1,0 +1,262 @@
+---
+/* The studio's first story: the knowledge base home in Strive. Told like the work
+   stories, as a short deck of numbered slides, but shorter and about one screen:
+   the first version (a colleague's), what I proposed in a Claude prototype, the
+   live page against the first one, and the two calls I took back on the way.
+   Media lives in public/images/experiments/kb/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import SketchLive from '../../../components/SketchLive.astro';
+import KbGraph from '../../../components/sketches/kb/KbGraph.astro';
+import ShotCompare from '../../../components/sketches/agentui/ShotCompare.astro';
+
+const img = (f: string) => `/images/experiments/kb/${f}`;
+
+const calls = [
+  { name: 'Full screen', before: 'A modal over the page. Clicking a node closed it and jumped to another page.', after: 'Stretches in place up to the sidebar, like every other full screen in Strive.' },
+  { name: 'Recent activity', before: 'A section of its own below the graph. Easy to miss, and it grows fast, with too little detail yet for a page of its own.', after: 'A pill in the header that opens a scrollable panel. Less prominent, never hidden, and room to grow.' },
+  { name: 'Files on the graph', before: 'Small dots you could click.', after: 'Pills with an icon and a name: a friendly hit target that looks clickable.' },
+  { name: 'Hover card', before: 'Every detail on hover, the same ones the file’s own page shows.', after: 'Just enough to know what it is. The rest is a click away.' },
+];
+
+const lessons = [
+  { miss: 'Folded the platform sidebar away on one page only.', lesson: 'Don’t move furniture people didn’t touch. Sidebar state belongs to the person, not the page.' },
+  { miss: 'Locked the page scroll to make room for the graph.', lesson: 'Consistency beats a perfect fit. Keep the shell the same, and fit the surface inside it.' },
+  { lesson: 'A graph is an interface, not a picture. Ask how it looks with a few nodes and with a crowd, how it says “click me”, and where things go when someone drags.' },
+];
+---
+<StudioLayout
+  title="Redesigning the KB homepage"
+  slug="kb-homepage"
+  description="Redesigning the knowledge base home in Strive: two sidebars, a draggable graph and a lot of controls, made calm enough to use. The first version, my prototype, old against new, and two calls I took back."
+  ogDescription="Two sidebars, a draggable graph and a lot of controls, made calm enough to use. Old against new, and two calls I took back."
+  eyebrow="Strivelabs · Knowledge base"
+  facts={[
+    { label: 'My part', value: 'Audit, prototype and build, on top of a colleague’s first version' },
+    { label: 'Prototyped in', value: 'Claude' },
+    { label: 'Status', value: 'Live' },
+  ]}
+  keywords="UX design, knowledge base, graph view, navigation, sidebars, prototyping with Claude, design engineering, UX for AI"
+>
+  <Fragment slot="lede">The knowledge base home had a lot to say: two sidebars, a draggable graph, an activity log and a row of controls. This is how I helped make it <mark class="hl">calm enough to use</mark>, including two calls I had to undo along the way.</Fragment>
+
+  <SketchLive slot="hero" id="kb" start="live" live={{ kind: 'video', src: img('final.mp4'), poster: img('final-poster.webp'), width: 1600, height: 832, alt: 'Screen recording of the live knowledge base home in Strive: the platform sidebar and the files sidebar both open, the page title and description, and the graph of folders and files below. Hovering a file shows its details, the Recent button opens the activity panel, a folder opens its table of files, a file opens its doc, and the graph opens full screen with a legend.' }} caption="The live page: hover a file for its details, open Recent, then a folder, a doc, and the graph full screen.">
+    <figure class="sk-fig kb-sketch">
+      <span class="kb-frame"><KbGraph label="Sketch of the redesigned knowledge base home: the platform sidebar and the files sidebar side by side, the page title and description, and a graph of the tenant’s files as soft pill-shaped nodes around a centre, with an expand button in the corner." /></span>
+    </figure>
+  </SketchLive>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">A graph on a files page</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Our knowledge base is where Strive keeps what agents need to know about each customer: <strong><code>.md</code> files on brand, audiences, competitors and more</strong>, filled in at onboarding. It’s a files and folders module, so it shows as a second sidebar next to the platform one.</li>
+        <li>A colleague brought in a new home for it: <strong>a graph you can drag</strong>, with every folder and file as a node. On an audit, I felt it could do more for usability, not just for looks, so I offered to build on top of it.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-audit">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">The audit</p><h2 id="s-audit">More to decide than to do</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Two sidebars side by side, <strong>each with its own switcher</strong> and plenty of options. A graph that had to work with one branch or many, inside a page that scrolls. A recent activity log, which wasn’t what people came for.</li>
+        <li>Put together, <strong>too many controls and too much detail</strong> on one screen. So the question wasn’t how to make the graph prettier. It was how to make the whole page calmer.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('old.webp')} width="1600" height="975" loading="lazy" decoding="async" alt="The first version of the knowledge base home: a files sidebar with its own workspace switcher at the top, the page title and description, and a graph card that runs past the bottom of the screen, with a full screen icon in its corner. Files show as small coloured dots with short labels, and hovering one shows a details card over the top right of the graph.">
+          <span class="shot-mark" style="--l: 1.1%; --t: 1.6%; --w: 13.6%; --h: 4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 23.4%; --t: 94.4%; --w: 2.6%; --h: 5.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 52.6%; --t: 38.6%; --w: 13.8%; --h: 5.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 73.4%; --t: 29.8%; --w: 24.4%; --h: 16.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 95.3%; --t: 22.6%; --w: 2.8%; --h: 4.4%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 16.4%; --t: 3.6%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 27.6%; --t: 96%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 52.6%; --t: 38.6%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 73.4%; --t: 29.8%" aria-hidden="true">4</span>
+          <span class="shot-num" style="--l: 94%; --t: 22.6%" aria-hidden="true">5</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>A second sidebar, with a switcher of its own.</strong> Files and folders sat beside the platform sidebar, each with a switcher at the top.</li>
+          <li><strong>A drag surface in a scrolling page.</strong> The graph ran past the fold, so dragging the graph and scrolling the page fought over the same gesture.</li>
+          <li><strong>Files as small dots.</strong> A tiny target, and long names cut short.</li>
+          <li><strong>Everything on hover.</strong> The same details the file’s own page already shows.</li>
+          <li><strong>Full screen in a modal.</strong> Open a node from there, and the modal closed as the page changed.</li>
+        </ol>
+        <figcaption>The first version. The idea was right. The edges needed calming.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-proposal">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Design call · the proposal</p><h2 id="s-proposal">Calm the surface down</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I prototyped the changes in Claude: <strong>no page scroll under a drag surface</strong>, the platform sidebar folded by default, recent activity out of the way, files as pills, and softer colours.</li>
+        <li>And I treated the graph as an interface, not a picture: <strong>how it looks with a few nodes and with a crowd</strong>, how it says “click me”, and what moves when someone drags.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('prototype.webp')} width="1600" height="789" loading="lazy" decoding="async" alt="The prototype built in Claude: the platform sidebar folded to a strip of icons beside the files sidebar, a Recent button with a count in the header, and the graph filling the rest of the screen. Folders are large soft-coloured circles, files are labelled pills with icons, zoom and fit controls sit in the bottom left, and a legend and a hint run along the bottom.">
+          <span class="shot-mark" style="--l: .3%; --t: 2.5%; --w: 3.3%; --h: 94.8%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 90.6%; --t: 3.2%; --w: 7.6%; --h: 5%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 29.4%; --t: 41.5%; --w: 13.8%; --h: 5.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 21.3%; --t: 92.8%; --w: 24.4%; --h: 4.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 21.2%; --t: 76.5%; --w: 2.6%; --h: 13.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 81%; --t: 92.8%; --w: 17.2%; --h: 4.4%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 2%; --t: 2.5%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 90.6%; --t: 3.2%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 29.4%; --t: 41.5%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 21.3%; --t: 92.8%" aria-hidden="true">4</span>
+          <span class="shot-num" style="--l: 23.8%; --t: 76.5%" aria-hidden="true">5</span>
+          <span class="shot-num" style="--l: 81%; --t: 92.8%" aria-hidden="true">5</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>More room for the graph.</strong> The platform sidebar folded to icons, and the page stopped scrolling, so nothing scrolls under a drag. I took both back, more on that below.</li>
+          <li><strong>Recent, one click away.</strong> Activity moved behind a button with a count, instead of taking a section of the page.</li>
+          <li><strong>Pills, not dots.</strong> Each file is a labelled pill with its icon: a bigger target that looks clickable.</li>
+          <li><strong>Softer colours, with a key.</strong> Folders keep a light tint, and a legend says which is which.</li>
+          <li><strong>Controls in one corner.</strong> Zoom, fit and full screen together, and a hint that says what clicks and what drags.</li>
+        </ol>
+        <figcaption>The prototype, built in Claude. Most of it shipped. Two parts didn’t.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-details">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · the details</p><h2 id="s-details">Less up front, nothing hidden</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Each of these started as something that felt off in use, not on screen. <strong>Full screen opened in a modal</strong>, while everywhere else in the platform it stretches in place up to the sidebar. And because nodes link to other pages, a click inside the modal closed it and jumped away.</li>
+        <li>So I kept full screen in the same view, like everywhere else, and went through the rest the same way: <strong>show less up front, but keep it one step away.</strong></li>
+      </ul>
+      <ul class="calls">
+        {calls.map((c, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{c.name}</h3>
+            <p class="calls-before"><span>Before</span>{c.before}</p>
+            <p class="calls-after"><span>After</span>{c.after}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-after">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Before · after</p><h2 id="s-after">Same page, fewer questions</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Both sidebars stay open</strong>, the title and description sit where every page has them, and the graph gets a card of its own with full screen in the corner. Recent activity lives behind a button in the header.</li>
+        <li>Files are pills with icons, and a details card shows on hover. A folder opens its files, and a file opens the doc.</li>
+      </ul>
+      <ShotCompare
+        id="kb"
+        before={{ label: 'Before', src: img('before.webp'), width: 1600, height: 832, alt: 'The first version: the files sidebar with its switcher, the page title and description, and the graph of small dots with a details card over it.' }}
+        after={{ label: 'After', src: img('after.webp'), width: 1600, height: 832, alt: 'The live version: the platform sidebar and the files sidebar both open, the page title and description, a Recent button in the header, and the graph of soft folder circles and file pills in its own card.' }}
+        caption="Drag to compare the first version with the one that’s live now."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-smudges">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Smudges</p><h2 id="s-smudges">Two calls I took back</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Folding the sidebar away.</strong> If it closed by itself on this one page, people would wonder where it went, and the app would need extra logic to detect the page and juggle both sidebars. I talked it through with Claude until I was confident, and kept both sidebars open.</li>
+        <li><strong>Locking the page scroll.</strong> It made this page behave unlike every other page in the platform. If the goal is to fit the graph on screen, the placement can change while the layout stays the same: the same title, description and spacing as everywhere else.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What I’d keep</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`, !l.miss && 'lessons-solo']}>
+            {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">Calm isn’t fewer features. It’s fewer questions.</blockquote>
+  </div>
+</StudioLayout>
+
+<style>
+  /* Deck styles from the work stories (report-builder.astro), trimmed to what a
+     studio story uses. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons .lessons-solo { grid-column: 1 / -1; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 04: four small calls, each what the first version did and what it does now. */
+  .calls { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .calls li { display: grid; gap: .5rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .calls h3 { margin: 0 0 .1rem; font-size: 1.3rem; line-height: 1.15; }
+  .calls p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .calls span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .calls-before { color: var(--ink-faint) !important; }
+  .calls-before span { color: var(--coral); }
+  .calls-after { color: var(--ink) !important; font-weight: 500; }
+  .calls-after span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .calls { grid-template-columns: 1fr; } }
+
+  /* Real screenshots with coral hand-drawn marks and numbers. Screenshots keep
+     their own light colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-num { position: absolute; left: var(--l); top: var(--t); display: grid; place-items: center; width: 1.6rem; height: 1.6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -50%) rotate(-6deg); }
+  .shot-notes { list-style: none; counter-reset: note; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem 1.5rem; margin: 1.4rem 0 0; padding: 0; }
+  .shot-notes li { counter-increment: note; position: relative; padding-left: 2.1rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  .shot-notes li::before { content: counter(note); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .shot-notes strong { color: var(--ink); font-weight: 500; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .shot-notes { grid-template-columns: 1fr; }
+    .shot-num { width: 1rem; height: 1rem; font-size: .8rem; box-shadow: 1px 1px 0 var(--shadow-ink); }
+    .shot-mark { border-width: 1.5px; }
+  }
+
+  /* The Sketch tab: the artboard drawing in a frame like the live one. */
+  .kb-sketch { margin: 0; }
+  .kb-frame { display: block; aspect-ratio: 600 / 440; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .kb-frame :global(.sk) { display: block; width: 100%; height: 100%; }
+
+  .closer { margin-top: var(--space-5); }
+</style>

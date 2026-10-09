@@ -1,0 +1,36 @@
+---
+/* The hand-off at the foot of a room on the Experiments page: the next room's
+   door, so reaching the end of one room walks you into the next (the yard wraps
+   round to the studio). A jump link (#<room>) that the page script turns into a
+   tab switch. */
+import Icon from './Icon.astro';
+import Thenga from './mascots/Thenga.astro';
+import { rooms, type Room } from '../data/rooms';
+
+interface Props { from: Room['id'] }
+const i = rooms.findIndex((r) => r.id === Astro.props.from);
+const next = rooms[(i + 1) % rooms.length];
+---
+<a class="next-room m-hover-host" href={`#${next.id}`} data-go-room={next.id}>
+  <span class="next-room-thenga" aria-hidden="true"><Thenga hobby={next.thenga.hobby} mood={next.thenga.mood} /></span>
+  <span class="next-room-body">
+    <span class="next-room-label">Next room</span>
+    <strong>{next.name}<span>{next.count}</span></strong>
+    <span class="next-room-blurb">{next.blurb}</span>
+  </span>
+  <Icon name="arrow-right" class="next-room-go" />
+</a>
+
+<style>
+  .next-room { display: grid; grid-template-columns: 3.6rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; margin-top: var(--space-5); padding: 1rem 1.3rem 1rem 1rem; text-decoration: none; color: var(--ink); border: 2px dashed var(--ink-faint); border-radius: var(--radius-wobble-3); transition: border-color .2s ease, background .2s ease; }
+  .next-room:hover { color: var(--ink); border-color: var(--coral); background: color-mix(in srgb, var(--sand) 55%, transparent); }
+  .next-room:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+  .next-room-thenga :global(.mascot) { display: block; width: 100%; }
+  .next-room-body { display: grid; gap: .15rem; min-width: 0; }
+  .next-room-label { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .next-room strong { display: flex; align-items: baseline; gap: .5rem; font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; line-height: 1.1; }
+  .next-room strong span { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); }
+  .next-room-blurb { font-size: .9rem; color: var(--ink-soft); }
+  .next-room :global(.next-room-go) { width: 1.4rem; height: 1.4rem; stroke-width: 2; color: var(--coral); transition: transform .2s ease; }
+  .next-room:hover :global(.next-room-go) { transform: translateX(5px); }
+</style>

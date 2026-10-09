@@ -5,30 +5,35 @@
    rendered into the panel up front (hidden), so they are in the page for search
    and need no templating. /experiments/#<id> opens one directly. Above the
    shelves, "Stories from the yard" holds the highlights: wide cards that link to a
-   story of their own. All content comes from src/data/experiments.ts. */
+   story of their own. All content comes from src/data/experiments.ts.
+   First of all, the studio: UI experiments as a gallery of artboards, each one a
+   preview of the new UI that opens its story (src/data/studio.ts). */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import Thenga from '../components/mascots/Thenga.astro';
 import CoconutHeap from '../components/mascots/CoconutHeap.astro';
 import DesignEcosystem from '../components/sketches/DesignEcosystem.astro';
+import KbGraph from '../components/sketches/kb/KbGraph.astro';
+import RoomDoors from '../components/RoomDoors.astro';
+import NextRoom from '../components/NextRoom.astro';
+import { rooms } from '../data/rooms';
 import { moods, shelves, experiments, experimentCount, highlights } from '../data/experiments';
+import { studio, studioHref } from '../data/studio';
 import { site } from '../data/site';
 
-const description = 'Thenga’s yard: the heap where I pile up my experiments. Marketplace apps, a pivoted product, college ventures, freelance work and night hacks, each with what I found inside.';
+const description = 'Thenga’s studio + yard: UI redesigns told as stories (the before, the after and the lessons), plus a heap of apps, ventures and night hacks, each with what I found inside.';
 const n = experiments.length;
 const sketches = { 'design-ecosystem': DesignEcosystem };
+const artSketches = { 'kb-graph': KbGraph };
 ---
-<BaseLayout title={`Thenga’s yard — experiments | ${site.name}`} description={description} current="experiments">
+<BaseLayout title={`Thenga’s studio + yard — experiments | ${site.name}`} description={description} current="experiments">
   <main id="main" class="wrap yard">
     <header class="yard-hero">
       <div>
         <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
-        <p class="eyebrow">Thenga’s yard · {experimentCount} on the pile</p>
+        <p class="eyebrow"><span><span>Thenga’s studio + yard</span> · <span>{studio.length} on the easel</span> · <span>{experimentCount} on the pile</span></span></p>
         <h1>Every coconut’s a keeper.</h1>
-        <p class="lede">The yard where I keep piling up experiments: shipped apps, a pivot, college ventures and night hacks. Not all of them became palms, but every one cracked open with something inside.</p>
-        <nav class="yard-jump" aria-label="Shelves">
-          {shelves.map((s) => <a class="pill" href={`#${s.id}`}>{s.name}<span>{s.items.length}</span></a>)}
-        </nav>
+        <p class="lede">In the studio, I take apart screens I’ve redesigned and show what changed. Out in the yard, the experiments keep piling up: shipped apps, a pivot, college ventures and night hacks. Not all of them became palms, but every one cracked open with something inside.</p>
       </div>
       <div class="yard-heap">
         <CoconutHeap items={experiments} />
@@ -36,7 +41,53 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
       </div>
     </header>
 
-    <section class="picks" id="highlights" aria-labelledby="highlights-title">
+    <!-- The three rooms, as doors: plain jump links until the script turns them into
+         tabs, so without JS every room simply shows, one after another. Once the
+         doors scroll away, a slim bar of the same rooms slides in under the header. -->
+    <RoomDoors mode="tabs" label="Rooms" />
+    <div class="rooms-mini" data-rooms-mini>
+      <div class="wrap rooms-mini-row">
+        {rooms.map((r) => <a class="room-tab" href={`#${r.id}`} data-room-jump={r.id}>{r.name}<span>{r.count}</span></a>)}
+      </div>
+    </div>
+
+    <section class="room studio" id="studio" aria-labelledby="studio-title" data-room-panel>
+      <header class="studio-head">
+        <Thenga hobby="brush" class="studio-mascot" />
+        <div>
+          <h2 id="studio-title">The studio</h2>
+          <p>Screens I’ve redrawn: the before, the after, and the smudges in between.</p>
+        </div>
+      </header>
+      <ul class="arts">
+        {studio.map((p) => {
+          const Sketch = p.preview.kind === 'sketch' ? artSketches[p.preview.sketch] : null;
+          return (
+            <li class="art" style={`--accent: var(--${p.accent})`}>
+              <a class="art-link" href={studioHref(p)}>
+                <span class="art-frame"><span class="art-frame-icon" aria-hidden="true">#</span>{p.frame}</span>
+                <span class="art-board">
+                  <span class="art-shot">
+                    {p.preview.kind === 'sketch' && Sketch
+                      ? <Sketch label={p.preview.alt} />
+                      : p.preview.kind === 'video' && <video src={p.preview.src} poster={p.preview.poster} width={p.preview.width} height={p.preview.height} muted loop playsinline preload="none" aria-label={p.preview.alt} data-art-video></video>}
+                  </span>
+                </span>
+                <span class="art-body">
+                  <strong class="art-title">{p.title}</strong>
+                  <span class="nut-context">{p.context}</span>
+                  {p.hook && <span class="art-hook">{p.hook}</span>}
+                  <span class="art-tags">{p.tags.map((t) => <span class="art-tag">{t}</span>)}</span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      <NextRoom from="studio" />
+    </section>
+
+    <section class="room picks" id="stories" aria-labelledby="highlights-title" data-room-panel>
       <header class="shelf-head">
         <p class="eyebrow">Highlights</p>
         <h2 id="highlights-title">Stories from the yard</h2>
@@ -61,40 +112,50 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
           );
         })}
       </ul>
+      <NextRoom from="stories" />
     </section>
 
-    <ul class="legend" aria-label="What each coconut means">
-      {Object.entries(moods).map(([key, m]) => (
-        <li>
-          <Thenga mood={key as keyof typeof moods} />
-          <p><strong>{m.label}</strong>{m.meaning}</p>
-        </li>
-      ))}
-    </ul>
+    <section class="room yard-room" id="yard" aria-labelledby="yard-title" data-room-panel>
+      <header class="room-head">
+        <h2 id="yard-title">The yard</h2>
+      </header>
+      <ul class="key" aria-label="What each coconut means">
+        {Object.entries(moods).map(([key, m]) => (
+          <li>
+            <Thenga mood={key as keyof typeof moods} />
+            <p><strong>{m.label}</strong>{m.meaning}</p>
+          </li>
+        ))}
+      </ul>
+      <nav class="yard-filter" aria-label="Shelves" data-yard-filter>
+        <a class="pill" href="#yard" data-shelf="all">All<span>{experimentCount}</span></a>
+        {shelves.map((s) => <a class="pill" href={`#${s.id}`} data-shelf={s.id}>{s.name}<span>{s.items.length}</span></a>)}
+      </nav>
 
-    {shelves.map((shelf) => (
-      <section class="shelf" id={shelf.id} aria-labelledby={`${shelf.id}-title`}>
-        <header class="shelf-head">
-          <h2 id={`${shelf.id}-title`}>{shelf.name}</h2>
-          <p>{shelf.tagline}</p>
-        </header>
-        <ul class="nuts">
-          {shelf.items.map((x) => (
-            <li class="nut m-hover-host">
-              <div class="nut-top">
-                <Thenga mood={x.mood} class="nut-mood" />
-                <span class="tag">{moods[x.mood].label}</span>
+      {shelves.map((shelf) => (
+        <section class="patch" id={shelf.id} aria-labelledby={`${shelf.id}-title`} data-patch={shelf.id}>
+          <header class="patch-head">
+            <h3 id={`${shelf.id}-title`}>{shelf.name}</h3>
+            <p>{shelf.tagline}</p>
+          </header>
+          <ul class="rows">
+            {shelf.items.map((x) => (
+              <li class="row m-hover-host">
+                <Thenga mood={x.mood} label={moods[x.mood].label} class="row-mood" />
+                <div class="row-main">
+                  <h4><button type="button" class="nut-open" data-open={x.id} aria-haspopup="dialog">{x.name}</button></h4>
+                  <p class="row-hook">{x.hook}</p>
+                </div>
+                <p class="nut-context row-context">{x.context}</p>
                 <span class="nut-status">{x.status}</span>
-              </div>
-              <h3><button type="button" class="nut-open" data-open={x.id} aria-haspopup="dialog">{x.name}</button></h3>
-              <p class="nut-context">{x.context}</p>
-              <p class="nut-hook">{x.hook}</p>
-              <span class="nut-go" aria-hidden="true">Crack it open<Icon name="arrow-right" /></span>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))}
+                <Icon name="arrow-right" class="row-go" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <NextRoom from="yard" />
+    </section>
 
     <p style="margin-top: var(--space-5)">
       <a class="pill" href="/#work"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
@@ -157,6 +218,110 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
 </BaseLayout>
 
 <script>
+  // ---- The rooms: studio, stories and yard, one at a time ----
+  // The bar's jump links become tabs; only the chosen room's panel shows. The hash
+  // picks the room: #studio, #stories (#highlights, its old name), #yard, a shelf
+  // id (the yard, filtered to that shelf) or an experiment id (the yard, with that
+  // experiment cracked open). The bar sticks under the site header, whose height
+  // changes when the nav wraps on phones, so it's measured.
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const setHeaderH = () => document.documentElement.style.setProperty('--header-h', `${header?.offsetHeight ?? 64}px`);
+  setHeaderH();
+  addEventListener('resize', setHeaderH);
+
+  const bar = document.querySelector<HTMLElement>('[data-doors]');
+  const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-doors] [data-room]'));
+  const mini = document.querySelector<HTMLElement>('[data-rooms-mini]');
+  const jumps = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-room-jump], [data-go-room]'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
+  const chips = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-yard-filter] [data-shelf]'));
+  const patches = Array.from(document.querySelectorAll<HTMLElement>('[data-patch]'));
+  let room = 'studio';
+
+  const selectRoom = (name: string, scroll = false) => {
+    room = name;
+    tabs.forEach((t) => {
+      const on = t.dataset.room === name;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+    });
+    panels.forEach((p) => { p.hidden = p.id !== name; });
+    jumps.forEach((j) => { if (j.dataset.roomJump) j.setAttribute('aria-current', String(j.dataset.roomJump === name)); });
+    // Switching from further down: back up to the doors, with the new room open below.
+    if (scroll && bar) {
+      const top = bar.getBoundingClientRect().top + scrollY - (header?.offsetHeight ?? 0) - 16;
+      if (scrollY > top) scrollTo({ top, behavior: 'instant' as ScrollBehavior });
+    }
+  };
+  const selectShelf = (id: string) => {
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.shelf === id)));
+    patches.forEach((p) => { p.hidden = id !== 'all' && p.dataset.patch !== id; });
+  };
+
+  if (bar && tabs.length) {
+    document.querySelector('main')?.classList.add('rooms-on');
+    tabs[0].parentElement!.setAttribute('role', 'tablist');
+    tabs.forEach((t, i) => {
+      t.setAttribute('role', 'tab');
+      t.id = `tab-${t.dataset.room}`;
+      t.setAttribute('aria-controls', t.dataset.room!);
+      t.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectRoom(t.dataset.room!, true);
+        history.replaceState(null, '', `#${t.dataset.room}`);
+      });
+      t.addEventListener('keydown', (e) => {
+        const to = e.key === 'ArrowRight' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' ? (i - 1 + tabs.length) % tabs.length : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+        if (to < 0) return;
+        e.preventDefault();
+        tabs[to].focus();
+        tabs[to].click();
+      });
+    });
+    panels.forEach((p) => { p.setAttribute('role', 'tabpanel'); p.setAttribute('aria-labelledby', `tab-${p.id}`); });
+    // The mini bar and the "Next room" hand-offs switch rooms too, then hand focus
+    // to that room's door so keyboard users land where the room starts.
+    jumps.forEach((j) => j.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = (j.dataset.roomJump ?? j.dataset.goRoom)!;
+      selectRoom(id, true);
+      history.replaceState(null, '', `#${id}`);
+      tabs.find((t) => t.dataset.room === id)?.focus({ preventScroll: true });
+    }));
+    if (mini && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => mini.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0), {
+        rootMargin: `-${header?.offsetHeight ?? 64}px 0px 0px 0px`,
+      }).observe(bar);
+    }
+    chips.forEach((c) => {
+      c.setAttribute('role', 'button');
+      c.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectShelf(c.dataset.shelf!);
+        history.replaceState(null, '', `#${c.dataset.shelf === 'all' ? 'yard' : c.dataset.shelf}`);
+      });
+    });
+
+    // The browser jumps to the anchor before the other rooms are hidden, which
+    // shifts the page under it; so once the right room shows, land on it again.
+    const land = (id: string) => document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior });
+    const route = () => {
+      const h = decodeURIComponent(location.hash.slice(1));
+      if (h === 'studio' || h === 'stories' || h === 'yard') { selectRoom(h); return bar?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior }); }
+      if (h === 'highlights') { selectRoom('stories'); return bar?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior }); }
+      if (patches.some((p) => p.dataset.patch === h)) { selectShelf(h); selectRoom('yard'); return land(h); }
+      if (h && document.querySelector(`[data-open="${CSS.escape(h)}"]`)) return selectRoom('yard');
+      selectRoom(room);
+    };
+    selectShelf('all');
+    route();
+    addEventListener('hashchange', route);
+    // The browser makes its own jump to the anchor once the page has loaded,
+    // after ours; land once more so the doors, not the room, end up on top.
+    addEventListener('load', () => { if (location.hash) route(); }, { once: true });
+  }
+
+  // ---- The cracked-open panel ----
   const dlg = document.querySelector<HTMLDialogElement>('[data-crack]');
   if (dlg && typeof dlg.showModal === 'function') {
     const items = Array.from(dlg.querySelectorAll<HTMLElement>('[data-item]'));
@@ -181,6 +346,8 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
       const i = ids.indexOf(id);
       if (i < 0) return;
       opener = from;
+      // Whichever coconut opened it (a row, or the heap up top), it lives in the yard.
+      if (tabs.length) selectRoom('yard');
       show(i);
       if (!dlg.open) { dlg.showModal(); document.documentElement.classList.add('crack-lock'); }
     };
@@ -188,7 +355,7 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
     dlg.addEventListener('close', () => {
       document.documentElement.classList.remove('crack-lock');
       delete dlg.dataset.swapped;
-      history.replaceState(null, '', location.pathname + location.search);
+      history.replaceState(null, '', location.pathname + location.search + (tabs.length ? `#${room}` : ''));
       opener?.focus();
       opener = null;
     });
@@ -229,20 +396,89 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
     window.addEventListener('hashchange', fromHash);
     fromHash();
   }
+
+  // The studio's artboards: each loop plays while its tile is hovered or focused.
+  // On touch screens (no hover) it plays while the tile is in view instead. Under
+  // reduced motion it never plays, and the poster stays.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const canHover = matchMedia('(hover: hover)').matches;
+    document.querySelectorAll<HTMLVideoElement>('[data-art-video]').forEach((video) => {
+      const link = video.closest<HTMLElement>('.art-link');
+      const play = () => { video.play().catch(() => {}); };
+      const stop = () => { video.pause(); };
+      if (canHover && link) {
+        link.addEventListener('pointerenter', play);
+        link.addEventListener('pointerleave', stop);
+        link.addEventListener('focus', play);
+        link.addEventListener('blur', stop);
+      } else {
+        new IntersectionObserver(([e]) => (e.isIntersecting ? play() : stop()), { threshold: 0.6 }).observe(video);
+      }
+    });
+  }
 </script>
 
 <style>
   .yard { padding-bottom: var(--space-5); }
   .yard-hero { display: grid; grid-template-columns: 1fr minmax(18rem, 30rem); align-items: end; gap: 1rem 3rem; padding-top: var(--space-4); }
   .yard-hero h1 { margin-top: .3rem; }
-  .yard-jump { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; }
-  .yard-jump .pill { font-size: .9rem; padding: .45rem .8rem; gap: .5rem; }
-  .yard-jump .pill span { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); }
+  /* Long eyebrow: if it wraps, it wraps at a dot, never inside a phrase. */
+  .yard-hero .eyebrow { max-width: none; }
+  .yard-hero .eyebrow > span > span { white-space: nowrap; }
   .yard-heap { position: relative; }
   .yard-hint { position: absolute; top: 2%; left: 4%; margin: 0; font-family: var(--font-hand); font-size: 1.3rem; color: var(--coral); transform: rotate(-5deg); }
 
+  /* The doors sit under the hero. Once they scroll away, the mini bar slides in
+     under the site header with the same three rooms, so switching is always one
+     click away. The script measures the header (it wraps on phones) into --header-h. */
+  main :global(.doors--tabs) { margin-top: var(--space-4); scroll-margin-top: calc(var(--header-h, 4rem) + 1rem); }
+  .rooms-mini { position: fixed; top: var(--header-h, 4rem); left: 0; right: 0; z-index: 40; padding: .55rem 0; background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1.5px dashed var(--line); transform: translateY(-110%); opacity: 0; visibility: hidden; transition: transform .25s cubic-bezier(.2,.8,.2,1), opacity .2s ease, visibility 0s linear .25s; }
+  .rooms-mini.is-on { transform: none; opacity: 1; visibility: visible; transition: transform .25s cubic-bezier(.2,.8,.2,1), opacity .2s ease; }
+  .rooms-mini-row { display: flex; gap: .45rem; overflow-x: auto; scrollbar-width: none; }
+  .rooms-mini-row::-webkit-scrollbar { display: none; }
+  .room-tab { display: inline-flex; align-items: center; gap: .5rem; padding: .45rem .95rem; font-size: .92rem; font-weight: 500; white-space: nowrap; text-decoration: none; color: var(--ink-soft); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 999px; transition: color .15s ease, background .15s ease; }
+  .room-tab span { font-family: var(--font-mono); font-size: .7rem; font-weight: 400; color: var(--ink-faint); }
+  .room-tab:hover { color: var(--ink); }
+  .room-tab[aria-current="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+  .room-tab[aria-current="true"] span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+  .room-tab:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+  /* One room at a time; a min-height so the footer doesn't jump up under a short room. */
+  .room { margin-top: var(--space-4); min-height: 50vh; scroll-margin-top: calc(var(--header-h, 4rem) + 4.5rem); }
+  .room-head h2 { margin: 0 0 .3rem; }
+  /* With the tabs on, the open door already names the room and says what's in it,
+     so each room's own heading is kept for screen readers only. Without JS every
+     room shows in turn, and the headings show with them. */
+  .rooms-on :is(.studio-head, .picks > .shelf-head, .room-head) { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* The studio: a gallery of artboards. Each is a frame label, a board with a dot
+     grid (the canvas), the new UI pinned on it, and a title with paint-swatch tags. */
+  .studio-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.6rem; }
+  .studio-head h2 { margin: 0 0 .3rem; }
+  .studio-head p { margin: 0; }
+  .studio-head :global(.studio-mascot) { flex: none; width: 5.5rem; margin: -.6rem 0 -.4rem; }
+  .arts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr)); gap: 2.2rem 2rem; }
+  .art-link { display: flex; flex-direction: column; gap: .45rem; text-decoration: none; color: var(--ink); }
+  .art-link:hover { color: var(--ink); }
+  .art-link:focus-visible { outline: none; }
+  .art-frame { display: flex; align-items: center; gap: .35rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em; color: var(--ink-faint); }
+  .art-frame-icon { color: var(--accent); font-size: .8rem; }
+  .art-board { display: block; padding: 1.1rem; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background-color: var(--sand); background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 16%, transparent) 1px, transparent 1.4px); background-size: 14px 14px; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
+  .art-link:hover .art-board { transform: translateY(-3px) rotate(-.4deg); box-shadow: 5px 6px 0 var(--shadow-ink); }
+  .art-link:focus-visible .art-board { outline: 2px solid var(--ink); outline-offset: 3px; }
+  /* Every artboard shares the recordings' shape (1600 × 832), so a row lines up; a sketch slice-crops to it. */
+  .art-shot { display: block; aspect-ratio: 25 / 13; overflow: hidden; border: 1.5px solid var(--border); border-radius: 8px; background: var(--paper-2); box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--ink) 35%, transparent); }
+  .art-shot :global(.sk), .art-shot video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .art-body { display: grid; gap: .35rem; margin-top: .45rem; }
+  .art-title { font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.6rem); font-weight: 400; line-height: 1.15; letter-spacing: -.01em; }
+  .art-hook { font-size: .95rem; line-height: 1.45; color: var(--ink-soft); }
+  .art-tags { display: flex; flex-wrap: wrap; gap: .4rem .9rem; margin-top: .15rem; }
+  /* A tag is a dab of paint and a word. */
+  .art-tag { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--ink-soft); }
+  .art-tag::before { content: ""; width: .8rem; height: .65rem; background: var(--accent); border-radius: 60% 40% 55% 45% / 55% 60% 40% 45%; transform: rotate(-12deg); }
+  .art-tag:nth-child(2n)::before { border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%; transform: rotate(18deg); opacity: .7; }
+
   /* Stories from the yard: wide cards, louder than the coconuts, straight to a story. */
-  .picks { margin-top: var(--space-4); scroll-margin-top: 5rem; }
+  .picks { margin-top: var(--space-4); }
   .picks .shelf-head .eyebrow { margin: 0 0 .3rem; }
   .picks-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.6rem; }
   .pick-link { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 1.4rem 2rem; padding: 1.2rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 14px 8px 16px 8px / 8px 16px 8px 14px; box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
@@ -259,41 +495,54 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
   .pick .nut-go { color: var(--accent); }
   .pick-link:hover .nut-go :global(.doodle) { transform: translateX(4px); }
 
-  /* The three kinds of coconut. Looping, out of step with each other. */
-  .legend { list-style: none; margin: var(--space-4) 0 0; padding: 1.1rem 1.3rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem 1.5rem; border: 2px dashed var(--ink-faint); border-radius: var(--radius-wobble-3); background: color-mix(in srgb, var(--sand) 60%, transparent); }
-  .legend li { display: flex; align-items: center; gap: .8rem; }
-  .legend li:nth-child(2) { --m-delay: -1s; }
-  .legend li:nth-child(3) { --m-delay: -.5s; }
-  .legend :global(.mascot) { flex: none; width: 4.2rem; }
-  .legend p { margin: 0; font-size: .9rem; line-height: 1.4; }
-  .legend strong { display: block; font-family: var(--font-hand); font-size: 1.35rem; font-weight: 400; line-height: 1.1; color: var(--ink); }
+  /* The yard's key: the three kinds of coconut on one slim line, out of step. */
+  .key { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem 1.5rem; }
+  .key li { display: flex; align-items: center; gap: .6rem; }
+  .key li:nth-child(2) { --m-delay: -1s; }
+  .key li:nth-child(3) { --m-delay: -.5s; }
+  .key :global(.mascot) { flex: none; width: 2.8rem; }
+  .key p { margin: 0; max-width: none; font-size: .85rem; line-height: 1.35; color: var(--ink-soft); }
+  .key strong { display: block; font-family: var(--font-hand); font-size: 1.2rem; font-weight: 400; line-height: 1.1; color: var(--ink); }
 
-  .shelf { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); scroll-margin-top: 5rem; }
   .shelf-head { margin-bottom: 1.4rem; }
   .shelf-head h2 { margin-bottom: .3rem; }
   .shelf-head p { margin: 0; }
 
-  /* Cards: a mood, a name, one line. The whole card opens the panel: the
-     heading's button stretches over it. The coconut only moves on hover. */
-  .nuts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1.4rem; }
-  .nut { position: relative; display: flex; flex-direction: column; gap: .45rem; padding: 1rem 1.2rem 1.1rem; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
-  .nut:nth-child(2n) { border-radius: 6px 12px 5px 10px / 10px 5px 12px 6px; }
-  .nut:nth-child(3n) { border-radius: 12px 6px 10px 5px / 5px 10px 6px 12px; }
-  .nut:hover, .nut:focus-within { transform: translateY(-3px) rotate(-.4deg); box-shadow: 5px 6px 0 var(--shadow-ink); }
-  .nut-top { display: flex; align-items: center; gap: .5rem; }
-  .nut-top :global(.nut-mood) { width: 3.2rem; margin: -.4rem 0 -.2rem -.3rem; }
+  /* Shelf filter: All, or one shelf at a time. */
+  .yard-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
+  .yard-filter .pill { font-size: .88rem; padding: .4rem .8rem; gap: .5rem; }
+  .yard-filter .pill span { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); }
+  .yard-filter .pill[aria-pressed="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+  .yard-filter .pill[aria-pressed="true"] span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+
+  /* A shelf: a ruled heading, then one row per experiment. No boxes: a row is a
+     coconut, a name with its one line, where it grew and its status. The name's
+     button stretches over the whole row, which tints on hover. */
+  .patch { margin-top: 2rem; scroll-margin-top: calc(var(--header-h, 4rem) + 4.5rem); }
+  .patch-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; padding-bottom: .55rem; border-bottom: 1.5px solid var(--ink); }
+  .patch-head h3 { margin: 0; font-size: 1.3rem; }
+  .patch-head p { margin: 0; font-size: .9rem; color: var(--ink-faint); }
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .row { position: relative; display: grid; grid-template-columns: 2.8rem minmax(0, 1fr) 11rem 6.5rem 1rem; grid-template-areas: "mood main ctx status go"; align-items: center; gap: .3rem 1.2rem; padding: .8rem .6rem; border-bottom: 1.5px dashed var(--line); border-radius: 8px; transition: background .15s ease; }
+  .row:hover, .row:focus-within { background: color-mix(in srgb, var(--sand) 70%, transparent); }
+  .row :global(.row-mood) { grid-area: mood; width: 2.8rem; margin: -.3rem 0; }
+  .row-main { grid-area: main; min-width: 0; }
+  .row h4 { margin: 0; font-size: 1.2rem; line-height: 1.2; }
+  .row-hook { margin: .15rem 0 0; max-width: none; font-size: .92rem; line-height: 1.45; color: var(--ink-soft); }
+  .row-context { grid-area: ctx; }
+  .row .nut-status { grid-area: status; justify-self: start; margin-left: 0; }
+  .row :global(.row-go) { grid-area: go; width: 1rem; height: 1rem; stroke-width: 2; color: var(--coral); transition: transform .2s ease; }
+  .row:hover :global(.row-go) { transform: translateX(4px); }
+  .row:has(.nut-open:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* Shared bits: the stretched open button, the mono context line, the status pill, the "go" link. */
   .nut-status { margin-left: auto; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); padding: .3rem .5rem; border: 1.5px dashed currentColor; border-radius: 999px; line-height: 1; white-space: nowrap; }
-  .nut h3 { margin: .1rem 0 0; font-size: 1.35rem; }
   .nut-open { padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; color: var(--ink); }
   .nut-open::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
   .nut-open:focus-visible { outline: none; }
-  .nut:has(.nut-open:focus-visible) { outline: 2px solid var(--ink); outline-offset: 3px; }
-  .nut p { margin: 0; max-width: none; }
   .nut-context { margin: 0; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); max-width: none; }
-  .nut-hook { font-size: .95rem; }
   .nut-go { margin-top: auto; padding-top: .5rem; display: inline-flex; align-items: center; gap: .3rem; font-size: .9rem; font-weight: 500; color: var(--coral); }
   .nut-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
-  .nut:hover .nut-go :global(.doodle) { transform: translateX(4px); }
 
   /* ---- The cracked-open panel ---- */
   /* While the panel is open: no page scroll (keeping the scrollbar's gutter so the
@@ -353,11 +602,16 @@ const sketches = { 'design-ecosystem': DesignEcosystem };
   @media (max-width: 767px) {
     .yard-hero { grid-template-columns: 1fr; }
     .yard-heap { width: min(26rem, 100%); justify-self: center; margin-top: .5rem; }
-    .legend { grid-template-columns: 1fr; }
+    .key { grid-template-columns: 1fr; }
     .pick-link { grid-template-columns: 1fr; }
   }
-  /* Phones: the panel is a sheet that rises from the bottom edge. */
+  /* Phones: the panel is a sheet that rises from the bottom edge. Rows put where it
+     grew and its status on a line under the name. */
   @media (max-width: 639px) {
+    .row { grid-template-columns: 2.4rem auto minmax(0, 1fr); grid-template-areas: "mood main main" ". ctx status"; gap: .4rem .8rem; padding-inline: .3rem; }
+    .row :global(.row-mood) { width: 2.4rem; align-self: start; }
+    .row :global(.row-go) { display: none; }
+    .room-tab { padding: .4rem .75rem; font-size: .86rem; }
     .crack { width: 100vw; max-height: 90vh; margin: auto 0 0; }
     .crack-sheet { max-height: 90vh; padding: 1.2rem 1.1rem 1rem; border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 0 var(--shadow-ink); }
     .crack[open] { animation: crack-up .34s cubic-bezier(.2,.8,.2,1); }

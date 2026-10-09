@@ -7,7 +7,9 @@
    moonshot (hovers on flickering flames).
    `hobby` (hero only) swaps the wave for Thenga's day off, on the About page:
    guitar (strums, notes rise), camera (flash pops), pen (writes on a page),
-   pot (stirs, steam rises), backpack (walking stick, a paper plane drifts by). */
+   pot (stirs, steam rises), backpack (walking stick, a paper plane drifts by).
+   brush is the studio's painter (Experiments page): a beret in place of the sprout
+   (one leaf pokes out), a palette in one hand, a brush that dabs a stroke of paint. */
 import type { Mood } from '../../data/experiments';
 import type { Hobby } from '../../data/offclock';
 
@@ -62,8 +64,8 @@ const { mood = 'hero', hobby, label, class: cls } = Astro.props;
           <g class="m-a-plane"><path d="M104 22l26-8-10 18-5-6z" class="m-card" /><path d="M115 26l5 6" class="m-line m-thin" /><path d="M100 30c-8 4-16 4-24 2" class="m-line m-thin m-trail" /></g>
         </g>
       )}
-      <!-- sprout -->
-      <g class="m-a-sprout">
+      <!-- sprout (under the beret, the painter keeps just one leaf) -->
+      {hobby !== 'brush' && <g class="m-a-sprout">
         {mood === 'sprouted' ? (
           <g>
             <path d="M80 58c0-12 1-22 4-30" class="m-line" />
@@ -79,14 +81,14 @@ const { mood = 'hero', hobby, label, class: cls } = Astro.props;
             <path d="M83 40c6-10 18-12 26-6-6 7-18 10-26 6z" class="m-leaf" />
           </g>
         )}
-      </g>
+      </g>}
 
       <!-- shell -->
       <g transform={mood === 'moonshot' ? 'rotate(-4 80 96)' : undefined}>
         <path d="M80 56c26 0 44 18 44 42 0 22-18 36-44 36s-44-14-44-36c0-24 18-42 44-42z" class="m-shell" />
         <path d="M52 76c3-4 6-6 10-8M50 108c2 4 5 7 9 9M104 70c4 2 7 5 9 9M110 118c-3 3-7 5-11 6" class="m-line m-thin m-fibre" />
         <!-- the coconut's own three "eyes" up top -->
-        <circle cx="74" cy="66" r="2.2" class="m-pore" /><circle cx="86" cy="66" r="2.2" class="m-pore" /><circle cx="80" cy="72" r="2.2" class="m-pore" />
+        {hobby !== 'brush' && (<g><circle cx="74" cy="66" r="2.2" class="m-pore" /><circle cx="86" cy="66" r="2.2" class="m-pore" /><circle cx="80" cy="72" r="2.2" class="m-pore" /></g>)}
 
         {mood === 'hero' && (<g><g class="m-a-blink"><circle cx="68" cy="96" r="3.4" class="m-dot" /><circle cx="92" cy="96" r="3.4" class="m-dot" /></g><path d="M73 106c4 4 10 4 14 0" class="m-line m-thin" /></g>)}
         {mood === 'sprouted' && (<g><path d="M63 97c2-4 8-4 10 0M87 97c2-4 8-4 10 0" class="m-line m-thin" /><path d="M71 104c4 7 14 7 18 0z" class="m-mouth" /></g>)}
@@ -147,6 +149,31 @@ const { mood = 'hero', hobby, label, class: cls } = Astro.props;
           <path d="M48 123h-7M112 123h7" class="m-line" />
           <path d="M38 104c0 8 2 14 5 19" class="m-line" />
           <g class="m-a-stir"><path d="M122 100c-2 4-6 6-10 6" class="m-line" /><path d="M114 104L94 122" class="m-ladle" /><ellipse cx="92" cy="123" rx="5" ry="3" class="m-pot-rim" /></g>
+        </g>
+      )}
+      {hobby === 'brush' && (
+        <g>
+          <!-- the beret, tipped to one side, a leaf for its nub -->
+          <g transform="rotate(-10 82 58)">
+            <path d="M84 44c0-5 1-9 4-12" class="m-line m-thin" />
+            <path d="M88 33c-6-6-14-6-19 0 6 3 13 3 19 0z" class="m-leaf" />
+            <path d="M52 62c0-12 14-20 32-20s32 8 32 18c0 4-9 7-32 7s-32-2-32-5z" class="m-beret" />
+          </g>
+          <!-- the palette, held out on the left, a blob of each accent -->
+          <path d="M38 104c-6 3-10 7-12 11" class="m-line" />
+          <path d="M4 121c0-10 10-17 23-17s25 5 25 13c0 5-5 6-9 6s-6 4-3 7c2 3-2 6-13 6C13 136 4 131 4 121z" class="m-palette" />
+          <circle cx="15" cy="118" r="3.4" class="m-blob" style="fill: var(--coral-soft)" />
+          <circle cx="25" cy="111" r="3.4" class="m-blob" style="fill: var(--yellow)" />
+          <circle cx="36" cy="111" r="3.4" class="m-blob" style="fill: var(--blue)" />
+          <circle cx="15" cy="128" r="3.4" class="m-blob" style="fill: var(--teal)" />
+          <!-- the brush, dabbing; a stroke of paint appears where it lands -->
+          <g class="m-a-splat"><path d="M126 44c4-6 9-6 12 0s9 6 13 0" class="m-paint" /></g>
+          <g class="m-a-dab">
+            <path d="M122 100c6-2 10-6 12-11" class="m-line" />
+            <path d="M127 99L145 63" class="m-brush" />
+            <path d="M143 66l3-7 5 2.5-3 7z" class="m-ferrule" />
+            <path d="M146 59c1-5 4-8 8-10 0 5-2 9-5 11.5z" class="m-tip" />
+          </g>
         </g>
       )}
       {hobby === 'backpack' && (
