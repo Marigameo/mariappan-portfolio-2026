@@ -14,6 +14,7 @@ import Thenga from '../components/mascots/Thenga.astro';
 import CoconutHeap from '../components/mascots/CoconutHeap.astro';
 import DesignEcosystem from '../components/sketches/DesignEcosystem.astro';
 import KbGraph from '../components/sketches/kb/KbGraph.astro';
+import KbProps from '../components/sketches/kb/KbProps.astro';
 import RoomDoors from '../components/RoomDoors.astro';
 import NextRoom from '../components/NextRoom.astro';
 import { rooms } from '../data/rooms';
@@ -24,7 +25,7 @@ import { site } from '../data/site';
 const description = 'Thenga’s studio + yard: UI redesigns told as stories (the before, the after and the lessons), plus a heap of apps, ventures and night hacks, each with what I found inside.';
 const n = experiments.length;
 const sketches = { 'design-ecosystem': DesignEcosystem };
-const artSketches = { 'kb-graph': KbGraph };
+const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps };
 ---
 <BaseLayout title={`Thenga’s studio + yard — experiments | ${site.name}`} description={description} current="experiments">
   <main id="main" class="wrap yard">

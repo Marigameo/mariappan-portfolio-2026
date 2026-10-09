@@ -1,0 +1,329 @@
+---
+/* The studio's second story: how a knowledge base file shows its frontmatter in
+   Strive. Same deck as kb-homepage: where it started (CMS blocks), the patterns,
+   the property cards I tried first and why they didn't scale (a playground
+   rebuilt from the mockup I tried them in), three directions
+   prototyped in Claude, why the Notion-style one won, and the live pages.
+   Media lives in public/images/experiments/frontmatter/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import SketchLive from '../../../components/SketchLive.astro';
+import KbProps from '../../../components/sketches/kb/KbProps.astro';
+import FmMiniDocs from '../../../components/sketches/kb/FmMiniDocs.astro';
+import FmPlayground from '../../../components/sketches/kb/FmPlayground.astro';
+
+const img = (f: string) => `/images/experiments/frontmatter/${f}`;
+
+const options = [
+  {
+    id: '1a',
+    name: 'Document-first',
+    sub: 'frontmatter as a property table',
+    src: 'option-1a.webp',
+    alt: 'Option 1a: a design.md file opens as a document. Under the title, description and a line saying who edited it and how many agents use it, the frontmatter is a list of rows: primary, secondary and accent colours as a swatch and hex code, background, typeface, theme and logo. The accent row is being edited in place, with “Enter to save, Esc to cancel” in the field. An “Add property” link closes the list, and the doc’s Colours section follows below.',
+    fits: 'Docs people read more than they edit, where properties and prose belong together. Every row edits in place, so editing is never a mode.',
+    asks: 'Only what every file already has: its frontmatter and its body.',
+  },
+  {
+    id: '1b',
+    name: 'Reader plus inspector',
+    sub: 'the panel stops repeating the page',
+    src: 'option-1b.webp',
+    alt: 'Option 1b: the middle of the screen is only the document, with its Colours and Typography sections. A right panel with Properties, Usage and Versions tabs holds the palette as a stack of colour fields, type and theme as small boxes, the logo, and the agents that read the file. One unsaved change waits at the bottom of the panel, with Discard and Save.',
+    fits: 'Long docs with a lot of structure. The reading column stays clean, and the inspector is always open, so it never moves the text.',
+    asks: 'Usage and versions for every file from the backend. And a second place to look and keep in sync, the split I was moving away from.',
+  },
+  {
+    id: '1c',
+    name: 'Browser-first',
+    sub: 'search and a table are the home screen',
+    src: 'option-1c.webp',
+    alt: 'Option 1c: a search for “brand colour” over a table of every file, with filters for type, folder, update time and which agent reads it. Rows show each file’s name, type, folder and when it was updated, with one web page marked stale. Selecting the Design row opens a preview on the right with its frontmatter, a preview of the body, and the agents that read it.',
+    fits: 'Hundreds of files, where search and filters beat the tree. A row opens a preview, and one more click opens the doc, drawn as in 1a.',
+    asks: 'The type, source, freshness and reading agents of every file, across every folder.',
+  },
+];
+
+const lessons = [
+  { miss: 'Chose property cards for the rich feel, without asking how they scale.', lesson: 'Design for the count, not the demo. Ask how it looks with one property and with many.' },
+  { miss: 'Put editing in a panel on the right, away from the text it changes.', lesson: 'Don’t make people jump between two areas of focus and keep them in sync. Edit in place, in one editor.' },
+  { lesson: 'Learn the patterns, not only the products. A pattern is what carries over to the next screen.' },
+];
+---
+<StudioLayout
+  title="Designing frontmatter for KB pages"
+  slug="kb-frontmatter"
+  description="How a knowledge base file in Strive shows its frontmatter: the property cards I tried first, three directions prototyped in Claude, and why a plain, Notion-style list of properties at the head of the doc won."
+  ogDescription="The property cards I tried first, three directions prototyped in Claude, and why a plain list of properties at the head of the doc won."
+  eyebrow="Strivelabs · Knowledge base"
+  facts={[
+    { label: 'My part', value: 'The UX, end to end: research, prototypes and one model for frontmatter across the platform' },
+    { label: 'Prototyped in', value: 'Claude' },
+    { label: 'Status', value: 'Live' },
+  ]}
+  keywords="UX design, frontmatter, knowledge base, properties, inline editing, markdown editor, prototyping with Claude, design engineering, UX for AI"
+>
+  <Fragment slot="lede">Every file in our knowledge base is a <code>.md</code> file, and many carry frontmatter: a domain, a brand name, a list of locations. This is how I made those properties <mark class="hl">part of the page, not a form beside it</mark>, and why the plainest of three options won.</Fragment>
+
+  <SketchLive slot="hero" id="fm" start="live" live={{ kind: 'image', src: img('live-read.webp'), width: 1600, height: 958, alt: 'The live competitor file for AirOps in Strive: the files sidebar with Brand, Audiences and Competitors folders, a header card with the file’s icon, title, a Competitors chip and a one-line description, and an Edit button. Below, one property row, Domain, with a help icon and a field reading https:// airops.com, then the doc itself, rendered: an Overview list and a section on what they do.' }} caption="The live page: a competitor file, its one property, then the doc.">
+    <figure class="sk-fig fm-sketch">
+      <span class="fm-frame"><KbProps label="Sketch of a knowledge base file: the files sidebar, a header with the file’s icon, title, folder and a line about it, then three property rows (domain, category and founded), with the category row being edited in place, and the doc’s Overview below in the same card." /></span>
+    </figure>
+  </SketchLive>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Files that carry data</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Our knowledge base keeps what Strive’s agents know about each customer as <code>.md</code> files: brand, audiences, competitors and more. Many open with <strong>frontmatter</strong>, a block of named values like a domain or a brand name, above the free text.</li>
+        <li>Both halves are context for the agents, and people need to edit both. So the question was how to show properties so they’re easy to edit, preview and maintain, <strong>without looking like a thing apart from the content</strong>.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-start">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Where it started</p><h2 id="s-start">Blocks and a side panel</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>My experience with frontmatter came mostly from CMSs. So the first idea took after CMS block editing: <strong>content paired with editor blocks</strong>, and a click that opens a panel on the right to edit the properties.</li>
+        <li>In a CMS, those properties are mostly not plain text. Ours were. A KB file is content heavy, and its properties are words and links too. So I went looking for what fits a document full of both.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-patterns">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Homework</p><h2 id="s-patterns">Patterns before products</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Notion was the first place I looked, as I use it heavily. Linear was another inspiration. But more than products, <strong>I wanted to learn the patterns</strong>.</li>
+        <li>Talking it through with LLMs turned up a few: inline property chips, property cards and highlighted callout blocks, next to the plain list. The cards felt closest to where I started, so I tried them first.</li>
+      </ul>
+      <FmMiniDocs
+        docs={[
+          { kind: 'chips', name: 'Inline chips', use: 'values inside the sentences' },
+          { kind: 'cards', name: 'Property cards', use: 'a box for every value' },
+          { kind: 'callout', name: 'Callout block', use: 'one highlighted block on top' },
+          { kind: 'list', name: 'Property list', use: 'a row each, then the doc', pick: true },
+        ]}
+        alt="Four small doc wireframes, each placing the same properties differently: as chips inside the lines of text, as a grid of six cards above the text, as one tinted callout block on top, and as a list of label and value rows above the doc. The list is outlined in coral."
+        note="cards first, the list in the end"
+        caption="Four ways to put properties in a doc. I started with the cards."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-cards">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Smudge · property cards</p><h2 id="s-cards">Boxes, boxes</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The cards gave the document a rich feel, inline with the text, with a panel on the right to edit them. <strong>I didn’t think about how they scale.</strong> As the number of properties grew, the page turned into boxes, boxes.</li>
+        <li>And editing meant jumping from one area of focus to another, then keeping the two in sync. Structured and unstructured context had become <strong>two separate things, each with a playground of its own</strong>.</li>
+      </ul>
+      <FmPlayground />
+    </section>
+
+    <section class="slide" aria-labelledby="s-options">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Options · prototyped in Claude</p><h2 id="s-options">Three ways in</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>So I stepped back and prototyped three directions in Claude, with the same content in each. All three <strong>drop the card-in-card chrome</strong>.</li>
+        <li>Each answers a different question first: what is this file, where is it in the tree, and how do I change it.</li>
+      </ul>
+      {options.map((o, i) => (
+        <figure class="shot-fig opt">
+          <p class="opt-name"><span class:list={['opt-id', `opt-id--${i + 1}`]}>{o.id}</span>{o.name}<small>{o.sub}</small></p>
+          <div class="shot-frame">
+            <img src={img(o.src)} width="1600" height="980" loading="lazy" decoding="async" alt={o.alt}>
+          </div>
+          <dl class="opt-fit">
+            <div><dt>Fits when</dt><dd>{o.fits}</dd></div>
+            <div><dt>Asks for</dt><dd>{o.asks}</dd></div>
+          </dl>
+        </figure>
+      ))}
+    </section>
+
+    <section class="slide" aria-labelledby="s-call">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Design call</p><h2 id="s-call">One document, one editor</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I went with 1a, the Notion-style one. The main reason was the UX: <strong>properties and content shouldn’t feel like two things</strong>, each with a space of its own. One simple document can hold both the structured and the unstructured context the agents read.</li>
+        <li>It also fit what our backend holds and can return. 1b and 1c leaned on data about every file that we didn’t have. 1a needed only the frontmatter and the body.</li>
+        <li>Then I checked it against every combination, <strong>from a file of only properties to one row over a long doc</strong>, until it held as one model for the whole platform.</li>
+      </ul>
+      <FmMiniDocs
+        docs={[
+          { kind: 'only-props', name: 'Only properties', use: 'rows in sections, each with a line on why', pick: true },
+          { kind: 'props-text', name: 'Properties and text', use: 'the rows, then the doc', pick: true },
+          { kind: 'mostly-text', name: 'Mostly text', use: 'one row over a long doc', pick: true },
+        ]}
+        alt="Three small doc wireframes using the same property rows: one file that is only properties, grouped in two sections with a heading and a line each; one with four rows and then the doc; and one with a single row over a long doc of headings and text."
+        caption="One model, whatever the file holds. The rows grow or shrink, and the page stays the same."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-live">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">What’s live</p><h2 id="s-live">Properties up top, the doc below</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Every file opens the same way: an icon, a title, its folder and a line about it. Then <strong>the properties as a list</strong>, each with an icon, a label, a help tip and a field that edits in place. Then the doc.</li>
+        <li>The body reads as a rendered preview. Edit opens it in an editor of its own, as markdown, while the properties stay right where they were.</li>
+      </ul>
+
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('live-read.webp')} width="1600" height="958" loading="lazy" decoding="async" alt="The AirOps competitor file: a header card with the icon, title, a Competitors chip, a one-line description and an Edit button, then a Domain row with a help icon and a field reading airops.com, then the doc rendered below, with a copy button in its corner.">
+          <span class="shot-mark" style="--l: 22.8%; --t: 10.6%; --w: 54%; --h: 9.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 22.8%; --t: 26.4%; --w: 51%; --h: 6.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 23%; --t: 36.6%; --w: 73.2%; --h: 26.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 88%; --t: 11.2%; --w: 8%; --h: 4.8%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 21.5%; --t: 15.2%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 21.5%; --t: 29.6%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 21.5%; --t: 49.8%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 86.6%; --t: 13.6%" aria-hidden="true">4</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>The same header on every file.</strong> Icon, title, its folder and a line about it.</li>
+          <li><strong>Properties as rows.</strong> A label, a help tip and a field. A competitor has just one: its domain.</li>
+          <li><strong>The doc, rendered.</strong> What the agents read, as a preview, with a copy button.</li>
+          <li><strong>Edit, one click away.</strong> It opens the body in an editor of its own.</li>
+        </ol>
+        <figcaption>A competitor file: one property, then the doc.</figcaption>
+      </figure>
+
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('live-properties.webp')} width="1600" height="958" loading="lazy" decoding="async" alt="The brand Details Page, a file that is only properties: a Brand section with a line on why it matters and rows for brand name, domain, blog URL and description, each with a help icon. The URL fields keep an https:// prefix and the description is a tall text box. A Search locations section below has search fields for the primary and additional locations.">
+          <span class="shot-mark" style="--l: 22.8%; --t: 26.8%; --w: 25%; --h: 7%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 22.8%; --t: 35.6%; --w: 10.4%; --h: 4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 38.2%; --t: 41.6%; --w: 35%; --h: 5.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 22.8%; --t: 75.4%; --w: 50.6%; --h: 20%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 21.5%; --t: 30.3%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 21.5%; --t: 37.6%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 36.9%; --t: 44.3%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 21.5%; --t: 85.4%" aria-hidden="true">4</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>Sections, each with a line on why.</strong> “What every agent opens with when it writes for you.”</li>
+          <li><strong>A help tip on every label.</strong> What the value is for, without leaving the page.</li>
+          <li><strong>Fields that fit the value.</strong> A URL keeps its <code>https://</code> prefix, and a description gets room to wrap.</li>
+          <li><strong>Locations you search for.</strong> Where rankings, competitors and AI answers are tracked.</li>
+        </ol>
+        <figcaption>A file of only properties: the same rows, grouped into sections.</figcaption>
+      </figure>
+
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('live-edit.webp')} width="1600" height="958" loading="lazy" decoding="async" alt="The Cricket Health competitor file in edit mode: the Domain row stays at the top, and the body below is now a markdown editor showing the raw text, a Snapshot table and a Top three strengths heading, with Cancel and Save at the bottom.">
+          <span class="shot-mark" style="--l: 22.8%; --t: 26.4%; --w: 51%; --h: 6.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 23.4%; --t: 36.6%; --w: 72.4%; --h: 49.8%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 85.6%; --t: 89.8%; --w: 10.8%; --h: 5.2%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 21.5%; --t: 29.6%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 21.5%; --t: 61.5%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 84.3%; --t: 92.4%" aria-hidden="true">3</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>Properties stay put.</strong> They still edit in place, above the body.</li>
+          <li><strong>The body as markdown.</strong> An editor of its own for the free text, in the same card.</li>
+          <li><strong>Cancel or Save.</strong> Then it reads as a preview again.</li>
+        </ol>
+        <figcaption>Editing a body: the markdown opens in place, and the properties stay above it.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What I’d keep</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`, !l.miss && 'lessons-solo']}>
+            {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">Structured or not, it’s all context. Keep it in one document.</blockquote>
+  </div>
+</StudioLayout>
+
+<style>
+  /* Deck styles from the work stories, as in kb-homepage.astro. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons .lessons-solo { grid-column: 1 / -1; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Real screenshots with coral hand-drawn marks and numbers. Screenshots keep
+     their own light colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-num { position: absolute; left: var(--l); top: var(--t); display: grid; place-items: center; width: 1.6rem; height: 1.6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -50%) rotate(-6deg); }
+  .shot-notes { list-style: none; counter-reset: note; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem 1.5rem; margin: 1.4rem 0 0; padding: 0; }
+  .shot-notes li { counter-increment: note; position: relative; padding-left: 2.1rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  .shot-notes li::before { content: counter(note); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .shot-notes strong { color: var(--ink); font-weight: 500; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .shot-notes { grid-template-columns: 1fr; }
+    .shot-num { width: 1rem; height: 1rem; font-size: .8rem; box-shadow: 1px 1px 0 var(--shadow-ink); }
+    .shot-mark { border-width: 1.5px; }
+  }
+
+  /* Slide 05: each direction with its id, then where it fits and what it asks for. */
+  .opt-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .6rem; margin: 0 0 .9rem !important; max-width: none; font-family: var(--font-display); font-size: 1.35rem; line-height: 1.15; color: var(--ink); }
+  .opt-name small { font-family: var(--font-body); font-size: .9rem; color: var(--ink-faint); }
+  .opt-id { align-self: center; padding: .1rem .5rem; border-radius: 999px; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em; color: var(--paper-2); background: var(--coral); transform: rotate(-4deg); }
+  .opt-id--2 { background: var(--blue); }
+  .opt-id--3 { background: var(--teal); }
+  .opt-fit { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem 1.5rem; margin: 1.2rem 0 0; }
+  .opt-fit div { margin: 0; }
+  .opt-fit dt { margin-bottom: .2rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); }
+  .opt-fit div + div dt { color: var(--coral); }
+  .opt-fit dd { margin: 0; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  @media (max-width: 559px) { .opt-fit { grid-template-columns: 1fr; } }
+
+  /* The Sketch tab: the artboard drawing in a frame like the live one. */
+  .fm-sketch { margin: 0; }
+  .fm-frame { display: block; aspect-ratio: 600 / 440; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .fm-frame :global(.sk) { display: block; width: 100%; height: 100%; }
+
+  .closer { margin-top: var(--space-5); }
+</style>

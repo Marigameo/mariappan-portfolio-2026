@@ -1,0 +1,419 @@
+---
+/* A small playground for the frontmatter story, rebuilt from the Claude mockup I
+   used to try the patterns (a brand Details file, made-up "Acme" data). Three
+   views of the same properties: inline chips and property cards, which send you
+   to a sheet on the right to edit, and the property list that shipped, which
+   edits where you read it. A second switch goes from a few properties to many,
+   so the cards can pile up. It keeps the mockup's own look (system font, blue
+   accent) and stays light in dark mode, like the screenshots around it. The
+   sheet slides in inside the frame, never over the page. All three views are
+   server-rendered; without JS the cards view shows as a still. */
+interface Prop {
+  key: string;
+  label: string;
+  /** Shorter label for the chips line. */
+  chip?: string;
+  icon: string;
+  value: string;
+  prefix?: string;
+  /** Shown only with "Many". */
+  extra?: boolean;
+  /** Comma-separated values, shown as small chips. */
+  multi?: boolean;
+  colour?: boolean;
+}
+
+const props: Prop[] = [
+  { key: 'name', label: 'Brand name', chip: 'Brand', icon: 'tag', value: 'Acme Inc.' },
+  { key: 'domain', label: 'Domain', icon: 'globe', value: 'acme.com', prefix: 'https://' },
+  { key: 'location', label: 'Primary location', chip: 'Location', icon: 'pin', value: 'United States' },
+  { key: 'blog', label: 'Blog URL', chip: 'Blog', icon: 'rss', value: 'blog.acme.com', prefix: 'https://', extra: true },
+  { key: 'more', label: 'Additional locations', chip: 'Also tracking', icon: 'pin', value: 'Canada, United Kingdom', multi: true, extra: true },
+  { key: 'primary', label: 'Primary colour', chip: 'Primary', icon: 'swatch', value: '#F97316', colour: true, extra: true },
+  { key: 'secondary', label: 'Secondary colour', chip: 'Secondary', icon: 'swatch', value: '#EA580C', colour: true, extra: true },
+  { key: 'type', label: 'Typeface', chip: 'Type', icon: 'type', value: 'Inter', extra: true },
+  { key: 'theme', label: 'Theme', icon: 'sun', value: 'Light', extra: true },
+];
+const desc = { key: 'desc', label: 'Description', icon: 'text', value: 'Acme builds marketing automation for B2B SaaS teams: campaign analysis, content generation and lead enrichment in one platform.' };
+const values = Object.fromEntries([...props, desc].map((p) => [p.key, p.value]));
+const few = props.filter((p) => !p.extra).length + 1;
+const many = props.length + 1;
+
+const ICON: Record<string, string> = {
+  tag: '<path d="M20.6 13.4 12 22l-9-9V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  rss: '<path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.4"/>',
+  swatch: '<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.5-.8 1.5-1.6 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16a6 6 0 0 0 6-6C22 6 17.5 2 12 2Z"/>',
+  type: '<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  text: '<path d="M4 6h16M4 12h16M4 18h11"/>',
+};
+const PEN = '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>';
+const split = (v: string) => v.split(',').map((s) => s.trim()).filter(Boolean);
+---
+<figure class="sk-fig pg-fig">
+  <div class="pg" data-pg data-view="cards" data-count="few" data-values={JSON.stringify(values)} data-few={few} data-many={many}>
+    <div class="pg-bar">
+      <span class="pg-lbl">View</span>
+      <div class="pg-seg" role="group" aria-label="View">
+        <button type="button" data-set-view="chips" aria-pressed="false">Chips</button>
+        <button type="button" data-set-view="cards" aria-pressed="true">Cards</button>
+        <button type="button" data-set-view="list" aria-pressed="false">List</button>
+      </div>
+      <span class="pg-lbl">Properties</span>
+      <div class="pg-seg" role="group" aria-label="How many properties">
+        <button type="button" data-set-count="few" aria-pressed="true">Few</button>
+        <button type="button" data-set-count="many" aria-pressed="false">Many</button>
+      </div>
+      <span class="pg-hint pg-hint--panel">Click a chip or card</span>
+      <span class="pg-hint pg-hint--list">Click a value to edit it</span>
+    </div>
+
+    <div class="pg-stage">
+      <div class="pg-doc">
+        <div class="pg-head">
+          <span class="pg-ficon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></span>
+          <div>
+            <p class="pg-title">Details Page</p>
+            <p class="pg-updated"><span></span>Updated 2 hours ago</p>
+          </div>
+          <button type="button" class="pg-btn pg-edit" data-edit="name"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={PEN} />Edit details</button>
+        </div>
+        <div class="pg-rule"></div>
+
+        <!-- A · inline chips -->
+        <div class="pg-view pg-view--chips">
+          <div class="pg-meta">
+            {props.map((p) => (
+              <span class="pg-field" data-extra={p.extra ? '' : undefined}>
+                <span class="pg-k">{p.chip ?? p.label}</span>
+                {p.multi
+                  ? <span class="pg-multi" data-vlist={p.key}>{split(p.value).map((v) => <button type="button" class="pg-chip" data-edit={p.key}>{v}</button>)}</span>
+                  : <button type="button" class="pg-chip" data-edit={p.key}>{p.colour && <i class="pg-sw" data-sw={p.key} style={`background:${p.value}`}></i>}<span data-v={p.key}>{p.value}</span></button>}
+              </span>
+            ))}
+          </div>
+          <button type="button" class="pg-lead" data-edit="desc"><span data-v="desc">{desc.value}</span><svg viewBox="0 0 24 24" aria-hidden="true" set:html={PEN} /></button>
+        </div>
+
+        <!-- B · property cards -->
+        <div class="pg-view pg-view--cards">
+          <p class="pg-eyebrow">Brand properties <span data-count-num>{few}</span></p>
+          <div class="pg-cards">
+            {[...props, desc].map((p) => (
+              <button type="button" class:list={['pg-card', p.key === 'desc' && 'pg-card--full']} data-edit={p.key} data-extra={'extra' in p && p.extra ? '' : undefined}>
+                <span class="pg-ck"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICON[p.icon]} />{p.label}</span>
+                {'multi' in p && p.multi
+                  ? <span class="pg-multi" data-vlist={p.key}>{split(p.value).map((v) => <span class="pg-mini">{v}</span>)}</span>
+                  : <span class="pg-cv">{'colour' in p && p.colour && <i class="pg-sw" data-sw={p.key} style={`background:${p.value}`}></i>}<span data-v={p.key}>{p.value}</span></span>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- C · property list: edits in place -->
+        <div class="pg-view pg-view--list">
+          <div class="pg-rows">
+            {[...props, desc].map((p) => (
+              <label class="pg-row" data-extra={'extra' in p && p.extra ? '' : undefined}>
+                <span class="pg-rk"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICON[p.icon]} />{p.label}</span>
+                <span class:list={['pg-rv', 'prefix' in p && p.prefix && 'pg-rv--pfx']}>
+                  {'prefix' in p && p.prefix && <span class="pg-pfx">{p.prefix}</span>}
+                  {'colour' in p && p.colour && <i class="pg-sw" data-sw={p.key} style={`background:${p.value}`}></i>}
+                  {p.key === 'desc'
+                    ? <textarea class="pg-in" data-in={p.key} rows="3">{p.value}</textarea>
+                    : <input class="pg-in" data-in={p.key} value={p.value}>}
+                  {p.key !== 'desc' && <span class="pg-keys" aria-hidden="true">Enter to save · Esc to cancel</span>}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div class="pg-rule pg-rule--body"></div>
+        <div class="pg-body">
+          <p class="pg-h">Positioning</p>
+          <p>Acme is the marketing automation platform for B2B SaaS teams. It replaces a stack of point tools with one workflow-driven system.</p>
+          <ul>
+            <li>One platform instead of five point tools.</li>
+            <li>Outcomes first: pipeline and revenue.</li>
+            <li>Agentic workflows, with a human in the loop.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pg-scrim" data-close></div>
+      <aside class="pg-sheet" aria-label="Edit details" hidden>
+        <div class="pg-sheet-head">
+          <div><p class="pg-sheet-title">Edit details</p><p class="pg-sheet-sub">brand/details.md</p></div>
+          <button type="button" class="pg-x" data-close aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        </div>
+        <div class="pg-sheet-body">
+          {[...props, desc].map((p) => (
+            <div class="pg-fld" data-fld={p.key} data-extra={'extra' in p && p.extra ? '' : undefined}>
+              <label>
+                <span class="pg-fl">{p.label}</span>
+                {p.key === 'desc'
+                  ? <textarea class="pg-input" data-sin={p.key} rows="4">{p.value}</textarea>
+                  : 'prefix' in p && p.prefix
+                    ? <span class="pg-prefixed"><span>{p.prefix}</span><input data-sin={p.key} value={p.value}></span>
+                    : <input class="pg-input" data-sin={p.key} value={p.value}>}
+              </label>
+            </div>
+          ))}
+        </div>
+        <div class="pg-sheet-foot">
+          <button type="button" class="pg-btn pg-ghost" data-close>Cancel</button>
+          <button type="button" class="pg-btn pg-save" data-save>Save details</button>
+        </div>
+      </aside>
+      <p class="pg-toast" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+  <figcaption>Try it. Chips and cards send you to a panel to edit. The list edits where you read it. Switch to many and watch the cards pile up.</figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-pg]').forEach((pg) => {
+    const values: Record<string, string> = JSON.parse(pg.dataset.values || '{}');
+    const doc = pg.querySelector<HTMLElement>('.pg-doc')!;
+    const bar = pg.querySelector<HTMLElement>('.pg-bar')!;
+    const sheet = pg.querySelector<HTMLElement>('.pg-sheet')!;
+    const toast = pg.querySelector<HTMLElement>('.pg-toast')!;
+    const countNum = pg.querySelector<HTMLElement>('[data-count-num]');
+    let opener: HTMLElement | null = null;
+    let toastTimer = 0;
+
+    const say = (msg: string) => {
+      toast.textContent = msg;
+      pg.classList.add('is-toast');
+      clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => pg.classList.remove('is-toast'), 1600);
+    };
+
+    // Paint one property everywhere it shows: text, chips, swatches and inputs.
+    const paint = (key: string) => {
+      const v = values[key];
+      pg.querySelectorAll<HTMLElement>(`[data-v="${key}"]`).forEach((el) => { el.textContent = v; });
+      pg.querySelectorAll<HTMLElement>(`[data-sw="${key}"]`).forEach((el) => { el.style.background = v; });
+      pg.querySelectorAll<HTMLElement>(`[data-vlist="${key}"]`).forEach((el) => {
+        const chips = el.closest('.pg-view--chips');
+        el.replaceChildren(...v.split(',').map((s) => s.trim()).filter(Boolean).map((s) => {
+          const c = document.createElement(chips ? 'button' : 'span');
+          c.className = chips ? 'pg-chip' : 'pg-mini';
+          if (chips) { (c as HTMLButtonElement).type = 'button'; c.dataset.edit = key; }
+          c.textContent = s;
+          // Astro scopes this component's CSS by an attribute; new chips need it too.
+          [...el.attributes].filter((x) => x.name.startsWith('data-astro-cid')).forEach((x) => c.setAttribute(x.name, ''));
+          return c;
+        }));
+      });
+      pg.querySelectorAll<HTMLInputElement>(`[data-in="${key}"], [data-sin="${key}"]`).forEach((el) => { el.value = v; });
+      if (key === 'desc') fit();
+    };
+
+    const press = (attr: string, val: string) => {
+      pg.querySelectorAll<HTMLButtonElement>(`[${attr}]`).forEach((b) => b.setAttribute('aria-pressed', String(b.getAttribute(attr) === val)));
+    };
+    // The description grows with its text, so nothing hides under a scrollbar.
+    function fit() {
+      pg.querySelectorAll<HTMLTextAreaElement>('textarea[data-in]').forEach((t) => {
+        t.style.height = 'auto';
+        t.style.height = `${t.scrollHeight}px`;
+      });
+    }
+    pg.querySelectorAll<HTMLButtonElement>('[data-set-view]').forEach((b) => b.addEventListener('click', () => {
+      pg.dataset.view = b.dataset.setView!;
+      press('data-set-view', pg.dataset.view);
+      fit();
+    }));
+    pg.querySelectorAll('textarea[data-in]').forEach((t) => t.addEventListener('input', fit));
+    window.addEventListener('resize', fit);
+    pg.querySelectorAll<HTMLButtonElement>('[data-set-count]').forEach((b) => b.addEventListener('click', () => {
+      pg.dataset.count = b.dataset.setCount!;
+      press('data-set-count', pg.dataset.count);
+      if (countNum) countNum.textContent = pg.dataset.count === 'many' ? pg.dataset.many! : pg.dataset.few!;
+    }));
+
+    // Chips and cards: open the sheet on the field that was clicked.
+    const open = (key: string, from: HTMLElement) => {
+      opener = from;
+      Object.keys(values).forEach(paint);
+      sheet.hidden = false;
+      requestAnimationFrame(() => pg.classList.add('is-open'));
+      doc.inert = true; bar.inert = true;
+      sheet.querySelectorAll('.pg-fld').forEach((f) => f.classList.toggle('is-focus', (f as HTMLElement).dataset.fld === key));
+      const field = sheet.querySelector<HTMLElement>(`[data-fld="${key}"]`);
+      field?.scrollIntoView({ block: 'nearest' });
+      field?.querySelector<HTMLInputElement>('input, textarea')?.focus({ preventScroll: true });
+    };
+    const close = () => {
+      if (sheet.hidden) return;
+      pg.classList.remove('is-open');
+      doc.inert = false; bar.inert = false;
+      window.setTimeout(() => { sheet.hidden = true; }, 220);
+      opener?.isConnected && opener.focus();
+    };
+    pg.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      const edit = t.closest<HTMLElement>('[data-edit]');
+      if (edit) { open(edit.dataset.edit!, edit); return; }
+      if (t.closest('[data-close]')) close();
+      if (t.closest('[data-save]')) {
+        sheet.querySelectorAll<HTMLInputElement>('[data-sin]').forEach((i) => { values[i.dataset.sin!] = i.value; });
+        Object.keys(values).forEach(paint);
+        close();
+        say('Changes saved');
+      }
+    });
+    pg.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) close(); });
+
+    // The list: edit in place. Enter saves, Esc puts the old value back.
+    pg.querySelectorAll<HTMLInputElement>('[data-in]').forEach((i) => {
+      const key = i.dataset.in!;
+      i.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && i.tagName === 'INPUT') { e.preventDefault(); i.blur(); }
+        if (e.key === 'Escape') { i.value = values[key]; i.blur(); }
+      });
+      i.addEventListener('blur', () => {
+        if (i.value === values[key]) return;
+        values[key] = i.value;
+        paint(key);
+        say('Saved');
+      });
+    });
+  });
+</script>
+
+<style>
+  /* The mockup's own palette: fixed, so it stays light in dark mode. */
+  .pg {
+    --g: #f5f6f8; --s: #fff; --i: #1b1f27; --m: #687085; --f: #9aa1b1;
+    --h: #e7e9ef; --hs: #d8dbe4; --a: #3b5bdb; --ai: #2c43a8; --cb: #e9edfd; --cbh: #dbe2fb; --cr: #c3cef8;
+    position: relative; overflow: hidden; color-scheme: light; color: var(--i); background: var(--g);
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; text-align: left;
+    border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink);
+  }
+  /* The site styles bare p in its own ink; inside the mockup, take the mockup's.
+     Global so only .pg counts: it beats the site's bare p, not the classes below. */
+  :global(.pg :where(p, ul, li)) { margin: 0; max-width: none; color: inherit; }
+  .pg button { font: inherit; color: inherit; }
+  .pg svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .pg-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 16px; background: rgba(245,246,248,.92); border-bottom: 1px solid var(--h); }
+  .pg-lbl { font-size: 12px; color: var(--m); }
+  .pg-seg { display: inline-flex; gap: 2px; padding: 2px; background: #eceef3; border: 1px solid var(--hs); border-radius: 9px; }
+  .pg-seg button { padding: 4px 11px; font-size: 12.5px; color: var(--m); background: none; border: 0; border-radius: 7px; cursor: pointer; }
+  .pg-seg button[aria-pressed="true"] { color: var(--i); font-weight: 600; background: var(--s); box-shadow: 0 1px 2px rgba(20,23,31,.08); }
+  .pg-seg button:focus-visible { outline: 2px solid var(--a); outline-offset: 1px; }
+  .pg-hint { margin-left: auto; font-size: 12px; color: var(--f); }
+  .pg-hint--list, .pg[data-view="list"] .pg-hint--panel { display: none; }
+  .pg[data-view="list"] .pg-hint--list { display: inline; }
+
+  .pg-stage { position: relative; padding: 22px; min-height: 520px; }
+  .pg-doc { padding: 24px 26px 26px; background: var(--s); border: 1px solid var(--h); border-radius: 14px; box-shadow: 0 1px 2px rgba(20,23,31,.04), 0 8px 24px rgba(20,23,31,.05); }
+  .pg-head { display: flex; align-items: flex-start; gap: 12px; }
+  .pg-ficon { display: grid; place-items: center; width: 36px; height: 36px; flex: none; border-radius: 9px; color: var(--ai); background: linear-gradient(180deg, #eef1fb, #e4e9f8); }
+  .pg-ficon svg { width: 18px; height: 18px; stroke-width: 1.8; }
+  .pg-title { font-size: 19px; font-weight: 650; letter-spacing: -.01em; }
+  .pg-updated { display: flex; align-items: center; gap: 6px; margin-top: 2px !important; font-size: 12px; color: var(--f); }
+  .pg-updated span { width: 5px; height: 5px; border-radius: 50%; background: #cdd2dd; }
+  .pg-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; font-size: 13px; font-weight: 550; white-space: nowrap; border-radius: 9px; cursor: pointer; }
+  .pg-edit { margin-left: auto; background: var(--s); border: 1px solid var(--hs); }
+  .pg-edit:hover { background: #f7f8fb; }
+  .pg[data-view="list"] .pg-edit { visibility: hidden; }
+  .pg-rule { height: 1px; margin: 20px 0 0; background: var(--h); }
+  .pg-rule--body { margin-top: 24px; }
+
+  .pg-view { display: none; }
+  .pg[data-view="chips"] .pg-view--chips, .pg[data-view="cards"] .pg-view--cards, .pg[data-view="list"] .pg-view--list { display: block; }
+  .pg[data-count="few"] [data-extra] { display: none !important; }
+
+  /* Chips */
+  .pg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 18px; }
+  .pg-field { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .pg-k { font-size: 13px; color: var(--m); }
+  .pg-multi { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .pg-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; font-size: 13px !important; font-weight: 550; color: var(--ai) !important; background: var(--cb); border: 0; border-radius: 999px; cursor: pointer; transition: box-shadow .12s, background .12s; }
+  .pg-chip:hover, .pg-lead:hover, .pg-card:hover { box-shadow: 0 0 0 3px var(--cr); }
+  .pg-chip:hover { background: var(--cbh); }
+  .pg-lead { position: relative; display: block; width: 100%; margin-top: 18px; padding: 13px 40px 13px 15px; font-size: 14.5px; line-height: 1.6; text-align: left; color: #2a3142 !important; background: linear-gradient(180deg, #f3f5fe, #eef1fd); border: 1px solid #e2e7fb; border-left: 3px solid var(--a); border-radius: 10px; cursor: pointer; }
+  .pg-lead svg { position: absolute; top: 14px; right: 14px; color: var(--a); opacity: .55; }
+  .pg-sw { display: inline-block; width: 11px; height: 11px; flex: none; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+
+  /* Cards */
+  .pg-eyebrow { display: flex; align-items: center; gap: 8px; margin: 18px 0 10px !important; font-size: 10.5px; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; color: var(--f); }
+  .pg-eyebrow span { padding: 0 6px; font-size: 10.5px; letter-spacing: 0; color: var(--m); background: #eef0f5; border-radius: 6px; }
+  .pg-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .pg-card { display: block; padding: 11px 13px; text-align: left; background: var(--s); border: 1px solid var(--h); border-radius: 11px; cursor: pointer; transition: box-shadow .12s, border-color .12s; }
+  .pg-card:hover { border-color: var(--cr); }
+  .pg-card--full { grid-column: 1 / -1; }
+  .pg-ck { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-size: 10.5px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--f); }
+  .pg-ck svg { width: 12px; height: 12px; }
+  .pg-cv { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 550; line-height: 1.45; color: var(--i); word-break: break-word; }
+  .pg-mini { padding: 2px 9px; font-size: 12.5px; font-weight: 550; color: var(--ai); background: var(--cb); border-radius: 999px; }
+
+  /* List: label on the left, a quiet field that edits in place. */
+  .pg-rows { margin-top: 10px; }
+  .pg-row { display: grid; grid-template-columns: 170px 1fr; align-items: start; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--h); cursor: text; }
+  .pg-row:last-child { border-bottom: 0; }
+  .pg-rk { display: flex; align-items: center; gap: 8px; padding-top: 7px; font-size: 13px; color: var(--m); }
+  .pg-rk svg { color: var(--f); }
+  .pg-rv { position: relative; display: flex; align-items: center; gap: 8px; padding: 0 8px; border: 1px solid transparent; border-radius: 8px; transition: border-color .12s, box-shadow .12s, background .12s; }
+  .pg-rv:hover { background: #f7f8fb; }
+  .pg-rv:focus-within { background: var(--s); border-color: var(--a); box-shadow: 0 0 0 3px var(--cr); }
+  .pg-pfx { padding-right: 8px; font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--f); border-right: 1px solid var(--h); }
+  .pg-in { flex: 1; min-width: 0; padding: 6px 0; font: inherit; font-size: 14px; color: var(--i); background: none; border: 0; outline: none; resize: none; }
+  textarea.pg-in { line-height: 1.55; }
+  .pg-keys { display: none; flex: none; font-size: 11px; color: var(--f); }
+  .pg-rv:focus-within .pg-keys { display: inline; }
+
+  /* Body */
+  .pg-body { margin-top: 18px; font-size: 14px; color: #353b48; }
+  .pg-body .pg-h { margin-bottom: 6px; font-size: 16px; font-weight: 650; color: var(--i); }
+  .pg-body p + ul { margin-top: 8px; }
+  .pg-body ul { padding-left: 18px; }
+  .pg-body li { margin: 3px 0; }
+
+  /* The sheet, inside the frame. */
+  .pg-scrim { position: absolute; inset: 0; z-index: 2; background: rgba(20,23,31,.3); opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .pg.is-open .pg-scrim { opacity: 1; pointer-events: auto; }
+  .pg-sheet { position: absolute; top: 0; right: 0; bottom: 0; z-index: 3; display: flex; flex-direction: column; width: min(360px, 88%); background: var(--s); box-shadow: -8px 0 40px rgba(20,23,31,.16); transform: translateX(100%); transition: transform .22s cubic-bezier(.22,.61,.36,1); }
+  .pg.is-open .pg-sheet { transform: none; }
+  .pg-sheet-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--h); }
+  .pg-sheet-title { font-size: 15px; font-weight: 650; }
+  .pg-sheet-sub { font-size: 12px; color: var(--f); }
+  .pg-x { display: grid; place-items: center; width: 28px; height: 28px; margin-left: auto; color: var(--m) !important; background: none; border: 0; border-radius: 8px; cursor: pointer; }
+  .pg-x:hover { background: #f1f2f6; }
+  .pg-x svg { width: 16px; height: 16px; }
+  .pg-sheet-body { flex: 1; overflow-y: auto; padding: 4px 18px 18px; }
+  .pg-fld { padding: 12px 0; border-bottom: 1px solid var(--h); border-radius: 10px; }
+  .pg-fld.is-focus { padding-left: 10px; padding-right: 10px; background: #f4f6ff; box-shadow: inset 0 0 0 1px var(--cr); }
+  .pg-fld label { display: grid; gap: 5px; }
+  .pg-fl { font-size: 12.5px; font-weight: 600; }
+  .pg-input, .pg-prefixed { width: 100%; font: inherit; font-size: 13.5px; color: var(--i); background: #fff; border: 1px solid var(--hs); border-radius: 9px; }
+  .pg-input { padding: 7px 10px; }
+  textarea.pg-input { resize: vertical; line-height: 1.5; }
+  .pg-prefixed { display: flex; overflow: hidden; }
+  .pg-prefixed span { display: grid; place-items: center; padding: 0 10px; font-size: 12.5px; color: var(--f); background: #f5f6f9; border-right: 1px solid var(--h); }
+  .pg-prefixed input { flex: 1; min-width: 0; padding: 7px 10px; font: inherit; font-size: 13.5px; color: var(--i); background: #fff; border: 0; outline: none; }
+  .pg-input:focus, .pg-prefixed:focus-within { outline: none; border-color: var(--a); box-shadow: 0 0 0 3px var(--cr); }
+  .pg-sheet-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--h); }
+  .pg-ghost { background: none; border: 1px solid var(--hs); }
+  .pg-save { color: #fff !important; background: var(--i); border: 1px solid var(--i); }
+
+  .pg-toast { position: absolute; left: 50%; bottom: 18px; z-index: 4; padding: 8px 14px; font-size: 13px; font-weight: 500; color: #fff; background: var(--i); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; transform: translate(-50%, 12px); transition: opacity .2s, transform .2s; pointer-events: none; }
+  .pg.is-toast .pg-toast { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) { .pg-sheet, .pg-scrim, .pg-toast { transition: none; } }
+  @media (max-width: 559px) {
+    .pg-bar { padding: 10px 12px; }
+    .pg-hint { display: none !important; }
+    .pg-stage { padding: 10px; min-height: 480px; }
+    .pg-doc { padding: 18px 16px 20px; }
+    .pg-row { grid-template-columns: 1fr; gap: 0; }
+    .pg-rk { padding-top: 4px; }
+  }
+</style>

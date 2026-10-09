@@ -21,7 +21,7 @@ export interface StudioPiece {
   tags: string[];
   accent: 'coral' | 'blue' | 'teal' | 'violet';
   preview:
-    | { kind: 'sketch'; sketch: 'kb-graph'; alt: string }
+    | { kind: 'sketch'; sketch: 'kb-graph' | 'kb-props'; alt: string }
     | { kind: 'video'; src: string; poster: string; width: number; height: number; alt: string };
 }
 
@@ -41,6 +41,20 @@ export const studio: StudioPiece[] = [
       width: 960,
       height: 500,
       alt: 'The live knowledge base home in Strive: both sidebars open, and a graph of soft folder circles and file pills. Hovering a file shows its details, then the Recent panel opens and closes.',
+    },
+  },
+  {
+    slug: 'kb-frontmatter',
+    title: 'Designing frontmatter for KB pages',
+    context: 'Strivelabs · Knowledge base',
+    frame: 'KB / File',
+    hook: 'Showing a file’s properties as part of the page, not a form beside it.',
+    tags: ['Editing', 'Frontmatter'],
+    accent: 'coral',
+    preview: {
+      kind: 'sketch',
+      sketch: 'kb-props',
+      alt: 'Sketch of a knowledge base file in Strive: a header with the file’s icon, title and folder, three property rows with one being edited in place, and the doc below in the same card.',
     },
   },
 ];

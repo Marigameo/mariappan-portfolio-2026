@@ -1,0 +1,134 @@
+---
+/* Small doc wireframes for the frontmatter story, in the card-sketch style of
+   ReportArchetypes. Each one is a page with a title and some text, and its
+   properties drawn the way a pattern places them: chips inside the text, cards,
+   a callout block, or a plain list of rows. The same rows also show how one
+   model holds every file: only properties, properties and text, or one row over
+   a lot of text. Coral marks the properties; `pick` inks one doc in coral.
+   Four across, two on a phone. */
+type Kind = 'chips' | 'cards' | 'callout' | 'list' | 'only-props' | 'props-text' | 'mostly-text';
+interface Doc { kind: Kind; name: string; use: string; pick?: boolean }
+interface Props { docs: Doc[]; alt: string; note?: string; caption?: string }
+const { docs, alt, note, caption } = Astro.props;
+const lines = (y: number, ws: number[]) => ws.map((w, i) => ({ y: y + i * 9, w }));
+---
+<figure class="sk-fig">
+  <div class="sk-sheet md" role="img" aria-label={alt}>
+    <ul class="md-grid" style={`--n: ${docs.length}`}>
+      {docs.map((d) => (
+        <li class:list={[d.pick && 'is-pick']}>
+          <svg class="sk md-svg" viewBox="0 0 120 150" aria-hidden="true">
+            <rect x="2" y="2" width="116" height="146" rx="8" class="f-card md-edge"/>
+            <rect x="10" y="11" width="56" height="7" rx="3" class="f-bar"/>
+
+            {d.kind === 'chips' && (
+              <g>
+                {lines(28, [100, 84, 100, 70, 96, 100, 60, 88, 100, 74, 92, 50]).map((l) => <rect x="10" y={l.y} width={l.w} height="4" rx="2" class="f-bar-2"/>)}
+                <rect x="40" y="35" width="30" height="8" rx="4" class="md-chip"/>
+                <rect x="66" y="53" width="34" height="8" rx="4" class="md-chip"/>
+                <rect x="22" y="71" width="28" height="8" rx="4" class="md-chip"/>
+                <rect x="56" y="98" width="32" height="8" rx="4" class="md-chip"/>
+              </g>
+            )}
+
+            {d.kind === 'cards' && (
+              <g>
+                {[0, 1, 2, 3, 4, 5].map((k) => (
+                  <g>
+                    <rect x={10 + (k % 2) * 51} y={26 + Math.floor(k / 2) * 23} width="49" height="20" rx="3" class="md-card"/>
+                    <rect x={14 + (k % 2) * 51} y={30 + Math.floor(k / 2) * 23} width="18" height="3" rx="1.5" class="f-bar"/>
+                    <rect x={14 + (k % 2) * 51} y={37 + Math.floor(k / 2) * 23} width="30" height="4" rx="2" class="md-prop"/>
+                  </g>
+                ))}
+                {lines(100, [100, 86, 100, 64, 92]).map((l) => <rect x="10" y={l.y} width={l.w} height="4" rx="2" class="f-bar-2"/>)}
+              </g>
+            )}
+
+            {d.kind === 'callout' && (
+              <g>
+                <rect x="10" y="26" width="100" height="50" rx="4" class="md-callout"/>
+                <rect x="10" y="26" width="3" height="50" class="md-accent"/>
+                {[0, 1, 2, 3].map((k) => (
+                  <g><rect x="18" y={33 + k * 10} width="22" height="4" rx="2" class="f-bar"/><rect x="46" y={33 + k * 10} width={52 - k * 6} height="4" rx="2" class="md-prop"/></g>
+                ))}
+                {lines(86, [100, 90, 100, 72, 96, 100, 58]).map((l) => <rect x="10" y={l.y} width={l.w} height="4" rx="2" class="f-bar-2"/>)}
+              </g>
+            )}
+
+            {(d.kind === 'list' || d.kind === 'props-text') && (
+              <g>
+                {[0, 1, 2, 3].map((k) => (
+                  <g>
+                    <circle cx="13" cy={30 + k * 11} r="2" class="f-bar"/>
+                    <rect x="18" y={28 + k * 11} width="22" height="4" rx="2" class="f-bar"/>
+                    <rect x="48" y={28 + k * 11} width={56 - k * 8} height="4" rx="2" class="md-prop"/>
+                    {k < 3 && <line x1="10" x2="110" y1={35.5 + k * 11} y2={35.5 + k * 11} class="md-rule"/>}
+                  </g>
+                ))}
+                <line x1="2" x2="118" y1="76.5" y2="76.5" class="s-line"/>
+                <rect x="10" y="86" width="40" height="6" rx="3" class="f-bar"/>
+                {lines(98, [100, 88, 100, 70, 94, 60]).map((l) => <rect x="10" y={l.y} width={l.w} height="4" rx="2" class="f-bar-2"/>)}
+              </g>
+            )}
+
+            {d.kind === 'only-props' && (
+              <g>
+                {[{ y: 28, n: 4 }, { y: 92, n: 3 }].map((s) => (
+                  <g>
+                    <rect x="10" y={s.y} width="30" height="4" rx="2" class="f-bar"/>
+                    <rect x="10" y={s.y + 7} width="54" height="3" rx="1.5" class="f-bar-2"/>
+                    {Array.from({ length: s.n }, (_, k) => (
+                      <g>
+                        <circle cx="13" cy={s.y + 19 + k * 11} r="2" class="f-bar"/>
+                        <rect x="18" y={s.y + 17 + k * 11} width="22" height="4" rx="2" class="f-bar"/>
+                        <rect x="48" y={s.y + 15 + k * 11} width="60" height="8" rx="2" class="md-field"/>
+                      </g>
+                    ))}
+                  </g>
+                ))}
+                <line x1="2" x2="118" y1="86.5" y2="86.5" class="s-line"/>
+              </g>
+            )}
+
+            {d.kind === 'mostly-text' && (
+              <g>
+                <circle cx="13" cy="30" r="2" class="f-bar"/>
+                <rect x="18" y="28" width="22" height="4" rx="2" class="f-bar"/>
+                <rect x="48" y="28" width="44" height="4" rx="2" class="md-prop"/>
+                <line x1="2" x2="118" y1="40.5" y2="40.5" class="s-line"/>
+                <rect x="10" y="49" width="40" height="6" rx="3" class="f-bar"/>
+                {lines(61, [100, 92, 100, 76, 98]).map((l) => <rect x="10" y={l.y} width={l.w} height="4" rx="2" class="f-bar-2"/>)}
+                <rect x="10" y="109" width="34" height="6" rx="3" class="f-bar"/>
+                {lines(121, [100, 84, 96]).map((l) => <rect x="10" y={l.y} width={l.w} height="4" rx="2" class="f-bar-2"/>)}
+              </g>
+            )}
+          </svg>
+          <strong>{d.name}</strong>
+          <span>{d.use}</span>
+        </li>
+      ))}
+    </ul>
+    {note && <p class="md-note sk-hand">{note}</p>}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .md-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 1.1rem; }
+  .md-grid li { display: grid; justify-items: center; align-content: start; gap: .15rem; text-align: center; }
+  .md-svg { width: 100%; max-width: 9rem; height: auto; margin-bottom: .4rem; }
+  .md-edge { stroke: var(--ink); stroke-width: 1.4; }
+  .is-pick .md-edge { stroke: var(--coral); stroke-width: 2; }
+  .md-prop { fill: var(--coral); fill-opacity: .55; }
+  .md-chip { fill: var(--coral); fill-opacity: .14; stroke: var(--coral); stroke-width: 1; }
+  .md-card { fill: var(--paper); stroke: var(--ink); stroke-opacity: .3; stroke-width: 1; }
+  .md-callout { fill: var(--coral); fill-opacity: .08; }
+  .md-accent { fill: var(--coral); }
+  .md-field { fill: var(--paper); stroke: var(--ink); stroke-opacity: .25; stroke-width: 1; }
+  .md-rule { stroke: var(--ink); stroke-opacity: .08; stroke-width: 1; }
+  .md-grid strong { font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .is-pick strong { color: var(--coral); }
+  .md-grid span { font-size: .76rem; line-height: 1.35; color: var(--ink-faint); }
+  .md-note { margin: 1.1rem 0 0 !important; max-width: none; text-align: center; color: var(--coral); }
+  @media (max-width: 559px) { .md-grid { grid-template-columns: 1fr 1fr; gap: 1.3rem 1rem; } }
+</style>
