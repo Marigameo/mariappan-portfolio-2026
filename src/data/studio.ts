@@ -27,6 +27,23 @@ export interface StudioPiece {
 
 export const studio: StudioPiece[] = [
   {
+    slug: 'blog-refresh',
+    title: 'Reviewing an agent’s edits, block by block',
+    context: 'Strivelabs · Blog refresh',
+    frame: 'Refresh / Review',
+    hook: 'Many suggestions, one post, and a review that stays in sync with both.',
+    tags: ['Review flow', 'AI suggestions'],
+    accent: 'blue',
+    preview: {
+      kind: 'video',
+      src: '/images/experiments/refresh/loop.mp4',
+      poster: '/images/experiments/refresh/loop-poster.webp',
+      width: 960,
+      height: 500,
+      alt: 'The live blog refresh review in Strive: the post on the left with one paragraph highlighted, and its suggestion card on the right. Feedback is typed into the card, it is approved, a toast confirms it, and the card shrinks to the feedback with Approved and Undo.',
+    },
+  },
+  {
     slug: 'kb-homepage',
     title: 'Redesigning the KB homepage',
     context: 'Strivelabs · Knowledge base',

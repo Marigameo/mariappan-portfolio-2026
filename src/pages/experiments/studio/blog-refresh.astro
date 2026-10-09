@@ -1,0 +1,352 @@
+---
+/* The blog refresh agent's review: an agent suggests changes to an old post, and
+   people review them in the same view as the post. Told mostly in screenshots
+   and recordings: the brief, the orange prototype we built to test demand, my
+   redesign that's live today, feedback on any block, and the states.
+   Media lives in public/images/experiments/refresh/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import Icon from '../../../components/Icon.astro';
+
+const img = (f: string) => `/images/experiments/refresh/${f}`;
+
+const brief = [
+  { name: 'Many controls', text: 'Approve, reject, feedback, locate and undo, on every suggestion.' },
+  { name: 'Many suggestions per block', text: 'One paragraph can have three, from different sources.' },
+  { name: 'State in sync', text: 'Act on a suggestion, and the post and the counts follow.' },
+  { name: 'One view', text: 'The post and its review side by side, never a separate page.' },
+];
+
+// Slide 03's other prototype shots. These, the annotated prototype shot and slide 07's
+// pair open full size in the lightbox (src/scripts/main.js) from a sharper copy.
+const thumbs = [
+  { src: 'v1-stacked-suggestions.webp', full: 'v1-stacked-suggestions-full.webp', width: 1600, height: 828, caption: 'Two suggestions, two sparkles. Which one is this?', alt: 'The prototype: yellow-tinted paragraphs with sparkle buttons on their right edge, two of them stacked beside one paragraph, and a popover titled AI Suggestion 1 with the change, a justification, and Reject and Approve buttons.' },
+  { src: 'v1-block-feedback.webp', full: 'v1-block-feedback-full.webp', width: 1600, height: 875, caption: 'Feedback on a block, in a popover of its own.', alt: 'The prototype: a Feedback on Block popover with a text box and an orange Add Suggestion button, open over a customer quote, with a small comment count bubble further down the post.' },
+  { src: 'v1-analysis-complete.webp', full: 'v1-analysis-complete-full.webp', width: 1600, height: 742, caption: 'Muted sparkles that didn’t read as buttons.', alt: 'The prototype: an Analysis Complete banner above the post, and two muted yellow sparkle buttons beside the first paragraph.' },
+];
+
+const pair = [
+  { label: 'Before', src: 'v1-review.webp', full: 'v1-review-full.webp', height: 814, alt: 'The prototype: yellow-tinted blocks, orange sparkle buttons, a popover over the text, and a panel repeating the suggestions.' },
+  { label: 'After', src: 'live-sync.webp', full: 'live-sync-full.webp', height: 949, alt: 'The live review: a clean post with dotted underlines, one highlighted block, and the matching suggestion card in the panel.' },
+];
+
+const states =['Open', 'Feedback, if any', 'Approved or rejected', 'Undo'];
+
+const lessons = [
+  'A suggestion belongs on its text, not on a button floating beside it.',
+  'One place to act. Two places means two states to keep in sync.',
+  'When every block is highlighted, nothing is.',
+];
+---
+<StudioLayout
+  title="Reviewing an agent’s edits, block by block"
+  slug="blog-refresh"
+  description="Designing the review for Strive’s blog refresh agent: many suggestions per block, a lot of controls, and a review that stays in sync with the post. The orange prototype we built to test demand, and the redesign that’s live today."
+  ogDescription="Many suggestions, one post, and a review that stays in sync with both. From an orange prototype to the version that’s live today."
+  eyebrow="Strivelabs · Blog refresh"
+  facts={[
+    { label: 'My part', value: 'Frontend: the editor, the review flow, and keeping suggestions in sync with the post' },
+    { label: 'Built with', value: 'The Strive team' },
+    { label: 'Status', value: 'Live' },
+  ]}
+  keywords="UX design, UX for AI, AI suggestions, review flow, content editor, human in the loop, content refresh, design engineering"
+>
+  <Fragment slot="lede">Strive’s blog refresh agent reads an old post, finds what’s out of date and suggests changes. This is how we made <mark class="hl">reviewing dozens of suggestions</mark> feel like editing one post.</Fragment>
+
+  <figure slot="hero" class="br-hero">
+    <div class="br-video">
+      <video src={img('final.mp4')} poster={img('final-poster.webp')} width="1600" height="948" controls muted playsinline preload="none" aria-label="Screen recording of the live blog refresh review in Strive: the post on the left with block types in the gutter, and Approval Items on the right. A suggestion card gets feedback typed into it and is approved, a toast confirms it, and the card shrinks to its feedback with an Approved label and Undo. Then the post scrolls, list suggestions highlight their blocks, one is rejected, and the sources list opens."></video>
+    </div>
+    <figcaption>Live today: feedback on a suggestion, approve, then on through the post.</figcaption>
+  </figure>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">An agent that refreshes old posts</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Share a blog post, and the agent reads it block by block, checks it against <strong>search, AI overviews and competitors</strong>, and suggests what to update. You review, then publish the refreshed post.</li>
+        <li>We built it as a team. I owned the frontend: <strong>setting up the editor, designing how review works</strong>, and keeping suggestions in sync with the post.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-brief">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">The brief</p><h2 id="s-brief">A lot to fit beside a post</h2></div>
+      </header>
+      <ul class="brief">
+        {brief.map((b, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{b.name}</h3>
+            <p>{b.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-proto">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Phase 1 · the prototype</p><h2 id="s-proto">Would people want this?</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We first built it to <strong>test the demand, not to ship</strong>. It wore the orange theme Strive had then.</li>
+        <li>It showed people wanted it. It also showed <strong>what made review tiring</strong>.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="br-video">
+          <video src={img('prototype.mp4')} poster={img('prototype-poster.webp')} width="1600" height="812" controls muted playsinline preload="none" aria-label="Screen recording of the prototype: a sparkle button beside a yellow-tinted paragraph opens a popover with the recommended change, a justification, optional feedback, and Reject and Approve. A toast confirms the approval. Then feedback is typed into a Feedback on Block popover and added, and finally the post reloads with an Analysis Complete banner and an AI Recommendations panel with Open and Resolved tabs."></video>
+        </div>
+        <figcaption>The prototype: approve from a popover, comment on a block, then the recommendations panel.</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <button class="zoom" type="button" data-full={img('v1-review-full.webp')} aria-label="View the prototype screenshot full size">
+        <span class="shot-frame">
+          <img src={img('v1-review.webp')} width="1600" height="814" loading="lazy" decoding="async" alt="The prototype in Strive’s old orange theme: the post with most paragraphs tinted yellow, an orange sparkle button on the right edge of each one, and a Recommended Change popover covering the middle of a paragraph with its justification, an optional feedback box, and Reject and Approve. On the right, a panel repeats the suggestions as cards, one marked Approved.">
+          <span class="shot-mark" style="--l: 65.4%; --t: 24.6%; --w: 2.2%; --h: 21%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 35.8%; --t: 22.9%; --w: 29.6%; --h: 41.3%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 11.3%; --t: 83.2%; --w: 57%; --h: 16.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 72.6%; --t: 1%; --w: 23.2%; --h: 42.6%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 66.5%; --t: 24.6%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 35.8%; --t: 22.9%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 11.3%; --t: 83.2%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 72.6%; --t: 4%" aria-hidden="true">4</span>
+        </span>
+        <span class="zoom-icon zoom-icon--left rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+        </button>
+        <ol class="shot-notes">
+          <li><strong>A sparkle per suggestion.</strong> Buttons on the block’s edge, stacked when a block had more than one.</li>
+          <li><strong>A popover over the text.</strong> The change you were judging hid the words it was about.</li>
+          <li><strong>Every block in yellow.</strong> With suggestions on most blocks, the highlight stopped meaning anything.</li>
+          <li><strong>The same cards, twice.</strong> The panel repeated the popovers: two places to act, two states to keep in sync.</li>
+        </ol>
+        <figcaption>The prototype. It proved the need, and showed what to calm down.</figcaption>
+      </figure>
+      <div class="thumbs">
+        {thumbs.map((t) => (
+          <figure class="thumb">
+            <button class="zoom" type="button" data-full={img(t.full)} aria-label={`View full size: ${t.alt}`}>
+              <span class="shot-frame"><img src={img(t.src)} width={t.width} height={t.height} loading="lazy" decoding="async" alt={t.alt}></span>
+              <span class="zoom-icon zoom-icon--small rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+            </button>
+            <figcaption>{t.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-redesign">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Phase 2 · the redesign</p><h2 id="s-redesign">The post is the review</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Once the demand was clear, I redesigned the review: <strong>suggestions sit on the text they change</strong>, and one panel holds every action.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('live-sync.webp')} width="1600" height="949" loading="lazy" decoding="async" alt="The live review: the post on the left with p and h2 labels in the gutter and dotted underlines under text that has suggestions. One paragraph is highlighted, with the phrase about LinkedIn and Google CPCs in orange. On the right, Approval Items with Open 39 and Resolved 0 tabs and a filter, and the matching card, Paragraph · Suggestion 3, with a Google icon, an eye button, the suggestion, its justification and a feedback box.">
+          <span class="shot-mark" style="--l: 4%; --t: 37.8%; --w: 2.2%; --h: 53.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 6.2%; --t: 38.2%; --w: 59%; --h: 10%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 6.2%; --t: 50.6%; --w: 59%; --h: 20.4%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 71.1%; --t: 37.6%; --w: 27.6%; --h: 61.6%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 70.3%; --t: 21.6%; --w: 28.4%; --h: 12.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 72.2%; --t: 39.6%; --w: 2%; --h: 3.4%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 4%; --t: 37.8%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 65.2%; --t: 38.2%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 65.2%; --t: 50.6%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 98.7%; --t: 37.6%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 98.7%; --t: 21.6%" aria-hidden="true">4</span>
+          <span class="shot-num" style="--l: 69.4%; --t: 41.3%" aria-hidden="true">5</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>Block types in the gutter.</strong> <code>p</code>, <code>h2</code>, <code>table</code>: the post as the agent reads it.</li>
+          <li><strong>A dotted underline.</strong> Quietly marks text with suggestions, without tinting the whole post.</li>
+          <li><strong>Card and block, in sync.</strong> Select a card and its block lights up, with the exact phrase in orange. The eye scrolls to it.</li>
+          <li><strong>Open and Resolved.</strong> Counts that move as you act, and a filter.</li>
+          <li><strong>Where it came from.</strong> Each suggestion shows its source: search, AI overviews, competitors and more.</li>
+        </ol>
+        <figcaption>Live today. The team later added the source icons, a filter by source, and the sources and keywords in the header.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-feedback">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Beyond suggestions</p><h2 id="s-feedback">Ask for what the agent missed</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>People wanted changes the agent didn’t suggest. So <strong>any block takes a comment</strong>, and the agent works it in with the rest.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('live-block-feedback.webp')} width="1600" height="949" loading="lazy" decoding="async" alt="The live review: a table in the post with a comment button on its top right corner, and a Feedback on Block popover open beside it with a text box, Cancel and Add Comment. Suggestion cards with Reject and Approve stay in the panel behind it.">
+          <span class="shot-mark" style="--l: 6.2%; --t: 47%; --w: 55.6%; --h: 30.6%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 61.8%; --t: 49%; --w: 2.2%; --h: 3.6%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 62%; --t: 53%; --w: 29.6%; --h: 26.4%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 6.2%; --t: 47%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 64.6%; --t: 47.4%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 91.6%; --t: 53%" aria-hidden="true">3</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>Any block.</strong> Paragraphs, headings, lists, tables too.</li>
+          <li><strong>A comment button on hover.</strong> Out of the way until you point at a block.</li>
+          <li><strong>Feedback on block.</strong> Beside the block, not over it.</li>
+        </ol>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-states">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">States</p><h2 id="s-states">Every click says what happened</h2></div>
+      </header>
+      <ol class="states" aria-label="A suggestion’s states">
+        {states.map((s) => <li>{s}</li>)}
+      </ol>
+      <ul class="doodle-list slide-points">
+        <li>Once you act, a card shrinks to <strong>your feedback and its state</strong>, with Undo right there. A toast confirms it.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="br-video">
+          <video src={img('loop.mp4')} poster={img('loop-poster.webp')} width="960" height="500" controls muted loop playsinline preload="none" aria-label="Screen recording: feedback is typed into a suggestion card, the card is approved, a toast says the recommendation was approved with feedback, and the card shrinks to the feedback, an Approved label and an Undo button."></video>
+        </div>
+        <figcaption>Feedback, approve, and the card settles into its new state.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-after">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Before · after</p><h2 id="s-after">Same job, calmer page</h2></div>
+      </header>
+      <div class="pair">
+        {pair.map((p) => (
+          <figure class="pair-shot">
+            <p class:list={['pair-label', `pair-label--${p.label.toLowerCase()}`]}>{p.label}</p>
+            <button class="zoom" type="button" data-full={img(p.full)} aria-label={`View full size: ${p.alt}`}>
+              <span class="shot-frame"><img src={img(p.src)} width="1600" height={p.height} loading="lazy" decoding="async" alt={p.alt}></span>
+              <span class="zoom-icon rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+            </button>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What I’d keep</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`, i === lessons.length - 1 && 'lessons-solo']}>
+            <p class="lessons-learn"><span>Lesson</span>{l}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">Every suggestion, one place to act.</blockquote>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</StudioLayout>
+
+<style>
+  /* Deck styles from the work stories (report-builder.astro), trimmed to what a
+     studio story uses. */
+  :global(.prose:has(> .story)) { max-width: none; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons .lessons-solo { grid-column: 1 / -1; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 02: the brief, four small boxes. */
+  .brief { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .brief li { display: grid; gap: .4rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .brief h3 { margin: 0; font-size: 1.3rem; line-height: 1.15; }
+  .brief p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
+  @media (max-width: 559px) { .brief { grid-template-columns: 1fr; } }
+
+  /* Real screenshots with coral hand-drawn marks and numbers. Screenshots keep
+     their own light colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-num { position: absolute; left: var(--l); top: var(--t); display: grid; place-items: center; width: 1.6rem; height: 1.6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -50%) rotate(-6deg); }
+  .shot-notes { list-style: none; counter-reset: note; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem 1.5rem; margin: 1.4rem 0 0; padding: 0; }
+  .shot-notes li { counter-increment: note; position: relative; padding-left: 2.1rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  .shot-notes li::before { content: counter(note); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .shot-notes strong { color: var(--ink); font-weight: 500; }
+  .shot-fig figcaption, .br-hero figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .shot-notes { grid-template-columns: 1fr; }
+    .shot-num { width: 1rem; height: 1rem; font-size: .8rem; box-shadow: 1px 1px 0 var(--shadow-ink); }
+    .shot-mark { border-width: 1.5px; }
+  }
+
+  /* Recordings, framed like the screenshots. */
+  .br-hero { margin: 0; }
+  .br-video { overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .br-video video { display: block; width: 100%; height: auto; }
+
+  /* Slide 03's other prototype shots: small frames in a row. */
+  .thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; margin-top: var(--space-4); }
+  .thumb { margin: 0; max-width: none; }
+  .thumb .shot-frame { transform: none; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .thumb figcaption { margin-top: .7rem; font-size: .85rem; line-height: 1.4; color: var(--ink-faint); }
+  @media (max-width: 719px) { .thumbs { grid-template-columns: 1fr; } }
+
+  /* Slide 07: before over after, full width. */
+  .pair { display: grid; gap: var(--space-4); margin-top: var(--space-3); }
+  .pair-shot { margin: 0; max-width: none; }
+  .pair-label { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; }
+  .pair-label--before { color: var(--coral); }
+  .pair-label--after { color: var(--teal); }
+
+  /* A screenshot that opens full size: the whole frame is the button, with a zoom
+     badge in a corner. The annotated shot keeps its badge clear of the marks. */
+  .zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; text-align: inherit; cursor: zoom-in; }
+  .zoom .shot-frame { display: block; transition: transform .2s ease; }
+  .zoom:hover .shot-frame { transform: rotate(0deg) translateY(-2px); }
+  .zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 10px; }
+  .zoom-icon { position: absolute; top: .7rem; right: .7rem; }
+  .zoom-icon--left { right: auto; left: .7rem; }
+  .zoom-icon--small { top: .45rem; right: .45rem; width: 2rem; height: 2rem; }
+  .zoom:hover .zoom-icon { background: var(--ink); color: var(--paper); }
+  .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+
+  /* Slide 06: a suggestion's states, as chips joined by arrows. */
+  .states { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.8rem; margin: 0 0 1rem; padding: 0; }
+  .states li { position: relative; padding: .25rem .7rem; font-family: var(--font-mono); font-size: .75rem; color: var(--ink); border: 1.5px solid var(--border); border-radius: 999px; background: var(--paper-2); }
+  .states li:not(:last-child)::after { content: '→'; position: absolute; right: -1.35rem; top: 50%; transform: translateY(-50%); color: var(--ink-faint); }
+
+  .closer { margin-top: var(--space-5); }
+</style>
