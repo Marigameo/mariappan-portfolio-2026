@@ -1,0 +1,718 @@
+---
+/* A playground for the chat mode picker story, rebuilt from the Claude prototypes:
+   one composer, seven ways to pick Quick, Balanced or Deep Dive, and the mode
+   carries over as you switch between them. With `compare`, a second switch
+   flips between the first pass (v1) and the build after the interaction audit
+   (v2), so the fixes can be felt, not only read: v1's labels resize their pill,
+   its popovers snap shut behind an invisible backdrop, its thumb jumps stop to
+   stop and it has no keyboard; v2 is the audited one. It keeps the prototype's
+   own look (Strive orange, a serif greeting, system font) and stays light in
+   dark mode, like the playground in the frontmatter story. Every direction is
+   server-rendered; without JS it shows as a still. */
+interface Props {
+  /** Show the v1 / v2 switch. */
+  compare?: boolean;
+  /** Direction to open on. */
+  start?: string;
+  build?: 'v1' | 'v2';
+  caption?: string;
+}
+const { compare = false, start = '1a', build = 'v2', caption } = Astro.props;
+
+const LABELS = ['Quick', 'Balanced', 'Deep Dive'];
+const DESCS = ['Fast, lighter answers', 'A mix of speed and detail', 'Slower, more thorough analysis'];
+
+const dirs = [
+  { id: '1a', name: 'Rising signal', sub: 'sliding segmented control', subV1: 'expanding segmented control' },
+  { id: '1b', name: 'Effort scrubber', sub: 'a compact faster ↔ deeper track' },
+  { id: '1c', name: 'Energy orb', sub: 'icon only, the pulse is the depth' },
+  { id: '2a', name: 'Effort slider', sub: 'Claude-style, glitter at max', rec: true },
+  { id: '3a', name: 'Tap to cycle', sub: 'one control, no popover' },
+  { id: '3b', name: 'Rising ladder', sub: 'hover previews, click commits', nameV1: 'Hold and scrub', subV1: 'press, drag up to deepen' },
+  { id: '3c', name: 'Fuel gauge', sub: 'an inline meter fills the composer’s edge' },
+];
+const first = dirs.find((d) => d.id === start) ?? dirs[0];
+const v1 = build === 'v1';
+
+const ICON = {
+  clip: '<path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+  send: '<path d="m22 2-7 20-4-9-9-4 20-7z"/>',
+  chev: '<path d="m6 9 6 6 6-6"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  q: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+};
+const ON = '#F56B10';
+const OFF = 'rgba(0,0,0,.18)';
+---
+<figure class="sk-fig mp-fig">
+  <div class="mp" data-mp data-dir={first.id} data-build={build} data-mode="1" data-dirs={JSON.stringify(dirs)} style="--m: 1">
+    <div class="mp-bar">
+      <span class="mp-lbl">Direction</span>
+      <div class="mp-seg" role="group" aria-label="Direction">
+        {dirs.map((d) => (
+          <button type="button" data-set-dir={d.id} aria-pressed={String(d.id === first.id)} aria-label={`${d.id}, ${d.name}${d.rec ? ', the pick' : ''}`}>{d.id}{d.rec && <span class="mp-star" aria-hidden="true">★</span>}</button>
+        ))}
+      </div>
+      {compare && (
+        <>
+          <span class="mp-lbl">Build</span>
+          <div class="mp-seg" role="group" aria-label="Build">
+            <button type="button" data-set-build="v1" aria-pressed={String(v1)}>v1 · first pass</button>
+            <button type="button" data-set-build="v2" aria-pressed={String(!v1)}>v2 · after the audit</button>
+          </div>
+        </>
+      )}
+    </div>
+
+    <div class="mp-stage">
+      <p class="mp-name"><span class="mp-id" data-dir-id>{first.id}</span><b data-dir-name>{v1 && first.nameV1 ? first.nameV1 : first.name}</b><span data-dir-sub>{v1 && first.subV1 ? first.subV1 : first.sub}</span></p>
+      <p class="mp-hint">Mouse, keys or touch</p>
+
+      <div class="mp-card">
+        <p class="mp-greet">Good afternoon, <b>Maya</b></p>
+        <div class="mp-shell">
+          <div class="mp-glow"></div>
+          <div class="mp-composer">
+            <div class="mp-fuel-clip"><div class="mp-fuel"></div></div>
+            <div class="mp-input">Ask anything…</div>
+            <div class="mp-row">
+              <button type="button" class="mp-ic mp-tth" aria-label="Attach" data-tip="Attach"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICON.clip} /><span class="tt" aria-hidden="true">Attach</span></button>
+              <span class="mp-spring"></span>
+
+              <!-- 1a · Rising signal: a radiogroup; a highlight slides under the mode. -->
+              <div class="mp-ctl" data-ctl="1a">
+                <div class="mp-segc" role="radiogroup" aria-label="Chat mode" data-radios>
+                  <span class="mp-seg-hl" aria-hidden="true"></span>
+                  {LABELS.map((l, i) => (
+                    <button type="button" class="mp-segb mp-tth" role="radio" aria-checked={String(i === 1)} tabindex={i === 1 ? '0' : '-1'} aria-label={l} aria-description={DESCS[i]} data-radio={i} data-tip={`${l} — ${DESCS[i].toLowerCase()}`}>
+                      <span class="mp-segi"><svg viewBox="0 0 17 14" aria-hidden="true">{[0, 1, 2].map((b) => <rect x={b * 6.5} y={8 - b * 4} width="3.5" height={6 + b * 4} rx="1.5" fill="currentColor" opacity={b <= i ? 1 : .28} />)}</svg></span>
+                      <span class="mp-segl">{l}</span>
+                      <span class="tt" aria-hidden="true"><b>{l}</b>{DESCS[i]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <!-- 1b · Effort scrubber, and 2a · the Claude-style effort slider. -->
+              {[
+                { id: '1b', head: 'Mode', ends: ['Faster', 'Deeper'], w: 300, tip: 'Response mode', shimmer: false },
+                { id: '2a', head: 'Effort', ends: ['Faster', 'Smarter'], w: 440, tip: 'Effort', shimmer: true },
+              ].map((s) => (
+                <div class="mp-ctl" data-ctl={s.id}>
+                  <div class="mp-anchor mp-anchor--dialog" data-anchor>
+                    <button type="button" class="mp-pill mp-tth" aria-haspopup="dialog" aria-expanded="false" data-trigger data-aria={`${s.tip}: `} aria-label={`${s.tip}: Balanced`}>
+                      {s.id === '1b' && <svg class="mp-bars" viewBox="0 0 17 14" aria-hidden="true"><rect x="0" y="8" width="3.5" height="6" rx="1.5" fill={ON} /><rect data-bar="1" x="6.5" y="4" width="3.5" height="10" rx="1.5" fill={ON} /><rect data-bar="2" x="13" y="0" width="3.5" height="14" rx="1.5" fill={OFF} /></svg>}
+                      <span class="mp-lab"><span class="mp-ghost" aria-hidden="true">Deep Dive</span><b class="mp-word" data-word data-shimmer={s.shimmer ? '' : undefined}>Balanced</b></span>
+                      {s.id === '2a' && <svg class="mp-chev" viewBox="0 0 24 24" aria-hidden="true" set:html={ICON.chev} />}
+                      <span class="tt r" aria-hidden="true">{s.tip}</span>
+                    </button>
+                    <div class:list={['mp-pop', s.id === '2a' && 'mp-pop--big']} role="dialog" aria-label={s.tip} data-pop data-open="false" style={`--w: ${s.w}px`}>
+                      <div class="mp-pop-h">
+                        <span class="mp-pop-t">{s.head} <span class="mp-lab"><span class="mp-ghost" aria-hidden="true">Deep Dive</span><b class="mp-word" data-word data-head data-shimmer={s.shimmer ? '' : undefined}>Balanced</b></span></span>
+                        <span class="mp-qwrap">
+                          <button type="button" class="mp-q" aria-label={`About ${s.tip.toLowerCase()}`}><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICON.q} /></button>
+                          <span class="mp-qtip" role="tooltip">{s.id === '2a'
+                            ? <><b>Effort</b>Higher effort means more thorough responses, but takes longer.</>
+                            : <><b data-name>Balanced</b><span data-desc>{DESCS[1]}</span></>}</span>
+                        </span>
+                      </div>
+                      <div class="mp-ends" aria-hidden="true"><span>{s.ends[0]}</span><span>{s.ends[1]}</span></div>
+                      <div class="mp-slider" role="slider" tabindex={v1 ? undefined : '0'} aria-label={s.tip} aria-valuemin="0" aria-valuemax="2" aria-valuenow="1" aria-valuetext="Balanced" data-slider style="--p: 50%">
+                        <div class="mp-track">
+                          <span class="mp-dot" style="left: 7%"></span><span class="mp-dot" style="left: 50%"></span><span class="mp-dot" style="left: 93%"></span>
+                          <span class="mp-fill">{s.shimmer && <span class="mp-glitter"></span>}</span>
+                          <span class="mp-thumb"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <!-- 1c · Energy orb: icon only; it breathes slower and rings more as the mode deepens. -->
+              <div class="mp-ctl" data-ctl="1c">
+                <div class="mp-anchor" data-anchor>
+                  <button type="button" class="mp-orb-btn mp-tth" aria-haspopup="listbox" aria-expanded="false" data-trigger data-aria="Response mode: " aria-label="Response mode: Balanced" data-tip="{name} — tap to change">
+                    <span class="mp-orb mp-orb--live" aria-hidden="true"><span class="mp-ring mp-ring--1"></span><span class="mp-ring mp-ring--2"></span><span class="mp-core"></span></span>
+                    <span class="tt r" aria-hidden="true"><b data-name>Balanced</b><span data-desc>{DESCS[1]}</span></span>
+                  </button>
+                  <div class="mp-pop mp-menu" role="listbox" aria-label="Response mode" data-pop data-open="false" data-list="down">
+                    {LABELS.map((l, i) => (
+                      <button type="button" class="mp-opt" role="option" aria-selected={String(i === 1)} tabindex="-1" data-opt={i}>
+                        <span class="mp-orb" aria-hidden="true" style={`--d: ${['1.3s', '2.2s', '3.2s'][i]}`}>
+                          {i >= 1 && <span class="mp-ring mp-ring--on"></span>}
+                          {i >= 2 && <span class="mp-ring mp-ring--on mp-ring--late"></span>}
+                          <span class="mp-core"></span>
+                        </span>
+                        <span class="mp-tx"><span class="mp-n">{l}</span><span class="mp-d">{DESCS[i]}</span></span>
+                        <svg class="mp-ck" viewBox="0 0 24 24" aria-hidden="true" set:html={ICON.check} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3a · Tap to cycle: one pill, every click steps the mode (Shift-click goes back in v2). -->
+              <div class="mp-ctl" data-ctl="3a">
+                <button type="button" class="mp-pill mp-tth" data-cycle data-aria="Response mode: " data-aria-end=". Activate to switch." aria-label="Response mode: Balanced. Activate to switch." data-tip="{name} — {desc}. Tap to change.">
+                  <svg class="mp-bars" viewBox="0 0 17 14" aria-hidden="true"><rect x="0" y="8" width="3.5" height="6" rx="1.5" fill={ON} /><rect data-bar="1" x="6.5" y="4" width="3.5" height="10" rx="1.5" fill={ON} /><rect data-bar="2" x="13" y="0" width="3.5" height="14" rx="1.5" fill={OFF} /></svg>
+                  <span class="mp-lab"><span class="mp-ghost" aria-hidden="true">Deep Dive</span><b class="mp-word" data-word data-shimmer>Balanced</b></span>
+                  <span class="tt r" aria-hidden="true"><b data-name>Balanced</b><span data-desc>{DESCS[1]}</span></span>
+                </button>
+              </div>
+
+              <!-- 3b · Rising ladder: Deep Dive on top; v2 previews on hover, v1 scrubs while pressed. -->
+              <div class="mp-ctl" data-ctl="3b">
+                <div class="mp-anchor" data-anchor>
+                  <button type="button" class="mp-pill mp-tth" aria-haspopup="listbox" aria-expanded="false" data-trigger data-aria="Response mode: " aria-label="Response mode: Balanced" data-tip="{name} — {desc}">
+                    <svg class="mp-bars" viewBox="0 0 17 14" aria-hidden="true"><rect x="0" y="8" width="3.5" height="6" rx="1.5" fill={ON} /><rect data-bar="1" x="6.5" y="4" width="3.5" height="10" rx="1.5" fill={ON} /><rect data-bar="2" x="13" y="0" width="3.5" height="14" rx="1.5" fill={OFF} /></svg>
+                    <span class="mp-lab"><span class="mp-ghost" aria-hidden="true">Deep Dive</span><b class="mp-word" data-word>Balanced</b></span>
+                    <svg class="mp-chev" viewBox="0 0 24 24" aria-hidden="true" set:html={ICON.chev} />
+                    <span class="tt r" aria-hidden="true"><b data-name>Balanced</b><span data-desc>{DESCS[1]}</span></span>
+                  </button>
+                  <div class="mp-pop mp-ladder" role="listbox" aria-label="Response mode" data-pop data-open="false" data-list="up" data-ladder style="--hl: 44px">
+                    <span class="mp-lad-hl" aria-hidden="true"></span>
+                    {[2, 1, 0].map((i) => (
+                      <button type="button" class="mp-lad-row" role="option" aria-selected={String(i === 1)} tabindex="-1" data-opt={i} data-lad={i}><span>{LABELS[i]}</span><span class="mp-lad-sel" aria-hidden="true"></span></button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3c · Fuel gauge: three cells to click or drag; the composer's left edge fills with the mode. -->
+              <div class="mp-ctl mp-ctl--meter" data-ctl="3c">
+                <div class="mp-meter mp-tth" role="slider" tabindex={v1 ? undefined : '0'} aria-label="Response mode" aria-valuemin="0" aria-valuemax="2" aria-valuenow="1" aria-valuetext="Balanced" data-meter data-tip="{name} — {desc}">
+                  {[0, 1, 2].map((i) => <span class:list={['mp-cell', `mp-cell--${i}`]} data-cell={i}></span>)}
+                  <span class="tt r" aria-hidden="true"><b data-name>Balanced</b><span data-desc>{DESCS[1]}</span></span>
+                </div>
+                <span class="mp-lab mp-meter-lab" aria-hidden="true"><span class="mp-ghost">Deep Dive</span><span data-preview>Balanced</span></span>
+              </div>
+
+              <button type="button" class="mp-send mp-tth" aria-label="Send" data-tip="Send"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICON.send} /><span class="tt r" aria-hidden="true">Send</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- v1's invisible backdrop, kept to the stage so the switches above still work. -->
+      <div class="mp-backdrop" data-backdrop aria-hidden="true"></div>
+    </div>
+    <p class="mp-sr" aria-live="polite" data-live></p>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  const LABELS = ['Quick', 'Balanced', 'Deep Dive'];
+  const DESCS = ['Fast, lighter answers', 'A mix of speed and detail', 'Slower, more thorough analysis'];
+  const STOPS = [0.07, 0.5, 0.93];
+  const ON = '#F56B10';
+  const OFF = 'rgba(0,0,0,.18)';
+  type Dir = { id: string; name: string; sub: string; nameV1?: string; subV1?: string };
+
+  document.querySelectorAll<HTMLElement>('[data-mp]').forEach((root) => {
+    const dirs: Dir[] = JSON.parse(root.dataset.dirs || '[]');
+    const live = root.querySelector<HTMLElement>('[data-live]')!;
+    const $$ = <T extends Element = HTMLElement>(sel: string, el: ParentNode = root) => [...el.querySelectorAll<T>(sel)] as T[];
+    let mode = 1;
+    let open: HTMLElement | null = null; // the open anchor
+    let drag: HTMLElement | null = null;
+    let hoverLadder: number | null = null;
+    let hoverMeter: number | null = null;
+    const v2 = () => root.dataset.build !== 'v1';
+    const fill = (s: string) => s.replace('{name}', LABELS[mode]).replace('{desc}', DESCS[mode].toLowerCase());
+
+    // Replays the slide-up on a word; the key is restarting the animation.
+    const replay = (w: HTMLElement) => { w.classList.remove('is-swap'); void w.offsetWidth; w.classList.add('is-swap'); };
+
+    function paintLadder() {
+      $$('[data-ladder]').forEach((l) => {
+        const hl = v2() && hoverLadder != null ? hoverLadder : mode;
+        l.style.setProperty('--hl', `${(2 - hl) * 44}px`);
+        $$<HTMLElement>('[data-lad]', l).forEach((r) => {
+          const i = Number(r.dataset.lad);
+          r.classList.toggle('is-hl', i === hl);
+          r.style.setProperty('--sel', i === mode ? (i === hl ? '.9' : '.5') : '0');
+        });
+      });
+    }
+    function paintMeter() {
+      const peek = v2() ? hoverMeter : null;
+      $$('[data-cell]').forEach((c) => {
+        const i = Number(c.dataset.cell);
+        c.style.background = i <= mode ? ON : peek != null && i <= peek ? 'rgba(245,107,16,.35)' : '#D8D8D8';
+      });
+      $$('[data-preview]').forEach((p) => { p.textContent = LABELS[peek ?? mode]; });
+    }
+    function titles() {
+      $$('[data-tip]').forEach((el) => {
+        if (v2()) el.removeAttribute('title');
+        else el.title = fill(el.dataset.tip!);
+      });
+    }
+
+    function render(changed: boolean) {
+      root.dataset.mode = String(mode);
+      root.style.setProperty('--m', String(mode));
+      const shown = root.querySelector<HTMLElement>(`[data-ctl="${root.dataset.dir}"]`);
+      $$('[data-word]').forEach((w) => {
+        if (w.textContent !== LABELS[mode]) {
+          w.textContent = LABELS[mode];
+          if (changed && shown?.contains(w)) replay(w);
+        }
+        w.classList.toggle('is-deep', mode === 2 && w.hasAttribute('data-shimmer'));
+      });
+      $$('[data-name]').forEach((n) => { n.textContent = LABELS[mode]; });
+      $$('[data-desc]').forEach((n) => { n.textContent = DESCS[mode]; });
+      $$('[data-bar]').forEach((r) => r.setAttribute('fill', Number(r.dataset.bar) <= mode ? ON : OFF));
+      $$('[data-radio]').forEach((b) => {
+        const i = Number(b.dataset.radio);
+        b.setAttribute('aria-checked', String(i === mode));
+        b.tabIndex = v2() ? (i === mode ? 0 : -1) : 0;
+      });
+      $$('[data-slider], [data-meter]').forEach((s) => {
+        if (s.hasAttribute('data-slider') && !(s === drag && v2())) s.style.setProperty('--p', `${STOPS[mode] * 100}%`);
+        s.setAttribute('aria-valuenow', String(mode));
+        s.setAttribute('aria-valuetext', LABELS[mode]);
+        if (v2()) s.tabIndex = 0; else s.removeAttribute('tabindex');
+      });
+      $$('[data-opt]').forEach((o) => o.setAttribute('aria-selected', String(Number(o.dataset.opt) === mode)));
+      $$('[data-aria]').forEach((el) => el.setAttribute('aria-label', el.dataset.aria + LABELS[mode] + (el.dataset.ariaEnd || '')));
+      paintLadder();
+      paintMeter();
+      titles();
+    }
+
+    function setMode(n: number) {
+      if (n === mode) return;
+      mode = n;
+      render(true);
+      if (v2()) live.textContent = `Mode set to ${LABELS[n]}`;
+    }
+
+    // Popovers. v2: always mounted, fade from the anchor, close on an outside
+    // click or Esc, and hand focus in and back. v1: mount with a pop-in, snap
+    // shut, and an invisible backdrop over the frame that eats the next click.
+    function openPop(anchor: HTMLElement) {
+      closePop(false);
+      open = anchor;
+      const pop = anchor.querySelector<HTMLElement>('[data-pop]')!;
+      pop.dataset.open = 'true';
+      anchor.querySelector('[data-trigger]')!.setAttribute('aria-expanded', 'true');
+      if (!v2()) {
+        root.classList.add('has-backdrop');
+        $$('[data-head]', pop).forEach(replay);
+        return;
+      }
+      requestAnimationFrame(() => {
+        const target = pop.querySelector<HTMLElement>('[data-slider]') ?? pop.querySelector<HTMLElement>(`[data-opt="${mode}"]`);
+        target?.focus({ preventScroll: true });
+      });
+    }
+    function closePop(refocus: boolean) {
+      if (!open) return;
+      const anchor = open;
+      open = null;
+      anchor.querySelector<HTMLElement>('[data-pop]')!.dataset.open = 'false';
+      const trig = anchor.querySelector<HTMLElement>('[data-trigger]')!;
+      trig.setAttribute('aria-expanded', 'false');
+      root.classList.remove('has-backdrop');
+      hoverLadder = null;
+      paintLadder();
+      if (refocus && v2()) trig.focus({ preventScroll: true });
+    }
+
+    $$('[data-trigger]').forEach((t) => t.addEventListener('click', () => {
+      const anchor = t.closest<HTMLElement>('[data-anchor]')!;
+      if (open === anchor) closePop(false); else openPop(anchor);
+    }));
+    root.querySelector('[data-backdrop]')!.addEventListener('click', () => closePop(false));
+    document.addEventListener('pointerdown', (e) => {
+      if (open && v2() && !open.contains(e.target as Node)) closePop(false);
+    }, true);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && open && v2()) { e.preventDefault(); closePop(true); }
+    });
+
+    // Sliders (1b, 2a). v2: the thumb follows the pointer 1:1 over the whole
+    // padded hit area, then settles on the nearest stop. v1: only the track
+    // takes the press, and the thumb jumps between stops.
+    $$('[data-slider]').forEach((s) => {
+      const track = s.querySelector<HTMLElement>('.mp-track')!;
+      const at = (x: number) => {
+        const rc = track.getBoundingClientRect();
+        const t = (x - rc.left) / rc.width;
+        if (!v2()) { setMode(t < 0.34 ? 0 : t < 0.67 ? 1 : 2); return; }
+        const p = Math.max(STOPS[0], Math.min(STOPS[2], t));
+        s.style.setProperty('--p', `${p * 100}%`);
+        let idx = 0;
+        STOPS.forEach((st, i) => { if (Math.abs(st - p) < Math.abs(STOPS[idx] - p)) idx = i; });
+        setMode(idx);
+      };
+      s.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        if (!v2() && !(e.target as Element).closest('.mp-track')) return;
+        e.preventDefault();
+        const cap = v2() ? s : (e.target as Element);
+        try { cap.setPointerCapture(e.pointerId); } catch { /* gone */ }
+        if (v2()) { s.focus({ preventScroll: true }); s.dataset.drag = 'true'; }
+        drag = s;
+        at(e.clientX);
+      });
+      s.addEventListener('pointermove', (e) => { if (drag === s) at(e.clientX); });
+      const up = () => {
+        if (drag !== s) return;
+        drag = null;
+        delete s.dataset.drag;
+        s.style.setProperty('--p', `${STOPS[mode] * 100}%`);
+      };
+      s.addEventListener('pointerup', up);
+      s.addEventListener('lostpointercapture', up);
+      s.addEventListener('keydown', (e) => {
+        if (!v2()) return;
+        let n: number;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') n = Math.min(2, mode + 1);
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') n = Math.max(0, mode - 1);
+        else if (e.key === 'Home') n = 0;
+        else if (e.key === 'End') n = 2;
+        else if (e.key === 'Enter') { e.preventDefault(); closePop(true); return; }
+        else return;
+        e.preventDefault();
+        setMode(n);
+      });
+    });
+
+    // 1a: arrows move the mode and the focus together (roving tabindex).
+    root.querySelector('[data-radios]')!.addEventListener('keydown', (e) => {
+      const k = (e as KeyboardEvent).key;
+      if (!v2()) return;
+      let n: number;
+      if (k === 'ArrowRight' || k === 'ArrowDown') n = (mode + 1) % 3;
+      else if (k === 'ArrowLeft' || k === 'ArrowUp') n = (mode + 2) % 3;
+      else if (k === 'Home') n = 0;
+      else if (k === 'End') n = 2;
+      else return;
+      e.preventDefault();
+      setMode(n);
+      root.querySelector<HTMLElement>(`[data-radio="${n}"]`)!.focus();
+    });
+    $$('[data-radio]').forEach((b) => b.addEventListener('click', () => setMode(Number(b.dataset.radio))));
+
+    // Lists (1c, 3b): pick and close; arrows walk the options in v2.
+    $$('[data-opt]').forEach((o) => o.addEventListener('click', () => { setMode(Number(o.dataset.opt)); closePop(true); }));
+    $$('[data-list]').forEach((list) => list.addEventListener('keydown', (e) => {
+      if (!v2()) return;
+      const dir = list.dataset.list === 'down' ? 1 : -1; // 'up': Deep Dive is on top
+      const cur = Number((document.activeElement as HTMLElement)?.dataset.opt ?? mode);
+      let n: number;
+      if (e.key === 'ArrowDown') n = cur + dir;
+      else if (e.key === 'ArrowUp') n = cur - dir;
+      else if (e.key === 'Home') n = dir > 0 ? 0 : 2;
+      else if (e.key === 'End') n = dir > 0 ? 2 : 0;
+      else if (e.key === 'Tab') { closePop(false); return; }
+      else return;
+      e.preventDefault();
+      list.querySelector<HTMLElement>(`[data-opt="${Math.max(0, Math.min(2, n))}"]`)!.focus();
+    }));
+
+    // 3b: v2 previews whatever is under the pointer or focus; v1 scrubs while pressed.
+    $$('[data-ladder]').forEach((l) => {
+      $$<HTMLElement>('[data-lad]', l).forEach((r) => {
+        const hov = () => { if (v2() && hoverLadder !== Number(r.dataset.lad)) { hoverLadder = Number(r.dataset.lad); paintLadder(); } };
+        r.addEventListener('pointerenter', hov);
+        r.addEventListener('focus', hov);
+      });
+      l.addEventListener('pointerleave', () => { if (hoverLadder != null) { hoverLadder = null; paintLadder(); } });
+      l.addEventListener('pointermove', (e) => {
+        if (v2() || e.buttons !== 1) return;
+        const rc = l.getBoundingClientRect();
+        const fromTop = Math.max(0, Math.min(2, Math.floor(((e.clientY - rc.top) / rc.height) * 3)));
+        setMode(2 - fromTop);
+      });
+    });
+
+    // 3a: a click steps the mode; Shift-click goes back in v2.
+    root.querySelector('[data-cycle]')!.addEventListener('click', (e) => {
+      setMode((mode + ((e as MouseEvent).shiftKey && v2() ? 2 : 1)) % 3);
+    });
+
+    // 3c: click or drag the cells; v2 also previews on hover and takes arrow keys.
+    const meter = root.querySelector<HTMLElement>('[data-meter]')!;
+    const cellAt = (x: number) => {
+      const rc = meter.getBoundingClientRect();
+      const t = (x - rc.left) / rc.width;
+      return v2() ? (t < 0.36 ? 0 : t < 0.64 ? 1 : 2) : (t < 0.34 ? 0 : t < 0.67 ? 1 : 2);
+    };
+    meter.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      try { (v2() ? meter : (e.target as Element)).setPointerCapture(e.pointerId); } catch { /* gone */ }
+      if (v2()) meter.focus({ preventScroll: true });
+      drag = meter;
+      setMode(cellAt(e.clientX));
+    });
+    meter.addEventListener('pointermove', (e) => {
+      const i = cellAt(e.clientX);
+      if (drag === meter) setMode(i);
+      else if (v2() && e.pointerType === 'mouse' && i !== hoverMeter) { hoverMeter = i; paintMeter(); }
+    });
+    const meterUp = () => { if (drag === meter) drag = null; };
+    meter.addEventListener('pointerup', meterUp);
+    meter.addEventListener('lostpointercapture', meterUp);
+    meter.addEventListener('pointerleave', () => { if (drag !== meter && hoverMeter != null) { hoverMeter = null; paintMeter(); } });
+    meter.addEventListener('keydown', (e) => {
+      if (!v2()) return;
+      let n: number;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') n = Math.min(2, mode + 1);
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') n = Math.max(0, mode - 1);
+      else if (e.key === 'Home') n = 0;
+      else if (e.key === 'End') n = 2;
+      else return;
+      e.preventDefault();
+      setMode(n);
+    });
+
+    // The switches above the frame.
+    const press = (attr: string, val: string) => $$(`[${attr}]`).forEach((b) => b.setAttribute('aria-pressed', String(b.getAttribute(attr) === val)));
+    const label = () => {
+      const d = dirs.find((x) => x.id === root.dataset.dir)!;
+      root.querySelector('[data-dir-id]')!.textContent = d.id;
+      root.querySelector('[data-dir-name]')!.textContent = (!v2() && d.nameV1) || d.name;
+      root.querySelector('[data-dir-sub]')!.textContent = (!v2() && d.subV1) || d.sub;
+    };
+    const reset = () => { closePop(false); drag = null; hoverMeter = null; hoverLadder = null; };
+    $$('[data-set-dir]').forEach((b) => b.addEventListener('click', () => {
+      reset();
+      root.dataset.dir = b.dataset.setDir!;
+      press('data-set-dir', root.dataset.dir);
+      label();
+      render(false);
+    }));
+    $$('[data-set-build]').forEach((b) => b.addEventListener('click', () => {
+      reset();
+      root.dataset.build = b.dataset.setBuild!;
+      press('data-set-build', root.dataset.build);
+      label();
+      render(false);
+    }));
+
+    render(false);
+  });
+</script>
+
+<style>
+  /* The prototype's own palette: fixed, so it stays light in dark mode. */
+  .mp {
+    --or: #F56B10; --grad: linear-gradient(135deg, #F7BB5C 0%, #F56B10 49%, #B34086 100%);
+    --i: #181818; --i2: rgba(24,24,24,.5); --i3: rgba(24,24,24,.3); --mu: #696969;
+    --card: #fff; --soft: #F8F8F8; --line: #E5E7EB; --line2: #D1D5DB; --line3: rgba(0,0,0,.06);
+    --pop-sh: 0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.04);
+    --eo: cubic-bezier(0, 0, .2, 1); --es: cubic-bezier(.2, 0, 0, 1);
+    position: relative; isolation: isolate; overflow: hidden; color-scheme: light; color: var(--i); background: #FBFBFB;
+    font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; text-align: left;
+    border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink);
+  }
+  :global(.mp :where(p)) { margin: 0; max-width: none; color: inherit; }
+  .mp button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+  .mp svg { flex: none; }
+  .mp :where(button, [role="slider"]):focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+
+  /* The switches. */
+  .mp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 16px; background: #f3f2ee; border-bottom: 1px solid var(--line); }
+  .mp-lbl { font-size: 12px; color: var(--mu); }
+  .mp-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 2px; background: #e9e7e1; border: 1px solid #dcd9d1; border-radius: 9px; }
+  .mp-seg button { padding: 4px 10px; font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--mu); background: none; border: 0; border-radius: 7px; cursor: pointer; }
+  .mp-seg button[aria-pressed="true"] { color: var(--i); font-weight: 600; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .mp-star { margin-left: 3px; font-size: 10px; color: var(--or); }
+
+  /* The stage: a chat home, with the composer low so popovers have room above. */
+  .mp-stage { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 320px; padding: 18px 22px 26px; }
+  .mp-name { position: absolute; top: 16px; left: 22px; right: 22px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding-right: 150px; font-size: 12.5px; color: var(--i2); }
+  .mp-name b { color: var(--i); font-weight: 600; }
+  .mp-id { padding: 2px 6px; font: 600 10.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: #fff; background: var(--i); border-radius: 5px; }
+  .mp-hint { position: absolute; top: 17px; right: 22px; font-size: 12px; color: var(--i3); }
+  .mp-card { width: 100%; max-width: 560px; margin: 0 auto; }
+  .mp-greet { margin: 0 0 20px !important; font: 400 26px/36px Fraunces, Georgia, "Times New Roman", serif; letter-spacing: -.5px; color: var(--i2) !important; }
+  .mp-greet b { font-weight: 400; color: var(--i); }
+
+  .mp-shell { position: relative; }
+  .mp-glow { position: absolute; inset: -3px; border-radius: 15px; pointer-events: none; transition: box-shadow .35s var(--es); }
+  .mp[data-mode="1"] .mp-glow { box-shadow: 0 0 0 3px rgba(247,187,92,.2); }
+  .mp[data-mode="2"] .mp-glow { box-shadow: 0 0 0 3px rgba(179,64,134,.15), 0 12px 30px -12px rgba(245,107,16,.35); }
+  .mp-composer { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
+  .mp-input { padding: 16px 18px 4px; min-height: 40px; font-size: 15px; color: var(--i2); }
+  .mp-row { display: flex; align-items: center; gap: 6px; padding: 8px 10px; }
+  .mp-spring { flex: 1; }
+  .mp-ctl { display: none; align-items: center; gap: 8px; }
+  .mp[data-dir="1a"] [data-ctl="1a"], .mp[data-dir="1b"] [data-ctl="1b"], .mp[data-dir="1c"] [data-ctl="1c"], .mp[data-dir="2a"] [data-ctl="2a"],
+  .mp[data-dir="3a"] [data-ctl="3a"], .mp[data-dir="3b"] [data-ctl="3b"], .mp[data-dir="3c"] [data-ctl="3c"] { display: inline-flex; }
+
+  .mp-ic, .mp-send { position: relative; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 8px; cursor: pointer; transition: background-color .15s, color .15s, transform .12s var(--eo); }
+  .mp-ic { color: var(--mu) !important; background: transparent; }
+  .mp-send { color: #fff !important; background: #262626; border-radius: 9px; }
+  .mp-ic svg, .mp-send svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .mp-send svg { width: 17px; height: 17px; }
+  @media (hover: hover) { .mp-ic:hover { color: var(--i) !important; background: var(--soft); } .mp-send:hover { background: #1a1a1a; } }
+
+  /* Tooltips: hover intent (450ms), keyboard focus, never over an open popover. */
+  .tt { position: absolute; bottom: calc(100% + 8px); left: 50%; z-index: 60; padding: 7px 10px; font-size: 11.5px; line-height: 1.4; font-weight: 400; letter-spacing: -.1px; white-space: nowrap; text-align: left; color: rgba(255,255,255,.72); background: #262626; border-radius: 8px; pointer-events: none; opacity: 0; translate: -50% 0; transform: translateY(3px); transition: opacity .1s, transform .1s; }
+  .tt b { display: block; color: #fff; font-weight: 600; }
+  .tt.r { left: auto; right: 0; translate: 0 0; }
+  @media (hover: hover) { .mp-tth:hover > .tt { opacity: 1; transform: none; transition: opacity .14s .45s, transform .14s .45s; } }
+  .mp-tth:focus-visible > .tt { opacity: 1; transform: none; }
+  .mp-tth[aria-expanded="true"] > .tt { opacity: 0 !important; transition: none !important; }
+
+  /* A label that keeps the widest mode's width; the word slides up when it changes. */
+  .mp-lab { display: inline-grid; }
+  .mp-lab > * { grid-area: 1 / 1; justify-self: start; font-weight: 600; }
+  .mp-ghost { visibility: hidden; }
+  .mp-word { color: var(--i); }
+  .mp-word.is-swap { animation: mp-swap .22s var(--eo); }
+  .mp-word.is-deep { color: transparent; -webkit-text-fill-color: transparent; background: linear-gradient(90deg, #F7BB5C, #F56B10, #B34086, #F56B10, #F7BB5C) 0 0 / 200% auto; -webkit-background-clip: text; background-clip: text; animation: mp-shimmer 2.4s linear infinite; }
+  .mp-word.is-deep.is-swap { animation: mp-swap .22s var(--eo), mp-shimmer 2.4s linear infinite; }
+
+  /* Pill triggers. */
+  .mp-pill { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; font-size: 12.5px; font-weight: 500; color: var(--i) !important; background: var(--soft); border: 1px solid var(--line); border-radius: 9px; cursor: pointer; transition: border-color .15s, background-color .15s, transform .12s var(--eo); }
+  @media (hover: hover) { .mp-pill:hover { border-color: var(--line2); } }
+  .mp-pill[aria-expanded="true"] { background: var(--card); border-color: var(--line2); }
+  .mp-bars { width: 15px; height: 12px; }
+  .mp-bars rect { transition: fill .2s; }
+  .mp-chev { width: 13px; height: 13px; fill: none; stroke: var(--i3); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s var(--eo); }
+  .mp-pill[aria-expanded="true"] .mp-chev { transform: rotate(180deg); }
+  .mp[data-build="v2"] :is(.mp-pill, .mp-orb-btn, .mp-ic, .mp-send):active { transform: scale(.95); }
+
+  /* Popovers: always mounted, fade and scale from the anchor. */
+  .mp-anchor { position: relative; }
+  .mp-pop { position: absolute; right: 0; bottom: calc(100% + 10px); z-index: 30; box-sizing: border-box; width: var(--w, auto); padding: 16px 18px 18px; background: var(--card); border: 1px solid var(--line3); border-radius: 14px; box-shadow: var(--pop-sh); transform-origin: bottom right; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(4px) scale(.98); transition: opacity .13s var(--eo), transform .13s var(--eo), visibility 0s linear .13s; }
+  .mp-pop[data-open="true"] { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity .16s var(--eo), transform .2s var(--eo), visibility 0s; }
+  .mp-pop-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .mp-pop-t { display: inline-flex; align-items: baseline; gap: 5px; font-size: 14px; color: var(--i2); }
+  .mp-pop--big { padding: 22px 26px 24px; }
+  .mp-pop--big .mp-pop-h { margin-bottom: 18px; }
+  .mp-pop--big .mp-pop-t { font-size: 17px; }
+  .mp-ends { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px; color: var(--i2); user-select: none; }
+  .mp-pop--big .mp-ends { font-size: 13px; }
+  .mp-qwrap { position: relative; display: inline-flex; }
+  .mp-q { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; color: var(--i3) !important; background: none; border: 0; border-radius: 50%; cursor: help; }
+  .mp-q:hover, .mp-q:focus-visible { color: var(--i) !important; }
+  .mp-q svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .mp-qtip { position: absolute; right: -6px; bottom: calc(100% + 10px); z-index: 40; width: 236px; padding: 13px 15px; font-size: 12.5px; line-height: 1.5; color: var(--i2); background: #fff; border: 1px solid var(--line3); border-radius: 12px; box-shadow: var(--pop-sh); opacity: 0; transform: translateY(3px); pointer-events: none; transition: opacity .14s, transform .14s; }
+  .mp-qtip b { display: block; margin-bottom: 3px; font-weight: 600; color: var(--i); }
+  @media (hover: hover) { .mp-qwrap:hover .mp-qtip { opacity: 1; transform: none; transition-delay: .25s; } }
+  .mp-qwrap:focus-within .mp-qtip { opacity: 1; transform: none; }
+
+  /* Sliders: a padded hit area, 1:1 drag, a settle on release. */
+  .mp-slider { position: relative; padding: 12px 0; cursor: pointer; touch-action: none; user-select: none; outline: none; }
+  .mp-track { position: relative; height: 8px; background: #EAEAEA; border-radius: 999px; }
+  .mp-dot { position: absolute; top: 2px; width: 4px; height: 4px; background: rgba(0,0,0,.2); border-radius: 50%; translate: -50% 0; }
+  .mp-fill { position: absolute; top: 0; left: 0; height: 100%; width: var(--p); overflow: hidden; background: var(--grad); border-radius: 999px; transition: width .26s var(--eo); }
+  .mp-thumb { position: absolute; top: 50%; left: var(--p); width: 20px; height: 20px; background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.2); translate: -50% -50%; transition: left .26s var(--eo), scale .15s var(--eo), box-shadow .15s; }
+  .mp-slider[data-drag="true"] { cursor: grabbing; }
+  .mp-slider[data-drag="true"] .mp-fill { transition: none; }
+  .mp-slider[data-drag="true"] .mp-thumb { scale: 1.1; box-shadow: 0 2px 6px rgba(0,0,0,.22); transition: scale .15s var(--eo), box-shadow .15s; }
+  .mp-slider:focus-visible .mp-thumb { box-shadow: 0 0 0 4px rgba(245,107,16,.28), 0 1px 3px rgba(0,0,0,.2); }
+  .mp-pop--big .mp-track { height: 16px; }
+  .mp-pop--big .mp-dot { top: 5.5px; width: 5px; height: 5px; }
+  .mp-pop--big .mp-thumb { width: 28px; height: 28px; }
+  .mp-glitter { position: absolute; inset: 0; opacity: 0; mix-blend-mode: screen; background-image: radial-gradient(circle, rgba(255,255,255,.95) .6px, transparent 1.2px), radial-gradient(circle, rgba(255,255,255,.55) .6px, transparent 1.2px); background-size: 6px 6px, 9px 9px; transition: opacity .3s; animation: mp-glitter 2.4s linear infinite; }
+  .mp[data-mode="2"] .mp-glitter { opacity: 1; }
+
+  /* 1a: a highlight slides under fixed-width buttons, so the control never resizes. */
+  .mp-segc { position: relative; display: inline-flex; gap: 2px; padding: 4px; background: rgba(0,0,0,.04); border-radius: 11px; }
+  .mp-seg-hl { position: absolute; top: 4px; left: 4px; width: 104px; height: 32px; background: var(--grad); border-radius: 8px; box-shadow: 0 1px 3px rgba(179,64,134,.25); transform: translateX(calc(var(--m) * 36px)); transition: transform .3s var(--es); pointer-events: none; }
+  .mp-segb { position: relative; z-index: 1; display: inline-flex; align-items: center; height: 32px; padding: 0; color: rgba(24,24,24,.5) !important; background: transparent; border: 0; border-radius: 8px; cursor: pointer; transition: color .22s, background-color .15s; }
+  .mp-segb[aria-checked="true"] { color: #fff !important; }
+  @media (hover: hover) { .mp-segb[aria-checked="false"]:hover { color: var(--i) !important; background: rgba(0,0,0,.05); } }
+  .mp-segi { display: grid; place-items: center; width: 34px; flex: none; }
+  .mp-segi svg { width: 17px; height: 14px; }
+  .mp-segl { display: block; width: 0; overflow: hidden; white-space: nowrap; font-size: 12px; font-weight: 500; letter-spacing: -.24px; opacity: 0; transition: width .3s var(--es), opacity .2s; }
+  .mp-segb[aria-checked="true"] .mp-segl { width: 70px; opacity: 1; }
+
+  /* 1c: the orb, and its menu. */
+  .mp-orb-btn { position: relative; display: grid; place-items: center; width: 40px; height: 36px; padding: 0; background: transparent; border: 1px solid transparent; border-radius: 9px; cursor: pointer; transition: background-color .15s, border-color .15s, transform .12s var(--eo); }
+  @media (hover: hover) { .mp-orb-btn:hover { background: var(--soft); border-color: var(--line); } }
+  .mp-orb-btn[aria-expanded="true"] { background: var(--soft); border-color: var(--line); }
+  .mp-orb { position: relative; display: grid; place-items: center; width: 22px; height: 22px; flex: none; }
+  .mp-core { width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F7BB5C, #F56B10 65%, #E55D08); box-shadow: 0 0 6px rgba(245,107,16,.5); animation: mp-breath var(--d, 2.2s) ease-in-out infinite; }
+  .mp-ring { position: absolute; width: 9px; height: 9px; border: 1.5px solid var(--or); border-radius: 50%; opacity: 0; transition: opacity .3s; }
+  .mp-ring--on, .mp[data-mode="1"] .mp-orb--live .mp-ring--1, .mp[data-mode="2"] .mp-orb--live .mp-ring { animation: mp-pulse var(--d, 2.2s) ease-out infinite; }
+  .mp-ring--late, .mp-orb--live .mp-ring--2 { animation-delay: .8s !important; }
+  .mp[data-mode="0"] .mp-orb--live { --d: 1.3s; }
+  .mp[data-mode="1"] .mp-orb--live { --d: 2.2s; }
+  .mp[data-mode="2"] .mp-orb--live { --d: 3.2s; }
+  .mp-menu { width: 240px; padding: 6px; }
+  .mp-opt { display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 10px; text-align: left; background: transparent; border: 0; border-radius: 9px; cursor: pointer; transition: background-color .12s; }
+  @media (hover: hover) { .mp-opt:hover { background: var(--soft); } }
+  .mp .mp-opt:focus-visible { outline: none; background: var(--soft); box-shadow: inset 0 0 0 1.5px var(--or); }
+  .mp-tx { display: grid; flex: 1; }
+  .mp-n { font-size: 13px; font-weight: 500; color: var(--i); }
+  .mp-d { font-size: 11px; color: var(--i2); }
+  .mp-ck { width: 16px; height: 16px; fill: none; stroke: var(--or); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .15s; }
+  .mp-opt[aria-selected="true"] .mp-ck { opacity: 1; }
+
+  /* 3b: the ladder, Deep Dive on top. */
+  .mp-ladder { right: auto; left: 50%; width: 176px; padding: 6px; transform-origin: bottom center; transform: translate(-50%, 4px) scale(.98); }
+  .mp-ladder[data-open="true"] { transform: translate(-50%, 0); }
+  .mp-lad-hl { position: absolute; top: 6px; left: 6px; right: 6px; height: 44px; background: var(--grad); border-radius: 10px; box-shadow: 0 2px 8px -2px rgba(245,107,16,.45); transform: translateY(var(--hl)); transition: transform .2s var(--eo); pointer-events: none; }
+  .mp-lad-row { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; width: 100%; height: 44px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--i) !important; background: transparent; border: 0; border-radius: 10px; cursor: pointer; transition: color .15s; }
+  .mp-lad-row.is-hl { color: #fff !important; }
+  .mp .mp-lad-row:focus-visible { outline: none; }
+  .mp-lad-sel { width: 6px; height: 6px; background: currentColor; border-radius: 50%; opacity: var(--sel, 0); transition: opacity .15s; }
+
+  /* 3c: the meter, and the accent on the composer's edge. */
+  .mp-fuel-clip { position: absolute; inset: 0; display: none; overflow: hidden; border-radius: 12px; pointer-events: none; }
+  .mp[data-dir="3c"] .mp-fuel-clip { display: block; }
+  .mp-fuel { position: absolute; top: 0; bottom: 0; left: 0; width: 4px; background: var(--grad); transform-origin: bottom; transform: scaleY(.67); transition: transform .35s var(--es); }
+  .mp[data-mode="0"] .mp-fuel { transform: scaleY(.34); }
+  .mp[data-mode="2"] .mp-fuel { transform: scaleY(1); }
+  .mp-meter { position: relative; display: inline-flex; align-items: flex-end; justify-content: center; gap: 4px; box-sizing: border-box; height: 36px; padding: 0 12px 8px; background: var(--soft); border: 1px solid var(--line); border-radius: 9px; cursor: pointer; touch-action: none; user-select: none; transition: border-color .15s; }
+  @media (hover: hover) { .mp-meter:hover { border-color: var(--line2); } }
+  .mp-cell { width: 6px; border-radius: 2px; pointer-events: none; transition: background-color .18s; }
+  .mp-cell--0 { height: 8px; } .mp-cell--1 { height: 14px; } .mp-cell--2 { height: 20px; }
+  .mp-meter-lab > * { font-size: 12px; font-weight: 500; color: var(--i2); user-select: none; }
+
+  /* v1, the first pass, as it was before the audit. */
+  .mp-backdrop { position: absolute; inset: 0; z-index: 20; display: none; }
+  .mp.has-backdrop .mp-backdrop { display: block; }
+  .mp[data-build="v1"] .tt { display: none; }
+  .mp[data-build="v1"] .mp-ghost { display: none; }
+  .mp[data-build="v1"] .mp-meter-lab { min-width: 66px; }
+  .mp[data-build="v1"] .mp-pop { display: none; transition: none; }
+  .mp[data-build="v1"] .mp-pop[data-open="true"] { display: block; animation: mp-pop-in .18s var(--eo); }
+  .mp[data-build="v1"] .mp-ladder[data-open="true"] { animation-name: mp-pop-in-mid; }
+  .mp[data-build="v1"] :is(.mp-fill, .mp-thumb) { transition-duration: .3s; transition-timing-function: var(--es); }
+  .mp[data-build="v1"] [data-ctl="1b"] .mp-thumb { width: 18px; height: 18px; }
+  .mp[data-build="v1"] .mp-seg-hl { display: none; }
+  .mp[data-build="v1"] .mp-segb { color: #9AA0A8 !important; transition: background .28s var(--es), color .24s; }
+  .mp[data-build="v1"] .mp-segb[aria-checked="true"] { color: #fff !important; background: var(--grad); }
+  .mp[data-build="v1"] .mp-segl { width: auto; max-width: 0; padding: 0; transition: max-width .32s var(--es), opacity .22s, padding .32s; }
+  .mp[data-build="v1"] .mp-segb[aria-checked="true"] .mp-segl { max-width: 80px; padding: 0 13px 0 2px; }
+  .mp[data-build="v1"] .mp-cell--0 { height: 10px; } .mp[data-build="v1"] .mp-cell--1 { height: 18px; } .mp[data-build="v1"] .mp-cell--2 { height: 26px; }
+  .mp[data-build="v1"] .mp-meter { align-items: center; gap: 3px; padding: 0 11px; }
+
+  .mp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @keyframes mp-swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes mp-shimmer { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+  @keyframes mp-glitter { from { background-position: 0 0, 0 0; } to { background-position: 24px -8px, -18px 12px; } }
+  @keyframes mp-breath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+  @keyframes mp-pulse { 0% { transform: scale(.7); opacity: .55; } 70% { opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
+  @keyframes mp-pop-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes mp-pop-in-mid { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mp *, .mp *::before, .mp *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
+  }
+  @media (max-width: 559px) {
+    .mp-bar { padding: 10px 12px; }
+    .mp-seg button { padding: 4px 8px; }
+    .mp-stage { min-height: 330px; padding: 14px 10px 18px; }
+    .mp-name { left: 12px; right: 12px; padding-right: 0; }
+    .mp-hint { display: none; }
+    .mp-greet { font-size: 21px; line-height: 30px; }
+    .mp-row { gap: 4px; padding: 8px; }
+    /* The dialogs take the composer's width instead of the pill's. */
+    .mp-anchor--dialog { position: static; }
+    .mp-pop:not(.mp-ladder) { max-width: 100%; }
+  }
+</style>

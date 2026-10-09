@@ -1,0 +1,217 @@
+---
+/* The studio's third story: a mode picker for Strive's chat composer, taking
+   after Claude desktop's effort slider. Same deck as kb-frontmatter: the
+   backstory, seven directions prototyped in Claude (a playground rebuilt from
+   them), the interaction audit I ran before choosing (the same playground with
+   a v1 / v2 switch), why the effort slider won, and the honest ending: we
+   later moved to one mode. No screenshots: it never shipped, so the hero is
+   the sketch. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import ChatMode from '../../../components/sketches/chat/ChatMode.astro';
+import ModePlayground from '../../../components/sketches/chat/ModePlayground.astro';
+import Versus from '../../../components/sketches/studio/Versus.astro';
+
+const audit = [
+  {
+    group: 'Nothing jumps',
+    items: [
+      { fix: 'Labels keep their width.', was: 'v1’s pill grew and shrank between Quick and Deep Dive. Now every label holds the widest word’s space.' },
+      { fix: 'Popovers fade both ways.', was: 'v1 popped in and snapped shut. Now they stay mounted and fade from their anchor, 160ms in and 130ms out.' },
+      { fix: 'Animate on change only.', was: 'v1 replayed the label’s slide every time a popover opened. Now it plays only when the mode changes.' },
+    ],
+  },
+  {
+    group: 'Easy in the hand',
+    items: [
+      { fix: 'The thumb follows the pointer.', was: 'v1 jumped from stop to stop. Now it moves 1:1 with a 32px+ hit area, then settles on the nearest stop.' },
+      { fix: 'No invisible layer.', was: 'v1 hid a backdrop over the page, so the next click only closed the popover. Now an outside click or Esc closes it, and the click still lands.' },
+      { fix: 'Tooltips on purpose.', was: 'v1 used the browser’s title tips. Now they wait 450ms on hover, show on keyboard focus, and hide while a popover is open.' },
+    ],
+  },
+  {
+    group: 'For everyone',
+    items: [
+      { fix: 'Keyboard complete.', was: 'Arrows, Home, End, Enter and Esc. Focus moves into a popover when it opens, and back to its trigger when it closes.' },
+      { fix: 'Screen readers.', was: 'A radiogroup, a slider with value text, a listbox, aria-expanded, and a live region that announces each change.' },
+      { fix: 'Touch and motion safe.', was: 'Hover styles only for pointers that hover. Reduced motion stops the glitter, the shimmer and the orb’s pulse.' },
+    ],
+  },
+];
+
+const lessons = [
+  { miss: 'Tried fancy directions next to the plain ones. 3a looked neat, one control and no popover, but nobody would know to click it to switch.', lesson: 'Minimal is the best. Skip the fancy that makes a control harder to use or to read.' },
+  { miss: 'v1 looked right in a still. In the hand, labels jumped, popovers snapped and the thumb skipped.', lesson: 'Feel a prototype before you choose it. Smooth is a list of small things you only find by using it.' },
+  { lesson: 'Prototype with AI, but don’t stop at what comes back first. The design engineering is in the details.' },
+];
+---
+<StudioLayout
+  title="Designing the chat mode picker"
+  slug="chat-mode-picker"
+  description="How I explored a mode picker for Strive’s chat composer, taking after Claude’s effort slider: seven directions prototyped in Claude, an interaction audit before choosing, and why a slider from faster to smarter won."
+  ogDescription="Seven directions prototyped in Claude, an interaction audit before choosing, and why a slider from faster to smarter won."
+  eyebrow="Strivelabs · Chat"
+  facts={[
+    { label: 'My part', value: 'A solo experiment: the directions, the prototypes and the interaction audit' },
+    { label: 'Prototyped in', value: 'Claude' },
+    { label: 'Status', value: 'Explored. We later moved to one mode' },
+  ]}
+  keywords="UX design, interaction design, chat composer, mode picker, effort slider, segmented control, accessibility, prototyping with Claude, design engineering, UX for AI"
+>
+  <Fragment slot="lede">I love the small details in the Claude desktop app. This is how I took after its effort slider for a mode picker in Strive’s composer: seven directions, <mark class="hl">an audit of how each one feels</mark>, and the one I picked.</Fragment>
+
+  <figure slot="hero" class="sk-fig cm-hero">
+    <span class="cm-frame cm-deep"><ChatMode label="Sketch of a chat home in Strive: a greeting, the composer with an Effort pill reading Deep Dive, and the effort popover open above it, its slider near Smarter with the track glittering, while the composer’s outline glows." /></span>
+    <figcaption>Effort at Deep Dive: one word on the pill, a slider behind it, and a composer that glows a little deeper.</figcaption>
+  </figure>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Three modes, one composer</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Strive’s chat could answer in three modes: <strong>Quick</strong>, <strong>Balanced</strong> and <strong>Deep Dive</strong>. Fast and lighter at one end, slower and more thorough at the other.</li>
+        <li>Picking one meant a word-heavy dropdown. I wanted a control in the composer that <strong>shows the trade-off at a glance</strong>, without three descriptions to read first.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-home">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Homework</p><h2 id="s-home">Borrow the feel, not the pixels</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I love the UX of the Claude desktop app, and its effort control is a favourite: <strong>a pill with one word on it</strong>, and a popover with a slider from Faster to Smarter.</li>
+        <li>So I used it as the starting point for an audit of the ways a switcher could live in our composer. The Claude-style slider was one. The rest each tried something of their own: a segmented control, an orb, a ladder, a meter.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-options">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Options · prototyped in Claude</p><h2 id="s-options">Seven ways to pick a mode</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I prototyped them in Claude on the same composer, in three families: <strong>visual-first</strong> (1a to 1c), <strong>the Claude-style slider</strong> (2a) and <strong>gesture-first</strong> (3a to 3c).</li>
+        <li>Each one sits in the composer’s bottom bar, and the composer’s outline glows a little deeper as the mode rises.</li>
+      </ul>
+      <ModePlayground start="1a" caption="Try all seven. The mode carries over as you switch, so you can compare them on the same pick." />
+    </section>
+
+    <section class="slide" aria-labelledby="s-audit">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">The audit · before choosing</p><h2 id="s-audit">Feel it, then pick it</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Claude gave me working prototypes fast. But I didn’t want to leave them as they came out, or <strong>choose one from how it looked</strong>. A mode picker gets touched every day, and how it moves is most of the design.</li>
+        <li>So before choosing, I ran an interaction audit on the same prototypes and rebuilt all seven as v2. Then I picked by feel.</li>
+      </ul>
+      <ModePlayground compare start="2a" build="v1" caption="Start on v1: open it, drag the thumb, click away. Then switch to v2 and do it again." />
+
+      <div class="audit" role="list" aria-label="What the audit changed, in three groups">
+        {audit.map((g, i) => (
+          <div class:list={['sk-box', `sk-lean-${i + 1}`, 'audit-col']} role="listitem">
+            <p class="audit-hdr">{g.group}</p>
+            <ul>
+              {g.items.map((it) => <li><strong>{it.fix}</strong> {it.was}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-call">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design call</p><h2 id="s-call">One word, one slider</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I picked 2a, the Claude-style effort slider. <strong>It explains the trade-off in very few words</strong>: Faster at one end, Smarter at the other, and the mode as one word on the pill.</li>
+        <li>A change of mode is loud enough to notice. The composer’s outline deepens, and at Deep Dive the word shimmers and the track fills with glitter.</li>
+        <li>And the handle is easy to grab: a 28px thumb on a 16px track, with room around it for a finger.</li>
+      </ul>
+      <Versus
+        left={{ title: '3a · tap to cycle', tone: 'ghost', items: ['One control, no popover', 'Nothing says a click switches the mode', 'Going back needs Shift-click'] }}
+        right={{ title: '2a · effort slider', tone: 'coral', stamp: 'the pick', items: ['Faster and Smarter, on the track', 'The mode on the pill and in the composer’s glow', 'A big thumb to drag, or arrow keys'] }}
+        alt="Two boxes side by side. On the left, dashed and faint, 3a, tap to cycle: one control with no popover, but nothing says a click switches the mode, and going back needs Shift-click. On the right, in coral and stamped the pick, 2a, the effort slider: Faster and Smarter on the track, the mode on the pill and in the composer’s glow, and a big thumb to drag or arrow keys."
+        caption="The neatest one on paper was the hardest to read."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-next">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">What happened next</p><h2 id="s-next">Then we went to one mode</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The picker isn’t in Strive today. We tried it out, then moved to <strong>a single mode</strong>: the platform now picks the model for each task on its own.</li>
+        <li>It’s the lesson below taken one step further: <strong>the calmest picker is the one you don’t have to touch</strong>.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What I’d keep</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`, !l.miss && 'lessons-solo']}>
+            {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">If a control needs explaining, it isn’t the one.</blockquote>
+  </div>
+</StudioLayout>
+
+<style>
+  /* Deck styles from the work stories, as in kb-frontmatter.astro. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons .lessons-solo { grid-column: 1 / -1; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 04: what the audit changed, in three leaning boxes. */
+  .audit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin-top: var(--space-4); }
+  .audit-col { padding: .9rem 1rem 1rem; }
+  .audit-hdr { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--teal); }
+  .audit ul { list-style: none; display: grid; gap: .7rem; margin: 0; padding: 0; }
+  .audit li { margin: 0; font-size: .88rem; line-height: 1.45; color: var(--ink-soft); }
+  .audit strong { display: block; color: var(--ink); font-weight: 500; }
+  @media (max-width: 719px) { .audit { grid-template-columns: 1fr; } }
+
+  /* The hero: the artboard drawing in a frame, at Deep Dive. */
+  .cm-hero { margin: 0; }
+  .cm-frame { display: block; aspect-ratio: 600 / 360; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .cm-frame :global(.sk) { display: block; width: 100%; height: 100%; }
+  .cm-hero figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+
+  .closer { margin-top: var(--space-5); }
+</style>

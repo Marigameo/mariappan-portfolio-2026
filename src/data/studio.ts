@@ -21,7 +21,7 @@ export interface StudioPiece {
   tags: string[];
   accent: 'coral' | 'blue' | 'teal' | 'violet';
   preview:
-    | { kind: 'sketch'; sketch: 'kb-graph' | 'kb-props'; alt: string }
+    | { kind: 'sketch'; sketch: 'kb-graph' | 'kb-props' | 'chat-mode'; alt: string }
     | { kind: 'video'; src: string; poster: string; width: number; height: number; alt: string };
 }
 
@@ -55,6 +55,20 @@ export const studio: StudioPiece[] = [
       kind: 'sketch',
       sketch: 'kb-props',
       alt: 'Sketch of a knowledge base file in Strive: a header with the file’s icon, title and folder, three property rows with one being edited in place, and the doc below in the same card.',
+    },
+  },
+  {
+    slug: 'chat-mode-picker',
+    title: 'Designing the chat mode picker',
+    context: 'Strivelabs · Chat',
+    frame: 'Chat / Composer',
+    hook: 'Seven ways to pick how hard the agent works, and the small details that make one feel calm.',
+    tags: ['Interaction', 'Composer'],
+    accent: 'violet',
+    preview: {
+      kind: 'sketch',
+      sketch: 'chat-mode',
+      alt: 'Sketch of a chat home in Strive: a greeting, the composer with an Effort pill, and the effort popover open above it with a slider from Faster to Smarter. On hover the slider moves to Deep Dive and the track glitters.',
     },
   },
 ];
