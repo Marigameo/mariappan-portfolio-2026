@@ -1,0 +1,208 @@
+---
+/* Eight small details from the audit rounds, as a list of rows on one sheet: the
+   round, what was off and what changed on one side, the real render from the round's
+   process/ folder on the other. Rows with a pair flip between Before and After with a
+   switch right above the render, starting on Before so the first press shows the fix.
+   A flip, not a drag slider: these changes are small and in one spot (a key's shade,
+   a few px of padding, a button that moved), so the eye should stay put while the
+   difference blinks, the same as the explorations. A handwritten "look at" line under
+   each render says where. "Try it ↑" loads the matching case in the playground at the
+   top of the page (see ClarifierPlayground's data-try hook).
+
+   Sharpness: the card renders are 2x captures of a 440px card, so they're never shown
+   wider than 440px. On wide screens the figure breaks out of the text column so text
+   and render sit side by side, and filmstrips run full width under their text. Every
+   render opens full size in the page's lightbox ([data-full]); wide ones pan. */
+import Icon from '../../Icon.astro';
+
+const B = '/images/work/agent-clarifier/';
+type Shot = { src: string; w: number; h: number; alt: string };
+type Detail = { id: string; round: string; t: string; d: string; before?: Shot; after?: Shot; sketch?: 'pill'; wide?: boolean; look?: string; tryId: string; tryHint?: string };
+
+const details: Detail[] = [
+  {
+    id: 'limit', round: 'Round 17', t: 'A limit that informs, not scolds',
+    d: '“Up to 2 picks” was a black toast, louder than the picks themselves. Black is for toasts you can press, so now it’s quiet ink text.',
+    before: { src: 'd-limit-before', w: 880, h: 853, alt: 'Before: a multi-select step with two picks, and a black toast reading Up to 2 picks. Unpick one first, next to the black Continue button.' },
+    after: { src: 'd-limit-after', w: 880, h: 853, alt: 'After: the same step, with the message as plain ink text in the footer, and only Continue in black.' },
+    look: 'Look at the footer, left of Skip.',
+    tryId: 'multi', tryHint: 'pick four',
+  },
+  {
+    id: 'back', round: 'Round 21', t: 'Back goes where the card doesn’t move',
+    d: 'The card sits at the bottom, so its header is the edge that moves between steps. Back moved to the footer, and the dashes now show what’s answered.',
+    before: { src: 'd-back-before', w: 880, h: 893, alt: 'Before: step 2 of 4 with a Back chevron in the header, beside the question.' },
+    after: { src: 'd-back-after', w: 880, h: 893, alt: 'After: step 2 of 4 with Back at the start of the footer, followed by dashes coloured by status, and the question starting on the card’s one edge.' },
+    look: 'Look at the top-left corner, then the bottom-left.',
+    tryId: 'hotel',
+  },
+  {
+    id: 'other', round: 'Round 14', t: '“Something else”, typed in place',
+    d: 'It used to open a second box under the row. Now the row becomes the field. On single choice, once you type, the other options fade to grey, never see-through.',
+    before: { src: 'd-other-before', w: 880, h: 859, alt: 'Before: Something else picked, with a separate text box opened below the row.' },
+    after: { src: 'd-other-after', w: 880, h: 859, alt: 'After: the Something else row has turned into the text field itself, with a blue focus ring.' },
+    look: 'Look at the last row.',
+    tryId: 'hotel', tryHint: 'press 4',
+  },
+  {
+    id: 'key', round: 'Round 21', t: 'The number key answers the hover',
+    d: 'The key was 2% away from the hover fill, so it vanished into it. Now it steps toward ink, mixed from the tokens, so a theme’s key follows.',
+    before: { src: 'd-key-before', w: 880, h: 360, alt: 'Before: the first row hovered, and its number key almost the same grey as the row.' },
+    after: { src: 'd-key-after', w: 880, h: 360, alt: 'After: the first row hovered, and its number key a step darker than the row, with the number in ink.' },
+    look: 'Look at the 1 key on the hovered row.',
+    tryId: 'hotel', tryHint: 'hover a row',
+  },
+  {
+    id: 'sticky', round: 'Round 18', wide: true, t: 'A stuck header keeps its padding',
+    d: 'A margin was collapsing out of the sticky header, so “Asked by” touched the card’s edge once you scrolled. The fix was one line: display: flow-root.',
+    before: { src: 'd-sticky-before', w: 1500, h: 430, alt: 'Before: a long question scrolled, with Asked by touching the top edge of the card.' },
+    after: { src: 'd-sticky-after', w: 1500, h: 430, alt: 'After: the same scroll, with the same padding above Asked by as before scrolling.' },
+    look: 'Look above “Asked by”.',
+    tryId: 'long', tryHint: 'scroll the options',
+  },
+  {
+    id: 'arrow', round: 'Round 20', wide: true, t: 'The arrow travels with its partner',
+    d: 'Moving the mouse across rows left an arrow on a row it had already left. Now the arrow shows only with its partner: the fill for a mouse, the ring for the keyboard.',
+    before: { src: 'd-arrow-before', w: 1500, h: 212, alt: 'Before: three frames of the mouse on rows 1, 2 and 3. The first row keeps its arrow in every frame.' },
+    after: { src: 'd-arrow-after', w: 1500, h: 212, alt: 'After: the same three frames. Only the hovered row shows an arrow.' },
+    look: 'Look at the right end of row 1, in the second and third frames.',
+    tryId: 'hotel', tryHint: 'sweep the mouse',
+  },
+  {
+    id: 'pill', round: 'Round 9', t: 'The pill that turned into an oval',
+    d: 'Slowed down 10 times, the fold showed the minimised pill stretched into an oval mid-way. No test was looking for that. Now the pill only fades in.',
+    sketch: 'pill',
+    tryId: 'hotel', tryHint: 'press Esc',
+  },
+  {
+    id: 'tick', round: 'Round 15', wide: true, t: 'The checkbox animation that didn’t exist',
+    d: 'I wanted the feel of Claude’s checkbox. Frame by frame, it fills in one frame: the feel was my screen recorder’s click circle. We animated ours anyway, by Emil’s rules: a 0.8px press and a 120ms tick, mouse only.',
+    after: { src: 'd-tick-strip', w: 2090, h: 428, alt: 'Filmstrip of a checkbox after a mouse click, every 20 milliseconds from 0 to 160: at 0 the tick is barely started, by 40 to 60 it is drawn left to right, and it stays put after that.' },
+    look: 'Watch the tick draw in, left to right, over the first 60ms.',
+    tryId: 'multi', tryHint: 'click, then press Space',
+  },
+];
+---
+<figure class="sk-fig dg-fig">
+  <div class="sk-sheet dg">
+    {details.map((x) => (
+      <article class:list={['dg-row', x.wide && 'dg-row--wide']} data-dg aria-labelledby={`dg-${x.id}`}>
+        <div class="dg-text">
+          <p class="dg-round">{x.round}</p>
+          <h3 class="dg-t" id={`dg-${x.id}`}>{x.t}</h3>
+          <p class="dg-d">{x.d}</p>
+          <div class="dg-actions">
+            <button type="button" class="dg-try" data-try={x.tryId}>Try it <span aria-hidden="true">↑</span></button>
+            {x.tryHint && <span class="dg-hint">{x.tryHint}</span>}
+          </div>
+        </div>
+        <div class="dg-media">
+          {x.after && (
+            <div class:list={['dg-shot', x.after.w < 1000 && 'dg-shot--card']}>
+              {x.before && (
+                <div class="dg-seg" role="group" aria-label={`${x.t}: show before or after`}>
+                  <button type="button" data-dg-show="before" aria-pressed="true">Before</button>
+                  <button type="button" data-dg-show="after" aria-pressed="false">After</button>
+                </div>
+              )}
+              {[x.before && { v: 'before', ...x.before }, { v: 'after', ...x.after }].filter(Boolean).map((sh: any) => (
+                <button type="button" class="dg-zoom" data-dg-img={x.before ? sh.v : undefined} hidden={x.before && sh.v === 'after'} data-full={`${B}${sh.src}.webp`} data-full-tall={sh.w >= 1000 ? '' : undefined} aria-label={`View full size: ${sh.alt}`}>
+                  <img src={`${B}${sh.src}.webp`} width={sh.w} height={sh.h} alt={sh.alt} loading="lazy" decoding="async">
+                  <span class="dg-enlarge" aria-hidden="true"><Icon name="zoom-in" /></span>
+                </button>
+              ))}
+              {x.look && <p class="dg-look sk-hand">{x.look}</p>}
+            </div>
+          )}
+          {x.sketch === 'pill' && (
+            <div class="dg-pill" role="img" aria-label="Drawn: mid-fold, the pill stretched into a tall oval, because its 999px radius was applied while its height still animated from the card’s size. After the fix, the pill fades in at its own size: a dot, 0 of 4 answered, and Reopen, above a composer reading Or reply in your own words.">
+              <div class="dg-pill-col" aria-hidden="true">
+                <p class="dg-pill-h">Mid-fold, before</p>
+                <span class="dg-oval">0 of 4 answered · Reopen</span>
+              </div>
+              <div class="dg-pill-col" aria-hidden="true">
+                <p class="dg-pill-h">After</p>
+                <span class="dg-pillshape"><i></i>0 of 4 answered<b>Reopen</b></span>
+                <span class="dg-comp">Or reply in your own words…</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </article>
+    ))}
+  </div>
+  <figcaption>None of these is something you’d point at. Together, they’re why it feels calm.</figcaption>
+</figure>
+
+<script>
+  // Before / After: flip which render shows. Both stay in the page, so the flip is instant.
+  document.querySelectorAll<HTMLElement>('[data-dg]').forEach((row) => {
+    const btns = row.querySelectorAll<HTMLButtonElement>('[data-dg-show]');
+    btns.forEach((b) => b.addEventListener('click', () => {
+      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      row.querySelectorAll<HTMLElement>('[data-dg-img]').forEach((el) => (el.hidden = el.dataset.dgImg !== b.dataset.dgShow));
+    }));
+  });
+</script>
+
+<style>
+  /* A list of rows on one sheet, split by dashed rules: no boxes, no tilt. Text on the
+     left, the render at its real size on the right; wide renders sit under the text. */
+  .dg { display: grid; padding-block: .4rem; }
+  .dg p { margin: 0 !important; max-width: none; }
+  .dg-row { display: grid; gap: 1rem; padding-block: 1.6rem; border-top: 1.5px dashed var(--line); }
+  .dg-row:first-child { border-top: 0; padding-top: .8rem; }
+  .dg-row:last-child { padding-bottom: .8rem; }
+  .dg-text { display: grid; gap: .45rem; align-content: start; }
+  .dg-round { font-family: var(--font-mono); font-size: .6rem !important; letter-spacing: .14em; text-transform: uppercase; color: var(--coral); }
+  .dg .dg-t { margin: 0 !important; font-size: 1.3rem; line-height: 1.25; color: var(--ink); }
+  .dg-d { font-size: .92rem !important; line-height: 1.55 !important; color: var(--ink-soft); }
+  .dg-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .7rem; margin-top: .35rem; }
+  .dg-try { padding: .25rem .75rem; font: 500 .8rem var(--font-body); color: var(--coral); background: transparent; border: 1.5px solid var(--coral); border-radius: 999px; cursor: pointer; }
+  .dg-try:hover { color: var(--paper-2); background: var(--coral); }
+  .dg-hint { font-family: var(--font-hand); font-size: 1.05rem; color: var(--ink-faint); }
+  .dg button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .dg-media { display: grid; justify-items: center; min-inline-size: 0; }
+  .dg-shot { inline-size: 100%; }
+  /* The card renders are 2x captures of a 440px card: never wider than that. */
+  .dg-shot--card { max-inline-size: 27.5rem; }
+  .dg-shot { display: grid; gap: .55rem; }
+  .dg-seg { justify-self: start; display: inline-flex; gap: 2px; padding: 2px; background: var(--sand-2); border-radius: 9px; }
+  .dg-seg button { min-inline-size: 4.6rem; padding: .3rem .8rem; font: .8rem var(--font-body); color: var(--ink-soft); background: none; border: 0; border-radius: 7px; cursor: pointer; }
+  .dg-seg button:hover { color: var(--ink); }
+  .dg-seg button[aria-pressed="true"] { color: var(--ink); font-weight: 500; background: var(--paper-2); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+  .dg-seg button[data-dg-show="after"][aria-pressed="true"] { color: var(--coral); }
+  .dg-zoom[hidden] { display: none; }
+  .dg-look { font-size: 1.05rem !important; line-height: 1.3 !important; color: var(--ink-faint); }
+  .dg-zoom { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 10px; box-shadow: 3px 3px 0 var(--shadow-ink); cursor: zoom-in; }
+  .dg-zoom img { display: block; inline-size: 100%; block-size: auto; border: 0 !important; border-radius: 0 !important; }
+  .dg-enlarge { position: absolute; inset-block-start: .45rem; inset-inline-end: .45rem; display: grid; place-items: center; inline-size: 1.9rem; block-size: 1.9rem; color: var(--paper); background: var(--ink); border-radius: 50%; opacity: .8; }
+  .dg-enlarge :global(.doodle) { width: 1rem; height: 1rem; }
+  .dg-zoom:hover .dg-enlarge, .dg-zoom:focus-visible .dg-enlarge { opacity: 1; background: var(--coral); color: #fff; }
+
+  .dg-pill { inline-size: 100%; max-inline-size: 27.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 1.1rem; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 10px; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .dg-pill-col { display: grid; gap: .55rem; justify-items: start; align-content: start; }
+  .dg-pill-h { font-family: var(--font-mono); font-size: .58rem !important; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .dg-oval { display: grid; place-items: center; inline-size: 100%; max-inline-size: 11rem; block-size: 5.5rem; padding: 0 1rem; text-align: center; font: .72rem var(--font-sub); color: var(--ink-faint); border: 1.5px dashed var(--coral); border-radius: 999px; }
+  .dg-pillshape { display: inline-flex; align-items: center; gap: .45rem; padding: .3rem .4rem .3rem .65rem; font: .74rem var(--font-sub); color: var(--ink-soft); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 999px; box-shadow: 2px 2px 0 var(--shadow-ink); white-space: nowrap; }
+  .dg-pillshape i { inline-size: .45rem; block-size: .45rem; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent); }
+  .dg-pillshape b { padding: .1rem .5rem; font-weight: 500; color: var(--ink); background: var(--sand); border-radius: 999px; }
+  .dg-comp { inline-size: 100%; padding: .45rem .7rem; font: .74rem var(--font-sub); color: var(--ink-faint); background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 12px; }
+
+  /* Wide screens: out of the text column to 64rem; text and render side by side. */
+  @media (min-width: 1100px) {
+    .sk-fig.dg-fig.dg-fig { inline-size: 64rem; max-inline-size: calc(100vw - 4rem); margin-inline: calc(50% - min(32rem, 50vw - 2rem)); }
+    .dg { padding-inline: 1.8rem; }
+    .dg-row { grid-template-columns: minmax(0, 1fr) 27.5rem; column-gap: 3rem; align-items: start; }
+    .dg-row--wide { grid-template-columns: 1fr; }
+    .dg-row--wide .dg-text { max-inline-size: 40rem; }
+    .dg-text { padding-top: .3rem; }
+  }
+  @media (max-width: 559px) {
+    .dg { padding: .2rem .9rem; }
+    .dg-row { padding-block: 1.3rem; }
+    .dg .dg-t { font-size: 1.15rem; }
+  }
+  @media (max-width: 419px) { .dg-pill { grid-template-columns: 1fr; } }
+</style>

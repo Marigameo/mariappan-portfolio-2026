@@ -22,6 +22,12 @@ interface Live {
   poster?: string;
   /** Tall images only: scroll inside a short frame, with this hint below it. */
   scroll?: string;
+  /** A sharper copy to open in the page's lightbox (needs <dialog data-lightbox> on
+      the page). Its button sits beside the tabs, so it's there on the sketch too. With
+      `scroll`, the lightbox keeps a readable width and scrolls. */
+  full?: string;
+  /** The button's words, e.g. "Open the real board". Defaults to "Open full size". */
+  fullLabel?: string;
 }
 interface Props {
   /** Unique on the page; builds the tab and panel ids. */
@@ -38,9 +44,12 @@ const onLive = start === 'live';
 const t = (k: string) => `sl-${id}-${k}`;
 ---
 <div class="sl" data-sketch-live>
-  <div class="sl-tabs" role="tablist" aria-label="Sketch or the real product">
-    <button class="sl-tab" type="button" role="tab" id={t('tab-sketch')} aria-controls={t('sketch')} aria-selected={onLive ? 'false' : 'true'} tabindex={onLive ? '-1' : undefined}>Sketch</button>
-    <button class="sl-tab" type="button" role="tab" id={t('tab-live')} aria-controls={t('live')} aria-selected={onLive ? 'true' : 'false'} tabindex={onLive ? undefined : '-1'}><span class="sl-dot" aria-hidden="true"></span>Live</button>
+  <div class="sl-top">
+    <div class="sl-tabs" role="tablist" aria-label="Sketch or the real product">
+      <button class="sl-tab" type="button" role="tab" id={t('tab-sketch')} aria-controls={t('sketch')} aria-selected={onLive ? 'false' : 'true'} tabindex={onLive ? '-1' : undefined}>Sketch</button>
+      <button class="sl-tab" type="button" role="tab" id={t('tab-live')} aria-controls={t('live')} aria-selected={onLive ? 'true' : 'false'} tabindex={onLive ? undefined : '-1'}><span class="sl-dot" aria-hidden="true"></span>Live</button>
+    </div>
+    {live.full && <button class="sl-full" type="button" data-full={live.full} data-full-alt={live.alt} data-full-tall={live.scroll ? '' : undefined}>{live.fullLabel ?? 'Open full size'} <span aria-hidden="true">⤢</span></button>}
   </div>
   <div class="sl-panel" role="tabpanel" id={t('sketch')} aria-labelledby={t('tab-sketch')} hidden={onLive}>
     <slot />

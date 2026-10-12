@@ -626,6 +626,14 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .lightbox figcaption { font-size: .9rem; color: var(--paper); text-align: center; max-width: 60ch; opacity: .85; }
 .lightbox-close { position: absolute; top: -.6rem; right: -.6rem; background: var(--paper-2); z-index: 1; }
 .lightbox-close .doodle { width: 1.1rem; height: 1.1rem; }
+/* A tall or wide render (data-full-tall: a whole design board, a filmstrip): kept at a
+   readable size, at least 60rem wide, and panned inside the dialog instead of shrunk to
+   fit. On a phone that means swiping across it. The close button stays fixed in a corner. */
+.lightbox--tall { inline-size: min(96vw, 80rem); max-block-size: 96vh; overflow: auto; overscroll-behavior: contain; }
+.lightbox--tall figure { justify-items: start; padding: .5rem 0 1rem; }
+.lightbox--tall img { inline-size: max(100%, 60rem); max-width: none; max-height: none; }
+.lightbox--tall figcaption { justify-self: center; }
+.lightbox--tall .lightbox-close { position: fixed; top: max(3vh, .75rem); right: max(3vw, .75rem); }
 .win-body { display: flex; flex-direction: column; gap: .45rem; align-items: flex-start; }
 .win-badge { width: 2.7rem; height: 2.7rem; display: grid; place-items: center; border: 1.5px solid var(--border); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; background: color-mix(in srgb, var(--accent) 16%, var(--paper-2)); color: var(--accent); box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-5deg); margin-bottom: .2rem; }
 .win-badge .doodle { width: 1.45rem; height: 1.45rem; stroke-width: 1.8; }
@@ -812,6 +820,10 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .sl-scroll:focus-visible { outline: 2px solid var(--coral); outline-offset: -2px; }
 .sl-hint { margin: .6rem .4rem 0 !important; max-width: none; text-align: right; color: var(--coral); }
 .sl-hint + figcaption { margin-top: .4rem; }
+.sl-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; }
+.sl-full { padding: .3rem .8rem; font: 500 .8rem var(--font-body); color: var(--coral); background: transparent; border: 1.5px solid var(--coral); border-radius: 999px; cursor: zoom-in; }
+.sl-full:hover { color: #fff; background: var(--coral); }
+.sl-full:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
 .sl-play { position: absolute; right: .7rem; bottom: .7rem; padding: .35rem .8rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: rgba(20, 20, 24, .78); border: 0; border-radius: 999px; cursor: pointer; }
 .sl-play:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
 .sl-live figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }

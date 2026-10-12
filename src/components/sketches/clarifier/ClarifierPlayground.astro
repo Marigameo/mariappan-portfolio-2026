@@ -1,0 +1,365 @@
+---
+/* The story's hero: the real <agent-clarifier> (the published npm package) in a small
+   fake chat, so the reader judges the component, not a picture of it. Cases from the
+   component's own demo, in three groups along the top. The side panel holds what to
+   look at for the case, the two settings (how it asks, its placement), the exact
+   result the agent gets back, and the events. On wide screens the figure breaks out
+   of the text column so the chat isn't squeezed. When the card
+   is answered, a pretend agent replies from that result, so Skip, Decide for me and
+   your own words visibly lead to different replies.
+
+   The component loads on first use (a dynamic import once the figure is near the
+   viewport), as its README recommends. It follows the site's theme. Any button on the
+   page with data-try="<scenario id>" (optionally data-try-flow / data-try-placement)
+   loads that scenario here and scrolls up to it: the story's "Try it" links.
+   Without JS the chat shows as a still, with a note. */
+import { SCENARIOS } from './scenarios';
+
+interface Props { caption?: string }
+const { caption } = Astro.props;
+const first = SCENARIOS[0];
+const groups = [...new Set(SCENARIOS.map((s) => s.group))];
+---
+<figure class="sk-fig acp-fig" id="playground" aria-label="Playground: the real agent-clarifier component in a small chat">
+  <div class="acp" data-acp data-scenarios={JSON.stringify(SCENARIOS)}>
+    <div class="acp-bar">
+      {groups.map((g, i) => (
+        <div class="acp-group">
+          <p class="acp-lbl" id={`acp-g-${i}`}>{g}</p>
+          <div class="acp-chips" role="group" aria-labelledby={`acp-g-${i}`}>
+            {SCENARIOS.filter((s) => s.group === g).map((s) => <button type="button" data-scenario={s.id} aria-pressed={String(s.id === first.id)}>{s.name}</button>)}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="acp-body">
+      <div class="acp-chat" data-chat>
+        <div class="acp-msgs" data-msgs>
+          <div class="acp-msg acp-msg--user"><p>{first.user}</p></div>
+          <div class="acp-msg acp-msg--agent"><p>{first.agent}</p></div>
+        </div>
+        <div class="acp-dock" data-dock>
+          <agent-clarifier composer="#acp-input" data-el></agent-clarifier>
+          <form class="acp-composer" data-composer>
+            <textarea id="acp-input" rows="1" placeholder="Message the agent…" aria-label="Message"></textarea>
+            <button class="acp-send" type="submit" aria-label="Send"><span aria-hidden="true">↑</span></button>
+          </form>
+        </div>
+        <p class="acp-nojs" data-nojs>The playground needs JavaScript to run the real component.</p>
+      </div>
+
+      <aside class="acp-side" aria-label="What to look at, settings, and what the agent gets">
+        <div class="acp-panel">
+          <p class="acp-h">What to look at</p>
+          <p class="acp-note" data-note>{first.note}</p>
+        </div>
+        <div class="acp-panel acp-panel--set">
+          <p class="acp-h" id="acp-lbl-f">Asks</p>
+          <div class="acp-seg" role="group" aria-labelledby="acp-lbl-f">
+            <button type="button" data-flow="sequential" aria-pressed="true">One at a time</button>
+            <button type="button" data-flow="all" aria-pressed="false">All at once</button>
+          </div>
+          <p class="acp-h" id="acp-lbl-p">Placement</p>
+          <div class="acp-seg" role="group" aria-labelledby="acp-lbl-p">
+            <button type="button" data-placement="replace" aria-pressed="true">Replace composer</button>
+            <button type="button" data-placement="dock" aria-pressed="false">Dock above</button>
+          </div>
+          <button type="button" class="acp-restart" data-restart><span aria-hidden="true">↺</span> Restart the case</button>
+        </div>
+        <div class="acp-panel acp-panel--grow">
+          <p class="acp-h">What the agent gets</p>
+          <pre class="acp-result" data-result tabindex="0" aria-label="The result sent to the agent">Nothing yet. Answer, skip or reply.</pre>
+        </div>
+        <div class="acp-panel">
+          <p class="acp-h">Events</p>
+          <ol class="acp-log" data-log aria-live="off"><li class="acp-empty">Pick something…</li></ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  type Answer = { status: 'answered' | 'skipped' | 'delegated'; labels: string[]; other?: string };
+  type Result = { status: 'submitted' | 'skipped' | 'dismissed'; delivery: 'card' | 'composer'; answers: Record<string, Answer>; message?: string };
+  type Q = { id: string; label?: string; prompt: string; options?: unknown[] };
+  type Scenario = { id: string; name: string; note: string; user: string; agent: string; q: { questions: Q[] } & Record<string, unknown>; lang?: string; stream?: boolean; labels?: Record<string, string> };
+  type Clarifier = HTMLElement & {
+    state: string; placement: string; labels: Record<string, string>;
+    open(q: unknown, o?: { partial?: boolean }): void; reset(): void;
+  };
+
+  const root = document.querySelector<HTMLElement>('[data-acp]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const scenarios: Scenario[] = JSON.parse(root.dataset.scenarios ?? '[]');
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector(sel) as T;
+    const el = $<Clarifier>('[data-el]');
+    const msgs = $('[data-msgs]');
+    const dock = $('[data-dock]');
+    const chat = $('[data-chat]');
+    const log = $('[data-log]');
+    const result = $('[data-result]');
+    const input = $<HTMLTextAreaElement>('#acp-input');
+    $('[data-nojs]').hidden = true;
+
+    let current = scenarios[0];
+    let flow = 'sequential';
+    let streaming = 0;
+    let ready: Promise<unknown> | null = null;
+
+    // ── load the component on first use, like the README says ──
+    const load = () => (ready ??= import('@marigameo/agent-clarifier'));
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load().then(() => start(true)); }
+    }, { rootMargin: '400px' });
+    io.observe(root);
+
+    // ── follow the site's theme (the site can force light on a dark OS, and back) ──
+    const dark = matchMedia('(prefers-color-scheme: dark)');
+    const syncTheme = () => {
+      const t = document.documentElement.dataset.theme;
+      el.setAttribute('theme', t === 'dark' || (t !== 'light' && dark.matches) ? 'dark' : 'light');
+    };
+    syncTheme();
+    dark.addEventListener('change', syncTheme);
+    new MutationObserver(syncTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // ── the chat ──
+    const bubble = (who: 'user' | 'agent', text: string, lines?: string[]) => {
+      const m = document.createElement('div');
+      m.className = `acp-msg acp-msg--${who}`;
+      const p = document.createElement('p');
+      p.textContent = text;
+      m.append(p);
+      if (lines?.length) {
+        const ul = document.createElement('ul');
+        for (const l of lines) { const li = document.createElement('li'); li.textContent = l; ul.append(li); }
+        m.append(ul);
+      }
+      msgs.append(m);
+      msgs.scrollTop = msgs.scrollHeight;
+    };
+
+    const toTranscript = () => {
+      if (['answered', 'expired'].includes(el.state) && el.parentElement !== msgs) {
+        msgs.append(el);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+    };
+    const toComposer = () => { if (el.parentElement !== dock) dock.prepend(el); };
+
+    // A pretend agent, replying from the result: what each way out means, in words.
+    const reply = (r: Result) => {
+      if (current.lang?.startsWith('ar')) return bubble('agent', 'شكرًا. سأبحث الآن.');
+      const name = (id: string) => { const q = current.q.questions.find((x) => x.id === id); return q?.label ?? q?.prompt ?? id; };
+      if (r.delivery === 'composer') {
+        const kept = Object.values(r.answers).filter((a) => a.status === 'answered').length;
+        return bubble('agent', `Got it. I’ll go with what you wrote${kept ? `, plus the ${kept === 1 ? 'pick' : `${kept} picks`} you’d made` : ''}.`);
+      }
+      if (r.status === 'skipped') return bubble('agent', 'No problem. I’ll use my judgement, and tell you what I assumed.');
+      const lines = Object.entries(r.answers).map(([id, a]) =>
+        a.status === 'delegated' ? `${name(id)}: left to me. I’ll pick, and say what I chose.`
+        : a.status === 'skipped' ? `${name(id)}: skipped. I’ll assume, and say what I assumed.`
+        : `${name(id)}: ${[...a.labels, ...(a.other ? [`“${a.other}”`] : [])].join(', ')}`);
+      bubble('agent', 'Thanks. Here’s what I’ll go with:', lines);
+    };
+
+    for (const n of ['clarify:skip', 'clarify:expire']) el.addEventListener(n, toTranscript);
+    el.addEventListener('clarify:reply', (e) => {
+      bubble('user', (e as CustomEvent<Result>).detail.message ?? '');
+      toTranscript();
+    });
+    for (const n of ['clarify:submit', 'clarify:revise']) el.addEventListener(n, () => queueMicrotask(toTranscript));
+    el.addEventListener('clarify:reopen', toComposer);
+    for (const n of ['clarify:submit', 'clarify:revise', 'clarify:skip', 'clarify:reply']) {
+      el.addEventListener(n, (e) => setTimeout(() => reply((e as CustomEvent<Result>).detail), 450));
+    }
+
+    // The app's normal send: only runs when the card isn't waiting (it catches the submit first).
+    $<HTMLFormElement>('[data-composer]').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      bubble('user', text);
+      input.value = '';
+      setTimeout(() => bubble('agent', 'This is a playground, so I only ask. Pick a case above, or press Restart.'), 450);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); $<HTMLFormElement>('[data-composer]').requestSubmit(); }
+    });
+
+    // ── readouts ──
+    const EVENTS = ['change', 'submit', 'revise', 'skip', 'reply', 'compose', 'dismiss', 'reopen', 'expire'];
+    for (const n of EVENTS) {
+      el.addEventListener(`clarify:${n}`, (e) => {
+        log.querySelector('.acp-empty')?.remove();
+        const li = document.createElement('li');
+        li.textContent = `clarify:${n}`;
+        log.prepend(li);
+        while (log.children.length > 6) log.lastElementChild?.remove();
+        if (['submit', 'revise', 'skip', 'reply', 'expire'].includes(n)) result.textContent = JSON.stringify((e as CustomEvent).detail, null, 2);
+      });
+    }
+
+    // ── controls ──
+    const press = (sel: string, on: (b: HTMLButtonElement) => boolean) =>
+      root.querySelectorAll<HTMLButtonElement>(sel).forEach((b) => b.setAttribute('aria-pressed', String(on(b))));
+
+    // auto: opened because it scrolled near, not because the reader asked. In the composer's
+    // place the card takes focus when it opens (right in a chat), which here would pull the
+    // page and show a ring nobody asked for, so the page's focus and scroll are put back.
+    function start(auto = false) {
+      clearInterval(streaming);
+      press('[data-scenario]', (b) => b.dataset.scenario === current.id);
+      press('[data-flow]', (b) => b.dataset.flow === flow);
+      $('[data-note]').textContent = current.note;
+      chat.lang = current.lang ?? 'en';
+      chat.dir = current.lang?.startsWith('ar') ? 'rtl' : 'ltr';
+      msgs.replaceChildren();
+      bubble('user', current.user);
+      bubble('agent', current.agent);
+      log.replaceChildren(Object.assign(document.createElement('li'), { className: 'acp-empty', textContent: 'Pick something…' }));
+      result.textContent = 'Nothing yet. Answer, skip or reply.';
+      input.value = '';
+      if (!ready) return; // the component isn't loaded yet; start() runs again once it is
+      el.reset();
+      el.labels = current.labels ?? {};
+      toComposer();
+      const q = { ...current.q, flow };
+      const y = scrollY;
+      const before = document.activeElement as HTMLElement | null;
+      if (current.stream) stream(q); else el.open(q);
+      if (auto) requestAnimationFrame(() => {
+        if (el.contains(document.activeElement) || document.activeElement === el) {
+          (el.shadowRoot?.activeElement as HTMLElement | null)?.blur();
+          if (before && before !== document.body) before.focus({ preventScroll: true });
+        }
+        scrollTo({ top: y, behavior: 'instant' });
+      });
+    }
+
+    function stream(full: { questions: Q[] }) {
+      const frames: unknown[] = [];
+      full.questions.forEach((q, i) => {
+        const before = full.questions.slice(0, i);
+        for (let n = 0; n <= (q.options?.length ?? 0); n++) frames.push({ ...full, questions: [...before, { ...q, options: q.options?.slice(0, n) }] });
+      });
+      el.open({ ...full, questions: [] }, { partial: true });
+      let k = 0;
+      streaming = window.setInterval(() => {
+        if (k < frames.length) el.open(frames[k++], { partial: true });
+        else { clearInterval(streaming); el.open(full); }
+      }, 260);
+    }
+
+    root.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
+      if (!b || !root.contains(b)) return;
+      if (b.dataset.scenario) current = scenarios.find((s) => s.id === b.dataset.scenario) ?? current;
+      else if (b.dataset.flow) flow = b.dataset.flow;
+      else if (b.dataset.placement) {
+        el.placement = b.dataset.placement;
+        press('[data-placement]', (x) => x === b);
+        return;
+      } else if (b.dataset.restart === undefined) return;
+      load().then(() => start());
+    });
+
+    // ── the story's "Try it" links ──
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-try]');
+      if (!t) return;
+      current = scenarios.find((s) => s.id === t.dataset.try) ?? current;
+      if (t.dataset.tryFlow) flow = t.dataset.tryFlow;
+      if (t.dataset.tryPlacement) {
+        el.placement = t.dataset.tryPlacement;
+        press('[data-placement]', (x) => x.dataset.placement === t.dataset.tryPlacement);
+      }
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      root.closest('figure')?.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+      load().then(() => start());
+    });
+  }
+</script>
+
+<style is:global>
+  /* Global on purpose: the chat bubbles and the event list are created by the script,
+     so they never get Astro's scoped attribute. Every selector is prefixed acp-.
+     The playground's frame uses the site's tokens; the component inside keeps its own
+     neutral look, as it ships. */
+  .acp-fig { margin-top: var(--space-3); scroll-margin-top: 5rem; }
+  /* Wide screens: out of the text column to 64rem, centred on it, like the details grid. */
+  @media (min-width: 1100px) {
+    #playground.acp-fig { inline-size: 64rem; max-inline-size: calc(100vw - 4rem); margin-inline: calc(50% - min(32rem, 50vw - 2rem)); }
+    .acp-body { grid-template-columns: minmax(0, 1fr) 19rem; }
+  }
+  .acp { overflow: hidden; border: 1.5px solid var(--ink); border-radius: 14px 8px 16px 10px / 10px 16px 8px 14px; background: var(--paper-2); box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .acp p { margin: 0 !important; max-width: none; }
+  .acp button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .acp button:focus-visible, .acp-result:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  /* Cases in three labelled groups, side by side when there's room. */
+  .acp-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .9rem 1.6rem; padding: 1rem 1.2rem 1.1rem; background: var(--sand); border-bottom: 1.5px solid var(--line); }
+  .acp-group { display: grid; gap: .45rem; align-content: start; }
+  .acp .acp-lbl { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .acp-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .acp-chips button { padding: .3rem .7rem; font-size: .8rem; line-height: 1.3; background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 999px; }
+  .acp-chips button:hover { border-color: var(--ink-faint); }
+  .acp-chips button[aria-pressed="true"] { color: var(--paper-2); background: var(--ink); border-color: var(--ink); }
+
+  /* Settings, in the side panel: two segmented switches and Restart. */
+  .acp-panel--set { gap: .4rem; padding-block: .85rem; border-block: 1.5px dashed var(--line); }
+  .acp-panel--set .acp-h:not(:first-child) { margin-top: .35rem !important; }
+  .acp-seg { display: flex; gap: 2px; padding: 2px; background: var(--sand-2); border-radius: 9px; }
+  .acp-seg button { flex: 1 1 auto; padding: .3rem .5rem; white-space: nowrap; font-size: .76rem; line-height: 1.25; background: none; border: 0; border-radius: 7px; color: var(--ink-soft); }
+  .acp-seg button[aria-pressed="true"] { color: var(--ink); font-weight: 500; background: var(--paper-2); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+  .acp .acp-restart { justify-self: start; margin-top: .45rem; padding: .25rem .65rem; font-size: .78rem; background: none; border: 1.5px solid var(--line); border-radius: 8px; color: var(--ink-soft); }
+  .acp-restart:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  .acp-body { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; }
+  .acp-chat { position: relative; display: flex; flex-direction: column; block-size: 36rem; min-inline-size: 0; background: var(--paper); }
+  .acp-msgs { flex: 1; min-block-size: 0; overflow: auto; display: flex; flex-direction: column; gap: .7rem; padding: 1.1rem 1rem .8rem; }
+  .acp-msgs::before { content: ""; margin-block-start: auto; }
+  .acp .acp-msg { max-inline-size: 85%; font-family: var(--font-sub); font-size: .9rem; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
+  .acp-msg p { font-size: inherit !important; line-height: inherit !important; }
+  .acp .acp-msg--user { align-self: flex-end; padding: .55rem .85rem; border-radius: 14px; background: var(--sand); }
+  .acp-msg ul { margin: .35rem 0 0; padding-inline-start: 1.1rem; }
+  .acp-msg li { margin: .15rem 0; font-size: .86rem; color: var(--ink-soft); }
+  .acp-msgs agent-clarifier { inline-size: 100%; max-inline-size: 34rem; }
+  .acp-dock { flex: none; display: grid; gap: .6rem; padding: 0 .75rem .75rem; }
+  .acp-dock:has([data-clarifier-docked]) { gap: 0; }
+  agent-clarifier { --clarify-max-height: min(60dvh, 25rem); }
+  .acp-composer { display: flex; align-items: flex-end; gap: .5rem; padding: .55rem .55rem .55rem .9rem; background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 16px; }
+  .acp-composer[data-clarifier-docked] { border-start-start-radius: 0; border-start-end-radius: 0; }
+  .acp-composer textarea { flex: 1; resize: none; padding: .35rem 0; font: .95rem/1.45 var(--font-sub); color: var(--ink); background: transparent; border: 0; outline: 0; field-sizing: content; max-block-size: 6lh; }
+  .acp-composer textarea::placeholder { color: var(--ink-faint); }
+  .acp-composer:focus-within { border-color: var(--ink-faint); }
+  .acp-send { flex: none; inline-size: 2rem; block-size: 2rem; display: grid; place-items: center; color: var(--paper-2) !important; background: var(--ink); border: 0; border-radius: 9px; }
+  .acp .acp-nojs { position: absolute; inset: auto 1rem 5rem; text-align: center; font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); }
+
+  .acp-side { display: flex; flex-direction: column; gap: 1rem; padding: 1.1rem 1.1rem 1.2rem; min-inline-size: 0; border-inline-start: 1.5px solid var(--line); background: var(--paper-2); }
+  .acp-panel { display: grid; gap: .35rem; min-inline-size: 0; }
+  .acp-panel--grow { flex: 1; min-block-size: 0; grid-template-rows: auto 1fr; }
+  .acp .acp-h { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .acp .acp-note { font-size: .84rem !important; line-height: 1.45 !important; color: var(--ink-soft); }
+  .acp-log { list-style: none; margin: 0; padding: 0; display: grid; gap: .2rem; font-family: var(--font-mono); font-size: .7rem; color: var(--ink-soft); }
+  .acp-log li:first-child:not(.acp-empty) { color: var(--teal); }
+  .acp-empty { color: var(--ink-faint); font-family: var(--font-sub); font-style: italic; }
+  .acp-result { margin: 0; min-block-size: 6rem; max-block-size: 15rem; overflow: auto; padding: .6rem .65rem; font: .68rem/1.45 var(--font-mono); color: var(--ink-soft); white-space: pre-wrap; overflow-wrap: anywhere; background: var(--paper); border: 1.5px dashed var(--line); border-radius: 8px; }
+
+  @media (max-width: 759px) {
+    .acp-body { grid-template-columns: 1fr; }
+    .acp-side { border-inline-start: 0; border-block-start: 1.5px solid var(--line); }
+    .acp-result { max-block-size: 12rem; }
+  }
+  @media (max-width: 559px) {
+    .acp-bar { grid-template-columns: 1fr; gap: .8rem; padding: .85rem .8rem .95rem; }
+    .acp-chat { block-size: 34rem; }
+    .acp-msgs { padding-inline: .75rem; }
+    .acp-dock { padding-inline: .5rem; }
+  }
+</style>

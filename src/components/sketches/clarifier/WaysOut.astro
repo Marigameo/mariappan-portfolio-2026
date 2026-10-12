@@ -1,0 +1,58 @@
+---
+/* Every way out of the card, and what the agent hears for each. One row per exit:
+   what the user does, an arrow, the message the agent gets, and the field it arrives
+   in. The × we didn't keep is a ghost row at the bottom, crossed through, with
+   minimise beside it. Decide for me is coral (the new idea). On a phone each row
+   stacks and its arrow turns down. */
+import Icon from '../../Icon.astro';
+
+const rows = [
+  { you: 'Skip', sub: 'this question', hears: 'No preference. Use your judgement, and say what you assumed.', code: 'status: skipped', tone: 'blue' },
+  { you: 'Decide for me', sub: 'in Skip’s place, when offered', hears: 'Up to you. Pick what fits, and say what you chose.', code: 'status: delegated', tone: 'coral' },
+  { you: 'Your own words', sub: 'fold the card, type, send', hears: 'This message is the answer, along with the picks so far.', code: 'delivery: composer', tone: 'teal' },
+  { you: 'Skip all', sub: 'stop asking, just go', hears: 'Go ahead. Use your judgement on all of it.', code: 'status: skipped', tone: 'violet' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet wo" role="img" aria-label="Four ways out of the card, and what the agent hears. Skip on one question: no preference, use your judgement, and say what you assumed. Decide for me, which takes Skip’s place when offered: up to you, pick what fits, and say what you chose. Your own words, by folding the card and sending a message: that message is the answer, along with the picks so far. Skip all: go ahead and use your judgement on all of it. Crossed out at the bottom: a close button that loses the answers, replaced by minimise, which folds the card into a pill with nothing lost.">
+    <p class="sk-hdr wo-h" aria-hidden="true">You</p>
+    <span class="wo-h" aria-hidden="true"></span>
+    <p class="sk-hdr wo-h" aria-hidden="true">The agent hears</p>
+    {rows.map((r, i) => (
+      <>
+        <div class:list={['sk-box', `sk-box--${r.tone}`, `sk-lean-${(i % 4) + 1}`, 'wo-you']} aria-hidden="true">
+          <p class="wo-t">{r.you}</p><p class="wo-s">{r.sub}</p>
+        </div>
+        <span class="sk-arrow wo-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+        <div class="wo-hears" aria-hidden="true">
+          <p class="wo-q">“{r.hears}”</p><code class="wo-code">{r.code}</code>
+        </div>
+      </>
+    ))}
+    <div class="sk-box sk-box--ghost wo-you wo-ghost" aria-hidden="true"><p class="wo-t"><s>× Close</s></p><p class="wo-s">answers gone</p></div>
+    <span class="sk-arrow wo-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+    <p class="sk-hand wo-hand" aria-hidden="true"><Icon name="arrow-curly" /> became minimise: a pill, with nothing lost</p>
+  </div>
+  <figcaption>Same outcome for the agent’s next step, different intent from the user. So, a different reply.</figcaption>
+</figure>
+
+<style>
+  .wo { display: grid; grid-template-columns: minmax(9rem, 13rem) auto minmax(0, 1fr); align-items: center; gap: .8rem 1rem; }
+  .wo p { margin: 0 !important; max-width: none; }
+  .wo-h { font-size: .62rem !important; letter-spacing: .14em; color: var(--ink-faint); }
+  .wo-you { padding: .55rem .75rem .6rem; }
+  .wo-t { font-size: .92rem; font-weight: 500; color: var(--c); }
+  .wo-s { font-size: .74rem; color: var(--ink-faint); }
+  .wo-ghost .wo-t { color: var(--ink-faint); }
+  .wo-hears { display: grid; gap: .25rem; }
+  .wo-q { font-size: .9rem; line-height: 1.45; color: var(--ink); }
+  .wo-code { justify-self: start; font-family: var(--font-mono); font-size: .66rem; padding: .05rem .4rem; color: var(--ink-soft); background: var(--sand-2); border-radius: 4px; }
+  .wo-arrow { color: var(--ink-faint); }
+  .wo-hand { font-size: 1.15rem; }
+  @media (max-width: 559px) {
+    .wo { grid-template-columns: 1fr; gap: .4rem; }
+    .wo-h { display: none; }
+    .wo-arrow { justify-self: start; margin-inline-start: 1rem; transform: rotate(90deg); }
+    .wo-hears { margin-bottom: .8rem; }
+  }
+</style>

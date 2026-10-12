@@ -1,0 +1,159 @@
+---
+/* Three design explorations from the build, as tabs. Each shows the real component
+   rendered with every option's CSS injected (the source never changed until a call
+   was made). The options swap in place at the card's real size (440px, from 2x
+   renders), so a subtle difference, like blue against ink, shows as a flip rather
+   than across three thumbnails too small to read. The option I picked is stamped.
+   Renders come in light and dark and follow the site's theme; each one opens full
+   size in the page's lightbox ([data-full], src/scripts/main.js). Tabs and options
+   work by keyboard; without JS the first option of the first exploration shows. */
+import Icon from '../../Icon.astro';
+
+const B = '/images/work/agent-clarifier/';
+const sets = [
+  {
+    id: 'colour', tab: '01 · Focus and colour', w: 880, h: 777,
+    why: 'Blue had four jobs on one card, and the agent’s Recommended badge sat right next to my pick. Claude prototyped two monochrome cards from a shadcn reference I liked.',
+    call: 'Kept the blue: it says “your pick” best. The badge and the “Asked by” dot went grey.',
+    look: 'Look at the picked key, the Recommended badge and the focus ring.',
+    opts: [
+      { key: 'x01-today', name: 'Blue, as it was', note: 'Blue pick, blue badge, blue dot', pick: true },
+      { key: 'x01-ink', name: 'Ink', note: 'Monochrome, with an ink ring' },
+      { key: 'x01-grey', name: 'Grey', note: 'Monochrome, with a grey ring' },
+    ],
+  },
+  {
+    id: 'spacing', tab: '02 · Row spacing', w: 880, h: 853,
+    why: 'Two picks next to each other looked like one shape, and so did a pick next to a hovered row.',
+    call: 'Gap: one rule for every case, each answer stays its own thing, and no row changes height.',
+    look: 'Look between the two ticked rows, and the hovered one under them.',
+    opts: [
+      { key: 'x02-today', name: 'As it was', note: 'Filled rows pinch together' },
+      { key: 'x02-gap', name: 'Gap', note: 'Each fill drawn 2px inside its row', pick: true },
+      { key: 'x02-merge', name: 'Merge', note: 'Filled neighbours join into one block' },
+    ],
+  },
+  {
+    id: 'pencil', tab: '03 · Active pencil', w: 880, h: 767,
+    why: 'With “Something else” open, its pencil stayed a grey square on a picked row. I couldn’t see the first fix at all.',
+    call: 'B: typing in “Something else” is picking it, so it looks like its picked neighbours.',
+    look: 'Look at the pencil key on the “Something else” row.',
+    opts: [
+      { key: 'x03-a', name: 'A · Ink icon', note: 'Shipped first. Too quiet to notice' },
+      { key: 'x03-b', name: 'B · Accent fill', note: 'The fill every picked key gets', pick: true },
+      { key: 'x03-c', name: 'C · Accent icon', note: 'Reads like a link' },
+    ],
+  },
+];
+---
+<figure class="sk-fig ex" data-ex>
+  <div class="ex-tabs" role="tablist" aria-label="Design explorations">
+    {sets.map((s, i) => (
+      <button class="ex-tab" type="button" role="tab" id={`ex-tab-${s.id}`} aria-controls={`ex-${s.id}`} aria-selected={String(i === 0)} tabindex={i === 0 ? undefined : '-1'}>{s.tab}</button>
+    ))}
+  </div>
+  {sets.map((s, i) => (
+    <div class="sk-sheet ex-panel" role="tabpanel" id={`ex-${s.id}`} aria-labelledby={`ex-tab-${s.id}`} hidden={i !== 0} data-ex-panel>
+      <p class="ex-why">{s.why}</p>
+      <div class="ex-opts" role="group" aria-label={`${s.tab.slice(5)}: options`}>
+        {s.opts.map((o, j) => (
+          <button type="button" class:list={['ex-opt', o.pick && 'ex-opt--pick']} aria-pressed={String(j === 0)} data-ex-opt={j}>
+            <span class="ex-name">{o.name}{o.pick && <span class="ex-stamp">my call</span>}</span>
+            <span class="ex-note">{o.note}</span>
+          </button>
+        ))}
+      </div>
+      <div class="ex-stage">
+        {s.opts.map((o, j) => (
+          <div class="ex-shot" data-ex-shot={j} hidden={j !== 0}>
+            {(['light', 'dark'] as const).map((t) => (
+              <button type="button" class:list={['ex-zoom', `th-${t}`]} data-full={`${B}${o.key}-${t}.webp`} aria-label={`View full size: ${o.name}, ${t} theme`}>
+                <img src={`${B}${o.key}-${t}.webp`} width={s.w} height={s.h} alt={`${o.name}: ${o.note}.${t === 'dark' ? ' Dark theme.' : ''}`} loading="lazy" decoding="async">
+                <span class="ex-enlarge" aria-hidden="true"><Icon name="zoom-in" />Enlarge</span>
+              </button>
+            ))}
+          </div>
+        ))}
+        <p class="ex-look sk-hand">{s.look}</p>
+      </div>
+      <p class="ex-call"><span>The call</span>{s.call}</p>
+    </div>
+  ))}
+  <figcaption>Prototype it on the real thing, flip between the options, then pick.</figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ex]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const show = (t: HTMLButtonElement, focus = false) => {
+      for (const x of tabs) {
+        const on = x === t;
+        x.setAttribute('aria-selected', String(on));
+        x.tabIndex = on ? 0 : -1;
+        root.querySelector<HTMLElement>(`#${x.getAttribute('aria-controls')}`)!.hidden = !on;
+      }
+      if (focus) t.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => show(t));
+      t.addEventListener('keydown', (e) => {
+        const n = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+        if (n === undefined) return;
+        e.preventDefault();
+        show(tabs[(n + tabs.length) % tabs.length], true);
+      });
+    });
+    // Options swap in place, so the eye stays on the same spot.
+    root.querySelectorAll<HTMLElement>('[data-ex-panel]').forEach((panel) => {
+      panel.querySelectorAll<HTMLButtonElement>('[data-ex-opt]').forEach((b) => {
+        b.addEventListener('click', () => {
+          panel.querySelectorAll<HTMLButtonElement>('[data-ex-opt]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+          panel.querySelectorAll<HTMLElement>('[data-ex-shot]').forEach((s) => (s.hidden = s.dataset.exShot !== b.dataset.exOpt));
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .ex p { margin: 0 !important; max-width: none; }
+  .ex-tabs { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .6rem; }
+  .ex-tab { padding: .3rem .75rem; font: .8rem var(--font-body); color: var(--ink-soft); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; cursor: pointer; }
+  .ex-tab:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .ex-tab[aria-selected="true"] { color: var(--paper-2); background: var(--ink); border-color: var(--ink); }
+  .ex button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .ex-panel { display: grid; gap: 1rem; }
+  .ex-why { font-size: .92rem; line-height: 1.5; color: var(--ink-soft); }
+
+  .ex-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  .ex-opt { display: grid; gap: .15rem; align-content: start; padding: .5rem .65rem .55rem; text-align: start; font: inherit; color: inherit; background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 10px 6px 12px 6px / 6px 12px 6px 10px; cursor: pointer; }
+  .ex-opt:hover { border-color: var(--ink-faint); }
+  .ex-opt[aria-pressed="true"] { border-color: var(--ink); box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .ex-name { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .45rem; font-size: .86rem; font-weight: 500; color: var(--ink); }
+  .ex-note { font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .ex-stamp { padding: 0 .35rem; border: 1.5px solid var(--coral); border-radius: 4px; font-family: var(--font-hand); font-size: .9rem; font-weight: 400; color: var(--coral); transform: rotate(-6deg); }
+
+  /* 440px is the card's real width, and the renders are 2x, so it stays sharp. */
+  .ex-stage { display: grid; justify-items: center; gap: .4rem; }
+  .ex-shot { inline-size: 100%; max-inline-size: 27.5rem; }
+  .ex-zoom { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 10px; box-shadow: 4px 4px 0 var(--shadow-ink); cursor: zoom-in; }
+  .ex-zoom img { display: block; inline-size: 100%; block-size: auto; border: 0 !important; border-radius: 0 !important; }
+  .ex-enlarge { position: absolute; inset-block-start: .5rem; inset-inline-end: .5rem; display: inline-flex; align-items: center; gap: .3rem; padding: .25rem .55rem; font: 500 .72rem var(--font-body); color: var(--paper); background: var(--ink); border-radius: 999px; opacity: .85; }
+  .ex-enlarge :global(.doodle) { width: .9rem; height: .9rem; }
+  .ex-zoom:hover .ex-enlarge, .ex-zoom:focus-visible .ex-enlarge { opacity: 1; background: var(--coral); color: #fff; }
+  .ex-look { font-size: 1.05rem; color: var(--ink-faint); text-align: center; }
+  .ex-call { font-size: .92rem; line-height: 1.5; color: var(--ink); }
+  .ex-call span { display: block; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+
+  .th-dark { display: none !important; }
+  :global([data-theme="dark"]) .th-dark { display: block !important; }
+  :global([data-theme="dark"]) .th-light { display: none !important; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .th-dark { display: block !important; }
+    :global(:root:not([data-theme="light"])) .th-light { display: none !important; }
+  }
+  @media (max-width: 519px) {
+    .ex-opts { grid-template-columns: 1fr; }
+    .ex-panel { padding: .8rem .6rem; }
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+/* Where agent-clarifier's weight sits among comparable packages, from the round 22
+   benchmarks (each built with the component's own Vite settings; gzip, KB, with any
+   stylesheet the package needs added). Bars share one scale up to 50 KB; the two chat
+   kits that run far past it get a torn bar and their number. agent-clarifier is the
+   coral bar. A handwritten note adds the figure that matters most: 0 KB at page load. */
+type Row = { name: string; kb: number; note?: string; me?: boolean; approx?: boolean; group: string };
+const rows: Row[] = [
+  { group: 'Small and polished', name: 'Lit (full base)', kb: 5.9 },
+  { group: 'Small and polished', name: 'sonner', kb: 9.3, note: '+ React' },
+  { group: 'Single-purpose widgets', name: 'cmdk', kb: 16.4, note: '+ React' },
+  { group: 'Single-purpose widgets', name: 'tom-select', kb: 19.6 },
+  { group: 'Single-purpose widgets', name: 'vaul', kb: 20.6, note: '+ React' },
+  { group: 'Single-purpose widgets', name: 'Shoelace dialog', kb: 21.2 },
+  { group: 'Single-purpose widgets', name: 'agent-clarifier', kb: 21.8, me: true },
+  { group: 'Single-purpose widgets', name: 'choices.js', kb: 23.0 },
+  { group: 'Chat kits it would sit beside', name: 'chatscope (5 parts)', kb: 45.1, note: '+ React' },
+  { group: 'Chat kits it would sit beside', name: 'deep-chat', kb: 104.9 },
+  { group: 'Chat kits it would sit beside', name: 'CopilotKit UI', kb: 812, approx: true, note: '+ React' },
+];
+const MAX = 50;
+const groups = [...new Set(rows.map((r) => r.group))];
+const alt = `Gzipped size in kilobytes. Small and polished: Lit 5.9, sonner 9.3. Single-purpose widgets: cmdk 16.4, tom-select 19.6, vaul 20.6, Shoelace’s dialog 21.2, agent-clarifier 21.8, choices.js 23.0. Chat kits it would sit beside: chatscope 45.1, deep-chat 104.9, CopilotKit about 812. sonner, cmdk, vaul, chatscope and CopilotKit also need React, about 66 KB. And agent-clarifier costs nothing at page load when it’s loaded on first use.`;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet sz" role="img" aria-label={alt}>
+    {groups.map((g) => (
+      <section class="sz-group" aria-hidden="true">
+        <p class="sk-hdr sz-g">{g}</p>
+        {rows.filter((r) => r.group === g).map((r) => (
+          <div class:list={['sz-row', r.me && 'sz-row--me']}>
+            <span class="sz-name">{r.name}</span>
+            <span class="sz-track">
+              <span class:list={['sz-bar', r.kb > MAX && 'sz-bar--torn']} style={`--w: ${Math.min(r.kb, MAX) / MAX * 100}%`}></span>
+              <span class="sz-kb">{r.approx && '~'}{r.kb > 100 ? Math.round(r.kb) : r.kb.toFixed(1)} KB{r.note && <small> {r.note}</small>}</span>
+            </span>
+          </div>
+        ))}
+      </section>
+    ))}
+    <p class="sk-hand sz-hand" aria-hidden="true">and 0 KB at page load, if it loads on first use</p>
+  </div>
+  <figcaption>Gzipped, each built the same way. React adds ~66 KB where it says so.</figcaption>
+</figure>
+
+<style>
+  .sz { display: grid; gap: .9rem; }
+  .sz p { margin: 0 !important; max-width: none; }
+  .sz-group { display: grid; gap: .35rem; }
+  .sz-g { margin-bottom: .1rem !important; font-size: .62rem !important; letter-spacing: .14em; color: var(--ink-faint); }
+  .sz-row { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); align-items: center; gap: .8rem; }
+  .sz-name { font-size: .82rem; color: var(--ink-soft); text-align: end; }
+  .sz-track { display: flex; align-items: center; gap: .5rem; min-inline-size: 0; }
+  .sz-bar { flex: none; inline-size: calc(var(--w) * .78); block-size: .8rem; background: color-mix(in srgb, var(--blue) 30%, var(--paper-2)); border: 1.5px solid var(--ink); border-radius: 3px 5px 4px 3px; }
+  .sz-bar--torn { border-inline-end-style: dashed; border-start-end-radius: 0; border-end-end-radius: 0; }
+  .sz-kb { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-soft); white-space: nowrap; }
+  .sz-kb small { color: var(--ink-faint); font-size: .62rem; }
+  .sz-row--me .sz-name { color: var(--coral); font-weight: 500; }
+  .sz-row--me .sz-bar { background: var(--coral); box-shadow: 2px 2px 0 var(--shadow-ink); }
+  .sz-row--me .sz-kb { color: var(--coral); font-weight: 600; }
+  .sz-hand { justify-self: end; font-size: 1.15rem; color: var(--teal); }
+  @media (max-width: 519px) {
+    .sz-row { grid-template-columns: 1fr; gap: .15rem; }
+    .sz-name { text-align: start; }
+    .sz-bar { inline-size: calc(var(--w) * .7); }
+    .sz-hand { justify-self: start; }
+  }
+</style>

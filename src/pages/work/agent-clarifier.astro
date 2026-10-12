@@ -1,0 +1,392 @@
+---
+/* agent-clarifier, told as a weekend exercise in design engineering rather than a
+   technical feat: why I picked Claude's question card over an artifact editor, the
+   research that found "ambiguity resolver" and the real moat (knowing when to ask),
+   the homework on Claude's card, the calls about what
+   each way out means, cutting draft mode, moving from a board to a playground, the
+   audit rounds run with Emil Kowalski's and Jakub Krehel's skills, the explorations,
+   the small details, the size, and what's next: a skill, so the next one takes a
+   day, not a weekend. Unlike the other stories, it opens on the real
+   component, live (ClarifierPlayground), and the details link back to it with
+   "Try it". Renders are real, from the component repo's process/ folders. No blog
+   yet: the journal on GitHub is the long version. New figures live in
+   ../../components/sketches/clarifier/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import SketchLive from '../../components/SketchLive.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
+import ClarifierPlayground from '../../components/sketches/clarifier/ClarifierPlayground.astro';
+import ClaudeTeardown from '../../components/sketches/clarifier/ClaudeTeardown.astro';
+import WaysOut from '../../components/sketches/clarifier/WaysOut.astro';
+import SkillShelf from '../../components/sketches/clarifier/SkillShelf.astro';
+import Explorations from '../../components/sketches/clarifier/Explorations.astro';
+import DetailGrid from '../../components/sketches/clarifier/DetailGrid.astro';
+import SizeShelf from '../../components/sketches/clarifier/SizeShelf.astro';
+
+const repo = 'https://github.com/Marigameo/agent-clarifier';
+const npm = 'https://www.npmjs.com/package/@marigameo/agent-clarifier';
+const site = 'https://marigameo.github.io/agent-clarifier/';
+const learnings = `${repo}/blob/main/process/00-research/learnings.md`;
+const description = 'agent-clarifier, a weekend exercise in design engineering: rebuilding Claude’s clarifying-question card with care, learning when an agent should ask, and turning it into a skill. Built with Claude as a pair.';
+
+const reads = [
+  { href: 'https://code.claude.com/docs/en/agent-sdk/user-input', source: 'Claude Agent SDK', title: 'Handling user input' },
+  { href: 'https://agentic-ux.com/patterns/clarifying-questions', source: 'Agentic UX', title: 'Clarifying questions' },
+  { href: 'https://www.chatreact.ai/blog/ai-chatbot-clarifying-questions-response-boundaries', source: 'ChatReact', title: 'Clarifying questions and response boundaries' },
+  { href: 'https://research.google/pubs/asking-clarifying-questions-for-preference-elicitation-with-large-language-models/', source: 'Google Research', title: 'Asking clarifying questions for preference elicitation' },
+  { href: 'https://medium.com/design-bootcamp/practical-ways-to-resolve-ambiguity-in-your-chatbots-52c1fba849dc', source: 'Bootcamp', title: 'Practical ways to resolve ambiguity in your chatbots' },
+];
+
+const phases = [
+  {
+    label: 'On paper · round 0 to 5',
+    tone: 'grey' as const,
+    items: [
+      { period: 'Round 0 · 10 Oct', title: 'Homework', detail: 'Claude’s card taken apart, five other systems, and the research on when models should ask' },
+      { period: 'Rounds 1 to 3', title: 'A plan and a board', detail: '30+ frames in 8 sections, every state. Draft mode added in round 2, cut in round 3' },
+      { period: 'Naming', title: 'clarify-card → agent-clarifier', detail: 'A noun, named after the job, not the look. It’s also a pill, a docked tray and a record' },
+      { period: 'Rounds 4 and 5', title: 'Scope lock', detail: 'Branching said no to. A build plan agreed, and DESIGN.md started: a reason for every value' },
+    ],
+  },
+  {
+    label: 'On the real component · round 6 onwards',
+    tone: 'coral' as const,
+    items: [
+      { period: 'Round 6', title: 'The playground', detail: 'The board frozen. Every call after this is made on the real thing, in a fake chat', pivot: true },
+      { period: 'M1 to M7', title: 'The build', detail: 'Model, element, both flows, keyboard, screen readers, converters for Claude and MCP, README' },
+      { period: 'Rounds 9 to 21 · 11 Oct', title: 'Audits and details', detail: 'One skill at a time, then my own doubts from using it, one per round' },
+      { period: 'Rounds 22 to 26 · 12 Oct', title: 'Weight, release and a chat demo', detail: 'Size measured against 25 packages, a review that read it like a stranger, then npm, Svelte 5 and a phone-first chat demo' },
+    ],
+  },
+];
+
+const lessons = [
+  { miss: 'Trusted 100% test coverage. Two tests checked either side of a limit, never the limit itself.', lesson: 'Test at the boundary. Then break the code on purpose, and watch a test fail.' },
+  { miss: 'Trusted an “after” screenshot. The gap looked right only because a focus ring drew it.', lesson: 'A screenshot can agree with you for the wrong reason. Measure the thing itself.' },
+  { miss: 'Assumed the audits still held. Two rounds of my own changes later, an accessibility fix had quietly gone.', lesson: 'Audits expire. Re-run them after every change to the parts they judged.' },
+  { miss: 'Tested against the source for 22 rounds. Three README recipes didn’t work, and some TypeScript users got no types.', lesson: 'Read it as a stranger. Install the package, and follow your own README.' },
+];
+---
+<WorkLayout
+  title="agent-clarifier — letting agents ask before they act"
+  description={description}
+  ogDescription="A weekend spent rebuilding a favourite piece of AI UX, Claude’s clarifying-question card, to practise design engineering and learn when an agent should ask."
+  eyebrow="Side build · Design engineer · Oct 2026"
+  heading="agent-clarifier"
+  facts={[
+    { label: 'Role', value: 'Solo build, paired with Claude' },
+    { label: 'Status', value: 'v0.1.0, live on npm. Open source (MIT)' },
+  ]}
+  link={{ href: repo, label: 'github.com/Marigameo/agent-clarifier' }}
+  schema={{
+    name: 'agent-clarifier',
+    url: repo,
+    description: 'A zero-dependency web component that lets a chat agent ask clarifying questions before it acts: one at a time or all at once, single and multiple choice, Something else, Decide for me, undo instead of confirmation, keyboard and screen reader support, right-to-left languages, and converters for Claude’s AskUserQuestion and MCP elicitation.',
+    inLanguage: 'en',
+    keywords: 'design engineering, UX for AI, clarifying questions, web components, accessibility, interaction design, AskUserQuestion, MCP elicitation, designing with Claude, agent UX',
+  }}
+>
+  <Fragment slot="lede">I wanted one component with lots of states, variants and a personality, to try out the design engineering ideas I’d been collecting. I picked a favourite: the card Claude shows when <mark class="hl">it asks before it acts</mark>. <a href="https://ui.shadcn.com/docs/components/base/questionnaire" rel="noopener">shadcn/ui</a> already has one. This was about what I’d learn, not what I’d beat.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The aim</h3>
+      <p>Not a perfect component. I wanted a fairly complex one, with variants, states and a personality, to practise design engineering on. Then I wanted to see how much of it I could teach an agent for next time.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The homework.</strong> Claude’s card taken apart, how others ask, and the research on when to.</li>
+          <li><strong>Every call.</strong> What each way out means, what got cut, the colours, the spacing, the size target.</li>
+          <li><strong>The audits.</strong> One skill at a time, from Emil Kowalski and Jakub Krehel, plus my own doubts from using it.</li>
+        </ul>
+        <p>Claude researched, drafted, built and tested. I set the direction and made the calls.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Considered</h3>
+      <p>Every state, one question or many, keyboard and screen readers, right-to-left languages. All of it kept as light as I could: about 21 KB gzipped, with no dependencies. Live on <a href={npm} rel="noopener">npm</a> and <a href={repo} rel="noopener">GitHub</a>.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <p class="try-note"><Icon name="arrow-curly" /> Have a go first. It’s the real component, not a picture of it.</p>
+    <ClarifierPlayground caption="The real agent-clarifier, v0.1.0 straight from npm, in a pretend chat. The details further down link back here." />
+    <p class="more-note"><a href={`${site}chat.html`} rel="noopener">Try it in a full chat app, on your phone <span class="nowrap">too<Icon name="arrow-right" /></span></a></p>
+
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">A favourite, not a flagship</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I first wanted to build an artifact editor like Claude’s, with collaborative editing. It’s a huge build, and <strong>I’d already built something like it at work</strong>. So I picked something smaller and more personal.</li>
+        <li>Claude’s question card is one of my favourites. It rescues a lazy, vague prompt, and lazy people like me love it. I’d used it a lot, and was always curious <strong>when Claude decides to show it, and when it doesn’t</strong>.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Artifact editor', tone: 'ghost', items: ['Collaborative editing, a huge build', 'Built one of its kind at work already', 'Weeks, not a weekend'] }}
+        right={{ title: 'The question card', stamp: 'the pick', tone: 'coral', items: ['Lots of variants, states and cases', 'A personality of its own', 'A personal favourite'] }}
+        alt="The path not taken: an artifact editor. Collaborative editing is a huge build, I’d built one of its kind at work already, and it would take weeks, not a weekend. The pick: the question card. Lots of variants, states and cases, a personality of its own, and a personal favourite."
+        caption="Complex enough to learn from. Small enough for a weekend."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-when">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Research</p><h2 id="s-when">Knowing when is the real work</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I started with a vague Claude research about the card itself: how other frontier tools do it, and what’s public to learn from. That’s where I met its name, an <strong>ambiguity resolver</strong>. Sounds wild, right? I asked Claude to write the design tensions down in a learnings file as we went.</li>
+        <li>That’s when it clicked. The real moat isn’t the card. It’s <strong>teaching the agent when to use it, and when not to</strong>. And the card has many personalities: several questions or one decision, all at once or strictly one by one.</li>
+      </ul>
+      <div class="reads sk-box sk-lean-1">
+        <p class="reads-title">What I read</p>
+        <ul>
+          {reads.map((r) => (
+            <li><a href={r.href} rel="noopener"><span>{r.source}</span>{r.title}</a></li>
+          ))}
+        </ul>
+        <p class="reads-foot"><a href={learnings} rel="noopener">The learnings file, with the design <span class="nowrap">tensions<Icon name="arrow-right" /></span></a></p>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-home">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Homework</p><h2 id="s-home">Borrow the feel, not the pixels</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Reading done, I took the card itself apart. I lined it up against the <code>AskUserQuestion</code> docs, then against <strong>how Cursor, ChatGPT, MCP and LangGraph ask</strong>.</li>
+        <li>Three things stuck. Multi-select must never move on by itself. Skip and close mean different things. And <strong>when to ask matters as much as how</strong>, so the README ships a prompt that tells the model when.</li>
+      </ul>
+      <ClaudeTeardown />
+    </section>
+
+    <section class="slide" aria-labelledby="s-exits">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · meaning</p><h2 id="s-exits">Every way out means something</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I wanted <strong>each exit to tell the agent something different</strong>, so it can say what it did about it. Skip means “say what you assumed”. Decide for me means “say what you chose”.</li>
+        <li>So Decide for me takes Skip’s place instead of sitting next to it, to avoid the overload. And × became <strong>minimise, so nothing is lost</strong>. A message typed while it’s folded is the answer.</li>
+      </ul>
+      <WaysOut />
+      <p class="try-row"><button type="button" class="try-btn" data-try="delegate">Try Decide for me <span aria-hidden="true">↑</span></button><button type="button" class="try-btn" data-try="compose">Try writing it yourself <span aria-hidden="true">↑</span></button></p>
+    </section>
+
+    <section class="slide" aria-labelledby="s-cut">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Simplify</p><h2 id="s-cut">Ask what each control is for</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>After v1 I asked for a draft mode: pick, get the answer prefilled, add context, then send. It came back as <strong>three levels of opt-in, an Edit first button and a prefill strip</strong>. Reviewing it, I couldn’t say what Edit first was for.</li>
+        <li>So we cut it: one way to answer, the card, and one way out to your own words, the composer. Later Claude designed branching, and <strong>I said no to that too</strong>, to build a top-notch core first.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-2" aria-label="Branching, proposed and turned down">
+        <div class="qa-row">
+          <span class="qa-av qa-av--ai" aria-hidden="true"><Icon name="sparkles" /></span>
+          <p class="qa-bubble qa-a"><span>Claude</span>Proposed branching for v1: a JSON <code>when</code> condition, a step count that only ever shrinks, and a “Because you picked X” line.</p>
+        </div>
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-q"><span>Me</span>“Let’s not complicate for now. Let’s build this functionally top notch rather than bloating in more supports.”</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
+      </aside>
+      <SketchLive id="board" start="live" live={{ kind: 'image', src: '/images/work/agent-clarifier/board-v3.webp', width: 1200, height: 7676, scroll: 'scroll the real board', full: '/images/work/agent-clarifier/board-v3-full.webp', fullLabel: 'Open the real board', alt: 'The real design board after round 3: a long page of frames for the question card, covering its anatomy, both flows, every input, the placements, the recovery states, the records it leaves in the conversation, and the new In your own words section that replaced draft mode.' }} caption="The real board after round 3. It was frozen in round 6, when the playground took over.">
+        <Versus
+          left={{ title: 'Draft mode', tone: 'ghost', items: ['Send, Draft or Choice, per question', 'Edit first and Add to message', 'A prefill strip, then Keep or Update draft'] }}
+          right={{ title: 'One way to answer, one way out', stamp: 'the call', tone: 'coral', items: ['Review lets you edit each answer', 'Minimise gives the composer back', 'A compose option for answers worth writing'] }}
+          alt="The path not taken: draft mode, with Send, Draft or Choice per question, Edit first and Add to message buttons, and a prefill strip with Keep or Update draft. The call: one way to answer and one way out. Review lets you edit each answer, minimise gives the composer back, and a compose option starts a sentence for answers worth writing."
+          caption="Every control has to earn its place, or it goes."
+        />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-process">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Process</p><h2 id="s-process">From a board to a playground</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Plan and visuals came first: research, a written plan, a board of every state, then <strong>a build plan we agreed on before any code</strong>. Each round was snapshotted into <code>process/</code>, and never edited after.</li>
+        <li>Then I hit a wall: <strong>I couldn’t judge a shadow, a grey or a 120ms confirm from a drawing</strong>. So the board was frozen in round 6, and every call after it was made on the real component, in a playground like the one above.</li>
+      </ul>
+      <ArcTimeline phases={phases} caption="Grey is paper. Coral is the real component, where most of the decisions got made." />
+    </section>
+
+    <section class="slide" aria-labelledby="s-ai">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">With AI</p><h2 id="s-ai">I make the calls, Claude does the legwork</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We worked as a pair in Claude Code. Claude researched, drafted, built and tested. <strong>I set the direction and made the calls</strong>, from options with a recommendation, one round at a time. When I delegated a batch of calls in round 8, I audited them after.</li>
+        <li>For the audits I brought in skills from people whose craft I trust: <strong>Emil Kowalski’s for motion, and Jakub Krehel’s for the interface</strong>. Each ran read-only first. I picked. Then Claude built it, and broke each fix on purpose to prove its test could fail.</li>
+      </ul>
+      <SkillShelf />
+    </section>
+
+    <section class="slide" aria-labelledby="s-colour">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Design call · colour</p><h2 id="s-colour">The user’s decision is the loudest thing</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I asked why the card mixed black and blue. The answer found a real problem: <strong>blue had four jobs on one card</strong>, and the agent’s Recommended badge looked like my pick.</li>
+        <li>So we prototyped a monochrome card, and I kept the blue anyway. The badge went grey instead. The same habit, <strong>see the options on the real thing, then pick</strong>, settled the row spacing and the pencil too.</li>
+      </ul>
+      <Explorations />
+    </section>
+
+    <section class="slide" aria-labelledby="s-details">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">Details</p><h2 id="s-details">Small things, on purpose</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Most rounds started with a doubt from using it: an arrow that lingered, a header that lost its padding, a checkbox that felt plain. <strong>Each got a measurement before a fix</strong>, a test that fails without it, and a before and after.</li>
+        <li>I wanted it to <strong>feel calm, and calm is a long list of small things</strong>. Every default now has a written reason in <code>DESIGN.md</code>. If a value has no reason, it’s a guess, and guesses get fixed.</li>
+      </ul>
+      <DetailGrid />
+    </section>
+
+    <section class="slide" aria-labelledby="s-size">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">Weight</p><h2 id="s-size">Weigh it before you diet</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I wanted it light, so nobody thinks twice about installing it. Claude measured first: <strong>25 comparable packages, built with the same settings</strong>. Every safe saving added up to about 0.6 KB.</li>
+        <li>So the honest result was a better target, not a smaller number: <strong>about 21 KB gzipped</strong>, among single-purpose widgets that do less, and nothing at page load if it loads on first use. The playground above does exactly that.</li>
+      </ul>
+      <SizeShelf />
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">11</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What I’d tell day-zero me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-next">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">12</span>
+        <div><p class="slide-kicker">What’s next</p><h2 id="s-next">From a weekend to a day?</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The end goal is bigger than one card: <strong>a skill and a knowledge base for crafting UX elements like this, faster</strong>. This one took a whole weekend of learning and care. Can the next one take a day?</li>
+        <li>First up is a skill for the clarifier itself: <strong>when to use it, when not to, and which variant fits</strong>, plus the design engineering habits from this build. That way anyone can check their agent is using it right.</li>
+      </ul>
+      <!-- TODO: link the skill repo here once it's public. -->
+      <div class="soon sk-box sk-lean-2">
+        <p class="soon-tag">Skill · coming soon</p>
+        <p>When to ask, when not to, which variant to use, and the design engineering habits behind every pixel.</p>
+      </div>
+      <p class="next"><span>For the card itself</span>A VoiceOver pass, and a real phone with its keyboard.</p>
+    </section>
+
+    <blockquote class="closer">Ask only when it matters, and make asking feel calm. That’s the card. Learn it once, and craft the next one faster. That’s the exercise.</blockquote>
+    <div class="get-it">
+      <code class="get-cmd">npm install @marigameo/agent-clarifier</code>
+      <a class="get-link" href={npm} rel="noopener">npm <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={repo} rel="noopener">GitHub <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={`${site}chat.html`} rel="noopener">Chat demo <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={site} rel="noopener">Playground <Icon name="external" class="doodle--thin" /></a>
+    </div>
+    <p class="more-note"><a href={`${repo}/blob/main/JOURNAL.md`} rel="noopener">Every round, with my brief, the calls and the renders, is in the journal on <span class="nowrap">GitHub<Icon name="arrow-right" /></span></a></p>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Render, full size">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</WorkLayout>
+
+<style>
+  /* The deck styles, as in the other stories, plus the playground's intro note and the Try it buttons. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .try-note { margin: 0 0 -.6rem !important; max-width: none; font-family: var(--font-hand); font-size: 1.25rem; color: var(--coral); }
+  .try-note :global(svg) { width: 1.3rem; height: 1.3rem; vertical-align: -.2rem; transform: scaleY(-1); }
+  .try-row { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0 !important; max-width: none; }
+  .try-btn { padding: .3rem .8rem; font: 500 .82rem var(--font-body); color: var(--coral); background: transparent; border: 1.5px solid var(--coral); border-radius: 999px; cursor: pointer; }
+  .try-btn:hover { color: var(--paper-2); background: var(--coral); }
+  .try-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .get-it { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .8rem; margin-top: var(--space-3); }
+  .get-it .get-cmd { padding: .5rem .8rem; font-size: .85rem; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 8px; box-shadow: 3px 3px 0 var(--shadow-ink); overflow-wrap: anywhere; }
+  .get-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .85rem; font-size: .88rem; font-weight: 500; color: var(--ink); text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px; }
+  .get-link:hover { border-color: var(--ink); }
+  .get-link :global(.doodle) { width: .85rem; height: .85rem; }
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+
+  /* Claude's proposal and my answer, as a chat. A sparkle stands in for Claude. */
+  .qa { margin-top: var(--space-3); padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .9rem; }
+  .qa-row { display: flex; align-items: flex-end; gap: .65rem; }
+  .qa-row--me { justify-content: flex-end; }
+  .qa-bubble { margin: 0 !important; max-width: min(36rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; color: var(--ink) !important; background: var(--sand); border: 1.5px solid var(--line); border-radius: 14px 14px 14px 4px; }
+  .qa-bubble span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--violet); }
+  .qa-q { color: var(--ink-soft) !important; font-style: italic; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border-color: color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 4px 14px; }
+  .qa-q span { font-style: normal; color: var(--teal); }
+  .qa-av { position: relative; flex: none; width: 2.4rem; height: 2.4rem; overflow: hidden; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--sand-2); }
+  .qa-av--me { object-fit: cover; }
+  .qa-av--ai { display: grid; place-items: center; color: var(--violet); }
+  .qa-av--ai :global(svg) { width: 1.3rem; height: 1.3rem; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  .next { margin: 1.4rem 0 0 !important; max-width: 60ch; font-size: .95rem !important; color: var(--ink-soft); }
+  .next span { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* What I read, as a small card of links, and the skill that's coming. */
+  .reads, .soon { margin-top: var(--space-3); padding: 1rem 1.1rem 1.1rem; max-width: 40rem; }
+  .reads-title, .soon-tag { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .reads ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+  .reads li a { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+  .reads li a:hover { text-decoration-color: var(--ink); }
+  .reads li span { display: block; font-size: .78rem; color: var(--ink-faint); }
+  .reads-foot { margin: .9rem 0 0 !important; max-width: none; }
+  .reads-foot a { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); text-decoration: none; }
+  .reads-foot .nowrap { white-space: nowrap; }
+  .soon p:not(.soon-tag) { margin: 0 !important; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+
+  .closer { margin-top: var(--space-5); }
+</style>

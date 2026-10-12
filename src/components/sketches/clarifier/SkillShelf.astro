@@ -1,0 +1,123 @@
+---
+/* How the audit rounds worked, and which skills ran them, built to scan: one round as
+   a numbered strip of five steps (mine in coral, Claude's in blue), then a table with
+   one row per skill: the round, the skill and whose craft it carries, what it found,
+   and what was turned down, because most of the craft was in the no's. A dot marks
+   the author (teal Emil Kowalski, blue Jakub Krehel, violet Claude Code). On wide
+   screens the figure breaks out of the text column; under 760px each row stacks. */
+import Icon from '../../Icon.astro';
+
+const steps = [
+  { who: 'Me', t: 'A brief, or a doubt from using it', tone: 'coral' },
+  { who: 'Claude + a skill', t: 'A read-only audit, frozen before any fix', tone: 'blue' },
+  { who: 'Me', t: 'Pick from options, with a recommendation', tone: 'coral' },
+  { who: 'Claude', t: 'Build it, test it, break the fix on purpose', tone: 'blue' },
+  { who: 'Both', t: 'Snapshot, journal, commit', tone: 'teal' },
+];
+
+const tone = { 'Emil Kowalski': 'teal', 'Jakub Krehel': 'blue', 'Claude Code': 'violet' } as const;
+const skills: { round: string; by: keyof typeof tone; name: string; area: string; found: string; no: string }[] = [
+  { round: '9', by: 'Emil Kowalski', name: 'find-animation-opportunities', area: 'Motion', found: 'A toast that swapped in unnoticed, and the doc saying 200ms while the code ran 160ms.', no: 'Five ideas: fills on rows, a pulse on the pill, an error shake and more.' },
+  { round: '10', by: 'Emil Kowalski', name: 'emil-design-eng', area: 'Craft', found: 'Buttons that didn’t answer the hover, and an Undo timer that kept running in a hidden tab.', no: 'Ease-in-out for the height. It would lag behind the content.' },
+  { round: '11', by: 'Jakub Krehel', name: 'better-interface', area: 'Interface', found: 'Six reviewers in parallel, 10 high: contrast themes lost every ring, Send dropped focus, the toast read “Und” at 320px.', no: 'Its own fix for one finding. It would have broken Undo.' },
+  { round: '13', by: 'Jakub Krehel', name: 'break', area: 'Stress', found: '34 worst cases on one page. 6 broke, and the worst was made by round 11’s own fix.', no: 'Stacked combining marks. Abusive input, not a real case.' },
+  { round: '15', by: 'Emil Kowalski', name: 'animate + review-animations', area: 'Checkbox', found: 'A 0.8px press and a 120ms tick, for the mouse only.', no: 'Motion on keyboard toggles, on unticking, and a bounce.' },
+  { round: '20', by: 'Emil Kowalski', name: '7 practical animation tips', area: 'Hover', found: 'Hover was already instant. But an arrow stayed on a row the mouse had left.', no: 'Hiding the keyboard’s arrow while a mouse rests on the card.' },
+  { round: '23', by: 'Claude Code', name: 'code review', area: 'Release', found: 'Four reviewers read the package as a stranger would: 44 findings, 9 serious, three README recipes broken.', no: 'Long MCP lists. Documented instead, outside the scope lock.' },
+  { round: '23', by: 'Claude Code', name: '/simplify', area: 'Cleanup', found: 'A regression in one of the review’s own fixes, caught before it shipped.', no: 'Two cleanups that would have changed behaviour.' },
+];
+---
+<figure class="sk-fig ss-fig">
+  <div class="sk-sheet ss">
+    <p class="ss-h">One round</p>
+    <ol class="ss-steps">
+      {steps.map((s, i) => (
+        <li style={`--c: var(--${s.tone})`}>
+          <span class="ss-n" aria-hidden="true">{i + 1}</span>
+          <span class="ss-who">{s.who}</span>
+          <span class="ss-t">{s.t}</span>
+        </li>
+      ))}
+    </ol>
+    <p class="sk-hand ss-again" aria-hidden="true"><Icon name="arrow-curly" /> …and round again, one skill at a time</p>
+
+    <p class="ss-h">The skills</p>
+    <table class="ss-table">
+      <thead>
+        <tr><th scope="col">Round</th><th scope="col">Skill</th><th scope="col">What it found</th><th scope="col">Turned down</th></tr>
+      </thead>
+      <tbody>
+        {skills.map((k) => (
+          <tr>
+            <td class="ss-round"><span class="ss-rlabel">Round </span>{k.round}<span class="ss-area">{k.area}</span></td>
+            <td class="ss-skill">
+              <code>{k.name}</code>
+              <span class="ss-by" style={`--c: var(--${tone[k.by]})`}>{k.by}</span>
+            </td>
+            <td class="ss-found"><span class="ss-tag">Found</span>{k.found}</td>
+            <td class="ss-no"><span class="ss-tag">Turned down</span>{k.no}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption>The skills brought the checklists. The calls stayed mine.</figcaption>
+</figure>
+
+<style>
+  .ss { display: grid; gap: .8rem; }
+  .ss p { margin: 0 !important; max-width: none; }
+  .ss .ss-h { font-family: var(--font-mono); font-size: .62rem !important; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+
+  /* One round: five steps on a line, joined by a rule behind the numbers. */
+  .ss-steps { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
+  .ss-steps::before { content: ""; position: absolute; inset-inline: .8rem; inset-block-start: .8rem; border-top: 1.5px dashed var(--line); }
+  .ss-steps li { position: relative; display: grid; gap: .2rem; align-content: start; }
+  .ss-n { display: grid; place-items: center; inline-size: 1.6rem; block-size: 1.6rem; margin-bottom: .25rem; font: 600 .72rem/1 var(--font-mono); color: var(--paper-2); background: var(--c); border-radius: 50%; box-shadow: 0 0 0 4px var(--sand); }
+  .ss-who { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  .ss-t { font-size: .84rem; line-height: 1.4; color: var(--ink); }
+  .ss-again { justify-self: end; font-size: 1.1rem; margin-bottom: .4rem !important; }
+
+  /* The skills: a plain table with hairlines, nothing boxed. */
+  .ss-table { inline-size: 100%; border-collapse: collapse; background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 10px; overflow: hidden; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .ss-table th { padding: .6rem .8rem; text-align: start; font: 400 .6rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); background: var(--sand); border-bottom: 1.5px solid var(--line); }
+  .ss-table td { padding: .75rem .8rem; vertical-align: top; font-size: .84rem; line-height: 1.45; border-bottom: 1px solid var(--line); }
+  .ss-table tr:last-child td { border-bottom: 0; }
+  .ss-round { white-space: nowrap; font-family: var(--font-mono); font-size: .78rem !important; color: var(--ink); }
+  .ss-rlabel { display: none; }
+  .ss-area { display: block; font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+  .ss-skill code { display: inline-block; font-size: .78rem; color: var(--ink); background: color-mix(in srgb, var(--violet) 12%, var(--paper-2)); overflow-wrap: anywhere; }
+  .ss-by { display: flex; align-items: center; gap: .35rem; margin-top: .35rem; font-size: .74rem; color: var(--ink-faint); }
+  .ss-by::before { content: ""; flex: none; inline-size: .5rem; block-size: .5rem; border-radius: 50%; background: var(--c); }
+  .ss-found { color: var(--ink); }
+  .ss-no { color: var(--ink-faint); }
+  .ss-tag { display: none; }
+
+  @media (min-width: 1100px) {
+    .sk-fig.ss-fig.ss-fig { inline-size: 64rem; max-inline-size: calc(100vw - 4rem); margin-inline: calc(50% - min(32rem, 50vw - 2rem)); }
+    .ss-skill { inline-size: 15rem; }
+  }
+  /* Narrow: the steps stack, and each table row becomes a short entry. */
+  @media (max-width: 759px) {
+    .ss-steps { grid-template-columns: 1fr; gap: .7rem; }
+    .ss-steps::before { inset-inline: auto; inset-inline-start: .8rem; inset-block: .8rem; border-top: 0; border-inline-start: 1.5px dashed var(--line); }
+    .ss-steps li { grid-template-columns: auto auto 1fr; align-items: center; column-gap: .6rem; }
+    .ss-n { margin: 0; }
+    .ss-again { justify-self: start; }
+    .ss-table thead { display: none; }
+    .ss-table, .ss-table tbody, .ss-table tr, .ss-table td { display: block; }
+    .ss-table tr { padding: .8rem .9rem .9rem; border-bottom: 1px solid var(--line); }
+    .ss-table tr:last-child { border-bottom: 0; }
+    .ss-table td { padding: 0; border: 0; }
+    .ss-round { display: flex !important; gap: .3rem; font-size: .66rem !important; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint) !important; }
+    .ss-rlabel { display: inline; }
+    .ss-area { display: inline; font-size: inherit; letter-spacing: inherit; }
+    .ss-area::before { content: "· "; }
+    .ss-skill { display: flex !important; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; margin: .3rem 0 .45rem; }
+    .ss-by { margin: 0; }
+    .ss-no { margin-top: .35rem; }
+    .ss-tag { display: block; font-family: var(--font-mono); font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; }
+    .ss-found .ss-tag { color: var(--teal); }
+    .ss-no .ss-tag { color: var(--coral); }
+  }
+</style>

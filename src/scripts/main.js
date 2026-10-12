@@ -263,9 +263,13 @@
         lbImg.src = btn.getAttribute("data-full");
         // whiteboard scans flip in dark mode; screenshots keep their colours
         lightbox.classList.toggle("lightbox--ink", btn.classList.contains("ink-shot"));
-        lbImg.alt = thumb ? thumb.alt : "";
-        if (lbCap) lbCap.textContent = thumb ? thumb.alt : "";
+        // a tall or wide render (a design board, a filmstrip) keeps a readable size and pans
+        lightbox.classList.toggle("lightbox--tall", btn.hasAttribute("data-full-tall"));
+        var alt = btn.getAttribute("data-full-alt") || (thumb ? thumb.alt : "");
+        lbImg.alt = alt;
+        if (lbCap) lbCap.textContent = alt;
         lightbox.showModal();
+        lightbox.scrollTop = 0;
       });
     });
     lightbox.querySelectorAll("[data-lightbox-close]").forEach(function (b) { b.addEventListener("click", function () { lightbox.close(); }); });
