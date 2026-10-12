@@ -14,6 +14,7 @@ import AgentUI from '../sketches/AgentUI.astro';
 import BrandKit from '../sketches/BrandKit.astro';
 import Thatpam from '../sketches/Thatpam.astro';
 import DforDoubts from '../sketches/DforDoubts.astro';
+import AgentClarifier from '../sketches/AgentClarifier.astro';
 import Stash from './Stash.astro';
 
 const strive = { company: 'Strivelabs', meta: 'Design engineer · 2024 → now', live: true };
@@ -57,7 +58,12 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
     </WorkCard>
   </Rail>
 
-  <Rail id="rail-indie" icon="lightbulb" title="Side builds" meta="Solo, outside the day job. Idea → pixels → payments.">
+  <Rail id="rail-indie" icon="lightbulb" title="Side builds" meta="Solo, outside the day job. Idea → pixels, sometimes → payments.">
+    <WorkCard href="/work/agent-clarifier/" accent="coral" title="agent-clarifier" tags={['Agent UX', 'Web component']} craft
+      part="Solo, paired with Claude: the research, every call, the audits" shipped="v0.1.0 on npm · open source">
+      <AgentClarifier slot="sketch" />
+      A weekend spent learning design engineering on one component: the card that lets an agent ask before it acts.
+    </WorkCard>
     <WorkCard href="/work/thatpam/" accent="teal" title="தட்பம்" titleLang="ta" titleNote="thatpam, Tamil for “coolness”" tags={['Teaching', '0 → 1']}
       part="All of it, from the pixels to the payments" shipped="Paused · the students went pro" shippedLabel="Status">
       <Thatpam slot="sketch" />

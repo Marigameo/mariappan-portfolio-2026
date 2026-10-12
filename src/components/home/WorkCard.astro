@@ -9,7 +9,12 @@
    "At a glance"). `shippedLabel` renames the second row, e.g. "Status".
    `tags` double as the mono kicker above the title ("GEN UI · DESIGN SYSTEM"), so
    the card has one line of metadata. The accent colours only that line's dash and
-   "Read the story", which sits at the bottom of the text column. */
+   "Read the story", which sits at the bottom of the text column.
+   `craft` marks design engineering work: graph paper behind the card and a round
+   rubber stamp that presses itself every few seconds (under the thumbnail on wide
+   screens, on its corner on a phone). It's always coral, whatever the card's
+   accent, so the mark reads as one thread across rails. Screen readers get the
+   label in the kicker instead. */
 import Icon from '../Icon.astro';
 import type { Accent } from '../../data/talks';
 
@@ -26,17 +31,19 @@ interface Props {
   part?: string;     // "My part" row
   shipped?: string;  // second row
   shippedLabel?: string;
+  craft?: boolean;   // design engineering stamp
 }
 
-const { href, accent, title, titleLang, titleNote, tags, company, meta, live = false, part, shipped, shippedLabel = 'Shipped' } = Astro.props;
+const { href, accent, title, titleLang, titleNote, tags, company, meta, live = false, part, shipped, shippedLabel = 'Shipped', craft = false } = Astro.props;
+const ring = `craft-ring-${Math.random().toString(36).slice(2, 8)}`;
 ---
-<li class="card" style={`--accent: var(--${accent})`} data-company={company} data-meta={meta} data-live={company ? String(live) : undefined}>
+<li class:list={['card', { 'card--craft': craft }]} style={`--accent: var(--${accent})`} data-company={company} data-meta={meta} data-live={company ? String(live) : undefined}>
   <a class="card-link" href={href}>
     <figure class="shot taped">
       <slot name="sketch" />
     </figure>
     <div class="card-body">
-      <p class="card-when">{company && <span class="visually-hidden">{company} · </span>}{tags.join(' · ')}</p>
+      <p class="card-when">{company && <span class="visually-hidden">{company} · </span>}{tags.join(' · ')}{craft && <span class="visually-hidden"> · design engineering</span>}</p>
       <h4 lang={titleLang}>{title}{titleNote && <span class="title-note" lang="en">{titleNote}</span>}</h4>
       <p><slot /></p>
       {(part || shipped) && (
@@ -46,6 +53,17 @@ const { href, accent, title, titleLang, titleNote, tags, company, meta, live = f
         </dl>
       )}
       <span class="card-go">Read the story<Icon name="arrow-right" /></span>
+      {craft && (
+        <svg class="craft-stamp" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <defs><path id={ring} d="M50 50m-33 0a33 33 0 1 1 66 0a33 33 0 1 1-66 0" /></defs>
+          <circle cx="50" cy="50" r="48" class="craft-paper" />
+          <circle cx="50" cy="50" r="46.5" class="craft-line" stroke-width="2.6" />
+          <circle cx="50" cy="50" r="43" class="craft-line" stroke-width=".9" />
+          <circle cx="50" cy="50" r="25" class="craft-line" stroke-width="1.3" />
+          <text><textPath href={`#${ring}`} textLength="205" lengthAdjust="spacing">DESIGN ENGINEERING • </textPath></text>
+          <path class="craft-mark" d="M50 36c1.6 7.8 5.2 11.4 13 13-7.8 1.6-11.4 5.2-13 13-1.6-7.8-5.2-11.4-13-13 7.8-1.6 11.4-5.2 13-13Z" />
+        </svg>
+      )}
     </div>
   </a>
 </li>

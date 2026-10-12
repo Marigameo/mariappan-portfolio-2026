@@ -378,6 +378,20 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .card-body { display: flex; flex-direction: column; gap: .55rem; padding: 1.1rem 1.3rem 1.2rem; flex: 1; min-width: 0; }
 .card-body .card-when { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin: 0; display: flex; align-items: center; gap: .6rem; }
 .card-when::before { content: ""; width: 1.2rem; height: 1.5px; background: var(--accent); flex: none; }
+/* design engineering cards (WorkCard `craft`): faint graph paper behind the card,
+   and a round rubber stamp in coral ink that presses itself every few seconds,
+   harder on hover. Wide screens: in the empty space under the thumbnail. Phone:
+   over the thumbnail's bottom corner, anchored to the top of the card body. */
+.card--craft .card-link { background-color: color-mix(in srgb, var(--coral) 4%, var(--paper-2)); background-image: linear-gradient(color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px); background-size: 22px 22px; background-position: -1px -1px; }
+.craft-stamp { position: absolute; right: .9rem; top: -2.7rem; z-index: 2; width: 4rem; height: 4rem; color: var(--coral); filter: drop-shadow(2px 2px 0 var(--shadow-ink)); transform: rotate(-14deg); pointer-events: none; animation: craft-press 6s cubic-bezier(.3,.7,.4,1) 1.2s infinite; }
+.craft-stamp .craft-paper { fill: var(--paper-2); }
+.craft-stamp .craft-line { fill: none; stroke: currentColor; }
+.craft-stamp .craft-mark { fill: currentColor; }
+.craft-stamp text { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; fill: currentColor; }
+.card-link:hover .craft-stamp { animation: craft-thunk .45s cubic-bezier(.3,.7,.4,1) both; }
+.card--craft .card-body { position: relative; }
+@keyframes craft-press { 0%, 80%, 100% { transform: rotate(-14deg) scale(1); } 85% { transform: rotate(-10deg) scale(1.14) translateY(-3px); } 90% { transform: rotate(-15deg) scale(.94); } 95% { transform: rotate(-13deg) scale(1.02); } }
+@keyframes craft-thunk { 0% { transform: rotate(-14deg) scale(1); } 40% { transform: rotate(-8deg) scale(1.16) translateY(-4px); } 70% { transform: rotate(-16deg) scale(.92); } 100% { transform: rotate(-12deg) scale(1); } }
 .card-body h4 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); margin: 0; }
 .card-body p { font-size: .97rem; margin: 0; }
 /* Optional "My part" / "Shipped" rows under the hook: mono label left, short fragment right. */
@@ -396,6 +410,8 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
   .card-link { display: grid; grid-template-columns: 44% minmax(0, 1fr); align-items: start; }
   .shot { grid-area: 1 / 1; aspect-ratio: 600 / 440; margin: 1.3rem .5rem 1.3rem 1.3rem; }
   .card-body { grid-area: 1 / 2; align-self: stretch; padding: 1.3rem 1.5rem 1.3rem 1.4rem; }
+  .card--craft .card-body { position: static; }
+  .craft-stamp { right: auto; top: auto; left: calc(44% - 5.8rem); bottom: 1.6rem; width: 4.6rem; height: 4.6rem; }
 }
 @media (max-width: 639px) {
   .card { flex-basis: 84vw; }
