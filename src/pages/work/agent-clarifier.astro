@@ -28,6 +28,7 @@ const repo = 'https://github.com/Marigameo/agent-clarifier';
 const npm = 'https://www.npmjs.com/package/@marigameo/agent-clarifier';
 const site = 'https://marigameo.github.io/agent-clarifier/';
 const learnings = `${repo}/blob/main/process/00-research/learnings.md`;
+const skillsRepo = 'https://github.com/Marigameo/skills';
 const description = 'agent-clarifier, a weekend exercise in design engineering: rebuilding Claude’s clarifying-question card with care, learning when an agent should ask, and turning it into a skill. Built with Claude as a pair.';
 
 const reads = [
@@ -36,6 +37,11 @@ const reads = [
   { href: 'https://www.chatreact.ai/blog/ai-chatbot-clarifying-questions-response-boundaries', source: 'ChatReact', title: 'Clarifying questions and response boundaries' },
   { href: 'https://research.google/pubs/asking-clarifying-questions-for-preference-elicitation-with-large-language-models/', source: 'Google Research', title: 'Asking clarifying questions for preference elicitation' },
   { href: 'https://medium.com/design-bootcamp/practical-ways-to-resolve-ambiguity-in-your-chatbots-52c1fba849dc', source: 'Bootcamp', title: 'Practical ways to resolve ambiguity in your chatbots' },
+];
+
+const skills = [
+  { href: `${skillsRepo}/blob/main/skills/craft-component/SKILL.md`, name: 'craft-component', note: 'Build a component the careful way. Brief, plan, milestones, audit, release on a go.' },
+  { href: `${skillsRepo}/blob/main/skills/ask-clarifier/SKILL.md`, name: 'ask-clarifier', note: 'When to ask, when not to, and which question type fits.' },
 ];
 
 const phases = [
@@ -289,12 +295,16 @@ const lessons = [
       </header>
       <ul class="doodle-list slide-points">
         <li>The end goal is bigger than one card: <strong>a skill and a knowledge base for crafting UX elements like this, faster</strong>. This one took a whole weekend of learning and care. Can the next one take a day?</li>
-        <li>First up is a skill for the clarifier itself: <strong>when to use it, when not to, and which variant fits</strong>, plus the design engineering habits from this build. That way anyone can check their agent is using it right.</li>
+        <li>The first two are out: a skill for the clarifier itself, <strong>when to use it, when not to, and which variant fits</strong>, and one for the design engineering habits from this build. Now anyone can check their agent is using it right.</li>
       </ul>
-      <!-- TODO: link the skill repo here once it's public. -->
-      <div class="soon sk-box sk-lean-2">
-        <p class="soon-tag">Skill · coming soon</p>
-        <p>When to ask, when not to, which variant to use, and the design engineering habits behind every pixel.</p>
+      <div class="reads sk-box sk-lean-2">
+        <p class="reads-title">The skills</p>
+        <ul>
+          {skills.map((s) => (
+            <li><a href={s.href} rel="noopener">{s.name}</a><span>{s.note}</span></li>
+          ))}
+        </ul>
+        <p class="reads-foot"><a href={skillsRepo} rel="noopener">The skills <span class="nowrap">repo<Icon name="arrow-right" /></span></a></p>
       </div>
       <p class="next"><span>For the card itself</span>A VoiceOver pass, and a real phone with its keyboard.</p>
     </section>
@@ -376,9 +386,9 @@ const lessons = [
   .next span { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
   @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
 
-  /* What I read, as a small card of links, and the skill that's coming. */
-  .reads, .soon { margin-top: var(--space-3); padding: 1rem 1.1rem 1.1rem; max-width: 40rem; }
-  .reads-title, .soon-tag { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  /* What I read, and the skills, as small cards of links. */
+  .reads { margin-top: var(--space-3); padding: 1rem 1.1rem 1.1rem; max-width: 40rem; }
+  .reads-title { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
   .reads ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
   .reads li a { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
   .reads li a:hover { text-decoration-color: var(--ink); }
@@ -386,7 +396,6 @@ const lessons = [
   .reads-foot { margin: .9rem 0 0 !important; max-width: none; }
   .reads-foot a { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); text-decoration: none; }
   .reads-foot .nowrap { white-space: nowrap; }
-  .soon p:not(.soon-tag) { margin: 0 !important; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
 
   .closer { margin-top: var(--space-5); }
 </style>
