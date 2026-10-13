@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Palm-leaf skills page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&family=Noto+Serif+Tamil:wght@500;600&display=swap">
+<style>
+/* Round 04: the palm-leaf story picked from round 03, with the hero redrawn to read
+   as a real olai bundle (references in ./references/). Round 03, for the record: */
+/* Concept board, round 03, for the /skills/ page. Rounds 01–02 invented new
+   interactions; the feedback was that the site never does that. So this round keeps
+   one plain layout, the experiments page's (a hero, then groups of cards), and only
+   changes the story told over it: the hero drawing, the heading, the group names and
+   a small touch on each card. Eight skills (four real, four examples) in every one. */
+:root {
+  color-scheme: light;
+  --paper: #fff9f1; --paper-2: #ffffff; --sand: #eee8d2; --sand-2: #e4dcc2;
+  --ink: #060606; --ink-soft: rgba(6,6,6,.72); --ink-faint: rgba(6,6,6,.5); --line: rgba(6,6,6,.12);
+  --coral: #d9573f; --yellow: #ffda3f; --sticky-ink: #2a2610;
+  --blue: #2f5bd8; --teal: #1a9a86; --violet: #7856f0;
+  --shadow-ink: var(--ink);
+  --leaf: #ead6a0; --leaf-2: #d9bf7c; --steel: #dcdad4; --steel-2: #b9b5ab;
+  --olai-a: #efd9a2; --olai-b: #dcbd7a; --olai-edge: #b48c4c; --olai-script: #4a3418;
+  --wood: #8a5a2b; --wood-2: #6e4520; --cord: #b8322a; --brass: #c09a58; --flame: #ffb43a; --marigold: #f39a1f;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-sub: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-hand: "Caveat", "Bradley Hand", cursive;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
+  --ink: #f2ede3; --ink-soft: rgba(242,237,227,.74); --ink-faint: rgba(242,237,227,.5); --line: rgba(242,237,227,.14);
+  --coral: #ff9a7f; --yellow: #f4cf4d; --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+  --olai-a: #cdb57f; --olai-b: #b89a5e; --olai-edge: #8f6c36; --olai-script: #3a2812; --wood: #6b4422; --wood-2: #553419; --cord: #c8443a; --brass: #a8874c;
+  --shadow-ink: #07080b; --leaf: #4d4128; --leaf-2: #3b311d; --steel: #4a4e58; --steel-2: #33363e;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
+    --ink: #f2ede3; --ink-soft: rgba(242,237,227,.74); --ink-faint: rgba(242,237,227,.5); --line: rgba(242,237,227,.14);
+    --coral: #ff9a7f; --yellow: #f4cf4d; --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+    --olai-a: #cdb57f; --olai-b: #b89a5e; --olai-edge: #8f6c36; --olai-script: #3a2812; --wood: #6b4422; --wood-2: #553419; --cord: #c8443a; --brass: #a8874c;
+    --shadow-ink: #07080b; --leaf: #4d4128; --leaf-2: #3b311d; --steel: #4a4e58; --steel-2: #33363e;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-body); line-height: 1.55; letter-spacing: -.01em; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; line-height: 1.05; letter-spacing: -.02em; margin: 0 0 .8rem; text-wrap: balance; }
+h1 { font-size: clamp(2.5rem, 6.4vw, 4.2rem); letter-spacing: -.03em; }
+p { margin: 0 0 1rem; max-width: 64ch; color: var(--ink-soft); }
+a { color: var(--ink); }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 72rem; margin: 0 auto; padding: 0 max(1rem, 3vw); }
+.eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 .9rem; display: flex; align-items: center; gap: .6rem; }
+.eyebrow::before { content: ""; width: 1.6rem; height: 1px; background: var(--ink-faint); }
+.hand { font-family: var(--font-hand); font-weight: 700; }
+svg.art { width: 100%; height: auto; overflow: visible; }
+svg.art .ink { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+svg.art .thin { stroke-width: 1.6; }
+svg.art .ink:not([fill]) { fill: none; }
+svg.art .ink.paper { fill: var(--paper-2); }
+svg.art .note { font-family: var(--font-hand); font-weight: 700; font-size: 22px; fill: var(--coral); }
+
+/* ---- board chrome ---- */
+.top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1.5px dashed var(--line); }
+.top-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding-block: .6rem; }
+.top-row nav { display: flex; flex-wrap: wrap; gap: .4rem; }
+.top-row nav a { font-family: var(--font-mono); font-size: .72rem; color: var(--ink); text-decoration: none; padding: .3rem .65rem; border: 1.5px solid var(--line); border-radius: 999px; }
+.top-row nav a:hover { border-color: var(--ink); }
+.pill { margin-inline-start: auto; padding: .35rem .8rem; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--paper-2); font-size: .82rem; font-weight: 500; }
+.board-intro { padding-block: 2.5rem .5rem; }
+.board-intro h2 { font-size: clamp(1.6rem, 3.6vw, 2.2rem); }
+.variant-tag { display: inline-block; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; padding: .3rem .7rem; border-radius: 999px; background: var(--ink); color: var(--paper); margin-bottom: 1rem; }
+.why { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .6rem 1.5rem; padding: 1rem 1.1rem; margin-top: 2.5rem; border: 1.5px dashed var(--ink-faint); border-radius: 10px; }
+.why p { margin: 0; font-size: .9rem; }
+.why b { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); font-weight: 400; margin-bottom: .2rem; }
+
+/* ---- the page skeleton every variant shares (as on /experiments/) ---- */
+.variant { padding-block: 3.5rem 4rem; border-top: 3px double var(--line); }
+.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 2rem; align-items: center; margin-bottom: 2.5rem; }
+.hero .lede { font-size: 1.02rem; }
+.hero .install { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-top: .4rem; }
+.hero code { font-family: var(--font-mono); font-size: .8rem; padding: .45rem .75rem; border: 1.5px solid var(--ink); border-radius: 8px; background: var(--paper-2); box-shadow: 2px 2px 0 var(--shadow-ink); }
+.hero .install a { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); text-decoration: none; }
+.hero-art { position: relative; }
+.hero-art .hint { position: absolute; font-family: var(--font-hand); font-size: 1.2rem; color: var(--coral); transform: rotate(-6deg); }
+@media (max-width: 759px) { .hero { grid-template-columns: 1fr; } .hero-art { max-width: 24rem; margin: 0 auto; } }
+
+.group { margin-top: 2.5rem; }
+.group-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1.5px dashed var(--line); }
+.group-head h3 { font-size: 1.6rem; margin: 0; }
+.group-head h3 span { font-family: var(--font-mono); font-size: .75rem; color: var(--ink-faint); margin-inline-start: .4rem; letter-spacing: 0; }
+.group-head p { margin: 0; font-size: .95rem; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1.1rem; }
+.card { position: relative; display: flex; flex-direction: column; gap: .45rem; padding: 1rem 1.1rem 1rem; border: 1.5px solid var(--ink); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--paper-2); box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s ease; }
+.card:hover { transform: translateY(-3px); }
+.card.ex { border-style: dashed; box-shadow: none; background: transparent; }
+.card .top-line { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.card .name { font-family: var(--font-mono); font-size: .95rem; font-weight: 500; }
+.card .status { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; padding: .2rem .45rem; border-radius: 999px; background: var(--sand-2); color: var(--ink-soft); white-space: nowrap; }
+.card .status.pub { background: color-mix(in srgb, var(--teal) 22%, var(--paper-2)); color: var(--ink); }
+.card .hook { margin: 0; color: var(--ink); font-size: .93rem; line-height: 1.45; }
+.card dl { margin: .2rem 0 0; display: grid; gap: .25rem; }
+.card dl div { display: grid; grid-template-columns: 6.6rem 1fr; gap: .5rem; font-size: .84rem; }
+.card dt { font-family: var(--font-hand); font-size: 1.1rem; line-height: 1.15; color: var(--coral); }
+.card dd { margin: 0; color: var(--ink-soft); }
+.card .go { margin-top: auto; padding-top: .4rem; font-family: var(--font-hand); font-size: 1.12rem; color: var(--coral); }
+.card .go::after { content: " →"; }
+
+/* ---- A · palm leaves: long leaf cards, two string holes ---- */
+.v-olai .card { border-radius: 40px 14px 40px 14px / 14px 40px 14px 40px; background: linear-gradient(180deg, var(--leaf), var(--leaf-2)); padding-inline: 2.4rem; }
+.v-olai .card::before, .v-olai .card::after { content: ""; position: absolute; top: 50%; width: .7rem; height: .7rem; margin-top: -.35rem; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--ink); }
+.v-olai .card::before { left: .9rem; } .v-olai .card::after { right: .9rem; }
+.v-olai .card.ex { background: transparent; }
+.v-olai .card .hook { font-size: .9rem; }
+.v-olai .card dl, .v-olai .card .go { position: relative; }
+.v-olai .card .status { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+
+/* ---- B · recipe cards: red header rule, ruled lines ---- */
+.v-recipe .card { border-radius: 4px; padding-top: 1.1rem; background-image: repeating-linear-gradient(0deg, transparent 0 26px, color-mix(in srgb, var(--blue) 14%, transparent) 26px 27px); background-color: var(--paper-2); }
+.v-recipe .card .top-line { padding-bottom: .45rem; border-bottom: 1.5px solid #d9573f; }
+.v-recipe .card .name { font-family: var(--font-hand); font-size: 1.5rem; line-height: 1; font-weight: 700; }
+.v-recipe .card.ex { background-color: transparent; }
+
+/* ---- C · tiffin: tier labels, steel band on each card ---- */
+.v-tiffin .group-head h3::before { content: attr(data-tier); display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; margin-inline-end: .6rem; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--steel); font-family: var(--font-mono); font-size: .75rem; vertical-align: .3rem; }
+.v-tiffin .card { border-radius: 14px; border-top: 7px solid var(--steel-2); }
+.v-tiffin .card.ex { border-top-width: 1.5px; }
+
+/* ---- D · songbook: track numbers, a chord box ---- */
+.v-song .card { padding-inline-start: 3.6rem; }
+.v-song .card .track { position: absolute; left: 1rem; top: .95rem; font-family: var(--font-display); font-size: 1.7rem; line-height: 1; color: var(--c); }
+.v-song .card .chord { position: absolute; left: 1.05rem; top: 3.3rem; width: 1.5rem; height: 1.9rem; border: 1.5px solid var(--ink-faint); border-top-width: 3px; background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), var(--ink-faint) calc(25% - 1px) 25%), repeating-linear-gradient(0deg, transparent 0 calc(33% - 1px), var(--ink-faint) calc(33% - 1px) 33%); }
+.v-song .card .chord i { position: absolute; width: .4rem; height: .4rem; border-radius: 50%; background: var(--ink); }
+
+footer.end { padding-block: 3rem 4rem; border-top: 1.5px dashed var(--line); }
+@media (max-width: 459px) { .card dl div { grid-template-columns: 1fr; gap: 0; } .v-olai .card { padding-inline: 2rem; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a href="/skills/story/" style="position:fixed;left:12px;bottom:12px;z-index:99;display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .85rem;font:500 .8rem 'Space Grotesk',sans-serif;color:#060606;background:#ffda3f;border:1.5px solid #060606;border-radius:999px;box-shadow:2px 2px 0 #060606;text-decoration:none">← Back to the story <span style="font:400 .62rem 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;opacity:.7">archived board · Round 04 · The palm-leaf drawing</span></a>
+
+<div class="top">
+  <div class="wrap top-row">
+    <p class="eyebrow" style="margin:0">Skills page · round 04 · palm leaves</p>
+    <button class="pill" type="button" data-theme-toggle aria-label="Toggle dark mode">◐</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="board-intro">
+    <p class="eyebrow">Skills page · concept board · round 04</p>
+    <h2>Palm leaves, drawn closer to the real thing</h2>
+    <p>Only the hero drawing changed from round 03. It now reads as an olai bundle: leaves stacked under a written top leaf, a red cord knotted in the middle with a beaded tassel, a wooden board beneath, the iron stylus (ezhuthani), a clay lamp and marigolds. The cards and copy are as before.</p>
+    <p>The top leaf carries Thirukkural 391, <span lang="ta">கற்க கசடறக் கற்பவை கற்றபின் நிற்க அதற்குத் தக</span>: learn what’s worth learning, thoroughly, then live by it. It felt right for a page of skills, and it’s easy to swap.</p>
+  </header>
+
+  <!-- the four variants are rendered from one data list -->
+  <div data-variants></div>
+</main>
+
+<footer class="wrap end">
+  <p class="hand" style="font-size:1.4rem; color: var(--coral); margin:0 0 .4rem">Closer?</p>
+  <p>If the drawing works, the next step is the real page copy, as options, before anything goes into the site.</p>
+</footer>
+
+<script>
+const ACC = { craft: 'var(--coral)', use: 'var(--blue)', write: 'var(--teal)', ship: 'var(--violet)' };
+const SKILLS = [
+  { name: 'craft-component', cat: 'craft', status: 'pub', hook: 'Build a UI component the careful way: plan first, stop for a go, audit, then ship.', when: 'A card, widget or any self-contained piece of UI.', pairs: 'Emil’s and Jakub’s skills' },
+  { name: 'motion-review', cat: 'craft', status: 'ex', hook: 'Example: every animation earns its place or goes.', when: 'Anything that moves.', pairs: 'craft-component' },
+  { name: 'empty-states', cat: 'craft', status: 'ex', hook: 'Example: design the first-run screen, not just the full one.', when: 'A new screen or dashboard.', pairs: 'craft-component' },
+  { name: 'ask-clarifier', cat: 'use', status: 'pub', hook: 'Wire agent-clarifier in, so your agent asks before it acts, and only when it matters.', when: 'A chat agent needs a few answers mid-task.', pairs: 'craft-component' },
+  { name: 'share-my-work', cat: 'write', status: 'repo', hook: 'Turn rough notes into a portfolio story in my voice. Never invents a fact.', when: 'A project is done and you have bullets, not a story.', pairs: 'linkedin-teaser' },
+  { name: 'microcopy', cat: 'write', status: 'ex', hook: 'Example: buttons say what happens next.', when: 'Any words inside a UI.', pairs: 'craft-component' },
+  { name: 'linkedin-teaser', cat: 'ship', status: 'repo', hook: 'A short, personal post and a 22-second sketch reel for a published story.', when: 'A story is out and you want to share it.', pairs: 'share-my-work' },
+  { name: 'release-notes', cat: 'ship', status: 'ex', hook: 'Example: tell people what changed for them.', when: 'A version goes out.', pairs: 'linkedin-teaser' },
+];
+const STATUS = { pub: 'Public', repo: 'Not public yet', ex: 'Example' };
+const CATS = ['craft', 'use', 'write', 'ship'];
+
+/* ---------- hero drawings ---------- */
+const bot = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">
+  <line x1="0" y1="-34" x2="0" y2="-22" class="ink"/><circle cx="0" cy="-38" r="5" fill="var(--coral)" class="ink thin"/>
+  <rect x="-26" y="-22" width="52" height="40" rx="12" class="ink paper"/>
+  <circle cx="-10" cy="-3" r="4" fill="var(--ink)"/><circle cx="10" cy="-3" r="4" fill="var(--ink)"/>
+  <path d="M-7 8q7 5 14 0" class="ink"/>
+  <rect x="-20" y="20" width="40" height="34" rx="8" class="ink paper"/></g>`;
+
+const ART = {
+  olai: `<svg class="art olai-art" viewBox="0 0 540 360" role="img" aria-label="A bundle of palm-leaf manuscripts tied with a red cord, the top leaf written in Tamil, with an iron stylus, a clay lamp and marigolds beside it.">
+    <defs>
+      <linearGradient id="olai-face" x1="0" x2="1">
+        <stop offset="0" stop-color="var(--olai-edge)"/><stop offset=".12" stop-color="var(--olai-b)"/><stop offset=".3" stop-color="var(--olai-a)"/>
+        <stop offset=".7" stop-color="var(--olai-a)"/><stop offset=".9" stop-color="var(--olai-b)"/><stop offset="1" stop-color="var(--olai-edge)"/>
+      </linearGradient>
+      <linearGradient id="olai-side" x1="0" x2="1">
+        <stop offset="0" stop-color="var(--olai-edge)"/><stop offset=".2" stop-color="var(--olai-b)"/><stop offset=".8" stop-color="var(--olai-b)"/><stop offset="1" stop-color="var(--olai-edge)"/>
+      </linearGradient>
+    </defs>
+    <ellipse cx="270" cy="270" rx="250" ry="14" fill="var(--ink)" opacity=".08"/>
+
+    <!-- the wooden board the bundle rests on -->
+    <path d="M22 226 Q16 254 44 258 H478 Q506 254 500 226 Z" fill="var(--wood)" class="ink"/>
+    <path d="M60 242 H290 M330 250 H470 M90 252 H220" class="ink thin" stroke="var(--wood-2)" opacity=".7"/>
+
+    <!-- the stack, seen from the side: one thin strip per leaf, ends not quite aligned -->
+    ${Array.from({ length: 11 }, (_, k) => { const i = 10 - k; const y = 180 + i * 4.2; const l = 26 + ((i * 7) % 5) * 2 - 4; const r = 496 - ((i * 5) % 4) * 3;
+      return `<rect x="${l}" y="${y.toFixed(1)}" width="${r - l}" height="4.6" rx="2.3" fill="var(--olai-${i % 2 ? 'b' : 'a'})" stroke="var(--olai-edge)" stroke-width="1"/>`; }).join('')}
+    <path d="M28 180 V226 M494 178 V226" class="ink thin" opacity=".0"/>
+
+    <!-- the top leaf, written on -->
+    <path d="M78 128 H478 Q504 130 496 153 Q488 177 454 178 H50 Q20 177 28 154 Q36 128 78 128 Z" fill="url(#olai-face)" class="ink"/>
+    <g fill="var(--olai-script)" stroke="none">
+      <ellipse cx="112" cy="153" rx="5.5" ry="3.6"/><ellipse cx="420" cy="153" rx="5.5" ry="3.6"/>
+    </g>
+    <g transform="translate(0 153) skewX(-26) translate(0 -153)" style="font-family: 'Noto Serif Tamil', serif; font-weight: 500; fill: var(--olai-script)">
+      <path d="M136 132 V174 M402 132 V174" class="ink thin" stroke="var(--olai-script)" opacity=".5"/>
+      <text x="146" y="148" font-size="12.5">கற்க கசடறக் கற்பவை</text>
+      <text x="146" y="167" font-size="12.5">கற்றபின் நிற்க அதற்குத் தக</text>
+    </g>
+
+    <!-- the cord: around the middle, knotted on top, a beaded tassel hanging -->
+    <path d="M372 128 L352 178 L352 226 M384 128 L364 178 L364 226" stroke="var(--cord)" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M364 148 c-14 -10 -20 6 -6 10 c-16 4 -10 20 4 10 c4 14 20 8 10 -4 c14 -2 12 -18 -2 -14 c0 -14 -18 -12 -10 0" fill="none" stroke="var(--cord)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M366 162 C380 190 396 206 390 236 C386 256 378 270 382 292" fill="none" stroke="var(--cord)" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="389" cy="246" r="5.5" fill="var(--brass)" class="ink thin"/><circle cx="384" cy="262" r="5.5" fill="var(--brass)" class="ink thin"/>
+    <path d="M382 290 l-8 22 M382 290 l-3 24 M382 290 l2 24 M382 290 l7 22 M382 290 l11 19" stroke="var(--cord)" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- the stylus (ezhuthani) -->
+    <g transform="rotate(-6 200 318)">
+      <path d="M52 312 H90 L96 308 H104 L110 312 H322 L360 318 L322 324 H110 L104 328 H96 L90 324 H52 Q44 318 52 312 Z" fill="var(--brass)" class="ink thin"/>
+      <path d="M64 312 V324 M72 312 V324 M80 312 V324" class="ink thin"/>
+    </g>
+
+    <!-- a clay lamp and two marigolds -->
+    <path d="M436 304 Q466 334 500 304 L512 298 Q506 308 500 304" fill="#b5653a" class="ink"/>
+    <path d="M436 304 Q468 294 500 304" class="ink thin"/>
+    <path d="M507 300 C499 282 507 270 511 262 C517 272 523 284 507 300 Z" fill="var(--flame)" class="ink thin"/>
+    ${[[418, 330, 12], [520, 240, 11]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="var(--marigold)" class="ink thin" stroke-dasharray="3 2"/><circle cx="${x}" cy="${y}" r="${r * .45}" fill="#e07a10" class="ink thin"/>`).join('')}
+
+    <text x="150" y="70" class="note" transform="rotate(-4 150 70)">one leaf, one skill</text>
+    <path d="M200 82 q-12 14 -10 38" class="ink thin" stroke="var(--coral)"/><path d="M184 112 l6 10 l7 -9" class="ink thin" stroke="var(--coral)"/>
+  </svg>`,
+  recipe: `<svg class="art" viewBox="0 0 420 300" aria-hidden="true">
+    <path d="M60 60l140 10v190L60 250z" class="ink paper"/><path d="M200 70l150-14v190l-150 14z" class="ink paper"/>
+    <path d="M200 70v190" class="ink"/>
+    <text x="78" y="102" class="note" style="fill: var(--ink)" transform="rotate(3 78 102)">craft-component</text>
+    <path d="M80 122h96M80 142h80M80 162h100M80 182h70M80 202h90" class="ink thin" stroke-dasharray="1 0"/>
+    <path d="M220 104h108M220 124h90M220 144h104M220 164h70" class="ink thin"/>
+    <rect x="214" y="186" width="70" height="40" rx="3" fill="var(--yellow)" class="ink thin" transform="rotate(-4 249 206)"/>
+    <text x="222" y="212" class="note" style="fill: #2a2610; font-size: 17px" transform="rotate(-4 249 206)">no guesses!</text>
+    <path d="M330 250h70l-8 30h-54z" fill="var(--steel)" class="ink"/><path d="M340 240c0-10 10-10 10-20M360 240c0-10 10-10 10-20M380 240c0-10 10-10 10-20" class="ink thin"/>
+    <text x="250" y="40" class="note" transform="rotate(-4 250 40)">written down, so it tastes the same</text>
+  </svg>`,
+  tiffin: `<svg class="art" viewBox="0 0 420 320" aria-hidden="true">
+    <path d="M150 40c0-28 120-28 120 0" class="ink"/><path d="M140 40h140" class="ink"/>
+    <path d="M135 40v250M285 40v250" class="ink thin"/>
+    ${['Craft', 'Use', 'Write', 'Ship'].map((t, i) => `<g transform="translate(150 ${55 + i * 60})">
+      <rect width="120" height="54" rx="10" fill="var(--steel)" class="ink"/>
+      <path d="M0 12h120" class="ink thin"/>
+      <text x="60" y="40" text-anchor="middle" style="font-family: var(--font-mono); font-size: 13px; fill: var(--ink)">${t}</text></g>`).join('')}
+    ${bot(345, 250, .85)}
+    <path d="M300 232l-20-6" class="ink thin"/>
+    <text x="10" y="120" class="note" transform="rotate(-6 10 120)">packed at home,</text>
+    <text x="14" y="148" class="note" transform="rotate(-6 14 148)">opened anywhere</text>
+  </svg>`,
+  song: `<svg class="art" viewBox="0 0 420 300" aria-hidden="true">
+    <path d="M200 270v-60M150 290l50-20 50 20" class="ink"/>
+    <rect x="80" y="30" width="240" height="185" rx="4" class="ink paper" transform="rotate(-2 200 120)"/>
+    <g transform="rotate(-2 200 120)">
+      <text x="100" y="62" style="font-family: var(--font-display); font-size: 22px; fill: var(--ink)">craft-component</text>
+      ${[0, 1, 2].map((i) => `<g transform="translate(${104 + i * 66} 78)">
+        <rect width="36" height="44" class="ink thin paper"/><path d="M0 0h36" class="ink" />
+        <path d="M9 0v44M18 0v44M27 0v44M0 11h36M0 22h36M0 33h36" class="ink thin" opacity=".5"/>
+        <circle cx="${[9, 18, 27][i]}" cy="${[16, 27, 5][i]}" r="4" fill="var(--ink)"/>
+        <text x="18" y="60" text-anchor="middle" class="note" style="fill: var(--ink); font-size: 16px">${['plan', 'build', 'audit'][i]}</text></g>`).join('')}
+      <path d="M100 160h200M100 178h160M100 196h180" class="ink thin"/>
+    </g>
+    <text x="250" y="22" class="note" transform="rotate(-4 250 22)">play it my way</text>
+  </svg>`,
+};
+
+/* ---------- the four stories ---------- */
+const VARIANTS = [
+  { id: 'olai', cls: 'v-olai', tag: 'A · Palm leaves (olai chuvadi)',
+    eyebrow: 'Skills · the palm-leaf bundle', title: 'Written down, so it lasts.',
+    lede: 'Long before books, Tamil knowledge was scratched onto palm leaves and tied into bundles, so the next person could pick it up and carry on. A skill is the same idea, for an agent: what I’ve learnt, written down so it can do the work my way. Every leaf here is one skill, and the bundle keeps growing.',
+    group: { craft: ['Leaves on craft', 'Building UI the careful way.'], use: ['Leaves on use', 'Working with the things I’ve made.'], write: ['Leaves on writing', 'Telling the story of the work.'], ship: ['Leaves on shipping', 'Getting it out and seen.'] },
+    labels: ['Read it when', 'Tied with'], go: 'Read the leaf',
+    why: [['The story', 'Knowledge written down to outlive the person who knew it. Tamil, and quietly next to the coconut palm in your footer.'], ['At 20+ skills', 'More leaves on the bundle: groups get longer, nothing else changes.'], ['Risk', 'Needs the lede to explain olai once; without it the leaf cards are just pretty.']] },
+];
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let track = 0;
+function card(s, v) {
+  track++;
+  const chord = v.id === 'song' ? `<span class="track" style="--c:${ACC[s.cat]}">${String(track).padStart(2, '0')}</span><span class="chord" aria-hidden="true"><i style="left:${(track * 7) % 3 * 6 + 2}px; top:${(track * 5) % 3 * 9 + 3}px"></i></span>` : '';
+  return `<li class="card${s.status === 'ex' ? ' ex' : ''}">
+    ${chord}
+    <div class="top-line"><span class="name">${esc(s.name)}</span><span class="status${s.status === 'pub' ? ' pub' : ''}">${STATUS[s.status]}</span></div>
+    <p class="hook">${esc(s.hook)}</p>
+    <dl><div><dt>${v.labels[0]}</dt><dd>${esc(s.when)}</dd></div><div><dt>${v.labels[1]}</dt><dd>${esc(s.pairs)}</dd></div></dl>
+    <span class="go">${v.go}</span></li>`;
+}
+document.querySelector('[data-variants]').innerHTML = VARIANTS.map((v) => {
+  track = 0;
+  return `<section class="variant ${v.cls}" id="${v.id}" aria-labelledby="${v.id}-t">
+    
+    <div class="hero">
+      <div>
+        <p class="eyebrow">${v.eyebrow} · ${SKILLS.length} skills</p>
+        <h1 id="${v.id}-t">${v.title}</h1>
+        <p class="lede">${v.lede}</p>
+        <div class="install"><code>npx skills@latest add marigameo/skills</code><a href="https://github.com/Marigameo/skills">on GitHub →</a></div>
+      </div>
+      <div class="hero-art">${ART[v.id]}</div>
+    </div>
+    ${CATS.map((c) => { const list = SKILLS.filter((s) => s.cat === c); const [name, tagline] = v.group[c];
+      return `<section class="group"><header class="group-head"><h3 ${v.tiers ? `data-tier="${v.tiers[c]}"` : ''}>${name}<span>${list.length}</span></h3><p>${tagline}</p></header>
+        <ul class="cards">${list.map((s) => card(s, v)).join('')}</ul></section>`; }).join('')}
+    <div class="why">${v.why.map(([b, t]) => `<p><b>${b}</b>${t}</p>`).join('')}</div>
+  </section>`;
+}).join('');
+
+document.querySelector('[data-theme-toggle]').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+---
+/* The palm-leaf bundle: my skills for coding agents. Laid out like the experiments
+   page (a hero, then groups of cards), with the story carried by the drawing and the
+   names: olai chuvadi, the palm-leaf manuscripts Tamil knowledge was written on and
+   tied into bundles so the next person could carry on. Each skill is a leaf that
+   links to its SKILL.md on GitHub. The pin in the hero opens the story of
+   how this page came about (/skills/story/). All content comes from src/data/skills.ts. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import OlaiBundle from '../../components/sketches/skills/OlaiBundle.astro';
+import { groups, skills, skillsRepo, installCmd, skillHref } from '../../data/skills';
+import { site } from '../../data/site';
+
+const description = 'Skills for coding agents, written down like palm-leaf manuscripts: how I build UI components with care, and how to use the things I’ve made.';
+const shelves = groups.map((g) => ({ ...g, leaves: skills.filter((s) => s.group === g.id) })).filter((g) => g.leaves.length);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Skills',
+  url: `${site.url}/skills/`,
+  description,
+  author: { '@type': 'Person', name: site.name, url: `${site.url}/` },
+};
+---
+<BaseLayout title={`Skills for coding agents | ${site.name}`} description={description} jsonLd={jsonLd}>
+  <main id="main" class="wrap leaves">
+    <header class="leaves-hero">
+      <div>
+        <a class="breadcrumb" href="/"><Icon name="arrow-right" />Home</a>
+        <p class="eyebrow"><span><span>Skills · the palm-leaf bundle</span> · <span>{skills.length} leaves</span></span></p>
+        <h1>Written down, so it lasts.</h1>
+        <p class="lede">Long before books, Tamil knowledge was scratched onto palm leaves and tied into bundles, so the next person could pick it up and carry on. A skill is the same idea, for an agent: <mark class="hl">what I’ve learnt, written down</mark> so it can do the work my way. Every leaf here is one skill, and the bundle keeps growing.</p>
+        <div class="install">
+          <code>{installCmd}</code>
+          <a href={skillsRepo} rel="noopener">On GitHub<Icon name="external" class="doodle--thin" /></a>
+        </div>
+      </div>
+      <div class="leaves-art">
+        <OlaiBundle />
+        <a class="story-pin" href="/skills/story/">
+          <span class="pin-btn" aria-hidden="true"><Icon name="pin" /></span>
+          <span class="story-pin-hint"><Icon name="arrow-curly" class="story-pin-arrow" /><span class="hand">how this page came about</span></span>
+        </a>
+      </div>
+    </header>
+
+    {shelves.map((g) => (
+      <section class="bundle" id={g.id} aria-labelledby={`${g.id}-title`}>
+        <header class="bundle-head">
+          <h2 id={`${g.id}-title`}>{g.name}<span>{g.leaves.length}</span></h2>
+          <p>{g.tagline}</p>
+        </header>
+        <ul class="leaf-list">
+          {g.leaves.map((s) => (
+            <li class="leaf">
+              <a class="leaf-card" href={skillHref(s)} rel="noopener">
+                <span class="leaf-name">{s.name}</span>
+                <span class="leaf-hook">{s.hook}</span>
+                <span class="leaf-facts">
+                  <span><b>Read it when</b>{s.when}</span>
+                  <span><b>Tied with</b>{s.tied}</span>
+                </span>
+                <span class="leaf-go">Read the leaf<Icon name="arrow-right" /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <p class="leaves-thanks"><span>Thanks</span>Emil Kowalski’s skills got me started on these, and <code>craft-component</code> leans on his and Jakub Krehel’s for its audits. Install those too.</p>
+  </main>
+</BaseLayout>
+
+<style>
+  .leaves { padding-bottom: var(--space-5); }
+  .leaves-hero { display: grid; grid-template-columns: 1fr minmax(18rem, 34rem); align-items: center; gap: 1rem 3rem; padding-top: var(--space-4); }
+  .leaves-hero h1 { margin-top: .3rem; }
+  .leaves-hero .eyebrow { max-width: none; }
+  .leaves-hero .eyebrow > span > span { white-space: nowrap; }
+  .install { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: var(--space-3); }
+  .install code { padding: .5rem .8rem; font-family: var(--font-mono); font-size: .82rem; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 8px; box-shadow: 2px 2px 0 var(--shadow-ink); overflow-wrap: anywhere; }
+  .install a { display: inline-flex; align-items: center; gap: .3rem; font-weight: 500; }
+  .install a :global(.doodle) { width: .9rem; height: .9rem; }
+
+  /* The drawing, with the pin to the story of how this page came about. The pin
+     borrows the footer's pulsing .pin-btn, bigger, with a hand-written nudge. */
+  .leaves-art { position: relative; padding-top: 3.2rem; }
+  .story-pin { position: absolute; top: 0; left: 46%; display: flex; align-items: flex-start; gap: .1rem; color: var(--coral); text-decoration: none; }
+  .story-pin .pin-btn { width: 2.8rem; height: 2.8rem; flex: none; }
+  .story-pin .pin-btn :global(.doodle) { width: 1.4rem; height: 1.4rem; }
+  .story-pin:hover .pin-btn, .story-pin:focus-visible .pin-btn { background: var(--coral); color: var(--paper-2); transform: rotate(0) scale(1.08); }
+  .story-pin:hover .pin-btn::after { animation: none; opacity: 0; }
+  .story-pin:focus-visible { outline: none; }
+  .story-pin:focus-visible .pin-btn { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .story-pin-hint { display: flex; align-items: flex-start; white-space: nowrap; }
+  .story-pin-hint :global(.story-pin-arrow) { width: 2.5rem; height: 1.9rem; stroke-width: 2; transform: scaleX(-1) rotate(-20deg) translateY(.55rem); flex: none; }
+  .story-pin-hint .hand { font-size: 1.3rem; display: inline-block; transform: rotate(-5deg); margin-top: -.2rem; }
+  .story-pin:hover .hand { text-decoration: underline; text-underline-offset: .2em; }
+
+  .bundle { margin-top: var(--space-5); }
+  .bundle-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; margin-bottom: var(--space-3); padding-bottom: .6rem; border-bottom: 1.5px dashed var(--line); }
+  .bundle-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.2rem); margin: 0; }
+  .bundle-head h2 span { margin-left: .5rem; font-family: var(--font-mono); font-size: .8rem; letter-spacing: 0; color: var(--ink-faint); }
+  .bundle-head p { margin: 0; }
+
+  /* Each skill is a leaf: long, rounded ends, tan with darker tips, two string holes. */
+  .leaf-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 1.4rem; }
+  .leaf-card {
+    --olai-a: #efd9a2; --olai-b: #dcbd7a; --olai-edge: #b48c4c; --olai-ink: #2e2210;
+    position: relative; height: 100%; display: flex; flex-direction: column; gap: .5rem; padding: 1.1rem 2.6rem 1.1rem;
+    color: var(--olai-ink); text-decoration: none;
+    background: linear-gradient(90deg, var(--olai-edge), var(--olai-b) 9%, var(--olai-a) 24%, var(--olai-a) 76%, var(--olai-b) 91%, var(--olai-edge));
+    border: 1.5px solid var(--ink); border-radius: 44px 16px 44px 16px / 16px 44px 16px 44px; box-shadow: 3px 3px 0 var(--shadow-ink);
+    transition: transform .2s cubic-bezier(.2,.8,.2,1);
+  }
+  .leaf-card::before, .leaf-card::after { content: ""; position: absolute; top: 50%; width: .7rem; height: .7rem; margin-top: -.35rem; border-radius: 50%; background: var(--olai-ink); opacity: .75; }
+  .leaf-card::before { left: 1rem; } .leaf-card::after { right: 1rem; }
+  .leaf-card:hover { transform: translateY(-4px) rotate(-.4deg); }
+  .leaf:nth-child(2n) .leaf-card { border-radius: 16px 44px 16px 44px / 44px 16px 44px 16px; }
+  .leaf-name { font-family: var(--font-mono); font-size: 1rem; font-weight: 500; }
+  .leaf-hook { font-size: .98rem; line-height: 1.45; }
+  .leaf-facts { display: grid; gap: .3rem; font-size: .87rem; line-height: 1.4; color: color-mix(in srgb, var(--olai-ink) 82%, transparent); }
+  .leaf-facts span { display: grid; grid-template-columns: 6.4rem 1fr; gap: .5rem; }
+  .leaf-facts b { font-family: var(--font-hand); font-size: 1.12rem; line-height: 1.15; font-weight: 700; color: #a8432f; }
+  .leaf-go { margin-top: auto; padding-top: .3rem; display: inline-flex; align-items: center; gap: .3rem; font-family: var(--font-hand); font-size: 1.2rem; font-weight: 700; color: #a8432f; }
+  .leaf-go :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+  :global([data-theme="dark"]) .leaf-card { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; --olai-ink: #241a0b; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .leaf-card { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; --olai-ink: #241a0b; } }
+
+  .leaves-thanks { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); max-width: 60ch; font-size: .95rem; }
+  .leaves-thanks span { display: block; margin-bottom: .2rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .leaves-thanks code { font-family: var(--font-mono); font-size: .85em; }
+
+  @media (max-width: 899px) {
+    .leaves-hero { grid-template-columns: 1fr; }
+    .leaves-art { width: min(34rem, 100%); justify-self: center; margin-top: .5rem; }
+  }
+  @media (max-width: 559px) { .story-pin { left: 2%; } }
+  @media (max-width: 459px) {
+    .leaf-card { padding-inline: 2.2rem; }
+    .leaf-facts span { grid-template-columns: 1fr; gap: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .leaf-card { transition: none; } }
+</style>

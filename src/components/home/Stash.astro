@@ -1,5 +1,6 @@
 ---
-/* The door to Thenga's yard (/experiments/): one wide card under the rails. The
+/* The door to Thenga's yard (/experiments/): one of the two cards in "Off the main
+   thread" (Beyond.astro), stacked like its neighbour, the palm-leaf door. The
    thumbnail is Thenga with a few experiments floating around it, each a coconut
    in its own mood with a name tag. The only idle motion is a slow float; the
    coconuts' mood loops play while the card is hovered (.m-hover-host). The scene
@@ -11,11 +12,11 @@
    with the three rooms as their own small links in the foot, straight into each. */
 import Icon from '../Icon.astro';
 import Thenga from '../mascots/Thenga.astro';
-import { moods, experiments, experimentCount } from '../../data/experiments';
+import { experiments, experimentCount } from '../../data/experiments';
 import { studio } from '../../data/studio';
 import { rooms, roomHref } from '../../data/rooms';
 
-// Order matters: phones show only 1, 2, 5 and 6, so those four cover all three moods.
+// Order matters: the half-width card shows only 1, 2, 5 and 6, so those four cover all three moods.
 const floaters = [
   { id: 'zendesk-clickup', tag: 'ClickUp app' },
   { id: 'accetoss', tag: 'Accetoss' },
@@ -28,8 +29,7 @@ const floaters = [
   .filter((f) => f.item);
 
 ---
-<div class="wrap">
-  <div class="stash-card m-hover-host">
+<div class="stash-card m-hover-host">
     <span class="stash-shot taped" aria-hidden="true">
       <span class="float-hero">
         <Thenga />
@@ -50,9 +50,6 @@ const floaters = [
       <span class="stash-eyebrow"><span><span>Thenga’s studio + yard</span> · <span>{studio.length} on the easel</span> · <span>{experimentCount} on the pile</span></span></span>
       <strong class="stash-title">Every coconut’s a keeper.</strong>
       <span class="stash-text">In the studio, I take apart screens I’ve redesigned and show what changed. Out in the yard, experiments keep piling up. Not all of them became palms, but every one cracked open with something worth keeping.</span>
-      <span class="stash-moods">
-        {Object.values(moods).map((m) => <span class="tag">{m.label}</span>)}
-      </span>
       <div class="stash-foot">
         <nav class="stash-rooms" aria-label="Rooms">
           {rooms.map((r) => <a class="stash-room" href={roomHref(r.id)}>{r.name}<span>{r.count}</span></a>)}
@@ -60,11 +57,10 @@ const floaters = [
         <a class="stash-go" href="/experiments/" aria-label={`Step inside Thenga’s studio + yard: ${studio.length} UI ${studio.length === 1 ? 'story' : 'stories'} and ${experimentCount} experiments, and what I found inside each`}>Step inside<Icon name="arrow-right" /></a>
       </div>
     </div>
-  </div>
 </div>
 
 <style>
-  .stash-card { position: relative; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: 1.5rem 2.5rem; margin-top: var(--space-5); padding: 1.5rem 2rem 1.5rem 1.5rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble-2); box-shadow: 4px 4px 0 var(--shadow-ink); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+  .stash-card { position: relative; height: 100%; display: flex; flex-direction: column; gap: 1.4rem; padding: 1.5rem 1.5rem 1.3rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble-2); box-shadow: 4px 4px 0 var(--shadow-ink); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
   .stash-card::before { content: ""; position: absolute; inset: -6px; border: 1.5px solid #9a6440; border-radius: inherit; transform: rotate(.5deg); opacity: .5; pointer-events: none; transition: transform .25s ease, opacity .25s ease; }
   .stash-card:hover { color: var(--ink); transform: translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); }
   .stash-card:hover::before { transform: rotate(-.4deg); opacity: .85; }
@@ -93,13 +89,12 @@ const floaters = [
   .floater--studio { --x: 50%; --y: 14%; --t: 5.6s; --d: -2s; --r: -2deg; }
   @keyframes thenga-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-3deg); } }
 
-  .stash-body { display: grid; gap: .6rem; min-width: 0; }
+  .stash-body { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; min-width: 0; }
   .stash-eyebrow { display: flex; align-items: center; gap: .6rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
   .stash-eyebrow::before { content: ""; width: 1.2rem; height: 1.5px; background: #9a6440; flex: none; }
-  .stash-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.7rem, 3.4vw, 2.4rem); line-height: 1.05; letter-spacing: -.02em; }
+  .stash-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.1rem); line-height: 1.05; letter-spacing: -.02em; }
   .stash-text { font-size: 1rem; color: var(--ink-soft); max-width: 52ch; }
-  .stash-moods { display: flex; flex-wrap: wrap; gap: .45rem; }
-  .stash-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: .4rem; padding-top: .8rem; border-top: 1.5px dashed var(--line); }
+  .stash-foot { align-self: stretch; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: auto; padding-top: .8rem; border-top: 1.5px dashed var(--line); }
   /* Long eyebrow: wrap between the pieces, never inside one. */
   .stash-eyebrow > span > span { white-space: nowrap; }
   /* The rooms: small links that sit above the card's stretched link. */
@@ -116,24 +111,21 @@ const floaters = [
   .stash-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
   .stash-card:hover .stash-go :global(.doodle) { transform: translateX(4px); }
 
-  @media (max-width: 899px) {
-    .stash-card { grid-template-columns: 1fr; padding: 1.3rem 1.2rem 1.2rem; }
-    .stash-go { margin-left: 0; }
-    .stash-shot { aspect-ratio: 2 / 1; }
-    .float-hero { width: 22%; }
-    .floater { width: 11%; }
-  }
-  /* Phones: four floaters, pulled in so their tags stay inside the frame. */
+  /* Half a row is phone-sized for the scene: four floaters, pulled in so their tags stay inside the frame. */
+  .float-hero { width: 28%; top: 50%; }
+  .floater { width: 15%; }
+  .floater-tag { font-size: .92rem; padding: .16rem .42rem .22rem; }
+  .floater--3, .floater--4 { display: none; }
+  .floater--1 { --x: 20%; --y: 24%; }
+  .floater--2 { --x: 80%; --y: 22%; }
+  .floater--5 { --x: 20%; --y: 76%; }
+  .floater--6 { --x: 80%; --y: 76%; }
+  .floater--studio { --y: 13%; }
   @media (max-width: 559px) {
+    .stash-card { padding: 1.3rem 1.2rem 1.2rem; }
     .stash-shot { aspect-ratio: 4 / 3; }
-    .float-hero { width: 30%; top: 50%; }
+    .float-hero { width: 30%; }
     .floater { width: 16%; }
-    .floater-tag { font-size: .88rem; padding: .16rem .4rem .22rem; }
-    .floater--3, .floater--4 { display: none; }
-    .floater--1 { --x: 20%; --y: 24%; }
-    .floater--2 { --x: 80%; --y: 22%; }
-    .floater--5 { --x: 20%; --y: 74%; }
-    .floater--6 { --x: 80%; --y: 74%; }
-    .floater--studio { --y: 13%; }
+    .floater-tag { font-size: .88rem; }
   }
 </style>

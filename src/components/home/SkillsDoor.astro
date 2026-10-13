@@ -1,0 +1,57 @@
+---
+/* The door to the palm-leaf bundle (/skills/): the second card in "Off the main
+   thread" (Beyond.astro), built like its neighbour, Thenga's card: a taped-on
+   scene, an eyebrow, a title, one line, and a foot with the leaves and the way in.
+   The scene is the skills page's hero drawing; the leaves come from
+   src/data/skills.ts. The whole card is one link ("Read the leaves" stretches). */
+import Icon from '../Icon.astro';
+import OlaiBundle from '../sketches/skills/OlaiBundle.astro';
+import { skills } from '../../data/skills';
+---
+<div class="door-card">
+  <span class="door-shot taped" aria-hidden="true"><OlaiBundle /></span>
+  <div class="door-body">
+    <span class="door-eyebrow">Skills for coding agents · {skills.length} leaves</span>
+    <strong class="door-title">Written down, so it lasts.</strong>
+    <span class="door-text">What I’ve learnt about crafting UI with agents, written down as skills, so an agent can do the work my way.</span>
+    <div class="door-foot">
+      <span class="door-leaves">{skills.map((s) => <span class="door-leaf">{s.name}</span>)}</span>
+      <a class="door-go" href="/skills/" aria-label={`Read the leaves: ${skills.length} skills for coding agents`}>Read the leaves<Icon name="arrow-right" /></a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .door-card { position: relative; height: 100%; display: flex; flex-direction: column; gap: 1.4rem; padding: 1.5rem 1.5rem 1.3rem; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble); box-shadow: 4px 4px 0 var(--shadow-ink); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+  .door-card::before { content: ""; position: absolute; inset: -6px; border: 1.5px solid #b48c4c; border-radius: inherit; transform: rotate(-.5deg); opacity: .5; pointer-events: none; transition: transform .25s ease, opacity .25s ease; }
+  .door-card:hover { transform: translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .door-card:hover::before { transform: rotate(.4deg); opacity: .85; }
+
+  /* Same frame as Thenga's scene, so the two cards line up. */
+  .door-shot { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; padding: 1rem 1.4rem .6rem; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--sand); box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(1.1deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .door-card:hover .door-shot { transform: rotate(0); }
+  .door-shot.taped::before { top: -.75rem; left: auto; right: 18%; width: 5rem; height: 1.3rem; transform: rotate(4deg); z-index: 1; }
+
+  .door-body { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: .6rem; min-width: 0; }
+  .door-eyebrow { display: flex; align-items: center; gap: .6rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .door-eyebrow::before { content: ""; width: 1.2rem; height: 1.5px; background: #b48c4c; flex: none; }
+  .door-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.1rem); line-height: 1.05; letter-spacing: -.02em; }
+  .door-text { font-size: 1rem; color: var(--ink-soft); max-width: 52ch; }
+  .door-foot { align-self: stretch; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: auto; padding-top: .8rem; border-top: 1.5px dashed var(--line); }
+  .door-leaves { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .door-leaf { padding: .3rem .7rem; font-family: var(--font-mono); font-size: .76rem; white-space: nowrap; color: var(--ink); background: var(--paper); border: 1.5px solid var(--border); border-radius: 999px; }
+  .door-go { margin-left: auto; display: inline-flex; align-items: center; gap: .3rem; font-size: .95rem; font-weight: 500; color: var(--coral); white-space: nowrap; text-decoration: none; }
+  .door-go::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-wobble); }
+  .door-go:hover { color: var(--coral); }
+  .door-go:focus-visible { outline: none; }
+  .door-card:has(.door-go:focus-visible) { outline: 2px solid var(--ink); outline-offset: 4px; }
+  .door-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .door-card:hover .door-go :global(.doodle) { transform: translateX(4px); }
+
+  @media (max-width: 559px) {
+    .door-card { padding: 1.3rem 1.2rem 1.2rem; }
+    .door-shot { aspect-ratio: 4 / 3; }
+    .door-go { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .door-card, .door-shot { transition: none; } }
+</style>

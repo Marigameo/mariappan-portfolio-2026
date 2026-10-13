@@ -35,7 +35,7 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
         <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
         <p class="eyebrow"><span><span>Thenga’s studio + yard</span> · <span>{studio.length} on the easel</span> · <span>{experimentCount} on the pile</span></span></p>
         <h1>Every coconut’s a keeper.</h1>
-        <p class="lede">In the studio, I take apart screens I’ve redesigned and show what changed. Out in the yard, the experiments keep piling up: shipped apps, a pivot, college ventures and night hacks. Not all of them became palms, but every one cracked open with something inside.</p>
+        <p class="lede">In the studio, I take apart screens I’ve redesigned and show what changed. Out in the yard, the experiments keep piling up: shipped apps, a pivot, college ventures and night hacks. Not all of them became palms, but every one cracked open with something inside. The things I learn get written down as <a href="/skills/">skills<Icon name="arrow-right" class="lede-arrow" /></a></p>
       </div>
       <div class="yard-heap">
         <CoconutHeap items={experiments} />
@@ -426,6 +426,9 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
   .yard-hero h1 { margin-top: .3rem; }
   /* Long eyebrow: if it wraps, it wraps at a dot, never inside a phrase. */
   .yard-hero .eyebrow { max-width: none; }
+  /* The way out to the skills page, at the end of the lede. */
+  .yard-hero .lede a { white-space: nowrap; }
+  .yard-hero .lede :global(.lede-arrow) { width: .9em; height: .9em; margin-left: .15em; vertical-align: -.1em; stroke-width: 2; }
   .yard-hero .eyebrow > span > span { white-space: nowrap; }
   .yard-heap { position: relative; }
   .yard-hint { position: absolute; top: 2%; left: 4%; margin: 0; font-family: var(--font-hand); font-size: 1.3rem; color: var(--coral); transform: rotate(-5deg); }

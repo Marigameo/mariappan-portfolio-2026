@@ -1,0 +1,267 @@
+---
+/* How the /skills/ page came about, told as a short deck: the spark, two rounds of
+   concepts turned down (collections, then new interactions), the rule that fixed it
+   (a story over plain card groups, like Thenga's yard), the four stories, and the
+   palm leaf redrawn closer to the real thing. Renders are real crops of the boards
+   in process/skills-page/, made with Claude as a pair. The pin on /skills/ links here. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import OlaiBundle from '../../components/sketches/skills/OlaiBundle.astro';
+import { site } from '../../data/site';
+
+const img = (f: string) => `/images/work/skills-page/${f}.webp`;
+/* The real boards, archived as they were (noindex), for a closer look. */
+const board = (n: string) => `/skills/story/boards/round-${n}.html`;
+const rounds = {
+  one: [
+    { f: 'r1-pedals', w: 1685, h: 1180, name: 'The pedalboard', alt: 'Skills as guitar pedals between your prompt and an amp that shows the agent’s reply with the pedal off and on.' },
+    { f: 'r1-tin', w: 1521, h: 566, name: 'The spice tin', alt: 'Skills as spices in a round steel masala box, with a recipe card for the one picked.' },
+    { f: 'r1-seeds', w: 1680, h: 501, name: 'Seed packets', alt: 'Skills as numbered seed packets in a rack, each flipping over for its details.' },
+    { f: 'r1-drawer', w: 1680, h: 792, name: 'The card drawer', alt: 'Skills as index cards in an open library drawer, filtered by coloured tabs.' },
+  ],
+  two: [
+    { f: 'r2-metro', w: 1685, h: 1095, name: 'The agent’s metro', alt: 'Skills as stations on a metro map; a small robot rides from “your task” and stops only at the skills it needs.' },
+    { f: 'r2-bench', w: 1685, h: 627, name: 'The apprentice’s bench', alt: 'A corkboard of skill notes and a robot apprentice whose rough toast becomes a crafted one after it reads a note.' },
+    { f: 'r2-carts', w: 1680, h: 693, name: 'Cartridges', alt: 'Skills as game cartridges plugged into a handheld agent whose stat meters change.' },
+  ],
+  three: [
+    { f: 'r3-olai', w: 1680, h: 1105, name: 'Palm leaves', picked: true, alt: 'The skills page as a palm-leaf bundle: a hero headed “Written down, so it lasts.” and leaf-shaped cards.' },
+    { f: 'r3-recipe', w: 1766, h: 1060, name: 'Recipe book', alt: 'The skills page as a recipe book: “My recipes, for your agent.” with recipe cards.' },
+    { f: 'r3-tiffin', w: 1680, h: 1076, name: 'Tiffin carrier', alt: 'The skills page as a steel tiffin carrier: “Packed with care.” with one tier per kind of skill.' },
+    { f: 'r3-song', w: 1680, h: 1116, name: 'Songbook', alt: 'The skills page as a songbook: “Chords, written down.” with numbered tracks.' },
+  ],
+};
+
+const lessons = [
+  { miss: 'I asked for something innovative, and got new ways to interact.', lesson: 'Say what must stay the same, not just what should be new.' },
+  { miss: 'Ideas described in chat were hard to picture.', lesson: 'Put the options side by side on one board, at real counts.' },
+  { lesson: 'Keep every round. The ones I turned down became this story.' },
+];
+
+const description = 'How my skills page became a palm-leaf bundle: eleven concepts drawn with Claude in four rounds, what I turned down and why, and the rule that fixed it.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: 'From a pedalboard to a palm leaf',
+  url: `${site.url}/skills/story/`,
+  description,
+  author: { '@type': 'Person', name: site.name, url: `${site.url}/` },
+  inLanguage: 'en',
+};
+---
+<BaseLayout title={`From a pedalboard to a palm leaf | ${site.name}`} description={description} ogType="article" jsonLd={jsonLd}>
+  <main id="main" class="wrap wrap--narrow">
+    <header class="page-hero">
+      <a class="breadcrumb" href="/skills/"><Icon name="arrow-right" />The skills</a>
+      <p class="eyebrow">Side build · This portfolio · Oct 2026</p>
+      <h1>From a pedalboard to a palm leaf</h1>
+      <p class="lede">Claude and I drew eleven concepts for one page. Ten were turned down, mostly for being too clever. Here’s how the palm leaf won, and <mark class="hl">what each round taught me</mark>.</p>
+      <dl class="facts">
+        <div><dt>My part</dt><dd>The brief, the feedback and every call</dd></div>
+        <div><dt>Paired with</dt><dd>Claude, who drew each round as a working board</dd></div>
+        <div><dt>Took</dt><dd>4 rounds, 13 to 14 Oct 2026</dd></div>
+      </dl>
+    </header>
+
+    <figure class="sk-fig story-hero">
+      <OlaiBundle />
+      <figcaption>Where it landed: one leaf per skill, and the agent writing the next one.</figcaption>
+    </figure>
+
+    <article class="prose">
+      <div class="story">
+        <section class="slide" aria-labelledby="s-spark">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">01</span>
+            <div><p class="slide-kicker">The spark</p><h2 id="s-spark">Not a plain list</h2></div>
+          </header>
+          <ul class="doodle-list slide-points">
+            <li>Emil Kowalski’s skills page got me to package mine. But I didn’t want a plain list.</li>
+            <li>I wanted what Thenga does for my experiments: <strong>a story the page tells</strong>, that still works at twenty skills.</li>
+            <li>So Claude drew each idea as a working board, and I reacted.</li>
+          </ul>
+        </section>
+
+        <section class="slide" aria-labelledby="s-one">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">02</span>
+            <div><p class="slide-kicker">Round 01 · Collections</p><h2 id="s-one">Four shelves, no point</h2></div>
+          </header>
+          <ul class="doodle-list slide-points">
+            <li>Pretty containers for skills. None of them said <strong>what a skill actually does</strong>.</li>
+          </ul>
+          <ul class="sheet">
+            {rounds.one.map((r) => <li><button type="button" class="zoom" data-full={img(r.f)} aria-label={`View full size: ${r.name}`}><img src={img(r.f)} width={r.w} height={r.h} alt={r.alt} loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><span class="sheet-name">{r.name}<i>turned down</i></span></li>)}
+          </ul>
+          <p class="board-link"><a href={board('01')}>Open the round 01 board, as it was<Icon name="external" /></a></p>
+          <p class="sticky fb">“Not convinced. Show what a skill is for, and how it holds six or more.”<span>my feedback</span></p>
+        </section>
+
+        <section class="slide" aria-labelledby="s-two">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">03</span>
+            <div><p class="slide-kicker">Round 02 · What a skill does</p><h2 id="s-two">Clever, and hard to use</h2></div>
+          </header>
+          <ul class="doodle-list slide-points">
+            <li>Each one explained skills well. Each one was also <strong>a new widget to learn</strong>.</li>
+          </ul>
+          <ul class="sheet">
+            {rounds.two.map((r) => <li><button type="button" class="zoom" data-full={img(r.f)} aria-label={`View full size: ${r.name}`}><img src={img(r.f)} width={r.w} height={r.h} alt={r.alt} loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><span class="sheet-name">{r.name}<i>turned down</i></span></li>)}
+          </ul>
+          <p class="board-link"><a href={board('02')}>Open the round 02 board and try it<Icon name="external" /></a></p>
+          <p class="sticky fb">“Too creative. My site never makes people learn a new way to interact, and these are hard on a phone.”<span>my feedback</span></p>
+        </section>
+
+        <section class="slide" aria-labelledby="s-rule">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">04</span>
+            <div><p class="slide-kicker">The rule</p><h2 id="s-rule">A story, not a new widget</h2></div>
+          </header>
+          <ul class="doodle-list slide-points">
+            <li>The experiments page is just a hero and groups of cards. <strong>The coconut carries the story</strong>, not the layout.</li>
+            <li>So the brief became: same layout, new story.</li>
+          </ul>
+          <figure class="rule-shot">
+            <img src={img('exp-hero')} width="1762" height="608" alt="The experiments page hero: “Every coconut’s a keeper.” next to a heap of coconut mascots." loading="lazy" decoding="async" />
+            <figcaption>Thenga’s yard: plain cards, and a coconut doing the talking.</figcaption>
+          </figure>
+        </section>
+
+        <section class="slide" aria-labelledby="s-three">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">05</span>
+            <div><p class="slide-kicker">Round 03 · Same page, four stories</p><h2 id="s-three">Written down, so it lasts</h2></div>
+          </header>
+          <ul class="doodle-list slide-points">
+            <li>All four said one thing: a skill is <strong>what I know, written down, so an agent can do it my way</strong>.</li>
+            <li>Palm leaves said it best. Olai chuvadi is how Tamil knowledge was written down and tied into bundles, so the next person could carry on.</li>
+          </ul>
+          <ul class="sheet">
+            {rounds.three.map((r) => <li class:list={[r.picked && 'is-picked']}><button type="button" class="zoom" data-full={img(r.f)} aria-label={`View full size: ${r.name}`}><img src={img(r.f)} width={r.w} height={r.h} alt={r.alt} loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><span class="sheet-name">{r.name}<i>{r.picked ? 'picked' : 'turned down'}</i></span></li>)}
+          </ul>
+          <p class="board-link"><a href={board('03')}>Open the round 03 board, all four stories<Icon name="external" /></a></p>
+        </section>
+
+        <section class="slide" aria-labelledby="s-four">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">06</span>
+            <div><p class="slide-kicker">Round 04 · The drawing</p><h2 id="s-four">Closer to the real thing</h2></div>
+          </header>
+          <ul class="doodle-list slide-points">
+            <li>I shared photos of real bundles. The redraw got <strong>thin stacked leaves, a red cord with a tassel, a lamp and marigolds</strong>.</li>
+            <li>Then I asked for the agent, holding the ezhuthani, the iron stylus. The top leaf carries Thirukkural 391: learn it well, then live by it.</li>
+          </ul>
+          <div class="before-after">
+            <figure><button type="button" class="zoom" data-full={img('r3-art')} aria-label="View full size: the round 03 drawing"><img src={img('r3-art')} width="1213" height="750" alt="The round 03 drawing: palm leaves as outlines, a loose leaf above a stack, a small robot beside it." loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><figcaption>Round 03 · a sketch</figcaption></figure>
+            <span class="ba-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+            <figure><button type="button" class="zoom" data-full={img('final-art')} aria-label="View full size: the final drawing"><img src={img('final-art')} width="1173" height="591" alt="The final drawing: a tan palm-leaf bundle tied with a red cord, the agent writing on the top leaf with a stylus." loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><figcaption>Round 04 · closer to real</figcaption></figure>
+          </div>
+          <p class="board-link"><a href={board('04')}>Open the round 04 board<Icon name="external" /></a></p>
+        </section>
+
+        <section class="slide" aria-labelledby="s-keep">
+          <header class="slide-head">
+            <span class="slide-num" aria-hidden="true">07</span>
+            <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-keep">What I’d keep</h2></div>
+          </header>
+          <ul class="lessons">
+            {lessons.map((l, i) => (
+              <li class:list={['sk-box', `sk-lean-${i + 1}`, !l.miss && 'lessons-solo']}>
+                {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+                <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <blockquote class="closer">The metaphor tells the story. The page stays familiar.</blockquote>
+        <p class="back"><a class="pill" href="/skills/">See the skills<Icon name="arrow-right" /></a></p>
+      </div>
+    </article>
+
+    <dialog class="lightbox" data-lightbox aria-label="Render, full size">
+      <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+      <figure>
+        <img alt="" data-lightbox-img>
+        <figcaption data-lightbox-caption></figcaption>
+      </figure>
+    </dialog>
+  </main>
+</BaseLayout>
+
+<style>
+  /* Deck styles from the studio stories (chat-mode-picker.astro), plus the contact
+     sheets of each round, the feedback stickies and the before/after drawing. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story-hero { margin: var(--space-3) 0 0; }
+  .story-hero figcaption { margin-top: .6rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  /* A round's concepts as a contact sheet: real board crops, each with a stamp. */
+  /* The sheets break out of the narrow column so each render is big enough to read. */
+  .sheet { --sheet-w: min(72rem, calc(100vw - 2.5rem)); width: var(--sheet-w); margin-inline: calc((100% - var(--sheet-w)) / 2) !important; list-style: none; margin-top: var(--space-3); padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1.4rem 1.2rem; }
+  .sheet li { display: grid; gap: .5rem; align-content: start; margin: 0; }
+  /* Each render is a button that opens it full size in the lightbox (src/scripts/main.js). */
+  .zoom { position: relative; display: block; width: 100%; padding: 0; overflow: hidden; background: #fff9f1; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 3px 3px 0 var(--shadow-ink); cursor: zoom-in; }
+  .zoom img { display: block; width: 100%; height: auto; border: 0 !important; border-radius: 0 !important; }
+  .zoom-icon { position: absolute; top: .45rem; right: .45rem; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; color: var(--paper); background: var(--ink); border-radius: 50%; opacity: .8; }
+  .zoom-icon :global(.doodle) { width: 1rem; height: 1rem; }
+  .zoom:hover .zoom-icon, .zoom:focus-visible .zoom-icon { opacity: 1; background: var(--coral); color: #fff; }
+  .sheet .zoom img { filter: grayscale(.35); opacity: .85; transition: filter .2s ease, opacity .2s ease; }
+  .sheet .zoom:hover img { filter: none; opacity: 1; }
+  .sheet .is-picked .zoom { border-color: var(--coral); box-shadow: 3px 3px 0 var(--coral); }
+  .sheet .is-picked .zoom img { filter: none; opacity: 1; }
+  .board-link { margin: 1rem 0 0 !important; }
+  .board-link a { display: inline-flex; align-items: center; gap: .3rem; font-family: var(--font-hand); font-size: 1.2rem; font-weight: 700; color: var(--coral); text-decoration: none; }
+  .board-link a:hover { text-decoration: underline; text-underline-offset: .2em; }
+  .board-link :global(.doodle) { width: .95rem; height: .95rem; }
+  .sheet-name { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; font-weight: 500; font-size: .95rem; color: var(--ink); }
+  .sheet-name i { font-style: normal; font-family: var(--font-hand); font-size: 1.15rem; font-weight: 700; color: var(--ink-faint); transform: rotate(-3deg); }
+  .is-picked .sheet-name i { color: var(--coral); }
+  .is-picked .sheet-name i::before { content: "✓ "; }
+
+  .fb { display: block; margin: var(--space-3) 0 0 auto !important; max-width: 22rem; font-size: 1.2rem; transform: rotate(1.5deg); }
+  .fb span { display: block; margin-top: .3rem; font-family: var(--font-mono); font-size: .58rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; opacity: .7; }
+
+  .rule-shot { --sheet-w: min(72rem, calc(100vw - 2.5rem)); width: var(--sheet-w); margin: var(--space-3) calc((100% - var(--sheet-w)) / 2) 0 !important; }
+  .rule-shot img { width: 100%; height: auto; background: #fff9f1; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .rule-shot figcaption, .before-after figcaption { margin-top: .6rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+
+  .before-after { --sheet-w: min(72rem, calc(100vw - 2.5rem)); width: var(--sheet-w); margin-inline: calc((100% - var(--sheet-w)) / 2); display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 1rem; margin-top: var(--space-3); }
+  .before-after figure { margin: 0; }
+  .before-after figure:first-child .zoom { border-style: dashed; box-shadow: none; }
+  .before-after figure:last-of-type .zoom { box-shadow: 3px 3px 0 var(--coral); border-color: var(--coral); }
+  .ba-arrow :global(.doodle) { width: 1.6rem; height: 1.6rem; color: var(--coral); stroke-width: 2; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons .lessons-solo { grid-column: 1 / -1; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+
+  .closer { margin-top: var(--space-5); }
+  .back { margin-top: var(--space-3) !important; }
+  .back :global(.doodle) { width: 1rem; height: 1rem; }
+
+  @media (max-width: 559px) {
+    .sheet { grid-template-columns: 1fr; }
+    .lessons { grid-template-columns: 1fr; }
+    .before-after { grid-template-columns: 1fr; }
+    .ba-arrow { justify-self: center; transform: rotate(90deg); }
+  }
+</style>

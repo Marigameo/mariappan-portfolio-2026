@@ -7,3 +7,6 @@ node_modules
 dist
 .astro
 .netlify
+
+# Design rounds and renders kept locally; the published story lives at /skills/story/
+process/

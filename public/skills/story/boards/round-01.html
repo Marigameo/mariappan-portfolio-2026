@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skills page concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=swap">
+<style>
+/* Concept board for the /skills/ page. Tokens copied from src/styles/style.css so the
+   mocks read like the site. One data list feeds all four concepts; "Add a skill" appends
+   to it so each concept can be judged at 5, 10 and 20 skills. */
+:root {
+  color-scheme: light;
+  --paper: #fff9f1; --paper-2: #ffffff; --sand: #eee8d2; --sand-2: #e4dcc2;
+  --ink: #060606; --ink-soft: rgba(6,6,6,.72); --ink-faint: rgba(6,6,6,.5); --line: rgba(6,6,6,.12);
+  --coral: #d9573f; --yellow: #ffda3f; --sticky-ink: #2a2610;
+  --blue: #2f5bd8; --teal: #1a9a86; --violet: #7856f0;
+  --shadow-ink: var(--ink);
+  --steel-a: #f1efea; --steel-b: #c9c5bc; --wood: #c99a62; --wood-2: #a87a45; --brass: #c9a24a;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-sub: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --font-hand: "Caveat", "Bradley Hand", cursive;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
+  --ink: #f2ede3; --ink-soft: rgba(242,237,227,.74); --ink-faint: rgba(242,237,227,.5); --line: rgba(242,237,227,.14);
+  --coral: #ff9a7f; --yellow: #f4cf4d; --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+  --shadow-ink: #07080b;
+  --steel-a: #4a4e58; --steel-b: #2b2e36; --wood: #5b4322; --wood-2: #3e2e17; --brass: #a8873c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
+    --ink: #f2ede3; --ink-soft: rgba(242,237,227,.74); --ink-faint: rgba(242,237,227,.5); --line: rgba(242,237,227,.14);
+    --coral: #ff9a7f; --yellow: #f4cf4d; --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+    --shadow-ink: #07080b;
+    --steel-a: #4a4e58; --steel-b: #2b2e36; --wood: #5b4322; --wood-2: #3e2e17; --brass: #a8873c;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-body); line-height: 1.55; letter-spacing: -.01em; color: var(--ink); background: var(--paper); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.05; letter-spacing: -.02em; margin: 0 0 .8rem; text-wrap: balance; }
+h1 { font-size: clamp(2.3rem, 6vw, 3.8rem); }
+h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+p { margin: 0 0 1rem; max-width: 64ch; color: var(--ink-soft); }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+code { font-family: var(--font-mono); font-size: .8em; }
+.wrap { max-width: 72rem; margin: 0 auto; padding: 0 max(1rem, 3vw); }
+.eyebrow { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 .8rem; }
+.hand { font-family: var(--font-hand); font-weight: 700; }
+.sk-box { border: 1.5px solid var(--ink); background: var(--paper-2); box-shadow: 3px 3px 0 var(--shadow-ink); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; }
+
+/* ---- board chrome ---- */
+.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1.5px dashed var(--line); }
+.top-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding-block: .6rem; }
+.top-row nav { display: flex; flex-wrap: wrap; gap: .4rem; }
+.top-row nav a { font-family: var(--font-mono); font-size: .72rem; color: var(--ink); text-decoration: none; padding: .3rem .65rem; border: 1.5px solid var(--line); border-radius: 999px; }
+.top-row nav a:hover { border-color: var(--ink); }
+.top-tools { margin-inline-start: auto; display: flex; gap: .5rem; align-items: center; }
+.pill { padding: .35rem .8rem; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--paper-2); font-size: .82rem; font-weight: 500; }
+.pill--coral { background: var(--coral); color: var(--paper-2); border-color: var(--coral); }
+.count { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-faint); }
+
+header.intro { padding-block: 3rem 1rem; }
+.intro .sub { font-family: var(--font-sub); font-weight: 300; font-size: clamp(1.1rem, 2.2vw, 1.4rem); line-height: 1.4; color: var(--ink); max-width: 46rem; }
+.legend { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; margin-top: 1rem; font-size: .85rem; color: var(--ink-soft); }
+.legend span::before { content: ""; display: inline-block; width: .75rem; height: .75rem; border-radius: 50%; background: var(--c); margin-inline-end: .4rem; vertical-align: -.05rem; border: 1px solid var(--ink); }
+
+section.concept { padding-block: 3rem; border-top: 1.5px dashed var(--line); }
+.c-head { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.4rem; }
+.c-letter { font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); flex: none; }
+#pedals .c-letter { color: var(--coral); } #tin .c-letter { color: var(--teal); } #seeds .c-letter { color: var(--blue); } #drawer .c-letter { color: var(--violet); }
+.c-head p { margin: 0; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; margin-top: 2rem; }
+.notes > div { padding: .9rem 1rem; }
+.notes h3 { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); margin: 0 0 .4rem; }
+.notes p { font-size: .92rem; margin: 0; }
+.try { font-family: var(--font-hand); font-size: 1.25rem; color: var(--coral); margin: 0 0 .8rem; }
+
+/* ---- shared detail panel ---- */
+.detail { padding: 1rem 1.1rem 1.1rem; }
+.detail .d-cat { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--c); margin: 0 0 .2rem; }
+.detail h3 { font-size: 1.5rem; margin: 0 0 .4rem; }
+.detail .d-what { color: var(--ink); margin-bottom: .8rem; }
+.d-rows { display: grid; gap: .55rem; margin: 0; }
+.d-rows div { display: grid; grid-template-columns: 7.5rem 1fr; gap: .6rem; font-size: .9rem; }
+.d-rows dt { font-family: var(--font-hand); font-size: 1.15rem; line-height: 1.2; color: var(--coral); }
+.d-rows dd { margin: 0; color: var(--ink-soft); }
+.d-install { display: block; margin-top: .9rem; padding: .45rem .7rem; border: 1.5px dashed var(--line); border-radius: 8px; font-family: var(--font-mono); font-size: .75rem; color: var(--ink); overflow-wrap: anywhere; }
+@media (max-width: 559px) { .d-rows div { grid-template-columns: 1fr; gap: 0; } }
+
+/* =========== A · Pedalboard =========== */
+.rig { display: grid; gap: 1.2rem; }
+.chain { display: flex; align-items: center; gap: .6rem; font-family: var(--font-mono); font-size: .72rem; color: var(--ink-faint); }
+.chain::after { content: ""; flex: 1; border-top: 2px dashed var(--ink-faint); order: 1; }
+.chain .jack-out { order: 2; }
+.board { padding: 1.2rem; background: var(--sand); border: 1.5px solid var(--ink); border-radius: 14px 8px 16px 10px / 10px 16px 8px 14px; box-shadow: 3px 3px 0 var(--shadow-ink); position: relative;
+  background-image: repeating-linear-gradient(0deg, transparent 0 38px, var(--line) 38px 40px); }
+.board::before, .board::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--ink-faint); top: 8px; }
+.board::before { left: 8px; } .board::after { right: 8px; }
+.pedal-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+.pedal { --pc: var(--coral); width: 118px; height: 160px; display: flex; flex-direction: column; align-items: center; gap: .45rem; padding: .55rem .5rem .6rem; border: 1.5px solid var(--ink); border-radius: 12px 9px 13px 8px; background: color-mix(in srgb, var(--pc) 30%, var(--paper-2)); box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .15s ease; }
+.pedal:hover { transform: translateY(-2px); }
+.pedal[aria-pressed="true"] { transform: translateY(1px); box-shadow: 1px 1px 0 var(--shadow-ink); }
+.pedal .knobs { display: flex; gap: .7rem; align-items: center; }
+.pedal .knob { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--paper-2); position: relative; }
+.pedal .knob::after { content: ""; position: absolute; left: 7px; top: 1px; width: 1.5px; height: 6px; background: var(--ink); transform-origin: 50% 7px; transform: rotate(var(--r, -30deg)); }
+.pedal .led { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--paper-2); }
+.pedal[aria-pressed="true"] .led { background: #ff3b30; box-shadow: 0 0 8px 2px rgba(255,59,48,.6); }
+.pedal .plate { width: 100%; padding: .25rem .2rem; background: var(--paper-2); border: 1px solid var(--ink); border-radius: 4px; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1; text-align: center; overflow-wrap: anywhere; }
+.pedal .stomp { margin-top: auto; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--ink); background: radial-gradient(circle at 40% 35%, var(--paper-2), var(--steel-b)); }
+.pedal .lock { font-family: var(--font-mono); font-size: .55rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.pedal--empty { border-style: dashed; background: transparent; box-shadow: none; justify-content: center; color: var(--ink-faint); font-family: var(--font-hand); font-size: 1.1rem; text-align: center; cursor: default; }
+.pedal--empty:hover { transform: none; }
+.amp { display: grid; grid-template-columns: 1fr; gap: 0; overflow: hidden; }
+.amp-head { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .5rem .9rem; border-bottom: 1.5px solid var(--ink); font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); background: var(--sand); }
+.amp-body { display: grid; grid-template-columns: 1fr 1fr; }
+.amp-body > div { padding: .9rem 1rem 1rem; }
+.amp-body > div + div { border-inline-start: 1.5px dashed var(--line); }
+.amp-body h4 { margin: 0 0 .35rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; }
+.amp-body .off h4 { color: var(--ink-faint); } .amp-body .on h4 { color: var(--teal); }
+.amp-body pre { margin: 0; white-space: pre-wrap; font-family: var(--font-mono); font-size: .78rem; line-height: 1.5; color: var(--ink-soft); }
+.amp-body .on pre { color: var(--ink); }
+.amp-body .dim { opacity: .35; }
+.prompt-line { font-family: var(--font-mono); font-size: .78rem; color: var(--ink); }
+.prompt-line b { color: var(--coral); font-weight: 500; }
+@media (max-width: 639px) { .amp-body { grid-template-columns: 1fr; } .amp-body > div + div { border-inline-start: 0; border-top: 1.5px dashed var(--line); } .pedal { width: calc(50% - .5rem); } }
+
+/* =========== B · Spice tin (anjarai petti) =========== */
+.tin-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.tins { display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; }
+.tin-box { text-align: center; }
+.tin { --size: 310px; width: var(--size); height: var(--size); border-radius: 50%; position: relative; border: 1.5px solid var(--ink); background: radial-gradient(circle at 35% 30%, var(--steel-a), var(--steel-b) 75%); box-shadow: 3px 4px 0 var(--shadow-ink), inset 0 0 0 9px color-mix(in srgb, var(--steel-a) 60%, transparent), inset 0 0 0 10.5px var(--ink); }
+.tin.small { --size: 210px; }
+.tin .cup { --cup: 78px; position: absolute; width: var(--cup); height: var(--cup); border-radius: 50%; left: calc(50% - var(--cup) / 2 + var(--x)); top: calc(50% - var(--cup) / 2 + var(--y)); border: 1.5px solid var(--ink); background: radial-gradient(circle at 50% 45%, var(--spice) 0 52%, color-mix(in srgb, var(--spice) 70%, #000) 53% 62%, var(--steel-a) 63%); box-shadow: inset 0 0 0 4px var(--steel-a), inset 0 0 0 5px var(--ink); padding: 0; transition: transform .15s ease; }
+.tin.small .cup { --cup: 56px; }
+.tin .cup:hover { transform: scale(1.05); }
+.tin .cup[aria-pressed="true"] { outline: 3px solid var(--coral); outline-offset: 3px; }
+.tin .cup.empty { background: var(--steel-a); border-style: dashed; box-shadow: none; cursor: default; }
+.tin .cup.empty:hover { transform: none; }
+.tin .cup .tag { position: absolute; left: 50%; bottom: -.6rem; transform: translateX(-50%) rotate(-3deg); background: var(--paper-2); color: var(--ink); border: 1px solid var(--ink); border-radius: 3px; padding: .05rem .3rem; font-family: var(--font-hand); font-size: .92rem; line-height: 1.1; white-space: nowrap; max-width: 9rem; overflow: hidden; text-overflow: ellipsis; }
+.tin.small .cup .tag { font-size: .8rem; max-width: 6rem; }
+.tin-label { margin-top: .9rem; font-family: var(--font-mono); font-size: .65rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+.recipe { background-image: repeating-linear-gradient(0deg, transparent 0 27px, var(--line) 27px 28px); }
+@media (max-width: 779px) { .tin-wrap { grid-template-columns: 1fr; } .tin { --size: 260px; } .tin .cup { --cup: 68px; } }
+
+/* =========== C · Seed packets =========== */
+.rack { display: flex; flex-wrap: wrap; gap: 1.4rem 1.1rem; padding: 1.4rem 1.1rem 1.1rem; border-top: 6px solid var(--wood-2); background: linear-gradient(var(--sand), transparent 70%); border-radius: 4px; }
+.packet { width: 190px; height: 262px; perspective: 900px; padding: 0; border: 0; background: none; text-align: start; }
+.packet-inner { position: relative; width: 100%; height: 100%; transition: transform .5s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; }
+.packet[aria-pressed="true"] .packet-inner { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; backface-visibility: hidden; border: 1.5px solid var(--ink); border-radius: 4px 4px 8px 6px; box-shadow: 3px 3px 0 var(--shadow-ink); overflow: hidden; display: flex; flex-direction: column; }
+.face::before { content: ""; height: 12px; flex: none; border-bottom: 1.5px dashed var(--ink-faint); background: repeating-linear-gradient(90deg, transparent 0 6px, color-mix(in srgb, var(--ink) 8%, transparent) 6px 8px); }
+.front { background: var(--paper-2); }
+.front .art { flex: 1; display: grid; place-items: center; background: color-mix(in srgb, var(--pc) 26%, var(--paper-2)); border-bottom: 1.5px solid var(--ink); }
+.front .art svg { width: 76px; height: 76px; }
+.front .meta { flex: none; height: 84px; padding: .5rem .65rem .6rem; overflow: hidden; }
+.front .no { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+.front .nm { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.05; overflow-wrap: anywhere; }
+.front .gr { font-family: var(--font-hand); font-size: 1rem; line-height: 1.1; color: var(--ink-soft); }
+.back { transform: rotateY(180deg); background: var(--paper-2); padding: 0; }
+.back .bk { padding: .45rem .65rem .55rem; display: grid; gap: .3rem; font-size: .72rem; line-height: 1.3; color: var(--ink-soft); overflow: hidden; }
+.back .bk b { display: block; font-family: var(--font-hand); font-size: .98rem; color: var(--coral); font-weight: 700; line-height: 1; }
+.back code { display: block; margin-top: .15rem; padding: .25rem .35rem; border: 1px dashed var(--ink-faint); border-radius: 4px; font-size: .62rem; color: var(--ink); overflow-wrap: anywhere; }
+.packet--empty { width: 190px; height: 262px; border: 1.5px dashed var(--ink-faint); border-radius: 6px; display: grid; place-items: center; text-align: center; color: var(--ink-faint); font-family: var(--font-hand); font-size: 1.15rem; padding: 1rem; }
+@media (max-width: 459px) { .packet, .packet--empty { width: calc(50% - .6rem); height: 240px; } .front .art svg { width: 56px; height: 56px; } }
+
+/* =========== D · Card catalogue =========== */
+.cabinet { display: grid; grid-template-columns: 15rem 1fr; gap: 1.5rem; align-items: start; }
+.drawer-front { padding: 1.1rem; background: linear-gradient(160deg, var(--wood), var(--wood-2)); border: 1.5px solid var(--ink); border-radius: 6px; box-shadow: 3px 3px 0 var(--shadow-ink); display: grid; justify-items: center; gap: .9rem; }
+.drawer-front .holder { width: 80%; padding: .4rem .3rem; background: var(--paper-2); border: 3px solid var(--brass); border-radius: 3px; text-align: center; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.drawer-front .pull { width: 56px; height: 22px; border: 3px solid var(--brass); border-top: 0; border-radius: 0 0 30px 30px; }
+.drawer-front .filters { display: flex; flex-wrap: wrap; gap: .35rem; justify-content: center; }
+.drawer-front .filters button { padding: .2rem .55rem; border: 1px solid var(--ink); border-radius: 999px; background: var(--paper-2); font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; }
+.drawer-front .filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.cards { display: grid; gap: 0; padding: 1rem .8rem 1rem; background: color-mix(in srgb, var(--wood) 35%, var(--paper)); border: 1.5px solid var(--ink); border-radius: 6px; }
+.icard { position: relative; margin-top: -.15rem; padding-top: 1.2rem; }
+.icard .tab { position: absolute; top: 0; inset-inline-start: var(--tx); height: 1.35rem; padding: 0 .6rem; border: 1.5px solid var(--ink); border-bottom: 0; border-radius: 6px 6px 0 0; background: color-mix(in srgb, var(--c) 30%, var(--paper-2)); font-family: var(--font-mono); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; display: flex; align-items: center; }
+.icard button.row { width: 100%; display: flex; align-items: baseline; gap: .7rem; padding: .55rem .8rem; border: 1.5px solid var(--ink); background: var(--paper-2); text-align: start; border-radius: 2px; }
+.icard button.row .nm { font-family: var(--font-mono); font-size: .85rem; font-weight: 500; }
+.icard button.row .wh { font-size: .82rem; color: var(--ink-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+.icard .body { display: none; padding: .7rem .9rem 1rem; border: 1.5px solid var(--ink); border-top: 1px solid #e05a5a; background: var(--paper-2); background-image: repeating-linear-gradient(0deg, transparent 0 25px, color-mix(in srgb, var(--blue) 25%, transparent) 25px 26px); }
+.icard.open .body { display: block; }
+.icard.open button.row { border-bottom: 0; }
+.icard .body p { font-family: var(--font-mono); font-size: .76rem; line-height: 26px; margin: 0; color: var(--ink); max-width: none; }
+.icard .body p span { font-family: var(--font-hand); font-size: 1.05rem; color: var(--coral); margin-inline-end: .4rem; }
+.icard.empty button.row { border-style: dashed; background: transparent; cursor: default; }
+@media (max-width: 719px) { .cabinet { grid-template-columns: 1fr; } }
+
+footer.end { padding-block: 3rem 4rem; border-top: 1.5px dashed var(--line); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<a href="/skills/story/" style="position:fixed;left:12px;bottom:12px;z-index:99;display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .85rem;font:500 .8rem 'Space Grotesk',sans-serif;color:#060606;background:#ffda3f;border:1.5px solid #060606;border-radius:999px;box-shadow:2px 2px 0 #060606;text-decoration:none">← Back to the story <span style="font:400 .62rem 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;opacity:.7">archived board · Round 01 · Collections</span></a>
+
+<div class="top">
+  <div class="wrap top-row">
+    <nav aria-label="Concepts">
+      <a href="#pedals">A · Pedalboard</a>
+      <a href="#tin">B · Spice tin</a>
+      <a href="#seeds">C · Seed packets</a>
+      <a href="#drawer">D · Card drawer</a>
+    </nav>
+    <div class="top-tools">
+      <span class="count" data-count></span>
+      <button class="pill pill--coral" type="button" data-add>+ Add a skill</button>
+      <button class="pill" type="button" data-reset>Reset</button>
+      <button class="pill" type="button" data-theme-toggle aria-label="Toggle dark mode">◐</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="intro">
+    <p class="eyebrow">Skills page · concept board · round 01</p>
+    <h1>Four ways to hold a growing shelf of skills</h1>
+    <p class="sub">The same skills in all four. Click any of them to open it, and press <b>+ Add a skill</b> a few times to see how each concept copes at 10 or 20.</p>
+    <p>The four real skills come first: two public (craft-component, ask-clarifier) and two that only live in the portfolio repo so far (share-my-work, linkedin-teaser). Added ones are placeholders. The copy is rough; this round is about the idea.</p>
+    <div class="legend">
+      <span style="--c: var(--coral)">Craft: building UI</span>
+      <span style="--c: var(--blue)">Use: working with a thing I made</span>
+      <span style="--c: var(--teal)">Write: telling the story</span>
+      <span style="--c: var(--violet)">Ship: getting it out</span>
+    </div>
+  </header>
+
+  <!-- A -->
+  <section class="concept" id="pedals" aria-labelledby="pedals-t">
+    <div class="c-head">
+      <span class="c-letter">A</span>
+      <div>
+        <p class="eyebrow">Guitar · the signal chain</p>
+        <h2 id="pedals-t">The pedalboard</h2>
+        <p>Your prompt is the guitar, the agent is the amp, and each skill is a pedal in between. Stomp one on and you hear the difference: the amp shows what the agent says with the pedal off and with it on. Pedals chain, the way skills stack.</p>
+      </div>
+    </div>
+    <p class="try">stomp a pedal ↓</p>
+    <div class="rig">
+      <div class="chain"><span>🎸 your prompt</span><span class="jack-out">agent 🔊</span></div>
+      <div class="board"><div class="pedal-row" data-pedals></div></div>
+      <div class="amp sk-box">
+        <div class="amp-head"><span>The amp</span><span data-chain>chain: nothing on</span></div>
+        <div style="padding: .8rem 1rem 0"><p class="prompt-line" data-prompt></p></div>
+        <div class="amp-body">
+          <div class="off"><h4>Pedal off</h4><pre data-off></pre></div>
+          <div class="on"><h4>Pedal on</h4><pre data-on></pre></div>
+        </div>
+        <div class="detail" data-pedal-detail style="border-top: 1.5px dashed var(--line)"></div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="sk-box"><h3>Why it means something</h3><p>Guitar is yours, and the metaphor is exact: a skill doesn't replace the agent, it shapes its sound. "Pairs with" becomes a chain.</p></div>
+      <div class="sk-box"><h3>How it scales</h3><p>Pedals wrap into rows, like a real board. Categories are pedal colours. At 20+ a second board, or a filter by colour.</p></div>
+      <div class="sk-box"><h3>Watch out</h3><p>Every skill needs an off/on pair of lines. That's the proof slot, and the most work per skill, but it's what makes the page worth visiting.</p></div>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="concept" id="tin" aria-labelledby="tin-t">
+    <div class="c-head">
+      <span class="c-letter">B</span>
+      <div>
+        <p class="eyebrow">Kitchen · anjarai petti</p>
+        <h2 id="tin-t">The spice tin</h2>
+        <p>The round steel masala box in every Tamil kitchen: seven cups, one in the middle. Each skill is a spice. Taste is what you add to an agent a pinch at a time, and a recipe is a mix. Click a cup for its recipe card.</p>
+      </div>
+    </div>
+    <p class="try">open a cup ↓</p>
+    <div class="tin-wrap">
+      <div class="tins" data-tins></div>
+      <div class="detail sk-box recipe" data-tin-detail></div>
+    </div>
+    <div class="notes">
+      <div class="sk-box"><h3>Why it means something</h3><p>The most personal of the four: home, cooking, the Tamil kitchen. "Taste" stops being a buzzword and becomes a spice.</p></div>
+      <div class="sk-box"><h3>How it scales</h3><p>Seven cups to a tin. Skill eight opens a second tin, and tins line up on a shelf, one per category if you like.</p></div>
+      <div class="sk-box"><h3>Watch out</h3><p>Circles hold little text, so names live on paper tags. At 4+ tins it starts to feel like a lot of steel.</p></div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="concept" id="seeds" aria-labelledby="seeds-t">
+    <div class="c-head">
+      <span class="c-letter">C</span>
+      <div>
+        <p class="eyebrow">Garden · sow it in your agent</p>
+        <h2 id="seeds-t">Seed packets</h2>
+        <p>Each skill is a seed packet in a rack: you plant it in someone else's agent and it grows into something. Flip a packet for the back: when to sow, when not to, companion plants (pairs with), what it grows into, and how to sow it.</p>
+      </div>
+    </div>
+    <p class="try">flip a packet ↓</p>
+    <div class="rack" data-rack></div>
+    <div class="notes">
+      <div class="sk-box"><h3>Why it means something</h3><p>A skill is a seed: small, passed on, grows in someone else's soil. Sits next to Thenga (a coconut is a seed too) without being Thenga.</p></div>
+      <div class="sk-box"><h3>How it scales</h3><p>The rack just gets longer. Numbered packets (Nº 01, Nº 02…) make the growth itself the story. Rows by category.</p></div>
+      <div class="sk-box"><h3>Watch out</h3><p>The back of a packet is small, so copy has to be tight. Flipping is great on desktop, a little fiddly to read on a phone.</p></div>
+    </div>
+  </section>
+
+  <!-- D -->
+  <section class="concept" id="drawer" aria-labelledby="drawer-t">
+    <div class="c-head">
+      <span class="c-letter">D</span>
+      <div>
+        <p class="eyebrow">Library · the card catalogue</p>
+        <h2 id="drawer-t">The card drawer</h2>
+        <p>An old library drawer, open. Each skill is an index card with a coloured tab by category, typed on ruled lines. Filter by the tabs on the drawer front, pull a card to read it.</p>
+      </div>
+    </div>
+    <p class="try">pull a card ↓</p>
+    <div class="cabinet">
+      <div class="drawer-front">
+        <div class="holder" data-holder>Skills · A–Z</div>
+        <div class="pull" aria-hidden="true"></div>
+        <div class="filters" data-filters></div>
+      </div>
+      <div class="cards" data-cards></div>
+    </div>
+    <div class="notes">
+      <div class="sk-box"><h3>Why it means something</h3><p>A catalogue is a knowledge base: the "skill and knowledge base" the agent-clarifier story promised. Quiet and archival.</p></div>
+      <div class="sk-box"><h3>How it scales</h3><p>Best of the four: alphabetical, filterable, and fine at 50. Closed cards are one line each.</p></div>
+      <div class="sk-box"><h3>Watch out</h3><p>The least personal and the least playful. Closest to Emil's list, just dressed up.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap end">
+  <p class="hand" style="font-size:1.4rem; color: var(--coral); margin:0 0 .4rem">Which one?</p>
+  <p>Pick one, mix two (say the pedalboard as the hero and the drawer as the full list), or say what's missing. The next round turns the pick into a real page layout.</p>
+</footer>
+
+<script>
+const CATS = { craft: 'var(--coral)', use: 'var(--blue)', write: 'var(--teal)', ship: 'var(--violet)' };
+const CAT_NAMES = { craft: 'Craft', use: 'Use', write: 'Write', ship: 'Ship' };
+const SPICE = { craft: '#c8462c', use: '#e8b923', write: '#6b8e3a', ship: '#3a2a1e' };
+const INSTALL = 'npx skills@latest add marigameo/skills';
+
+const BASE = [
+  { name: 'craft-component', cat: 'craft', public: true,
+    what: 'Build a UI component the careful way, with the owner deciding.',
+    use: 'A card, widget or any self-contained piece of UI you want done properly.',
+    dont: 'A whole app or page. Motion alone (use animate).',
+    pairs: 'Emil’s animate, break-ui · Jakub’s audits',
+    prompt: 'build me a toast',
+    off: 'Sure! Here’s a Toast component:\n\n.toast { color: #999;\n  transition: all 300ms ease-in;\n  border-radius: 6px; }',
+    on: 'Before any code: what is it, which states\ndoes it have, and what does each way out\nmean? I’ll write PLAN.md and stop for your go.' },
+  { name: 'ask-clarifier', cat: 'use', public: true,
+    what: 'Wire agent-clarifier in, so your agent asks before it acts.',
+    use: 'A chat agent needs structured answers mid-task.',
+    dont: 'The question has one obvious answer. Just act.',
+    pairs: 'craft-component',
+    prompt: 'plan my trip to Kerala',
+    off: 'Great! I’ve booked 7 days in Munnar,\nassuming a mid-range budget and July…',
+    on: '┌ A few questions ─────────────┐\n│ When?    ○ Monsoon ○ Winter   │\n│ Budget?  ○ Lean ○ Comfortable │\n│          → Decide for me      │\n└───────────────────────────────┘' },
+  { name: 'share-my-work', cat: 'write', public: false,
+    what: 'Turn rough notes into a portfolio story in my voice.',
+    use: 'A project is done and you have bullets, not a story.',
+    dont: 'You want marketing copy. It won’t invent facts.',
+    pairs: 'linkedin-teaser',
+    prompt: 'write up my notes as a case study',
+    off: 'Revolutionizing UX: How We Leveraged\nCutting-Edge AI to Drive 300% Growth 🚀',
+    on: 'Draft in your voice is ready.\n2 TODOs: the launch date and the team\nsize. I won’t make those up.' },
+  { name: 'linkedin-teaser', cat: 'ship', public: false,
+    what: 'A short personal post and a 22-second sketch reel for a story.',
+    use: 'A story or blog is published and you want to share it.',
+    dont: 'Nothing is published yet.',
+    pairs: 'share-my-work',
+    prompt: 'announce this on LinkedIn',
+    off: '🚀 Thrilled to announce that I’ve\nembarked on an incredible journey…',
+    on: 'A 6-line post in your voice, plus a\nsilent 22s reel drawn in the site’s\nsketch style, colour-coded per story.' },
+];
+
+const catKeys = Object.keys(CATS);
+let skills = [...BASE];
+let addN = 0;
+const state = { pedal: 'craft-component', on: new Set(['craft-component']), cup: 'craft-component', flipped: new Set(), card: 'craft-component', filter: 'all' };
+
+function placeholder() {
+  addN++;
+  const cat = catKeys[(addN + 1) % catKeys.length];
+  const name = `next-skill-${String(skills.length + 1).padStart(2, '0')}`;
+  return { name, cat, public: true, placeholder: true,
+    what: 'A placeholder for a skill still to come.',
+    use: 'When it matters.', dont: 'When it doesn’t.', pairs: '—',
+    prompt: 'do the thing',
+    off: 'Doing the thing the usual way…', on: 'Doing the thing with care.' };
+}
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const find = (n) => skills.find((s) => s.name === n) || skills[0];
+const installOf = (s) => s.public ? INSTALL : 'Not public yet · lives in the portfolio repo';
+
+function detailHTML(s, opts = {}) {
+  return `<p class="d-cat" style="--c:${CATS[s.cat]}">${CAT_NAMES[s.cat]}${s.public ? '' : ' · not public yet'}</p>
+    <h3>${esc(s.name)}</h3>
+    <p class="d-what">${esc(s.what)}</p>
+    <dl class="d-rows">
+      <div><dt>${opts.use || 'Use when'}</dt><dd>${esc(s.use)}</dd></div>
+      <div><dt>${opts.dont || 'Skip when'}</dt><dd>${esc(s.dont)}</dd></div>
+      <div><dt>${opts.pairs || 'Pairs with'}</dt><dd>${esc(s.pairs)}</dd></div>
+    </dl>
+    <code class="d-install">${esc(installOf(s))}</code>`;
+}
+
+/* A · pedals */
+function renderPedals() {
+  const row = document.querySelector('[data-pedals]');
+  const knobs = (i) => `<span class="knobs"><span class="knob" style="--r:${-50 + i * 37 % 100}deg"></span><span class="led"></span><span class="knob" style="--r:${20 + i * 53 % 90}deg"></span></span>`;
+  row.innerHTML = skills.map((s, i) => `<button type="button" class="pedal" style="--pc:${CATS[s.cat]}" aria-pressed="${state.on.has(s.name)}" data-pedal="${s.name}">
+      ${knobs(i)}<span class="plate">${esc(s.name)}</span>${s.public ? '' : '<span class="lock">not public yet</span>'}<span class="stomp"></span></button>`).join('')
+    + `<div class="pedal pedal--empty">next pedal…</div>`;
+  const s = find(state.pedal);
+  const isOn = state.on.has(s.name);
+  document.querySelector('[data-prompt]').innerHTML = `<b>you ▸</b> ${esc(s.prompt)}`;
+  document.querySelector('[data-off]').textContent = s.off;
+  document.querySelector('[data-on]').textContent = s.on;
+  document.querySelector('[data-off]').parentElement.classList.toggle('dim', isOn);
+  document.querySelector('[data-on]').parentElement.classList.toggle('dim', !isOn);
+  const chain = skills.filter((x) => state.on.has(x.name)).map((x) => x.name);
+  document.querySelector('[data-chain]').textContent = chain.length ? 'chain: ' + chain.join(' → ') : 'chain: nothing on';
+  document.querySelector('[data-pedal-detail]').innerHTML = detailHTML(s);
+}
+
+/* B · tins */
+const RING = [[0, 0], [0, -96], [83, -48], [83, 48], [0, 96], [-83, 48], [-83, -48]];
+function renderTins() {
+  const box = document.querySelector('[data-tins]');
+  const chunks = [];
+  for (let i = 0; i < skills.length; i += 7) chunks.push(skills.slice(i, i + 7));
+  if (!chunks.length || chunks[chunks.length - 1].length === 7) chunks.push([]);
+  const small = chunks.length > 1;
+  box.innerHTML = chunks.map((group, t) => {
+    const k = small ? 0.72 : (matchMedia('(max-width: 779px)').matches ? 0.88 : 1);
+    const cups = RING.map(([x, y], j) => {
+      const s = group[j];
+      const pos = `--x:${Math.round(x * k)}px;--y:${Math.round(y * k)}px`;
+      if (!s) return `<span class="cup empty" style="${pos}" aria-hidden="true"></span>`;
+      return `<button type="button" class="cup" style="${pos};--spice:${SPICE[s.cat]}" aria-pressed="${state.cup === s.name}" aria-label="${esc(s.name)}" data-cup="${s.name}"><span class="tag">${esc(s.name)}</span></button>`;
+    }).join('');
+    return `<div class="tin-box"><div class="tin${small ? ' small' : ''}">${cups}</div><p class="tin-label">Tin ${t + 1} · ${group.length}/7</p></div>`;
+  }).join('');
+  document.querySelector('[data-tin-detail]').innerHTML = detailHTML(find(state.cup), { use: 'Add when', dont: 'Leave out when', pairs: 'Goes with' });
+}
+
+/* C · seeds */
+const SPROUT = `<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M40 70V38"/><path d="M40 46c-14-2-20-12-18-22 12 0 19 9 18 22z" fill="var(--paper-2)"/><path d="M40 40c2-14 11-21 22-19 0 12-9 19-22 19z" fill="var(--paper-2)"/><path d="M22 70h36" stroke-dasharray="3 4"/></svg>`;
+function renderSeeds() {
+  const rack = document.querySelector('[data-rack]');
+  rack.innerHTML = skills.map((s, i) => `<button type="button" class="packet" style="--pc:${CATS[s.cat]}" aria-pressed="${state.flipped.has(s.name)}" aria-label="${esc(s.name)}, flip packet" data-packet="${s.name}">
+    <div class="packet-inner">
+      <div class="face front"><div class="art">${SPROUT}</div><div class="meta"><div class="no">Nº ${String(i + 1).padStart(2, '0')} · ${CAT_NAMES[s.cat]}</div><div class="nm">${esc(s.name)}</div><div class="gr">${s.public ? 'grows into: ' + esc(s.what.split(',')[0].replace(/^./, (c) => c.toLowerCase())) : 'not on sale yet'}</div></div></div>
+      <div class="face back"><div class="bk">
+        <div><b>Sow when</b>${esc(s.use)}</div>
+        <div><b>Don’t sow when</b>${esc(s.dont)}</div>
+        <div><b>Companions</b>${esc(s.pairs)}</div>
+        <div><b>To sow</b><code>${esc(s.public ? INSTALL : 'not public yet')}</code></div>
+      </div></div>
+    </div></button>`).join('') + `<div class="packet--empty">Nº ${String(skills.length + 1).padStart(2, '0')}<br>still in the ground</div>`;
+}
+
+/* D · drawer */
+function renderDrawer() {
+  const f = document.querySelector('[data-filters]');
+  f.innerHTML = ['all', ...catKeys].map((c) => `<button type="button" aria-pressed="${state.filter === c}" data-filter="${c}">${c === 'all' ? 'All' : CAT_NAMES[c]}</button>`).join('');
+  const list = [...skills].sort((a, b) => a.name.localeCompare(b.name)).filter((s) => state.filter === 'all' || s.cat === state.filter);
+  const first = list[0]?.name[0]?.toUpperCase() || 'A', last = list[list.length - 1]?.name[0]?.toUpperCase() || 'Z';
+  document.querySelector('[data-holder]').textContent = `Skills · ${first}–${last} · ${list.length}`;
+  const tabX = { craft: '0.6rem', use: '28%', write: '52%', ship: '74%' };
+  document.querySelector('[data-cards]').innerHTML = list.map((s) => `<div class="icard${state.card === s.name ? ' open' : ''}" style="--c:${CATS[s.cat]};--tx:${tabX[s.cat]}">
+      <span class="tab">${CAT_NAMES[s.cat]}</span>
+      <button type="button" class="row" aria-expanded="${state.card === s.name}" data-card="${s.name}"><span class="nm">${esc(s.name)}</span><span class="wh">${esc(s.what)}</span></button>
+      <div class="body">
+        <p><span>what</span>${esc(s.what)}</p>
+        <p><span>use when</span>${esc(s.use)}</p>
+        <p><span>skip when</span>${esc(s.dont)}</p>
+        <p><span>see also</span>${esc(s.pairs)}</p>
+        <p><span>get it</span>${esc(installOf(s))}</p>
+      </div></div>`).join('') + `<div class="icard empty" style="--c:var(--ink-faint);--tx:40%"><button type="button" class="row" tabindex="-1"><span class="wh">a blank card, for the next one</span></button></div>`;
+}
+
+function renderAll() {
+  renderPedals(); renderTins(); renderSeeds(); renderDrawer();
+  document.querySelector('[data-count]').textContent = `${skills.length} skills`;
+}
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-pedal],[data-cup],[data-packet],[data-card],[data-filter],[data-add],[data-reset],[data-theme-toggle]');
+  if (!t) return;
+  if (t.dataset.pedal) { const n = t.dataset.pedal; if (state.pedal === n || !state.on.has(n)) { state.on.has(n) ? state.on.delete(n) : state.on.add(n); } state.pedal = n; renderPedals(); }
+  else if (t.dataset.cup) { state.cup = t.dataset.cup; renderTins(); }
+  else if (t.dataset.packet) { const n = t.dataset.packet; state.flipped.has(n) ? state.flipped.delete(n) : state.flipped.add(n); t.setAttribute('aria-pressed', state.flipped.has(n)); }
+  else if (t.dataset.card) { state.card = state.card === t.dataset.card ? '' : t.dataset.card; renderDrawer(); }
+  else if (t.dataset.filter) { state.filter = t.dataset.filter; renderDrawer(); }
+  else if ('add' in t.dataset) { skills.push(placeholder()); renderAll(); }
+  else if ('reset' in t.dataset) { skills = [...BASE]; addN = 0; state.on = new Set(['craft-component']); state.pedal = state.cup = state.card = 'craft-component'; state.flipped.clear(); state.filter = 'all'; renderAll(); }
+  else if ('themeToggle' in t.dataset) {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+  }
+});
+addEventListener('resize', () => renderTins());
+renderAll();
+</script>
+</body>
+</html>

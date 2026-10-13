@@ -1,0 +1,28 @@
+---
+/* "Off the main thread": the home section between the work and the talks, for the
+   two places that aren't projects. Thenga's studio + yard (Stash.astro) and the
+   palm-leaf bundle of skills (SkillsDoor.astro), side by side as two cards of the
+   same shape, so they read as two doors rather than more work. Its own band
+   (paper, between the sand of the work and the talks) gives the eye a clean break. */
+import Stash from './Stash.astro';
+import SkillsDoor from './SkillsDoor.astro';
+---
+<section class="section section--paper has-wave before-wave" id="beyond" aria-labelledby="beyond-title">
+  <div class="wave" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Beyond the work</p>
+      <h2 id="beyond-title">Off the main thread.</h2>
+      <p>Where the experiments pile up, and where what I learn gets written down.</p>
+    </div>
+    <div class="doors">
+      <Stash />
+      <SkillsDoor />
+    </div>
+  </div>
+</section>
+
+<style>
+  .doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: 2.2rem; }
+  @media (max-width: 899px) { .doors { grid-template-columns: 1fr; gap: 2.4rem; } }
+</style>

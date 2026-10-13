@@ -1,0 +1,117 @@
+---
+/* The /skills/ hero: a bundle of palm-leaf manuscripts (olai chuvadi), drawn close
+   to the real thing. Thin leaves stacked on a wooden board, a written top leaf
+   (Thirukkural 391), a red cord knotted in the middle with a beaded tassel, a clay
+   lamp and marigolds. The agent stands at the end, writing on the top leaf with an
+   ezhuthani, the iron stylus. References and earlier rounds: process/skills-page/. */
+interface Props { class?: string }
+const { class: cls } = Astro.props;
+
+/* One thin strip per leaf in the stack, drawn bottom-up, with ends not quite aligned. */
+const strips = Array.from({ length: 11 }, (_, k) => {
+  const i = 10 - k;
+  const l = 26 + ((i * 7) % 5) * 2 - 4;
+  const r = 496 - ((i * 5) % 4) * 3;
+  return { x: l, y: +(180 + i * 4.2).toFixed(1), w: r - l, tone: i % 2 ? 'b' : 'a' };
+});
+---
+<svg class:list={['olai', cls]} viewBox="0 0 620 360" role="img" aria-label="A bundle of palm-leaf manuscripts tied with a red cord, the top leaf written in Tamil. A small robot, the agent, stands at its end writing on the top leaf with an iron stylus. A clay lamp and marigolds sit beside it.">
+  <defs>
+    <linearGradient id="olai-face" x1="0" x2="1">
+      <stop offset="0" stop-color="var(--olai-edge)" /><stop offset=".12" stop-color="var(--olai-b)" /><stop offset=".3" stop-color="var(--olai-a)" />
+      <stop offset=".7" stop-color="var(--olai-a)" /><stop offset=".9" stop-color="var(--olai-b)" /><stop offset="1" stop-color="var(--olai-edge)" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="300" cy="270" rx="290" ry="14" class="o-shadow" />
+
+  <!-- the wooden board the bundle rests on -->
+  <path d="M22 226 Q16 254 44 258 H478 Q506 254 500 226 Z" class="o-ink o-wood" />
+  <path d="M60 242 H290 M330 250 H470 M90 252 H220" class="o-grain" />
+
+  <!-- the stack -->
+  {strips.map((s) => <rect x={s.x} y={s.y} width={s.w} height="4.6" rx="2.3" class={`o-strip o-strip--${s.tone}`} />)}
+
+  <!-- the top leaf, written on -->
+  <path d="M78 128 H478 Q504 130 496 153 Q488 177 454 178 H50 Q20 177 28 154 Q36 128 78 128 Z" class="o-ink o-face" />
+  <ellipse cx="112" cy="153" rx="5.5" ry="3.6" class="o-hole" /><ellipse cx="420" cy="153" rx="5.5" ry="3.6" class="o-hole" />
+  <g transform="translate(0 153) skewX(-26) translate(0 -153)">
+    <path d="M136 132 V174 M402 132 V174" class="o-rule" />
+    <text x="146" y="148" class="o-script" lang="ta">கற்க கசடறக் கற்பவை</text>
+    <text x="146" y="167" class="o-script" lang="ta">கற்றபின் நிற்க அதற்குத் தக</text>
+  </g>
+
+  <!-- the cord: around the middle, knotted on top, a beaded tassel hanging -->
+  <path d="M372 128 L352 178 L352 226 M384 128 L364 178 L364 226" class="o-cord" />
+  <path d="M364 148 c-14 -10 -20 6 -6 10 c-16 4 -10 20 4 10 c4 14 20 8 10 -4 c14 -2 12 -18 -2 -14 c0 -14 -18 -12 -10 0" class="o-cord" />
+  <path d="M366 162 C380 190 396 206 390 236 C386 256 378 270 382 292" class="o-cord o-cord--thin" />
+  <circle cx="389" cy="246" r="5.5" class="o-ink o-thin o-bead" /><circle cx="384" cy="262" r="5.5" class="o-ink o-thin o-bead" />
+  <path d="M382 290 l-8 22 M382 290 l-3 24 M382 290 l2 24 M382 290 l7 22 M382 290 l11 19" class="o-tassel" />
+
+  <!-- the agent, writing with the ezhuthani -->
+  <path d="M428 162 h18" class="o-fresh" />
+  <g class="o-agent">
+    <line x1="553" y1="138" x2="553" y2="151" class="o-ink" />
+    <circle cx="553" cy="133" r="5.5" class="o-ink o-thin o-antenna" />
+    <rect x="521" y="151" width="64" height="50" rx="15" class="o-ink o-paper" />
+    <circle cx="538" cy="176" r="4.8" class="o-eye" /><circle cx="560" cy="176" r="4.8" class="o-eye" />
+    <path d="M543 189 q7 5 14 0" class="o-ink" />
+    <rect x="529" y="204" width="48" height="50" rx="10" class="o-ink o-paper" />
+    <path d="M577 220 q16 6 13 24" class="o-ink" />
+  </g>
+  <g class="o-stylus">
+    <path d="M452 158 L532 122" class="o-stylus-out" />
+    <path d="M452 158 L532 122" class="o-stylus-in" />
+    <path d="M516 126 l4 9 M523 123 l4 9" class="o-ink o-thin" />
+  </g>
+  <path d="M530 216 C508 212 492 172 486 148" class="o-ink" />
+  <circle cx="486" cy="144" r="6.5" class="o-ink o-paper" />
+
+  <!-- a clay lamp and two marigolds -->
+  <path d="M40 304 Q70 334 104 304 L116 298 Q110 308 104 304" class="o-ink o-clay" />
+  <path d="M40 304 Q72 294 104 304" class="o-ink o-thin" />
+  <path d="M111 300 C103 282 111 270 115 262 C121 272 127 284 111 300 Z" class="o-ink o-thin o-flame" />
+  <circle cx="150" cy="322" r="12" class="o-ink o-thin o-petals" /><circle cx="150" cy="322" r="5.4" class="o-ink o-thin o-heart" />
+  <circle cx="604" cy="268" r="10" class="o-ink o-thin o-petals" /><circle cx="604" cy="268" r="4.5" class="o-ink o-thin o-heart" />
+
+  <text x="150" y="70" class="o-note" transform="rotate(-4 150 70)">one leaf, one skill</text>
+  <path d="M200 82 q-12 14 -10 38 M184 112 l6 10 l7 -9" class="o-note-line" />
+</svg>
+
+<style>
+  .olai {
+    --olai-a: #efd9a2; --olai-b: #dcbd7a; --olai-edge: #b48c4c; --olai-script: #4a3418;
+    --wood: #8a5a2b; --wood-2: #6e4520; --cord: #b8322a; --brass: #c09a58;
+    width: 100%; height: auto; overflow: visible; display: block;
+  }
+  :global([data-theme="dark"]) .olai { --olai-a: #cdb57f; --olai-b: #b89a5e; --olai-edge: #8f6c36; --olai-script: #3a2812; --wood: #6b4422; --wood-2: #553419; --cord: #c8443a; --brass: #a8874c; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .olai { --olai-a: #cdb57f; --olai-b: #b89a5e; --olai-edge: #8f6c36; --olai-script: #3a2812; --wood: #6b4422; --wood-2: #553419; --cord: #c8443a; --brass: #a8874c; }
+  }
+  .o-ink { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .o-thin { stroke-width: 1.6; }
+  .o-paper { fill: var(--paper-2); }
+  .o-face { fill: url(#olai-face); }
+  .o-shadow { fill: var(--ink); opacity: .08; }
+  .o-wood { fill: var(--wood); }
+  .o-grain { fill: none; stroke: var(--wood-2); stroke-width: 1.6; stroke-linecap: round; opacity: .7; }
+  .o-strip { stroke: var(--olai-edge); stroke-width: 1; }
+  .o-strip--a { fill: var(--olai-a); } .o-strip--b { fill: var(--olai-b); }
+  .o-hole { fill: var(--olai-script); }
+  .o-rule { fill: none; stroke: var(--olai-script); stroke-width: 1.6; opacity: .5; }
+  .o-script { font-family: "Noto Serif Tamil", serif; font-weight: 600; font-size: 12.5px; fill: var(--olai-script); }
+  .o-cord { fill: none; stroke: var(--cord); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+  .o-cord--thin { stroke-width: 3.5; }
+  .o-bead { fill: var(--brass); }
+  .o-tassel { stroke: var(--cord); stroke-width: 2; stroke-linecap: round; }
+  .o-fresh { stroke: var(--olai-script); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 3 2; }
+  .o-antenna { fill: var(--coral); }
+  .o-eye { fill: var(--ink); }
+  .o-stylus-out { stroke: var(--ink); stroke-width: 8; stroke-linecap: round; }
+  .o-stylus-in { stroke: var(--brass); stroke-width: 4.5; stroke-linecap: round; }
+  .o-clay { fill: #b5653a; }
+  .o-flame { fill: #ffb43a; }
+  .o-petals { fill: #f39a1f; stroke-dasharray: 3 2; }
+  .o-heart { fill: #e07a10; }
+  .o-note { font-family: var(--font-hand); font-weight: 700; font-size: 22px; fill: var(--coral); }
+  .o-note-line { fill: none; stroke: var(--coral); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+</style>
