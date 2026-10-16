@@ -1,0 +1,35 @@
+---
+/* What testing the skill on co-presence changed in it, as notes pinned to a board:
+   what happened in the build on top, faint, and the rule it became in the skill
+   below, inked. Teal marks the rules now in craft-component. Wraps to two columns,
+   one on a phone. */
+const notes = [
+  { what: '“Go with your recommendations” stretched over every gate. The agent picked the sketch itself.', rule: 'Those words answer the calls on the table. The sketch, the playground and the demo are never handed over.' },
+  { what: 'The audits ran before I’d played with it, so my feedback meant auditing again.', rule: 'Play, freeze, then audit. Audits polish the frozen version, they don’t redesign it.' },
+  { what: 'One page did the demo’s job and the playground’s, with eleven controls in the header.', rule: 'Two pages, one engine: a plain playground and a story demo.' },
+  { what: '“Looks too vibe-coded.” The page around the component used more hues than the component.', rule: 'The host is quieter than the component, and a slop check runs before every hand-over.' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet sn" role="img" aria-label={`What the build changed in the craft-component skill. ${notes.map((n) => `${n.what} Now: ${n.rule}`).join(' ')}`}>
+    <ul>
+      {notes.map((n, i) => (
+        <li class:list={['sk-box', 'sk-box--teal', `sk-lean-${(i % 4) + 1}`]}>
+          <p class="sn-what">{n.what}</p>
+          <p class="sn-rule"><span>Now in the skill</span>{n.rule}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <figcaption>24 notes from one build. The next component starts where this one ended.</figcaption>
+</figure>
+
+<style>
+  .sn { padding: 1.3rem 1.2rem 1.2rem; }
+  .sn ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+  .sn li { display: grid; gap: .5rem; align-content: start; padding: .8rem .9rem .9rem; }
+  .sn p { margin: 0 !important; max-width: none; line-height: 1.42; }
+  .sn-what { font-size: .8rem; color: var(--ink-faint); }
+  .sn-rule { font-size: .86rem; font-weight: 500; color: var(--ink); }
+  .sn-rule span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .56rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--c); }
+</style>

@@ -1,0 +1,75 @@
+---
+/* Two real renders from the build, before and after, shown one at a time at a size
+   you can read, with a switch to flip between them in place, so the eye stays on the
+   same spot. On wide screens the figure breaks out of the text column to 64rem, like
+   the hero. Each render comes in light and dark and follows the site's theme, and
+   opens full size in the page's lightbox. The notes under it say what to look at for
+   the one showing. The switch works by keyboard; without JS the first one shows. */
+import Icon from '../../Icon.astro';
+interface Shot { label: string; key: string; w: number; h: number; alt: string; notes: string[]; max?: string }
+interface Props { id: string; shots: Shot[]; caption: string }
+const { id, shots, caption } = Astro.props;
+const B = '/images/work/co-presence/';
+---
+<figure class="sk-fig ba-fig" data-ba>
+  <div class="sk-sheet ba">
+    <div class="ba-switch" role="group" aria-label="Show">
+      {shots.map((s, i) => (
+        <button type="button" aria-pressed={String(i === 0)} aria-controls={`${id}-${i}`} data-ba-btn={i} class:list={[i === shots.length - 1 && 'ba-btn--last']}>{s.label}</button>
+      ))}
+    </div>
+    {shots.map((s, i) => (
+      <div class="ba-shot" id={`${id}-${i}`} data-ba-shot={i} hidden={i !== 0}>
+        {(['light', 'dark'] as const).map((t) => (
+          <button type="button" class:list={['ba-zoom', `th-${t}`]} style={s.max && `max-inline-size: ${s.max}`} data-full={`${B}${s.key}-${t}.webp`} aria-label={`View full size: ${s.label}`}>
+            <img src={`${B}${s.key}-${t}.webp`} width={s.w} height={s.h} alt={s.alt} loading="lazy" decoding="async">
+            <span class="ba-enlarge" aria-hidden="true"><Icon name="zoom-in" />Enlarge</span>
+          </button>
+        ))}
+        <ul class="ba-notes">{s.notes.map((n) => <li>{n}</li>)}</ul>
+      </div>
+    ))}
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((root) => {
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-ba-btn]')];
+    btns.forEach((b) => b.addEventListener('click', () => {
+      for (const x of btns) {
+        const on = x === b;
+        x.setAttribute('aria-pressed', String(on));
+        root.querySelector<HTMLElement>(`[data-ba-shot="${x.dataset.baBtn}"]`)!.hidden = !on;
+      }
+    }));
+  });
+</script>
+
+<style>
+  @media (min-width: 1100px) {
+    .ba-fig { inline-size: 64rem; max-inline-size: calc(100vw - 4rem); margin-inline: calc(50% - min(32rem, 50vw - 2rem)) !important; }
+  }
+  .ba { display: grid; gap: 1rem; padding: 1.1rem 1.2rem 1.2rem; }
+  .ba-switch { justify-self: start; display: flex; gap: 2px; padding: 2px; background: var(--sand-2); border-radius: 999px; }
+  .ba-switch button { padding: .4rem 1rem; font: 500 .82rem var(--font-body); color: var(--ink-soft); background: none; border: 0; border-radius: 999px; cursor: pointer; }
+  .ba-switch button[aria-pressed="true"] { color: var(--paper-2); background: var(--ink); }
+  .ba-switch .ba-btn--last[aria-pressed="true"] { background: var(--coral); }
+  .ba-switch button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .ba-shot { display: grid; gap: .8rem; justify-items: center; }
+  .ba-zoom { position: relative; display: block; inline-size: 100%; padding: 0; border: 1.5px solid var(--ink); border-radius: 10px; overflow: hidden; cursor: zoom-in; background: var(--paper); box-shadow: 3px 3px 0 var(--shadow-ink); }
+  /* The frame is the button; the prose's wobbly image border would draw a second, curved one inside it. */
+  .ba-zoom img { display: block; inline-size: 100%; block-size: auto; border: 0 !important; border-radius: 0 !important; }
+  .ba-zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .ba-enlarge { position: absolute; inset-block-end: .5rem; inset-inline-end: .5rem; display: inline-flex; align-items: center; gap: .25rem; padding: .2rem .6rem; font-size: .72rem; color: var(--ink); background: var(--paper-2); border: 1px solid var(--line); border-radius: 999px; }
+  .ba-enlarge :global(svg) { width: .8rem; height: .8rem; }
+  .ba-notes { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; }
+  .ba-notes li { padding: .2rem .7rem; font-size: .8rem; line-height: 1.4; text-align: center; color: var(--ink-soft); background: var(--paper-2); border: 1px solid var(--line); border-radius: 12px; }
+  .th-dark { display: none !important; }
+  :global([data-theme="dark"]) .th-dark { display: block !important; }
+  :global([data-theme="dark"]) .th-light { display: none !important; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme="light"])) .th-dark { display: block !important; }
+    :global(:root:not([data-theme="light"])) .th-light { display: none !important; }
+  }
+</style>

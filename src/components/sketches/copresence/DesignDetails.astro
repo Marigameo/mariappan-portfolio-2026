@@ -1,0 +1,70 @@
+---
+/* How the strip behaves, and why: nine decisions from DESIGN.md in three groups
+   (motion, UX, access and performance), each as a small card with the decision, its
+   value as a chip, and one line of why. Built to be scanned, not read. Three cards
+   have a "Try it" button (data-try) that sets the hero war room to that state and
+   scrolls up to it (CopresenceRoom listens). Groups sit side by side on wide
+   screens and stack on a phone. */
+const groups = [
+  {
+    name: 'Motion', tone: 'coral',
+    items: [
+      { title: 'Quiet joins', chip: '0.85 → 1 · 240ms', why: 'Agents arrive in bursts. A pop for each is noise.' },
+      { title: 'Keys move instantly', chip: '0ms on Tab and arrows', why: 'Motion on keyboard actions slows the hands.' },
+      { title: 'Hover intent', chip: '120ms', why: 'A pointer crossing to the doc doesn’t fan the stack.', tryIt: 'hover' },
+    ],
+  },
+  {
+    name: 'UX', tone: 'blue',
+    items: [
+      { title: 'Needs you skips the queue', chip: '2s hold, skipped', why: 'The hold is for one full read. It never delays bad news.' },
+      { title: 'The name gives way first', chip: 'name ≤ 40%', why: 'What you wait on wraps. It’s never cut.' },
+      { title: 'Offline in words', chip: '“Reconnecting…”', why: 'A dim alone was 2:1, and invisible when collapsed.', tryIt: 'offline' },
+    ],
+  },
+  {
+    name: 'Access & performance', tone: 'teal',
+    items: [
+      { title: 'Failed is square', chip: '2px corners', why: 'In light mode, amber and red differ by hue alone.' },
+      { title: 'Announcements batched', chip: '1s batch', why: 'A burst of joins reads as one. Needs you, at once.' },
+      { title: 'Roster renders only when open', chip: '41ms → 4.7ms', why: 'Per event, with 1,284 actors.', tryIt: 'roster' },
+    ],
+  },
+];
+const label = (g: (typeof groups)[number]) => g.items.map((d) => `${d.title}: ${d.chip}. ${d.why}`).join(' ');
+---
+<figure class="sk-fig">
+  <div class="sk-sheet dd">
+    {groups.map((g, gi) => (
+      <section class:list={['dd-group', `sk-box--${g.tone}`]} aria-label={g.name}>
+        <p class="sk-hdr dd-hdr">{g.name}</p>
+        <ul aria-label={label(g)}>
+          {g.items.map((d, i) => (
+            <li class:list={['sk-box', `sk-lean-${((gi + i) % 4) + 1}`]}>
+              <strong>{d.title}</strong>
+              <span class="dd-chip">{d.chip}</span>
+              <span class="dd-why">{d.why}</span>
+              {d.tryIt && <button type="button" class="dd-try" data-try={d.tryIt}>Try it <span aria-hidden="true">↑</span></button>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+  <figcaption>Every value has a written reason. If it doesn’t, it’s a guess, and guesses get fixed.</figcaption>
+</figure>
+
+<style>
+  .dd { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; padding: 1.2rem; }
+  .dd-group { display: grid; gap: .7rem; align-content: start; }
+  .dd-hdr { margin: 0 !important; font-size: .62rem !important; color: var(--c) !important; }
+  .dd ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .8rem; }
+  .dd li { display: grid; gap: .3rem; justify-items: start; padding: .7rem .8rem .8rem; }
+  .dd strong { font-size: .88rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+  .dd-chip { padding: .05rem .5rem; font-family: var(--font-mono); font-size: .66rem; color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--paper-2)); border-radius: 999px; }
+  .dd-why { font-size: .78rem; line-height: 1.4; color: var(--ink-faint); }
+  .dd-try { margin-top: .15rem; padding: .15rem .6rem; font: 500 .74rem var(--font-body); color: var(--coral); background: transparent; border: 1.5px solid var(--coral); border-radius: 999px; cursor: pointer; }
+  .dd-try:hover { color: var(--paper-2); background: var(--coral); }
+  .dd-try:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  @media (max-width: 719px) { .dd { grid-template-columns: 1fr; } }
+</style>

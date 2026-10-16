@@ -1,0 +1,440 @@
+---
+/* The story's hero: the real <co-presence> (the published npm package) as the strip
+   above a small war room's message box, so the reader judges the component, not a
+   picture of it. A pretend incident plays by itself once the figure is near the
+   viewport: four agents fan out, Aisha joins quietly, one agent waits on her, and
+   one needs you, asked inline in the thread. The side panel says what to look at for
+   each beat, holds the strip's settings (faces before +N, the network, collapsed,
+   the roster), and logs what the backend sent and what the element told the app.
+
+   The host stays quieter than the component: greys from the site, the cast's faces
+   as the only hue. Each actor's face is one SVG used in both the thread and the
+   strip, so nobody is drawn two ways. Pause and Replay sit in the app's own bar
+   (WCAG 2.2.2). The component loads on first use, and follows the site's theme
+   through color-scheme. Without JS the chat shows a note. */
+interface Props { caption?: string }
+const { caption } = Astro.props;
+---
+<figure class="sk-fig cpr-fig" id="playground" aria-label="The real co-presence component in a pretend war room">
+  <div class="cpr" data-cpr>
+    <div class="cpr-body">
+      <div class="cpr-app">
+        <div class="cpr-bar">
+          <div class="cpr-title">
+            <p class="cpr-name">Checkout is slow</p>
+            <p class="cpr-chan">#inc-2291 · a replay</p>
+          </div>
+          <button type="button" class="cpr-icon" data-pause aria-pressed="false" aria-label="Pause the replay"><span aria-hidden="true" data-pause-glyph>❙❙</span></button>
+          <button type="button" class="cpr-icon" data-replay aria-label="Replay from the start"><span aria-hidden="true">↺</span></button>
+        </div>
+        <div class="cpr-msgs" data-msgs aria-label="War room thread"></div>
+        <div class="cpr-dock">
+          <co-presence selectable max="4" data-el></co-presence>
+          <form class="cpr-composer" data-composer>
+            <input id="cpr-input" autocomplete="off" placeholder="Message the war room…" aria-label="Message">
+            <button class="cpr-send" type="submit" aria-label="Send"><span aria-hidden="true">↑</span></button>
+          </form>
+        </div>
+        <p class="cpr-nojs" data-nojs>The war room needs JavaScript to run the real component.</p>
+      </div>
+
+      <aside class="cpr-side" aria-label="What to look at, settings, and events">
+        <div class="cpr-panel">
+          <p class="cpr-h">What to look at</p>
+          <p class="cpr-note" data-note>Scroll down a little and it starts by itself.</p>
+        </div>
+        <div class="cpr-panel cpr-panel--set">
+          <p class="cpr-h" id="cpr-l-max">Faces before +N</p>
+          <div class="cpr-seg" role="group" aria-labelledby="cpr-l-max">
+            {[3, 4, 6].map((n) => <button type="button" data-max={n} aria-pressed={String(n === 4)}>{n}</button>)}
+          </div>
+          <p class="cpr-h" id="cpr-l-net">Network</p>
+          <div class="cpr-seg" role="group" aria-labelledby="cpr-l-net">
+            <button type="button" data-net="live" aria-pressed="true">Live</button>
+            <button type="button" data-net="connecting" aria-pressed="false">Reconnecting</button>
+            <button type="button" data-net="offline" aria-pressed="false">Offline</button>
+          </div>
+          <p class="cpr-h" id="cpr-l-col">Strip</p>
+          <div class="cpr-seg" role="group" aria-labelledby="cpr-l-col">
+            <button type="button" data-col="false" aria-pressed="true">Full</button>
+            <button type="button" data-col="true" aria-pressed="false">Only what needs you</button>
+          </div>
+          <button type="button" class="cpr-roster" data-roster>Open the roster</button>
+        </div>
+        <div class="cpr-panel cpr-panel--grow">
+          <p class="cpr-h">Events</p>
+          <ol class="cpr-log" data-log><li class="cpr-empty">Nothing yet.</li></ol>
+        </div>
+      </aside>
+    </div>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  import type { Activity, Actor, CoPresence, CoPresenceEvent } from '@marigameo/co-presence';
+
+  const root = document.querySelector<HTMLElement>('[data-cpr]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const $ = <T extends HTMLElement>(sel: string) => root.querySelector(sel) as T;
+    const el = $<CoPresence>('[data-el]');
+    const msgs = $('[data-msgs]');
+    const note = $('[data-note]');
+    const log = $('[data-log]');
+    const input = $<HTMLInputElement>('#cpr-input');
+    const pauseBtn = $<HTMLButtonElement>('[data-pause]');
+    $('[data-nojs]').hidden = true;
+
+    // ── faces: one transparent SVG per actor, tinted with its own hue, used by the thread and the strip ──
+    const face = (letter: string, h: number) => 'data:image/svg+xml,' + encodeURIComponent(
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="hsl(${h} 70% 55%)" fill-opacity=".2"/>` +
+      `<text x="20" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="600" fill="hsl(${h} 45% 48%)">${letter}</text></svg>`);
+    const person = (id: string, name: string, h: number): Actor => ({ id, kind: 'person', name, avatar: face(name[0], h), activity: { type: 'viewing' } });
+    const agent = (id: string, name: string, h: number, activity: Activity, parentId?: string): Actor =>
+      ({ id, kind: 'agent', name, avatar: face(name[0], h), activity, ...(parentId ? { parentId } : {}) });
+
+    const cast: Record<string, Actor> = {
+      me: person('me', 'Mari S', 330),
+      aisha: person('aisha', 'Aisha Khan', 190),
+      planner: agent('planner', 'Planner', 265, { type: 'working', label: 'Reading the alert' }),
+      logs: agent('logs', 'Logs agent', 205, { type: 'working', label: 'Searching payments-api logs' }, 'planner'),
+      metrics: agent('metrics', 'Metrics agent', 235, { type: 'working', label: 'Reading the dashboards' }, 'planner'),
+      deploy: agent('deploy', 'Deploy-diff agent', 290, { type: 'working', label: 'Comparing v412 with v413' }, 'planner'),
+      status: agent('status', 'Status page agent', 175, { type: 'editing', target: 'Status page' }, 'planner'),
+      rollback: agent('rollback', 'Rollback agent', 315, { type: 'working', label: 'Planning the rollback' }, 'planner'),
+    };
+
+    // ── the story's clock: 14:06, a minute for every 5 seconds of story ──
+    let t0 = 0;
+    let elapsed = 0;
+    const clock = () => {
+      const m = 6 + Math.floor((elapsed + (paused ? 0 : performance.now() - t0)) / 5000);
+      return `14:${String(m).padStart(2, '0')}`;
+    };
+
+    // ── pause and replay: every wait is in story time, and a replay cancels the old run ──
+    let paused = false;
+    let run = 0;
+    const sleep = async (ms: number, id: number) => {
+      let left = ms;
+      while (left > 0) {
+        if (id !== run) throw new Error('replayed');
+        await new Promise((r) => setTimeout(r, 50));
+        if (!paused) left -= 50;
+      }
+      if (id !== run) throw new Error('replayed');
+    };
+
+    // ── the thread ──
+    const near = () => msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 80;
+    const follow = (was: boolean) => { if (was) msgs.scrollTop = msgs.scrollHeight; };
+    const mention = (text: string) => {
+      const frag = document.createDocumentFragment();
+      for (const part of text.split(/(@(?:Mari S|Aisha Khan|Logs agent|Metrics agent|Deploy-diff agent|Status page agent|Rollback agent|Planner))/)) {
+        if (part.startsWith('@')) {
+          const b = document.createElement('span');
+          b.className = part === '@Mari S' ? 'cpr-at cpr-at--me' : 'cpr-at';
+          b.textContent = part;
+          frag.append(b);
+        } else frag.append(part);
+      }
+      return frag;
+    };
+    const say = (id: string, text: string) => {
+      const was = near();
+      const a = cast[id];
+      const m = document.createElement('div');
+      m.className = `cpr-msg cpr-msg--${a.kind}`;
+      m.innerHTML = '<img alt=""><div><p class="cpr-who"><b></b><time></time></p><p class="cpr-text"></p></div>';
+      m.querySelector('img')!.src = a.avatar!;
+      m.querySelector('b')!.textContent = id === 'me' ? 'You' : a.name;
+      m.querySelector('time')!.textContent = clock();
+      m.querySelector('.cpr-text')!.append(mention(text));
+      msgs.append(m);
+      follow(was);
+      return m;
+    };
+
+    // ── the backend: every change goes through apply(), and shows in the log ──
+    const describe = (e: CoPresenceEvent) =>
+      e.type === 'join' ? `join · ${e.actor.name}`
+      : e.type === 'leave' ? `leave · ${cast[e.id]?.name ?? e.id}`
+      : e.type === 'activity' ? `activity · ${cast[e.id]?.name ?? e.id} → ${e.activity?.type ?? 'idle'}`
+      : e.type;
+    const entry = (text: string, out = false) => {
+      log.querySelector('.cpr-empty')?.remove();
+      const li = document.createElement('li');
+      if (out) li.className = 'cpr-out';
+      li.textContent = text;
+      log.prepend(li);
+      while (log.children.length > 7) log.lastElementChild?.remove();
+    };
+    const send = (e: CoPresenceEvent) => { el.apply(e); entry(`→ ${describe(e)}`); };
+    const join = (id: string) => send({ type: 'join', actor: { ...cast[id], activity: cast[id].activity && { ...cast[id].activity, startedAt: Date.now() } } });
+    const act = (id: string, activity: Activity | null) => send({ type: 'activity', id, activity: activity && { ...activity, startedAt: Date.now() } });
+    const leave = (id: string) => send({ type: 'leave', id });
+    const look = (text: string) => { note.textContent = text; };
+
+    // ── needs you: asked inline in the thread, answered there (or from the roster) ──
+    let answer: ((a: 'approve' | 'hold') => void) | null = null;
+    const ask = (id: string, question: string) => new Promise<'approve' | 'hold'>((resolve) => {
+      const was = near();
+      const card = document.createElement('div');
+      card.className = 'cpr-ask';
+      card.innerHTML = '<p class="cpr-ask-k">Needs you</p><p class="cpr-ask-q"></p><div class="cpr-ask-row"><button type="button" data-a="approve">Approve</button><button type="button" data-a="hold">Hold</button></div>';
+      card.querySelector('.cpr-ask-q')!.textContent = question;
+      msgs.append(card);
+      follow(was);
+      act(id, { type: 'waiting', waitingOn: 'me', label: question });
+      answer = (a) => {
+        answer = null;
+        card.classList.add('is-done');
+        card.tabIndex = -1;
+        card.innerHTML = '';
+        const p = document.createElement('p');
+        p.className = 'cpr-ask-q';
+        p.textContent = a === 'approve' ? `You approved: ${question}` : `You held it: ${question}`;
+        card.append(p);
+        // Focus lands on what happened, not on the page's body.
+        if (root.contains(document.activeElement) || document.activeElement === document.body) card.focus({ preventScroll: true });
+        resolve(a);
+      };
+      card.addEventListener('click', (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-a]');
+        if (b && answer) answer(b.dataset.a as 'approve' | 'hold');
+      });
+    });
+
+    // ── the story ──
+    async function story(id: number) {
+      const w = (ms: number) => sleep(ms, id);
+      look('You and the Planner. Two faces, and one line that says who is doing what.');
+      say('me', 'Checkout p99 has been at 4s since 14:02. Find out why and get it back under 300ms.');
+      await w(1400);
+      say('planner', 'On it. Splitting this four ways: @Logs agent takes the logs, @Metrics agent the dashboards, @Deploy-diff agent the last deploy, and @Status page agent drafts a customer update.');
+      act('planner', { type: 'working', label: 'Coordinating 4 agents' });
+      await w(600);
+      look('Four agents join at once. The faces stop at the max and roll into +N. Hover or Tab to the stack to fan them out.');
+      for (const a of ['logs', 'metrics', 'deploy', 'status']) { join(a); await w(250); }
+      await w(2600);
+      say('logs', '@Metrics agent every timeout is waiting on a database connection. Is the pool saturated?');
+      act('logs', { type: 'editing', target: 'Timeline' });
+      await w(1600);
+      look('Aisha just joined. The thread didn’t say so. Only the strip did.');
+      join('aisha');
+      await w(1800);
+      say('metrics', '@Logs agent yes, all 5 connections busy since 14:01. @Deploy-diff agent did the last deploy touch the pool?');
+      act('metrics', { type: 'editing', target: 'Impact' });
+      await w(2000);
+      say('deploy', '@Metrics agent it did. v413 changed pool_size from 50 to 5 in config/db.yaml. Looks like a typo.');
+      leave('logs');
+      await w(900);
+      look('Amber means someone is waiting. It’s on Aisha, not you, so the line names her.');
+      act('status', { type: 'waiting', waitingOn: 'aisha', label: 'Review the status page draft' });
+      say('status', '@Aisha Khan the customer update is drafted in the doc. Can you review it before it goes out?');
+      await w(2400);
+      act('aisha', { type: 'commenting', target: 'Status page' });
+      leave('metrics');
+      await w(1600);
+      say('planner', 'Root cause: v413 cut the DB pool from 50 to 5. @Rollback agent, prepare a rollback of payments-api to v412.');
+      join('rollback');
+      leave('deploy');
+      await w(2200);
+      say('aisha', '@Status page agent looks good, publish it.');
+      act('aisha', { type: 'viewing' });
+      act('status', { type: 'done', label: 'Customer update published' });
+      await w(1200);
+      look('Needs you comes first, whatever else is going on. Approve it in the thread, or pick the Rollback agent from the roster.');
+      say('rollback', '@Mari S plan ready: 6 pods to v412, one at a time, about 90 seconds.');
+      leave('status');
+      const a = await ask('rollback', 'Roll back payments-api to v412?');
+      if (a === 'approve') {
+        look('Back to green and grey. Green, doing something. Amber, waiting. A red square, failed. Nothing, just here.');
+        act('rollback', { type: 'editing', target: 'Mitigation' });
+        await w(2600);
+        say('rollback', '6 of 6 pods on v412. p99 is back to 190ms.');
+        leave('rollback');
+        act('planner', { type: 'working', label: 'Watching p99 for 15 minutes' });
+      } else {
+        look('Held. Nothing changed, and nothing waits on you now.');
+        act('rollback', null);
+        say('planner', 'Rollback on hold. payments-api stays on v413.');
+      }
+      await w(2400);
+      look('That’s the replay. Press ↺ to watch it again, or try the settings: drop the network, change the max, or show only what needs you.');
+    }
+
+    // If the component can't load (offline, a blocked script, a stale dev cache), say so in the chat instead
+    // of leaving an empty war room.
+    let ready: Promise<unknown> | null = null;
+    const load = () => (ready ??= import('@marigameo/co-presence').catch((err) => {
+      ready = null;
+      const nojs = $('[data-nojs]');
+      nojs.textContent = 'The component couldn’t load. Reload the page to try again.';
+      nojs.hidden = false;
+      look('The component couldn’t load, so there’s nothing to replay yet.');
+      throw err;
+    }));
+    function start() {
+      run++;
+      answer = null;
+      paused = false;
+      elapsed = 0;
+      t0 = performance.now();
+      pauseBtn.setAttribute('aria-pressed', 'false');
+      pauseBtn.setAttribute('aria-label', 'Pause the replay');
+      msgs.replaceChildren();
+      log.replaceChildren(Object.assign(document.createElement('li'), { className: 'cpr-empty', textContent: 'Nothing yet.' }));
+      el.closeRoster();
+      el.data = { selfId: 'me', actors: [{ ...cast.me }, { ...cast.planner, activity: { ...cast.planner.activity!, startedAt: Date.now() } }] };
+      entry('→ snapshot · 2 actors');
+      story(run).catch(() => {});
+    }
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); load().then(start, () => {}); }
+    }, { rootMargin: '200px' });
+    io.observe(root);
+
+    // ── what the element tells your app ──
+    el.addEventListener('copresence-select', (e) => {
+      const actor = e.detail.actor;
+      entry(`← copresence-select · ${actor.name}`, true);
+      if (actor.id === 'rollback' && answer) {
+        el.closeRoster();
+        msgs.querySelector<HTMLButtonElement>('.cpr-ask:not(.is-done) [data-a="approve"]')?.focus();
+      }
+    });
+    el.addEventListener('copresence-roster', (e) => entry(`← copresence-roster · ${e.detail.open ? 'open' : 'closed'}`, true));
+
+    // ── controls ──
+    const press = (sel: string, b: HTMLButtonElement) => root.querySelectorAll<HTMLButtonElement>(sel).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    root.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
+      if (!b) return;
+      if (b.dataset.max) { el.max = Number(b.dataset.max); press('[data-max]', b); }
+      else if (b.dataset.net) { el.connection = b.dataset.net as CoPresence['connection']; press('[data-net]', b); }
+      else if (b.dataset.col) { el.collapsed = b.dataset.col === 'true'; press('[data-col]', b); }
+      else if (b.hasAttribute('data-roster')) load().then(() => el.openRoster(), () => {});
+      else if (b.hasAttribute('data-replay')) load().then(start, () => {});
+      else if (b.hasAttribute('data-pause')) {
+        if (!paused) elapsed += performance.now() - t0; else t0 = performance.now();
+        paused = !paused;
+        b.setAttribute('aria-pressed', String(paused));
+        b.setAttribute('aria-label', paused ? 'Resume the replay' : 'Pause the replay');
+        $('[data-pause-glyph]').textContent = paused ? '▶' : '❙❙';
+      }
+    });
+    // ── the story's "Try it" buttons: set the war room to that state and scroll up to it ──
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-try]');
+      if (!t) return;
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      root.closest('figure')?.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+      load().then(() => {
+        if (!run) start();
+        if (t.dataset.try === 'offline') {
+          el.connection = 'offline';
+          press('[data-net]', $<HTMLButtonElement>('[data-net="offline"]'));
+          look('Offline, said in words: “Reconnecting…”. Press Live to bring it back.');
+        } else if (t.dataset.try === 'roster') {
+          el.openRoster();
+          look('The roster renders only while it’s open: 41ms per event became 4.7ms at 1,284 actors.');
+        } else if (t.dataset.try === 'hover') {
+          look('Rest the pointer on the faces: after 120ms they fan out. Sweep across them fast, and they stay put.');
+        }
+      }, () => {});
+    });
+    $<HTMLFormElement>('[data-composer]').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      say('me', text);
+      input.value = '';
+      setTimeout(() => say('planner', 'This is a replay, so I can only listen. Press ↺ to watch it again.'), 500);
+    });
+  }
+</script>
+
+<style is:global>
+  /* Global on purpose: the thread is built by the script, so it never gets Astro's
+     scoped attribute. Every selector is prefixed cpr-. The frame uses the site's
+     tokens; the component keeps its own look, as it ships. */
+  .cpr-fig { margin-top: var(--space-3); scroll-margin-top: 5rem; }
+  @media (min-width: 1100px) {
+    #playground.cpr-fig { inline-size: 64rem; max-inline-size: calc(100vw - 4rem); margin-inline: calc(50% - min(32rem, 50vw - 2rem)); }
+    .cpr-body { grid-template-columns: minmax(0, 1fr) 19rem; }
+  }
+  .cpr { overflow: hidden; border: 1.5px solid var(--ink); border-radius: 14px 8px 16px 10px / 10px 16px 8px 14px; background: var(--paper-2); box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .cpr p { margin: 0 !important; max-width: none; }
+  .cpr button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .cpr button:focus-visible, .cpr-ask:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .cpr-body { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; }
+  .cpr-app { position: relative; display: flex; flex-direction: column; block-size: 38rem; min-inline-size: 0; background: var(--paper); }
+  .cpr-bar { flex: none; display: flex; align-items: center; gap: .25rem; padding: .7rem .8rem .65rem 1rem; border-bottom: 1.5px solid var(--line); }
+  .cpr-title { flex: 1; min-inline-size: 0; }
+  .cpr .cpr-name { font-size: .95rem; font-weight: 600; color: var(--ink); }
+  .cpr .cpr-chan { font-size: .75rem; color: var(--ink-faint); }
+  .cpr-icon { inline-size: 2.75rem; block-size: 2.75rem; display: grid; place-items: center; font-size: .9rem !important; color: var(--ink-soft) !important; background: none; border: 0; border-radius: 10px; }
+  .cpr-icon:hover { background: var(--sand); color: var(--ink) !important; }
+
+  .cpr-msgs { flex: 1; min-block-size: 0; overflow: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: .95rem; padding: 1rem 1rem .9rem; }
+  .cpr-msgs::before { content: ""; margin-block-start: auto; }
+  .cpr-msg { display: flex; gap: .65rem; align-items: flex-start; }
+  .cpr-msg img { flex: none; inline-size: 1.9rem; block-size: 1.9rem; border-radius: 7px; background: var(--sand-2); }
+  .cpr-msg--person img { border-radius: 50%; }
+  .cpr-msg > div { min-inline-size: 0; }
+  .cpr .cpr-who { display: flex; gap: .45rem; align-items: baseline; font-size: .82rem; color: var(--ink); }
+  .cpr-who time { font-size: .72rem; color: var(--ink-faint); }
+  .cpr .cpr-text { font-size: .88rem !important; line-height: 1.5 !important; color: var(--ink-soft); overflow-wrap: break-word; }
+  .cpr-at { padding: 0 .25rem; font-weight: 500; color: var(--ink); background: var(--sand-2); border-radius: 5px; white-space: nowrap; }
+  .cpr-at--me { color: var(--paper-2); background: var(--ink); }
+
+  /* The one box in the thread: a decision that's yours. */
+  .cpr-ask { margin-inline-start: 2.55rem; display: grid; gap: .45rem; padding: .75rem .85rem .85rem; background: var(--sand); border: 1.5px solid var(--line); border-radius: 12px; }
+  .cpr .cpr-ask-k { font-size: .75rem; font-weight: 600; color: light-dark(#a14a06, #f5b83d); }
+  .cpr .cpr-ask-q { font-size: .88rem; color: var(--ink); }
+  .cpr-ask-row { display: flex; gap: .4rem; }
+  .cpr-ask-row button { min-block-size: 2.25rem; padding: .3rem .95rem; font-size: .82rem !important; font-weight: 500; background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 999px; }
+  .cpr-ask-row button[data-a="approve"] { color: var(--paper-2) !important; background: var(--ink); border-color: var(--ink); }
+  .cpr-ask.is-done { background: none; border-style: dashed; }
+  .cpr-ask.is-done .cpr-ask-q { font-size: .82rem; color: var(--ink-faint); }
+
+  .cpr-dock { flex: none; display: grid; gap: .55rem; padding: 0 .75rem .75rem; }
+  .cpr-dock co-presence { --copresence-surface: var(--paper); padding-inline: .25rem; }
+  .cpr-composer { display: flex; align-items: center; gap: .5rem; padding: .4rem .4rem .4rem .9rem; background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 999px; }
+  .cpr-composer:focus-within { border-color: var(--ink-faint); }
+  .cpr-composer input { flex: 1; min-inline-size: 0; padding: .35rem 0; font: 1rem/1.4 var(--font-sub); color: var(--ink); background: transparent; border: 0; outline: 0; }
+  .cpr-composer input::placeholder { color: var(--ink-faint); }
+  .cpr-send { flex: none; inline-size: 2.2rem; block-size: 2.2rem; display: grid; place-items: center; color: var(--paper-2) !important; background: var(--ink); border: 0; border-radius: 50%; }
+  .cpr .cpr-nojs { position: absolute; inset: auto 1rem 7rem; text-align: center; font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); }
+
+  .cpr-side { display: flex; flex-direction: column; gap: 1rem; padding: 1.1rem 1.1rem 1.2rem; min-inline-size: 0; border-inline-start: 1.5px solid var(--line); background: var(--paper-2); }
+  .cpr-panel { display: grid; gap: .35rem; min-inline-size: 0; }
+  .cpr-panel--set { gap: .4rem; padding-block: .85rem; border-block: 1.5px dashed var(--line); }
+  .cpr-panel--set .cpr-h:not(:first-child) { margin-top: .35rem !important; }
+  .cpr-panel--grow { flex: 1; min-block-size: 0; align-content: start; }
+  .cpr .cpr-h { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .cpr .cpr-note { min-block-size: 4.4em; font-size: .84rem !important; line-height: 1.45 !important; color: var(--ink-soft); }
+  .cpr-seg { display: flex; gap: 2px; padding: 2px; background: var(--sand-2); border-radius: 9px; }
+  .cpr-seg button { flex: 1 1 auto; padding: .35rem .5rem; white-space: nowrap; font-size: .76rem; line-height: 1.25; background: none; border: 0; border-radius: 7px; color: var(--ink-soft); }
+  .cpr-seg button[aria-pressed="true"] { color: var(--ink); font-weight: 500; background: var(--paper-2); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+  .cpr .cpr-roster { justify-self: start; margin-top: .45rem; padding: .3rem .7rem; font-size: .78rem; background: none; border: 1.5px solid var(--line); border-radius: 8px; color: var(--ink-soft); }
+  .cpr-roster:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .cpr-log { list-style: none; margin: 0; padding: 0; display: grid; gap: .2rem; font-family: var(--font-mono); font-size: .68rem; line-height: 1.4; color: var(--ink-faint); overflow-wrap: anywhere; }
+  .cpr-log .cpr-out { color: var(--teal); }
+  .cpr-empty { font-family: var(--font-sub); font-style: italic; }
+
+  @media (max-width: 759px) {
+    .cpr-body { grid-template-columns: 1fr; }
+    .cpr-side { border-inline-start: 0; border-block-start: 1.5px solid var(--line); }
+  }
+  @media (max-width: 559px) {
+    .cpr-app { block-size: 34rem; }
+    .cpr-msgs { padding-inline: .75rem; }
+    .cpr-dock { padding-inline: .5rem; }
+    .cpr-ask { margin-inline-start: 0; }
+  }
+</style>

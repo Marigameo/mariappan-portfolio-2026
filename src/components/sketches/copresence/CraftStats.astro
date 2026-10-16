@@ -1,0 +1,28 @@
+---
+/* What "no corners cut" came to, as numbers pinned up: the StatGrid pattern from the
+   gen-UI blog, with co-presence's own figures from its README, journal and
+   DESIGN.md. Each leans a different way. */
+const stats = [
+  { value: '15.3 KB', label: 'Gzipped, zero dependencies', sub: 'Any framework or none. Guarded on every commit', ink: 'coral' },
+  { value: '173', label: 'Tests, proven to bite', sub: 'Bugs put in on purpose, a replay, a fake network', ink: 'blue' },
+  { value: '1,284', label: 'Actors on the worst-case page', sub: 'Roster render 41ms → 4.7ms. 320px, 200% zoom', ink: 'teal' },
+  { value: '16', label: 'Audit runs, from five skills', sub: 'Keyboard, forced colours, reduced motion, RTL', ink: 'violet' },
+];
+---
+<ul class="cs">
+  {stats.map((s, i) => (
+    <li class:list={['sk-box', `sk-box--${s.ink}`, `sk-lean-${i + 1}`]}>
+      <b>{s.value}</b>
+      <strong>{s.label}</strong>
+      <span>{s.sub}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .cs { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; margin-block: var(--space-3) 0; padding: 0; }
+  .cs li { display: flex; flex-direction: column; gap: .15rem; padding: 1rem 1.05rem 1.1rem; }
+  .cs b { font-family: var(--font-display); font-size: 2.1rem; line-height: 1; letter-spacing: -.02em; color: var(--c); }
+  .cs strong { margin-top: .35rem; font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .cs span { font-size: .78rem; line-height: 1.4; color: var(--ink-faint); }
+</style>

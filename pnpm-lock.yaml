@@ -11,6 +11,9 @@ importers:
       '@marigameo/agent-clarifier':
         specifier: 0.1.0
         version: 0.1.0
+      '@marigameo/co-presence':
+        specifier: 0.1.0
+        version: 0.1.0
       astro:
         specifier: ^7.3.1
         version: 7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@25.0.6)(jiti@2.6.1)(terser@5.44.1)(yaml@2.9.1)
@@ -553,6 +556,14 @@ packages:
 
   '@marigameo/agent-clarifier@0.1.0':
     resolution: {integrity: sha512-L8wlvHv399wZGsnrn8pM6wWaKFt043ZjDGvMNOo/F/rY1pdCIQvIwWYmNk+3MN7agnb7gGC83rSoBA3Laj9A9g==}
+
+  '@marigameo/co-presence@0.1.0':
+    resolution: {integrity: sha512-6phUY7GJbnear0wUin74LHAhoWGnzYIklWvVlDVawS8UboZdcD148ixyKHjfgOz+Bx/KnvA3Nme0LgIiLqWd4Q==}
+    peerDependencies:
+      '@types/react': '>=19'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   '@napi-rs/wasm-runtime@1.2.4':
     resolution: {integrity: sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g==}
@@ -2165,6 +2176,8 @@ snapshots:
     optional: true
 
   '@marigameo/agent-clarifier@0.1.0': {}
+
+  '@marigameo/co-presence@0.1.0': {}
 
   '@napi-rs/wasm-runtime@1.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)':
     dependencies:

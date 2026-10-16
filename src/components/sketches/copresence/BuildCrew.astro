@@ -1,0 +1,54 @@
+---
+/* The build itself, drawn with the thing it built: a second real <co-presence>, as a
+   card with a goal, holding everyone who worked on co-presence. Me at the gates, Claude
+   waiting on my call (so the line reads "Needs you"), the audit skills as sub-agents
+   via Claude, a helper limited to the playground, a reviewer that wrote none of it,
+   and another session in the same repo. It's a still snapshot, not a replay: the whole
+   build in one strip. Hover or Tab to the faces, or open the roster, to meet them. The
+   faces are the component's own coloured initials. Loads on first use, like the hero. */
+import Icon from '../../Icon.astro';
+const crew = [
+  { id: 'me', kind: 'person', name: 'Mari S', activity: { type: 'viewing' } },
+  { id: 'claude', kind: 'agent', name: 'Claude', activity: { type: 'waiting', waitingOn: 'me', label: 'Freeze the playground and the demo?' } },
+  { id: 'break', kind: 'agent', name: 'break-ui audit', parentId: 'claude', activity: { type: 'working', label: 'Long names at 320px' } },
+  { id: 'motion', kind: 'agent', name: 'Motion audit', parentId: 'claude', activity: { type: 'working', label: 'Slow-motion filmstrips' } },
+  { id: 'emil', kind: 'agent', name: 'emil-design-eng audit', parentId: 'claude', activity: { type: 'working', label: 'Hover intent' } },
+  { id: 'better', kind: 'agent', name: 'better-interface audit', parentId: 'claude', activity: { type: 'working', label: 'Six domain reviews in parallel' } },
+  { id: 'mobile', kind: 'agent', name: 'mobile-native audit', parentId: 'claude', activity: { type: 'done', label: 'Touch probe, 6 of 6' } },
+  { id: 'helper', kind: 'agent', name: 'Playground helper', parentId: 'claude', activity: { type: 'editing', target: 'playground/ only' } },
+  { id: 'review', kind: 'agent', name: 'Reviewer', parentId: 'claude', activity: { type: 'working', label: 'Reading what ships, none of it its own' } },
+  { id: 'other', kind: 'agent', name: 'Another session', activity: { type: 'editing', target: 'Mention chips' } },
+];
+---
+<figure class="sk-fig crew-fig">
+  <div class="sk-sheet crew">
+    <co-presence class="crew-el" max="5" data-crew={JSON.stringify(crew)} aria-label="The build's crew, in the real component"></co-presence>
+    <p class="sk-hand crew-hint"><Icon name="arrow-curly" /> hover the faces, or click +N to meet the crew</p>
+  </div>
+  <figcaption>Me, Claude and a crew of agents, in the component they were building. Not one moment, the whole build.</figcaption>
+</figure>
+
+<script>
+  import type { CoPresence, Actor } from '@marigameo/co-presence';
+  document.querySelectorAll<CoPresence>('[data-crew]').forEach((el) => {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      import('@marigameo/co-presence').then(() => {
+        const now = Date.now();
+        const actors: Actor[] = JSON.parse(el.dataset.crew ?? '[]').map((a: Actor) => ({ ...a, activity: a.activity && { ...a.activity, startedAt: now - 4 * 60_000 } }));
+        el.data = { selfId: 'me', goal: { title: 'Craft co-presence 0.1.0', detail: 'Round 20 of 26', progress: 20 / 26, startedAt: now - 26 * 60 * 60_000 }, actors };
+      }, () => {
+        el.closest('.crew')?.querySelector('.crew-hint')?.replaceChildren('The component couldn’t load. Reload the page to meet the crew.');
+      });
+    }, { rootMargin: '200px' });
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .crew { display: grid; gap: .9rem; padding: 1.4rem 1.2rem 1.1rem; }
+  .crew-el { display: block; max-inline-size: 34rem; --copresence-surface: var(--paper-2); background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 14px; }
+  .crew-hint { margin: 0 !important; font-size: 1.1rem; }
+  .crew-hint :global(svg) { width: 1.2rem; height: 1.2rem; vertical-align: -.15rem; transform: scaleY(-1); }
+</style>

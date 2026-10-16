@@ -1,0 +1,407 @@
+---
+/* co-presence, told as the story of a framework more than a component: a small test
+   of the craft-component skill that grew into a war room for people and agents, and
+   into a way of pairing with agents on interfaces that fits my taste. The gates I
+   keep, playing before auditing, the quieter host, one meaning per mark, the build's
+   own crew of agents, what "no corners cut" came to, and what the build changed in
+   the skill. Like agent-clarifier, it opens on the real component, live
+   (CopresenceRoom), and a second live instance holds the build's crew (BuildCrew).
+   Renders are real, from the component repo's process/ folders. No blog: the journal
+   on GitHub is the long version. New figures live in
+   ../../components/sketches/copresence/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import SketchLive from '../../components/SketchLive.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import ArcTimeline from '../../components/sketches/genui/ArcTimeline.astro';
+import CopresenceRoom from '../../components/sketches/copresence/CopresenceRoom.astro';
+import GateRail from '../../components/sketches/copresence/GateRail.astro';
+import BeforeAfter from '../../components/sketches/copresence/BeforeAfter.astro';
+import MarkLegend from '../../components/sketches/copresence/MarkLegend.astro';
+import DesignDetails from '../../components/sketches/copresence/DesignDetails.astro';
+import BuildCrew from '../../components/sketches/copresence/BuildCrew.astro';
+import CraftStats from '../../components/sketches/copresence/CraftStats.astro';
+import SkillNotes from '../../components/sketches/copresence/SkillNotes.astro';
+
+const repo = 'https://github.com/Marigameo/co-presence';
+const npm = 'https://www.npmjs.com/package/@marigameo/co-presence';
+const site = 'https://marigameo.github.io/co-presence/';
+const arc = 'https://uiarc.dev/components/presence-stack';
+const skillsRepo = 'https://github.com/Marigameo/skills';
+const craftSkill = `${skillsRepo}/blob/main/skills/craft-component/SKILL.md`;
+const warRoom = `${site}war-room.html`;
+const description = 'co-presence, a web component for people and agents working on one goal, and the story of the framework behind it: a skill test that grew into a war room, and a way of pairing with agents to craft interfaces with taste. Built by me, paired with Claude.';
+
+const phases = [
+  {
+    label: 'Built first · 15 Oct · rounds 1 to 14',
+    tone: 'grey' as const,
+    items: [
+      { period: 'Rounds 1 to 5', title: 'Brief, plan, sketch', detail: 'Arc’s Presence stack taken apart, twelve calls on what it is, two directions side by side' },
+      { period: 'Rounds 6 to 9', title: 'The build', detail: 'Model, element and integration, a fake network that reorders and drops, then a playground' },
+      { period: 'Rounds 10 to 14', title: 'Five audits', detail: 'All before I’d played with it' },
+    ],
+  },
+  {
+    label: 'Played with · 16 Oct · rounds 15 to 23',
+    tone: 'coral' as const,
+    items: [
+      { period: 'Round 15', title: 'Play first, audit after', detail: 'My process change, written into the skill', pivot: true },
+      { period: 'Rounds 16 to 19', title: 'From a trace to a war room', detail: 'The overkill call, Arc’s look, a chat, faces for the agents' },
+      { period: 'Rounds 22 and 23', title: 'Green for working, a quieter host', detail: 'A plain playground and a demo that tells one story' },
+    ],
+  },
+  {
+    label: 'Smoothed and shipped · rounds 20 to 26',
+    tone: 'teal' as const,
+    items: [
+      { period: 'Rounds 20, 24 and 25', title: 'Audits on the frozen version', detail: 'Five skills at once, twice, then break-ui on the final state' },
+      { period: 'Round 26', title: 'Review, simplify, release', detail: 'A reviewer that wrote none of it, then v0.1.0 on npm' },
+    ],
+  },
+];
+
+const skills = [
+  { href: craftSkill, name: 'craft-component', note: 'The framework. Brief, plan, sketch, milestones, playground and demo, audits, release on a go.' },
+];
+
+const lessons = [
+  { miss: 'Said “go with your recommendations” to twelve calls. The agent took it as every gate up to the playground, the sketch too.', lesson: 'Delegate calls, not gates. The look stays with me.' },
+  { miss: 'Let five audits run before I’d played with it. Every change I asked for after that meant auditing again.', lesson: 'Play, freeze, then audit. Audits polish what’s settled.' },
+  { miss: 'Trusted 100% coverage and every planted bug caught. An agent that had already left still took over the strip’s line.', lesson: 'Watch it run. A replay of a real scenario sees what tests don’t.' },
+  { miss: 'Tested the source for 25 rounds. The npm build would have shipped with no colours at all.', lesson: 'Test what ships. Build it, install it, then look.' },
+];
+---
+<WorkLayout
+  title="co-presence — who’s on it, and what needs you"
+  description={description}
+  ogDescription="A small skill test that grew into a war room for people and agents, and into a framework for crafting interfaces with agents."
+  eyebrow="Side build · Design engineer · Oct 2026"
+  heading="co-presence"
+  facts={[
+    { label: 'Role', value: 'Solo build, paired with Claude' },
+    { label: 'Status', value: 'v0.1.0, live on npm. Open source (MIT)' },
+  ]}
+  link={{ href: repo, label: 'github.com/Marigameo/co-presence' }}
+  schema={{
+    name: 'co-presence',
+    url: repo,
+    description: 'A zero-dependency web component that shows who is working on a shared goal, people and agents together, what each of them is doing right now, and anything waiting on you. Built with the craft-component skill: gates the owner keeps, a playground frozen before audits, and audits from external skills.',
+    inLanguage: 'en',
+    keywords: 'design engineering, UX for AI, multi-agent, human in the loop, presence, web components, accessibility, motion, designing with Claude, agent UX, skills',
+  }}
+>
+  <Fragment slot="lede">It started as a small test of my <a href={craftSkill} rel="noopener"><code>craft-component</code></a> skill: <a href={arc} rel="noopener">a presence stack</a> for people and agents working on one goal. It grew into <mark class="hl"><a href={warRoom} rel="noopener">a war room</a></mark>, and into a way of crafting interfaces with agents that matches my taste.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The aim</h3>
+      <ul class="doodle-list">
+        <li><strong>Test the skill.</strong> How close can <a href={craftSkill} rel="noopener"><code>craft-component</code></a> get me to the taste I’m after?</li>
+        <li><strong>Show the usage.</strong> A <a href={arc} rel="noopener">presence-stack</a> kind of component, shown where it helps: <a href={warRoom} rel="noopener">a war room</a> of people and agents on one goal.</li>
+        <li><strong>Improve the skill.</strong> Every miss along the way went back in.</li>
+      </ul>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>Every call.</strong> The brief, the name, the war room, the colours, what got cut.</li>
+          <li><strong>The gates.</strong> The sketch, playing with it until I froze it, and the go to release.</li>
+          <li><strong>The skill.</strong> What this build taught it, folded back into <code>craft-component</code>.</li>
+        </ul>
+        <p>I ran every step, paired with Claude. The goal was simple: a component as compelling and useful as agent-clarifier, on par with the framework.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Considered</h3>
+      <p>People and agents in one strip, needs-you first, offline in words. Keyboard, screen readers, forced colours, reduced motion, right-to-left. About 15 KB gzipped, zero dependencies. Live on <a href={npm} rel="noopener">npm</a> and <a href={repo} rel="noopener">GitHub</a>.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <p class="try-note"><Icon name="arrow-curly" /> Have a go first. It’s the real component, replaying a pretend incident.</p>
+    <CopresenceRoom caption="The real co-presence, v0.1.0 straight from npm, as the strip above a war room’s message box." />
+    <p class="more-note"><a href={warRoom} rel="noopener">See the full war room, on a phone or a <span class="nowrap">desktop<Icon name="arrow-right" /></span></a></p>
+
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">A skill test that grew a room</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The <strong>first real test</strong> of <a href={craftSkill} rel="noopener"><code>craft-component</code></a>: how far does it take me on an actual build?</li>
+        <li>Something small, yet unique. <a href={arc} rel="noopener">Arc’s Presence stack</a> was the spark, but I wanted it for the <strong>multiplayer agent space</strong>.</li>
+        <li>I strongly feel agents talking to us, and to each other, to get a goal done will soon be everywhere. Hence <strong>co-presence</strong>: present together, person or agent.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Presence stack', tone: 'ghost', items: ['Who is here', 'Faces and names', 'The spark'] }}
+        right={{ title: 'co-presence', stamp: 'the test', tone: 'coral', items: ['Who is on it, people and agents', 'What each is doing right now', 'Anything waiting on you, first'] }}
+        marks="dot"
+        alt="The spark: Arc’s Presence stack, which shows who is here with faces and names. The test: co-presence, which shows who is on a goal, people and agents together, what each is doing right now, and anything waiting on you, first."
+        caption="Same faces. A different question: who’s on it, and what needs you?"
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-room">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Design call · placement</p><h2 id="s-room">Earn the space, or leave it out</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>First playground: the strip on top of a shared doc. I found it <strong>overkill</strong>, since a chat trace already shows streamed work.</li>
+        <li>The placement was wrong, not the component. Presence earns its place with <strong>more agents than you can read, more than one person, or your eyes on the doc</strong>.</li>
+        <li>An incident war room hits all three. That’s where the idea came from.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-2" aria-label="My overkill call">
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-q"><span>Me</span>“The current UI in the playground, I find it overkill. It can just be a chat trace, where the rest of the background work is streamed.”</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
+      </aside>
+      <SketchLive id="placement" live={{ kind: 'image', src: '/images/work/co-presence/first-playground.webp', width: 1400, height: 1465, scroll: 'scroll the first playground', full: '/images/work/co-presence/first-playground.webp', fullLabel: 'Open the first playground', alt: 'The first playground: the component as a card on top of a fake Q3 pricing deck, with an agent’s section outlined in blue and someone’s comment tagged in orange, and a side panel of scenario, network, by-hand, component and event log controls.' }} caption="The first playground: the strip on top of a fake doc. I called it overkill.">
+        <Versus
+          left={{ title: 'Just you and one agent', tone: 'ghost', items: ['The thread already says it all', 'The strip only repeats it', 'So leave it out'] }}
+          right={{ title: 'A war room', stamp: 'earns it', tone: 'coral', items: ['More agents than you can read', 'More than one person', 'Your eyes on the doc, not the thread'] }}
+          alt="Where co-presence isn’t worth it: just you and one agent, where the thread already says it all and the strip only repeats it, so leave it out. Where it earns its place: a war room, with more agents than you can read, more than one person, and your eyes on the doc rather than the thread."
+          caption="The README says when to leave it out, too."
+        />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-gates">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Process</p><h2 id="s-gates">The look is mine to call</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>“Go with your recommendations” on twelve calls got read as <strong>every gate</strong>. The agent picked the sketch direction itself.</li>
+        <li>The sketch is where I judge the look. The skill now names the <strong>gates that are never handed over</strong>.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-1" aria-label="My pushback on the skipped sketch gate">
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-q"><span>Me</span>“Actually the sketch is for me to decide on the direction. That’s the whole purpose, I wanted the sketch to be a human-in-the-loop step.”</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
+      </aside>
+      <SketchLive id="gates" live={{ kind: 'image', src: '/images/work/co-presence/sketch.webp', width: 1400, height: 1640, scroll: 'scroll the real sketch', full: '/images/work/co-presence/sketch-full.webp', fullLabel: 'Open the real sketch', alt: 'The real sketch from round 4: direction A, two rows with the goal above the faces and the status line, and direction B, one row, each shown live, needing you, failed with progress, offline, collapsed and with the roster open, and both again at 375 pixels wide.' }} caption="The real sketch, two directions side by side. I picked A, once it came back to me.">
+        <GateRail />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-order">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Process</p><h2 id="s-order">Play first, audit after</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Five audits ran <strong>before I’d played with it</strong>. Every change after that meant auditing again.</li>
+        <li>New order: <strong>play, freeze, then audit</strong>. Audits make it smoother, not different.</li>
+      </ul>
+      <ArcTimeline phases={phases} caption="Grey ran ahead of me. Coral is where I played with it, and where most of the calls got made." />
+    </section>
+
+    <section class="slide" aria-labelledby="s-host">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design call · taste</p><h2 id="s-host">The host is quieter than the component</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The component looked good. The pages around it looked <strong>too vibe-coded</strong>.</li>
+        <li>So: a quiet host, a plain playground apart, and a rule in the skill: <strong>the host never out-talks the thing it hosts</strong>.</li>
+      </ul>
+      <BeforeAfter
+        id="host"
+        shots={[
+          { label: 'Before · round 22', key: 'before', w: 2400, h: 1642, alt: 'The war room before: a header with three scenario tabs and six simulator buttons beside a three-colour logo, purple and blue mention tags in the thread, and a doc pane beside it.', notes: ['Eleven controls in the header', 'A three-colour logo, blue and violet tags', 'The thread at 9:32, the doc at 14:02'] },
+          { label: 'After · round 24', key: 'after', w: 1760, h: 1650, max: '44rem', alt: 'The war room after: a quiet about column with the headline Who’s on it, and what needs you, a Phone and Desktop toggle and a link to the playground, beside the war room in a phone frame, with grey mention chips and the strip above the message box.', notes: ['One story, playing by itself', 'Greys and the system font', 'Phone or desktop, and a plain playground apart'] },
+        ]}
+        caption="Same component. The page around it stopped talking over it."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-marks">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Design call · colour</p><h2 id="s-marks">Each mark means one thing</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Grey meant working, so <strong>the busiest agents looked the quietest</strong>.</li>
+        <li>Four directions rendered side by side, not a third guess in prose. I kept the colours and made <strong>working green</strong>.</li>
+      </ul>
+      <SketchLive id="marks" live={{ kind: 'image', src: '/images/work/co-presence/colours.webp', width: 1800, height: 1080, full: '/images/work/co-presence/colours-full.webp', fullLabel: 'Open the four directions', alt: 'Four colour directions for the same slice of the war room, side by side: A, as it was, with vivid characters and a grey dot for working; B, status colour only; C, muted identity colours, recommended; and D, the same on warm neutrals. Each shows the Planner’s message, two agent steps, a Needs you card and the strip with its legend.' }} caption="Four directions on one page. Seeing them together settled it in one round.">
+        <MarkLegend />
+      </SketchLive>
+    </section>
+
+    <section class="slide" aria-labelledby="s-details">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Design details</p><h2 id="s-details">Quiet until it needs you</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>By a message box all day, it can’t be noisy. <strong>Motion only says what changed.</strong></li>
+        <li>Timings come <strong>from reading, not taste</strong>: a 300ms agent stays 1.2s to be seen, and the status line holds 2s for one full read.</li>
+      </ul>
+      <DesignDetails />
+    </section>
+
+    <section class="slide" aria-labelledby="s-crew">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">With agents</p><h2 id="s-crew">The build was a war room too</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Every round: my brief, <strong>options with a recommendation</strong>, my call, then a build verified before I saw it.</li>
+        <li>Around it, a crew: <strong>audits as parallel sub-agents</strong>, each report frozen before a fix. A helper kept to the playground, a reviewer wrote none of it, and another session shared the repo.</li>
+      </ul>
+      <BuildCrew />
+    </section>
+
+    <section class="slide" aria-labelledby="s-craft">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">Craft</p><h2 id="s-craft">No corners cut</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Under the strip, <strong>a pure model</strong>: one snapshot, six event types, late and duplicate events dropped, and the element owns the clock.</li>
+        <li>Keyboard all the way, <strong>batched announcements</strong>, forced colours, reduced motion, right-to-left.</li>
+        <li>Every claim checked: a replay caught what 100% coverage missed, and <strong>a fake network</strong> caught a race.</li>
+      </ul>
+      <CraftStats />
+    </section>
+
+    <section class="slide" aria-labelledby="s-skill">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">The skill</p><h2 id="s-skill">A test that sharpened the skill</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Every step logged a <a href={`${repo}/blob/main/SKILL-TEST.md`} rel="noopener">note</a>: <strong>24 of them</strong>, each a step, what happened and a fix.</li>
+        <li><strong>Two rewrites</strong> of <a href={craftSkill} rel="noopener"><code>craft-component</code></a>, on 15 and 16 Oct. More rounds than I expected, all for the better.</li>
+      </ul>
+      <SkillNotes />
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">11</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What I’d tell day-zero me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-next">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">12</span>
+        <div><p class="slide-kicker">What’s next</p><h2 id="s-next">A skill to wire it in</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>agent-clarifier has <code>ask-clarifier</code>. <strong>co-presence gets one next</strong>, so an agent can wire it in well.</li>
+        <li>Every build tests the skill, and <strong>every miss becomes a rule</strong>.</li>
+      </ul>
+      <div class="reads sk-box sk-lean-2">
+        <p class="reads-title">The skills</p>
+        <ul>
+          {skills.map((s) => (
+            <li><a href={s.href} rel="noopener">{s.name}</a><span>{s.note}</span></li>
+          ))}
+          <li><span class="reads-soon">A skill for co-presence</span><span>Coming soon.</span></li>
+        </ul>
+        <p class="reads-foot"><a href="/skills/">See all the <span class="nowrap">skills<Icon name="arrow-right" /></span></a></p>
+      </div>
+      <p class="next"><span>For the component itself</span>A real screen-reader pass, and a real phone.</p>
+    </section>
+
+    <blockquote class="closer">Show who’s on it, and what needs you. That’s the strip. Keep the calls, share the legwork, and let every miss sharpen the skill. That’s the framework.</blockquote>
+    <div class="get-it">
+      <code class="get-cmd">npm install @marigameo/co-presence</code>
+      <a class="get-link" href={npm} rel="noopener">npm <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={repo} rel="noopener">GitHub <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={warRoom} rel="noopener">War room <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={site} rel="noopener">Playground <Icon name="external" class="doodle--thin" /></a>
+    </div>
+    <p class="more-note"><a href={`${repo}/blob/main/JOURNAL.md`} rel="noopener">Every round, with my feedback in my words and the calls, is in the journal on <span class="nowrap">GitHub<Icon name="arrow-right" /></span></a></p>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Render, full size">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</WorkLayout>
+
+<style>
+  /* The deck styles, as in agent-clarifier, plus the playground's intro note. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .try-note { margin: 0 0 -.6rem !important; max-width: none; font-family: var(--font-hand); font-size: 1.25rem; color: var(--coral); }
+  .try-note :global(svg) { width: 1.3rem; height: 1.3rem; vertical-align: -.2rem; transform: scaleY(-1); }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .get-it { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .8rem; margin-top: var(--space-3); }
+  .get-it .get-cmd { padding: .5rem .8rem; font-size: .85rem; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 8px; box-shadow: 3px 3px 0 var(--shadow-ink); overflow-wrap: anywhere; }
+  .get-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .85rem; font-size: .88rem; font-weight: 500; color: var(--ink); text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px; }
+  .get-link:hover { border-color: var(--ink); }
+  .get-link :global(.doodle) { width: .85rem; height: .85rem; }
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+
+  /* My own words, as a chat bubble beside my portrait. */
+  .qa { margin-top: var(--space-3); padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .9rem; }
+  .qa-row { display: flex; align-items: flex-end; gap: .65rem; }
+  .qa-row--me { justify-content: flex-end; }
+  .qa-bubble { margin: 0 !important; max-width: min(36rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; color: var(--ink) !important; background: var(--sand); border: 1.5px solid var(--line); border-radius: 14px 14px 14px 4px; }
+  .qa-bubble span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--violet); }
+  .qa-q { color: var(--ink-soft) !important; font-style: italic; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border-color: color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 4px 14px; }
+  .qa-q span { font-style: normal; color: var(--teal); }
+  .qa-av { position: relative; flex: none; width: 2.4rem; height: 2.4rem; overflow: hidden; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--sand-2); }
+  .qa-av--me { object-fit: cover; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  .next { margin: 1.4rem 0 0 !important; max-width: 60ch; font-size: .95rem !important; color: var(--ink-soft); }
+  .next span { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* The skills, as a small card of links. One is still a placeholder. */
+  .reads { margin-top: var(--space-3); padding: 1rem 1.1rem 1.1rem; max-width: 40rem; }
+  .reads-title { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .reads ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+  .reads li a, .reads .reads-soon { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+  .reads .reads-soon { color: var(--ink-faint); text-decoration-style: dashed; }
+  .reads li a:hover { text-decoration-color: var(--ink); }
+  .reads li > span:not(.reads-soon) { display: block; font-size: .78rem; color: var(--ink-faint); }
+  .reads-foot { margin: .9rem 0 0 !important; max-width: none; }
+  .reads-foot a { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); text-decoration: none; }
+  .reads-foot .nowrap { white-space: nowrap; }
+
+  .closer { margin-top: var(--space-5); }
+</style>

@@ -1,0 +1,48 @@
+---
+/* The craft-component skill as a rail of eight steps, each ending at a gate where the
+   agent stops and shows me. Coral gates are the ones I never hand over, because
+   that's where I judge the look and feel (the sketch, the playground and demo) or
+   say go (the release). Grey ones I can hand over, but only by naming them. Wraps
+   into rows; on a phone it's one column. */
+const steps = [
+  { n: '1', name: 'Brief', sub: 'Scope, name, the one story' },
+  { n: '2', name: 'Plan', sub: 'The what, then the how' },
+  { n: '3', name: 'Sketch', sub: 'Directions side by side', mine: true },
+  { n: '4', name: 'Milestones', sub: 'Model, element, integration' },
+  { n: '5', name: 'Playground and demo', sub: 'Played with until I freeze it', mine: true },
+  { n: '6', name: 'Audits', sub: 'Only on the frozen version' },
+  { n: '7', name: 'Review, simplify', sub: 'Fresh eyes on what ships' },
+  { n: '8', name: 'Release', sub: 'On my go, every time', mine: true },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet gr" role="img" aria-label="The craft-component skill as eight steps, each ending at a gate where the agent stops for me: brief, plan, sketch, milestones, playground and demo, audits, review and simplify, and release. Three gates are never handed over: the sketch and the playground and demo, where I judge the look and feel, and the release, which happens only on my go. The others can be handed over, but only by naming them.">
+    <ol class="gr-steps">
+      {steps.map((s, i) => (
+        <li class:list={['sk-box', s.mine ? 'sk-box--coral' : 'sk-box--ghost', `sk-lean-${(i % 4) + 1}`, s.mine && 'gr-mine']}>
+          <span class="gr-n">{s.n}</span>
+          <strong>{s.name}</strong>
+          <span class="gr-sub">{s.sub}</span>
+          <span class="gr-gate">{s.mine ? 'my gate, always' : 'gate'}</span>
+        </li>
+      ))}
+    </ol>
+    <p class="sk-hand gr-note">“Go with your recommendations” answers the calls on the table. Not the gates after them.</p>
+  </div>
+  <figcaption>The agent proposes, builds and verifies. The look is mine to call.</figcaption>
+</figure>
+
+<style>
+  .gr { padding: 1.3rem 1.2rem 1.1rem; }
+  .gr-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem .9rem; }
+  .gr-steps li { display: grid; gap: .15rem; align-content: start; padding: .7rem .8rem .75rem; }
+  .gr-n { font-family: var(--font-display); font-size: 1.3rem; line-height: 1; color: var(--ink-faint); }
+  .gr-mine .gr-n { color: var(--coral); }
+  .gr-steps strong { font-size: .88rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+  .gr-sub { font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .gr-gate { justify-self: start; margin-top: .35rem; padding: .05rem .5rem; font-family: var(--font-mono); font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); border: 1px dashed var(--line); border-radius: 999px; }
+  .gr-mine .gr-gate { color: var(--coral); border: 1.5px solid var(--coral); }
+  .gr-note { margin: 1rem 0 0 !important; max-width: 40rem; font-size: 1.15rem; }
+  @media (max-width: 719px) { .gr-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 419px) { .gr-steps { grid-template-columns: 1fr; } }
+</style>
