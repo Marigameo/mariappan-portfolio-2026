@@ -44,6 +44,13 @@ export const skills: Skill[] = [
     when: 'A chat agent needs a few answers mid-task.',
     tied: 'agent-clarifier, on npm',
   },
+  {
+    name: 'show-co-presence',
+    group: 'use',
+    hook: 'Put co-presence in, so people see who’s on a task, people and agents, and what needs them.',
+    when: 'A multi-agent or multiplayer product needs to show who’s on it.',
+    tied: 'co-presence, on npm',
+  },
 ];
 
 export const skillHref = (s: Skill) => `${skillsRepo}/blob/main/skills/${s.name}/SKILL.md`;

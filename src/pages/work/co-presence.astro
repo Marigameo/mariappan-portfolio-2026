@@ -30,6 +30,7 @@ const arc = 'https://uiarc.dev/components/presence-stack';
 const skillsRepo = 'https://github.com/Marigameo/skills';
 const craftSkill = `${skillsRepo}/blob/main/skills/craft-component/SKILL.md`;
 const warRoom = `${site}war-room.html`;
+const showSkill = `${skillsRepo}/blob/main/skills/show-co-presence/SKILL.md`;
 const description = 'co-presence, a web component for people and agents working on one goal, and the story of the framework behind it: a skill test that grew into a war room, and a way of pairing with agents to craft interfaces with taste. Built by me, paired with Claude.';
 
 const phases = [
@@ -62,6 +63,7 @@ const phases = [
 ];
 
 const skills = [
+  { href: showSkill, name: 'show-co-presence', note: 'How to use co-presence. When it earns its place, feeding it events, and a set_activity tool so agents say what they’re doing.' },
   { href: craftSkill, name: 'craft-component', note: 'The framework. Brief, plan, sketch, milestones, playground and demo, audits, release on a go.' },
 ];
 
@@ -304,7 +306,7 @@ const lessons = [
         <div><p class="slide-kicker">What’s next</p><h2 id="s-next">A skill to wire it in</h2></div>
       </header>
       <ul class="doodle-list slide-points">
-        <li>agent-clarifier has <code>ask-clarifier</code>. <strong>co-presence gets one next</strong>, so an agent can wire it in well.</li>
+        <li>agent-clarifier has <code>ask-clarifier</code>. co-presence now has <a href={showSkill} rel="noopener"><code>show-co-presence</code></a>: <strong>when to show it, how to feed it, and how agents say what they’re doing</strong>.</li>
         <li>Every build tests the skill, and <strong>every miss becomes a rule</strong>.</li>
       </ul>
       <div class="reads sk-box sk-lean-2">
@@ -313,7 +315,6 @@ const lessons = [
           {skills.map((s) => (
             <li><a href={s.href} rel="noopener">{s.name}</a><span>{s.note}</span></li>
           ))}
-          <li><span class="reads-soon">A skill for co-presence</span><span>Coming soon.</span></li>
         </ul>
         <p class="reads-foot"><a href="/skills/">See all the <span class="nowrap">skills<Icon name="arrow-right" /></span></a></p>
       </div>
@@ -391,14 +392,13 @@ const lessons = [
   .next span { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
   @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
 
-  /* The skills, as a small card of links. One is still a placeholder. */
+  /* The skills, as a small card of links. */
   .reads { margin-top: var(--space-3); padding: 1rem 1.1rem 1.1rem; max-width: 40rem; }
   .reads-title { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
   .reads ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
-  .reads li a, .reads .reads-soon { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
-  .reads .reads-soon { color: var(--ink-faint); text-decoration-style: dashed; }
+  .reads li a { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
   .reads li a:hover { text-decoration-color: var(--ink); }
-  .reads li > span:not(.reads-soon) { display: block; font-size: .78rem; color: var(--ink-faint); }
+  .reads li span { display: block; font-size: .78rem; color: var(--ink-faint); }
   .reads-foot { margin: .9rem 0 0 !important; max-width: none; }
   .reads-foot a { font-family: var(--font-hand); font-size: 1.15rem; color: var(--coral); text-decoration: none; }
   .reads-foot .nowrap { white-space: nowrap; }
