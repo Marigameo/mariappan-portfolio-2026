@@ -1,6 +1,8 @@
 <!doctype html>
-<!-- Teaser reel template. Copy to <slug>-teaser/reel.html, replace every TODO, and
-     draw the four highlights (scenes 2–5) by hand (see references/reel.md and examples/strive-studio-reel.html).
+<!-- Teaser reel template. Copy to <slug>-teaser/reel.html, replace every TODO, and fill scenes 2–5.
+     Real UI first: scenes 2–4 show the three real-UI patterns (footage, screenshot + camera + ring,
+     before/after wipe). Scene 5 is the one drawn slot, for an idea with no screen. Reorder or swap
+     patterns per the scene table. See references/real-ui.md and references/reel.md.
      Rendered frame by frame: everything must be a pure function of t inside seek(t). -->
 <html><head><meta charset="utf-8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@700&display=block">
@@ -22,6 +24,25 @@
   .bar { height:16px; border-radius:8px; background:var(--sand2); }
   .tag { position:absolute; left:64px; top:60px; font-size:22px; color:var(--faint); }
   svg { overflow:visible; }
+
+  /* Real UI. A drawn ink frame on the paper, real pixels inside.
+     .win: a browser window, 952 wide. Its view is 952×714, which fits a 1280×960 capture at scale .744.
+     .phone: a phone, 488 wide. Its screen is 460×920, which fits a 390×780 capture at scale 1.18. */
+  .win { position:absolute; left:64px; top:190px; width:952px; height:768px; overflow:hidden; }
+  .win .chrome { position:absolute; left:0; right:0; top:0; height:54px; background:var(--sand); border-bottom:3px solid var(--ink);
+    display:flex; align-items:center; gap:10px; padding:0 20px; }
+  .win .chrome i { width:16px; height:16px; border-radius:50%; border:2.5px solid var(--ink); background:var(--card); }
+  .win .chrome b { margin-left:18px; flex:1; height:32px; border-radius:16px; background:var(--card); border:2px solid var(--line);
+    font:500 17px/28px "JetBrains Mono",monospace; color:var(--faint); padding:0 16px; letter-spacing:.02em; }
+  .view { position:absolute; left:0; right:0; top:54px; bottom:0; overflow:hidden; background:#fff; }
+  .phone { position:absolute; left:296px; top:150px; width:488px; height:948px; padding:14px; border-radius:66px 60px 70px 58px; }
+  .phone .view { inset:14px; border-radius:52px; }
+  .stage { position:absolute; left:0; top:0; transform-origin:0 0; }
+  .stage > img { display:block; }
+  .ink { position:absolute; left:0; top:0; width:1px; height:1px; }  /* SVG for rings and arrows, in page px */
+  .ink path { fill:none; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+  .wipe { position:absolute; top:0; bottom:0; width:0; border-left:4px solid var(--ink); }
+  .pill { position:absolute; top:22px; font-size:22px; padding:8px 16px; border-radius:20px; background:var(--ink); color:var(--paper); }
 </style></head>
 <body>
 
@@ -42,17 +63,54 @@
   <p class="hand abs" id="s1sub" style="left:0;right:0;top:850px;text-align:center;font-size:66px">TODO the one-liner, 5–6 words</p>
 </section>
 
-<!-- 2–5 · four highlights: one drawing that moves each, a note of ~5 words (TODO) -->
+<!-- 2 · the product moment: real footage (a capture.mjs or frames.mjs sequence) in a browser window -->
 <section class="scene" id="s2">
   <p class="mono tag">TODO Kicker</p>
-  <div class="box abs" id="s2main" style="left:80px;top:220px;width:920px;height:760px;padding:44px">
+  <div class="win box" id="s2win">
+    <div class="chrome"><i></i><i></i><i></i><b>TODO app.example.com</b></div>
+    <!-- width = the capture's CSS width (events.json "css"), so camera keys are in page px. -->
+    <div class="view"><div class="stage" id="s2stage"><img id="s2clip" width="1280" alt=""></div></div>
+  </div>
+  <p class="hand abs" id="s2note" style="left:0;right:0;top:1060px;text-align:center;font-size:70px">TODO ~5 words</p>
+</section>
+
+<!-- 3 · a design call on a real screenshot: the camera pushes in, a ring is drawn round the thing -->
+<section class="scene" id="s3">
+  <p class="mono tag">TODO Kicker</p>
+  <div class="win box" id="s3win">
+    <div class="chrome"><i></i><i></i><i></i><b>TODO app.example.com/page</b></div>
+    <div class="view"><div class="stage" id="s3stage">
+      <img src="shots/TODO.png" width="1280" alt="">
+      <svg class="ink"><path id="s3ring" stroke="var(--coral)" stroke-width="6"/></svg>
+    </div></div>
+  </div>
+  <p class="hand abs" id="s3note" style="left:0;right:0;top:1060px;text-align:center;font-size:70px">TODO ~5 words</p>
+</section>
+
+<!-- 4 · before → after on real renders: the after wipes in over the before -->
+<section class="scene" id="s4">
+  <p class="mono tag">TODO Kicker</p>
+  <div class="win box" id="s4win">
+    <div class="chrome"><i></i><i></i><i></i><b>TODO app.example.com</b></div>
+    <div class="view">
+      <div class="stage" id="s4before"><img src="shots/TODO-before.png" width="1280" alt=""></div>
+      <div class="stage" id="s4after"><img src="shots/TODO-after.png" width="1280" alt=""></div>
+      <div class="wipe" id="s4wipe"></div>
+      <span class="pill mono" id="s4b" style="left:22px">before</span>
+      <span class="pill mono" id="s4a" style="right:22px;background:var(--teal)">after</span>
+    </div>
+  </div>
+  <p class="hand abs" id="s4note" style="left:0;right:0;top:1060px;text-align:center;font-size:70px;color:var(--teal)">TODO ~5 words</p>
+</section>
+
+<!-- 5 · the drawn slot: only for an idea with no screen (architecture, a flow, the bet) -->
+<section class="scene" id="s5">
+  <p class="mono tag">TODO Kicker</p>
+  <div class="box abs" id="s5main" style="left:80px;top:220px;width:920px;height:760px;padding:44px">
     <div class="bar" style="width:220px"></div>
   </div>
-  <p class="hand abs" id="s2note" style="left:0;right:0;top:1110px;text-align:center;font-size:70px;color:var(--teal)">TODO ~5 words</p>
+  <p class="hand abs" id="s5note" style="left:0;right:0;top:1110px;text-align:center;font-size:70px;color:var(--teal)">TODO ~5 words</p>
 </section>
-<section class="scene" id="s3"><p class="mono tag">TODO Kicker</p></section>
-<section class="scene" id="s4"><p class="mono tag">TODO Kicker</p></section>
-<section class="scene" id="s5"><p class="mono tag">TODO Kicker</p></section>
 
 <!-- 6 · end card (fixed shape) -->
 <section class="scene" id="s6">
@@ -75,9 +133,9 @@ const back = x => { const c = 1.7; return 1 + (c+1)*Math.pow(x-1,3) + c*Math.pow
 const lerp = (a, b, x) => a + (b - a) * x;
 
 // [id, start, end]. The last scene's end is 99 so it holds until DURATION.
-const SCENES = [['s1',0,3.0],['s2',3.0,7.4],['s3',7.4,11.2],['s4',11.2,15.2],['s5',15.2,19.4],['s6',19.4,99]];
+const SCENES = [['s1',0,3.0],['s2',3.0,8.2],['s3',8.2,12.6],['s4',12.6,16.8],['s5',16.8,20.8],['s6',20.8,99]];
 window.SCENES = SCENES;
-window.DURATION = 22.6;
+window.DURATION = 24.0;
 
 function show(el, t, a, b, dy=40) { // fade + rise in at a, fade out ending at b
   const i = out(p(t, a, a + .45)), o = p(t, b - .35, b);
@@ -88,8 +146,56 @@ function pop(el, t, a, d=.5, from=.6) { const x = p(t, a, a + d); el.style.opaci
 function rise(el, t, a, d=.5, dy=50) { const x = out(p(t, a, a + d)); el.style.opacity = x; el.style.transform = `translateY(${(1-x)*dy}px)`; }
 function draw(path, x) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L * (1 - x); }
 
-window.seek = function (t) {
-  for (const [id, a, b] of SCENES) { const el = $(id); const v = p(t, a, a + .4) * (1 - p(t, b - .4, b)); el.style.opacity = v; el.style.visibility = v ? 'visible' : 'hidden'; }
+// ---- Real UI helpers ----
+// camera: keys [[t, x, y, s], …]. (x, y) is the page point (CSS px) at the view's top-left, s the zoom.
+// Fit a 1280-wide capture into .win with s = .744; push in to ~1.1–1.6 for the moment that matters.
+function camera(stage, keys, t) {
+  let c = keys[0].slice(1);
+  if (t >= keys.at(-1)[0]) c = keys.at(-1).slice(1);
+  else for (let i = 0; i < keys.length - 1; i++) {
+    const [ta, ...a] = keys[i], [tb, ...b] = keys[i + 1];
+    if (t >= ta && t < tb) { const k = inout((t - ta) / (tb - ta)); c = a.map((v, j) => lerp(v, b[j], k)); break; }
+  }
+  const [x, y, s] = c;
+  stage.style.transform = `scale(${s}) translate(${-x}px, ${-y}px)`;
+}
+// retime: map reel time to clip time, piecewise-linear over [[reelT, clipT], …]. Speed through the typing,
+// hold on the result. Before the first key it holds the first frame; after the last, the last.
+function retime(t, keys) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 0; i < keys.length - 1; i++) {
+    const [ta, va] = keys[i], [tb, vb] = keys[i + 1];
+    if (t < tb) return lerp(va, vb, (t - ta) / (tb - ta));
+  }
+  return keys.at(-1)[1];
+}
+// clip: show the frame of a 30fps sequence (<dir>/f/00000.jpg…) at clip time vt. Returns a promise
+// to await in seek, so the screenshot never catches a half-loaded frame.
+function clip(img, dir, n, vt) {
+  const i = clamp(Math.floor(vt * 30), 0, n - 1);
+  const src = `${dir}/f/${String(i).padStart(5, '0')}.jpg`;
+  if (img.getAttribute('src') === src) return;
+  img.setAttribute('src', src);
+  return img.decode().catch(() => {});
+}
+// ring: a hand-drawn loop round a box in page px (it overshoots its start, like a pen). Draw it with draw().
+function ring(path, x, y, w, h, pad = 14) {
+  const cx = x + w / 2, cy = y + h / 2, rx = w / 2 + pad, ry = h / 2 + pad, pts = [];
+  for (let i = 0; i <= 44; i++) {
+    const a = -2.2 + (i / 44) * Math.PI * 2.18, wob = 1 + .035 * Math.sin(i * .9);
+    pts.push(`${(cx + Math.cos(a) * rx * wob).toFixed(1)} ${(cy + Math.sin(a) * ry * wob).toFixed(1)}`);
+  }
+  path.setAttribute('d', 'M' + pts.join('L'));
+}
+
+// ---- TODO: per-scene data ----
+const S2 = { dir: 'clips/TODO', n: 1 };                 // n = frames in the sequence (frames.mjs / events.json)
+ring($('s3ring'), 760, 300, 360, 120);                   // TODO: the element's box in page px
+
+window.seek = async function (t) {
+  const vis = {};
+  for (const [id, a, b] of SCENES) { const el = $(id); const v = p(t, a, a + .4) * (1 - p(t, b - .4, b)); el.style.opacity = v; el.style.visibility = v ? 'visible' : 'hidden'; vis[id] = v > 0; }
+  const loads = [];
 
   // 1 · title
   pop($('s1star'), t, .1, .7, .2); $('s1star').style.rotate = `${t*40}deg`;
@@ -98,18 +204,48 @@ window.seek = function (t) {
   draw($('s1line'), inout(p(t, 1.0, 1.7)));
   rise($('s1sub'), t, 1.6, .6);
 
-  // 2 · TODO (3–5 the same way: tag first, drawing builds over ~2.5s, note last, 1s+ hold)
+  // 2 · real footage: the window rises, the clip plays (retimed), the camera pushes in on the result
   const T2 = 3.0;
-  rise($('s2main'), t, T2 + .3, .6, 100);
-  rise($('s2note'), t, T2 + 3.0, .5);
+  rise($('s2win'), t, T2 + .2, .6, 90);
+  if (vis.s2) loads.push(clip($('s2clip'), S2.dir, S2.n, retime(t, [[T2 + .6, 0], [T2 + 3.4, 2.8]])));
+  camera($('s2stage'), [[T2, 0, 0, .744], [T2 + 3.2, 0, 0, .744], [T2 + 4.0, 300, 240, 1.15]], t);
+  rise($('s2note'), t, T2 + 3.7, .5);
+
+  // 3 · real screenshot: fit, push in, ring the element, note
+  const T3 = 8.2;
+  rise($('s3win'), t, T3 + .2, .6, 90);
+  camera($('s3stage'), [[T3, 0, 0, .744], [T3 + 1.0, 0, 0, .744], [T3 + 2.0, 560, 160, 1.4]], t);
+  draw($('s3ring'), inout(p(t, T3 + 2.1, T3 + 2.7)));
+  rise($('s3note'), t, T3 + 2.8, .5);
+
+  // 4 · before → after
+  const T4 = 12.6;
+  rise($('s4win'), t, T4 + .2, .6, 90);
+  for (const id of ['s4before', 's4after']) $(id).style.transform = 'scale(.744)';
+  const w = 1 - inout(p(t, T4 + 1.2, T4 + 2.4));            // 1 = all before, 0 = all after
+  $('s4after').style.clipPath = `inset(0 0 0 ${w * 1280}px)`;
+  $('s4wipe').style.left = w * 952 + 'px'; $('s4wipe').style.opacity = w > 0 && w < 1 ? 1 : 0;
+  $('s4b').style.opacity = 1 - p(t, T4 + 1.2, T4 + 1.5); $('s4a').style.opacity = p(t, T4 + 2.1, T4 + 2.4);
+  rise($('s4note'), t, T4 + 2.6, .5);
+
+  // 5 · drawn (tag first, drawing builds over ~2.5s, note last, 1s+ hold)
+  const T5 = 16.8;
+  rise($('s5main'), t, T5 + .3, .6, 100);
+  rise($('s5note'), t, T5 + 2.8, .5);
 
   // 6 · end card
-  const T6 = 19.4;
+  const T6 = 20.8;
   pop($('s6star'), t, T6 + .2, .7, .2); $('s6star').style.rotate = `${t*40}deg`;
   rise($('s6t'), t, T6 + .4, .6, 70); rise($('s6s'), t, T6 + 1.0, .5);
   draw($('s6ap'), out(p(t, T6 + 1.4, T6 + 2.0)));
   $('s6arrow').style.transform = `translateY(${Math.sin((t - T6) * 5) * 10 * p(t, T6 + 2, T6 + 2.3)}px)`;
+
+  await Promise.all(loads);
 };
-seek(0);
+// render.mjs and stills.mjs wait for this before the first frame.
+window.ready = Promise.all([document.fonts.ready, ...[...document.images].filter(i => i.getAttribute('src')).map(i => i.decode().catch(() => {}))])
+  .then(() => seek(0));
+// Preview in a browser: reel.html?t=9.5 shows one moment.
+const q = new URLSearchParams(location.search); if (q.has('t')) window.ready.then(() => seek(+q.get('t')));
 </script>
 </body></html>

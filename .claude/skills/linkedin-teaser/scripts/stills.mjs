@@ -13,6 +13,8 @@ const b = await chromium.launch({ channel: 'chrome' });
 const pg = await b.newPage({ viewport: { width: 1080, height: 1350 } });
 await pg.goto('file://' + resolve(html), { waitUntil: 'networkidle' });
 await pg.evaluate(() => document.fonts.ready);
+// Real UI: the reel sets window.ready once its screenshots and first clip frames have decoded.
+await pg.evaluate(() => window.ready);
 let ts = rest.map(Number);
 if (!ts.length) ts = await pg.evaluate(() => (window.SCENES || []).map(([, , e]) => +(Math.min(e, window.DURATION) - 0.5).toFixed(2)));
 if (!ts.length) { console.error('no times given and window.SCENES is not set'); process.exit(1); }

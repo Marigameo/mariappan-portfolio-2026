@@ -1,4 +1,4 @@
-// Render a teaser reel to MP4: calls window.seek(t) per frame, screenshots, pipes to ffmpeg.
+// Render a teaser reel to MP4: calls (and awaits) window.seek(t) per frame, screenshots, pipes to ffmpeg.
 // Usage: node render.mjs <abs path to reel.html> <abs path to out.mp4> [fps=30]
 import { chromium } from 'playwright';
 import { spawn } from 'child_process';
@@ -13,6 +13,8 @@ const b = await chromium.launch({ channel: 'chrome' });
 const pg = await b.newPage({ viewport: { width: 1080, height: 1350 } });
 await pg.goto('file://' + resolve(html), { waitUntil: 'networkidle' });
 await pg.evaluate(() => document.fonts.ready);
+// Real UI: the reel sets window.ready once its screenshots and first clip frames have decoded.
+await pg.evaluate(() => window.ready);
 const D = await pg.evaluate(() => window.DURATION);
 const N = Math.round(D * FPS);
 
