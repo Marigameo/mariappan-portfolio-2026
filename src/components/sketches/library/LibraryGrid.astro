@@ -1,0 +1,92 @@
+---
+// Sketch for the Library story (the studio, Experiments page). The page in grid
+// view: the platform sidebar with Library active, the title and Upload, the
+// All files / Yours tabs, search and the filter / grid / list buttons, then a
+// masonry of tiles that each keep their own shape, with PDFs as fixed cards. One
+// tile is outlined in coral: the file open in the side panel. Strive orange is the
+// one fixed colour; the rest follows the theme through the .sk rules.
+interface Props { label: string }
+const { label } = Astro.props;
+
+// Four columns, each tile placed in order; h is the tile's height.
+const cols = [
+  [{ h: 120 }, { h: 104, pdf: true }, { h: 92 }],
+  [{ h: 70 }, { h: 70 }, { h: 140 }, { h: 60 }],
+  [{ h: 104, open: true }, { h: 104, pdf: true }, { h: 100 }],
+  [{ h: 150 }, { h: 104, pdf: true }, { h: 60 }],
+];
+const x0 = 132, w = 104, gap = 8, y0 = 132;
+const tiles = cols.flatMap((col, c) => {
+  let y = y0;
+  return col.map((t) => { const tile = { ...t, x: x0 + c * (w + gap), y }; y += t.h + gap; return tile; });
+});
+---
+<svg class="sk lib" viewBox="0 0 600 440" preserveAspectRatio="xMidYMin slice" role="img" aria-label={label}>
+  <rect width="600" height="440" class="f-card"/>
+
+  <!-- Platform sidebar, Library active. -->
+  <rect width="100" height="440" class="f-tint"/>
+  <line x1="100.5" y1="0" x2="100.5" y2="440" class="s-line"/>
+  <rect x="16" y="18" width="16" height="16" rx="5" fill="#f26b1d"/>
+  <rect x="38" y="23" width="40" height="6" rx="3" class="f-bar"/>
+  <g>
+    <rect x="16" y="58" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="60" width="40" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="82" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="84" width="32" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="114" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="116" width="44" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="138" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="140" width="34" height="6" rx="3" class="f-bar-2"/>
+    <rect x="10" y="156" width="82" height="22" rx="6" fill="#f26b1d" fill-opacity=".12"/>
+    <rect x="16" y="162" width="10" height="10" rx="3" fill="#f26b1d"/><rect x="32" y="164" width="38" height="6" rx="3" fill="#f26b1d" fill-opacity=".55"/>
+    <rect x="16" y="196" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="198" width="46" height="6" rx="3" class="f-bar-2"/>
+    <rect x="16" y="220" width="10" height="10" rx="3" class="f-bar"/><rect x="32" y="222" width="30" height="6" rx="3" class="f-bar-2"/>
+  </g>
+  <circle cx="24" cy="414" r="9" class="f-bar"/><rect x="38" y="411" width="40" height="6" rx="3" class="f-bar-2"/>
+
+  <!-- Title, description and Upload. -->
+  <text x="120" y="40" font-size="20" class="t-display">Library</text>
+  <rect x="120" y="52" width="150" height="6" rx="3" class="f-bar-2"/>
+  <rect x="516" y="24" width="68" height="22" rx="11" class="f-ink"/>
+  <text x="550" y="39" font-size="9.5" text-anchor="middle" class="lib-on-ink">Upload</text>
+
+  <!-- The card: tabs, then search and the view buttons. -->
+  <rect x="120" y="74" width="464" height="380" rx="10" class="f-page s-soft" stroke-width="1.5"/>
+  <path d="M120 98V84a10 10 0 0 1 10-10h444a10 10 0 0 1 10 10v14z" class="f-tint"/>
+  <rect x="124" y="78" width="54" height="20" rx="6" class="f-page"/>
+  <text x="151" y="92" font-size="9" text-anchor="middle" font-weight="600">All files</text>
+  <text x="200" y="92" font-size="9" text-anchor="middle" class="t-soft">Yours</text>
+  <circle cx="136" cy="113" r="4" class="s-ink lib-glyph" stroke-width="1.2"/>
+  <rect x="146" y="110" width="70" height="6" rx="3" class="f-bar-2"/>
+  <circle cx="530" cy="113" r="8" class="f-card s-soft" stroke-width="1.1"/>
+  <circle cx="550" cy="113" r="8" class="f-tint s-soft" stroke-width="1.1"/>
+  <circle cx="570" cy="113" r="8" class="f-card s-soft" stroke-width="1.1"/>
+
+  <!-- The masonry: images keep their shape, PDFs are fixed cards. -->
+  <g>
+    {tiles.map((t) => t.pdf ? (
+      <g class="lib-pdf">
+        <rect x={t.x} y={t.y} width={w} height={t.h} rx="6" class="lib-card"/>
+        <line x1={t.x} y1={t.y + 18} x2={t.x + w} y2={t.y + 18} class="lib-rule"/>
+        <rect x={t.x + 7} y={t.y + 6} width="6" height="7" rx="1.5" class="lib-mark-sm"/>
+        <rect x={t.x + 17} y={t.y + 7} width="56" height="5" rx="2.5" class="f-bar"/>
+        <path d={`M${t.x + 46} ${t.y + 46}h9l5 5v17h-14z`} class="lib-mark"/>
+        <text x={t.x + w / 2} y={t.y + 82} font-size="7" text-anchor="middle" class="t-soft">PDF</text>
+      </g>
+    ) : (
+      <g class:list={['lib-img', t.open && 'lib-open']}>
+        <rect x={t.x} y={t.y} width={w} height={t.h} rx="6"/>
+        <path d={`M${t.x + 36} ${t.y + t.h / 2 + 10}l12 -13 9 9 6 -6 12 10z`} class="lib-hill"/>
+        <circle cx={t.x + 64} cy={t.y + t.h / 2 - 8} r="4" class="lib-hill"/>
+      </g>
+    ))}
+  </g>
+</svg>
+
+<style>
+  .lib .lib-on-ink { fill: var(--paper); }
+  .lib .lib-glyph { fill: none; }
+  .lib .lib-card { fill: var(--paper-2); stroke: var(--ink); stroke-opacity: .16; stroke-width: 1.1; }
+  .lib .lib-rule { stroke: var(--ink); stroke-opacity: .12; }
+  .lib .lib-mark, .lib .lib-mark-sm { fill: none; stroke: var(--coral); stroke-width: 1.3; stroke-linejoin: round; }
+  .lib .lib-img rect { fill: var(--ink); fill-opacity: .07; }
+  .lib .lib-hill { fill: var(--ink); fill-opacity: .12; }
+  .lib .lib-open rect { fill: var(--coral); fill-opacity: .08; stroke: var(--coral); stroke-width: 1.8; }
+</style>

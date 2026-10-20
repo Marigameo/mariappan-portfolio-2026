@@ -1,0 +1,334 @@
+---
+/* The studio's Library story: one home for every file uploaded in Strive, taking
+   after ChatGPT's library, designed straight in code. Same deck as kb-homepage,
+   led by the real UI: the live page as the hero, then annotated screenshots and
+   short recordings for the grid, the list, the side panel, PDFs and the way into
+   chat, the small details, and what dried. Media lives in
+   public/images/experiments/library/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import SketchLive from '../../../components/SketchLive.astro';
+import LibraryGrid from '../../../components/sketches/library/LibraryGrid.astro';
+
+const img = (f: string) => `/images/experiments/library/${f}`;
+
+const rules = [
+  'A tile stays between half and twice its width tall',
+  'Older images, with no size on record, get a square',
+  'PDFs get a fixed card',
+  'The next page only adds to the bottom',
+];
+
+const intoChat = [
+  { src: 'composer-triggers.webp', alt: 'The chat home in Strive with the attach menu open above the composer: Files (PDF), Images (PNG, JPG, GIF, WebP) and From library (files already uploaded).', caption: '“From library” sits next to Files and Images in the attach menu.' },
+  { src: 'add-from-library-panel.webp', alt: 'The Add from library dialog over the chat: a search box, a list of files with thumbnails, names and upload times, one ticked, “1 selected”, and Cancel and Add to chat buttons.', caption: 'Pick several at once, within the chat’s five-file limit. Files already in the chat say “Already attached”.' },
+  { src: 'as-attachment-in-chat.webp', alt: 'The chat home with a file attached in the composer, shown as a chip with its thumbnail, name and size, above an empty “Ask anything…” box.', caption: 'The file lands in the composer, with nothing uploaded again. Ask about this file ends here too.' },
+];
+
+const details = [
+  { name: 'Never a blank page', text: 'Change a filter, and the current results stay on screen at half opacity until the new ones swap in.' },
+  { name: 'Uploads that don’t blink', text: 'Files land in the grid the moment you pick them, dimmed with “Uploading…”, already at their final shape. The placeholder stays until the real file is in the list, so nothing disappears and comes back.' },
+  { name: 'A next step in every empty state', text: '“No files match ‘…’” comes with Clear search, “No PDFs yet” with Show all types, and an empty library with Upload files.' },
+  { name: 'Errors you can walk away from', text: 'A failed load shows inside the card, under the tabs, so you can still switch tab or view to get away from it.' },
+  { name: 'Scrolling stays ahead', text: 'Files come 40 at a time, and the next page is asked for 800px before you reach the bottom. At the end it says “That’s everything.”' },
+  { name: 'Menus that respect touch', text: 'A tile’s more button shows on hover or focus, and always on touch screens, where there’s no hover.' },
+];
+
+const lessons = [
+  { miss: 'Drew the first panel skeleton in our loading grey. It sat on a panel of almost the same lightness (95.9% against 95.5%), so nobody could see it.', lesson: 'Check a placeholder against what’s behind it. Panel skeletons now sit on a white card with a thin border.' },
+  { miss: 'Waited for each image’s load event. A cached image could finish before React was listening, and its tile waited forever.', lesson: 'Don’t trust an event you might have missed. Each image now checks if it’s already complete as it mounts.' },
+  { lesson: 'Ship small, and finish it. No folders, rename or delete in v1: each is a feature with its own questions, like who can delete a teammate’s upload. Real use decides what comes next.' },
+];
+---
+<StudioLayout
+  title="Designing the Library in Strive"
+  slug="library"
+  description="Designing the Library in Strive: one home for every file uploaded across a workspace, taking after ChatGPT’s library, and a page that never jumps, flashes or blinks while it loads."
+  ogDescription="One home for every file uploaded in Strive, taking after ChatGPT’s library, and a page that never jumps, flashes or blinks."
+  eyebrow="Strivelabs · Library"
+  facts={[
+    { label: 'My part', value: 'Design and frontend, designed straight in code' },
+    { label: 'Taking after', value: 'ChatGPT’s library' },
+    { label: 'Status', value: 'Live' },
+  ]}
+  keywords="UX design, file library, masonry grid, layout shift, loading states, skeletons, empty states, attachments, chat composer, design engineering, UX for AI"
+>
+  <Fragment slot="lede">Files in Strive used to live only inside the chat they were dropped into. Library gives them one home, taking after ChatGPT’s. I kept it <mark class="hl">small, clean and built to extend</mark>, and made sure nothing on the page jumps, flashes or blinks.</Fragment>
+
+  <SketchLive slot="hero" id="library" start="live" live={{ kind: 'video', src: img('preview.mp4'), poster: img('preview-poster.webp'), width: 1600, height: 948, alt: 'Screen recording of the live Library in Strive: a masonry grid of screenshots and PDF cards. Hovering a tile shows its name on a soft dark gradient, a click opens it in a side panel as the page makes room, a placeholder card holds the image’s exact size while it loads, and the screenshot fades in where the card was.' }} caption="The live page: open a file, and it fades in where its placeholder sat.">
+    <figure class="sk-fig lib-sketch">
+      <span class="lib-frame"><LibraryGrid label="Sketch of the Library in Strive: the platform sidebar with Library active, the page title and an Upload button, All files and Yours tabs, search, filter, grid and list buttons, and a masonry grid of image tiles in different shapes with PDFs as fixed cards. One tile is outlined: the file open in the side panel." /></span>
+    </figure>
+  </SketchLive>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Files lived inside chats</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>People upload a lot into Strive: <strong>screenshots of ad dashboards, brand guidelines as PDFs, product shots</strong> for a blog post. Each file lived only in the chat it came in, so using it again meant finding that chat, or uploading it twice.</li>
+        <li>So I scoped v1 to <strong>the smallest version that works, built to extend</strong>: more formats and share permissions can follow without a rewrite. On the UI, I went for clean and uncluttered, taking heavily after ChatGPT on the web.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('library-in-app-view.webp')} width="1600" height="828" loading="lazy" decoding="async" alt="The Library in Strive, in grid view: Library is active in the platform sidebar, under Reports and Blogs. The page has its title, “Files uploaded across your workspace” and an Upload button, then a card with All files and Yours tabs, a search box, and filter, grid and list buttons. Below, a masonry grid of screenshots in their own shapes, and PDFs as cards with the file name on top and a PDF mark.">
+          <span class="shot-mark" style="--l: 1.5%; --t: 34%; --w: 11.9%; --h: 3.6%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 89.5%; --t: 10.9%; --w: 6.3%; --h: 4.5%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 18.3%; --t: 22.5%; --w: 8.7%; --h: 4.9%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 19.4%; --t: 28.6%; --w: 9.4%; --h: 3.3%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 88.4%; --t: 27.8%; --w: 6.7%; --h: 4.4%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 1.5%; --t: 34%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 89.5%; --t: 10.9%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 18.3%; --t: 22.5%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 28.8%; --t: 30.2%" aria-hidden="true">4</span>
+          <span class="shot-num" style="--l: 88.4%; --t: 27.8%" aria-hidden="true">5</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>A home in the sidebar.</strong> A dedicated place in the workbench.</li>
+          <li><strong>Upload from here too.</strong> Files are a platform entity, not tied to chat alone.</li>
+          <li><strong>All files, or Yours.</strong> Everything in the workspace, or just what you uploaded.</li>
+          <li><strong>Search by name.</strong> Debounced as you type.</li>
+          <li><strong>Filter, grid, list.</strong> Filter by type, and views that give each type a personality of its own.</li>
+        </ol>
+        <figcaption>One place for every file in the workspace. No folders, rename or delete yet.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-grid">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Design call · the grid</p><h2 id="s-grid">Know the shape before the picture</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Why masonry.</strong> Images are most of what people upload, and the pile only grows. Their names (“image (13).png”) say little, so thumbnails do the scanning. Cropped or pixelated previews would look clumsy, and uneven scaling wouldn’t work either. So, like Google Photos, every image keeps its own shape. Worth the extra effort.</li>
+        <li>The catch: the browser doesn’t know an image’s shape until it downloads, <strong>so tiles start wrong and the page jumps</strong>.</li>
+        <li>So we fixed it at the source. <strong>The server records each image’s size at upload</strong>, and every tile is drawn at its final size before any image loads. It pulses softly, then the image fades in.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="lib-video">
+          <video src={img('grid.mp4')} poster={img('grid-poster.webp')} width="1600" height="948" controls muted loop playsinline preload="none" aria-label="Screen recording: the Library opens on a skeleton grid of soft tiles in mixed heights, and the screenshots and PDF cards fade in at exactly those sizes, with nothing moving."></video>
+        </div>
+        <ul class="rules" aria-label="The grid’s rules">
+          {rules.map((r) => <li>{r}</li>)}
+        </ul>
+        <figcaption>Every tile at its final size, before a single image arrives.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-list">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Design call · views</p><h2 id="s-list">Grid to look, list to find</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The grid is for looking. The list is for finding: <strong>name, type, size, who and when</strong>, with the matching part of each name highlighted as you search.</li>
+        <li><strong>The URL remembers where you are.</strong> The tab, the type filter and the search live in the address bar, so a reload or a link to a teammate opens the same view.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('list-view.webp')} width="1600" height="947" loading="lazy" decoding="async" alt="The Library in list view: columns for Name, Type, Size, Uploaded by and Modified. Each row has a small thumbnail, the file name, PNG or PDF, the size, the uploader’s avatar and name, a date, and a more button. The list button is active in the toolbar.">
+          <span class="shot-mark" style="--l: 6.8%; --t: 38.7%; --w: 3.1%; --h: 5.2%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 51%; --t: 33.4%; --w: 35.5%; --h: 3.5%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 90.5%; --t: 39.5%; --w: 2.5%; --h: 3.5%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 89.3%; --t: 27%; --w: 4.9%; --h: 4.1%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 6.8%; --t: 38.7%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 49.6%; --t: 35.1%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 88.6%; --t: 41.2%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 89.3%; --t: 27%" aria-hidden="true">4</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>The smallest thumbnail.</strong> Every upload gets four sizes. Rows use the 160px one, the grid the 480 or 960, and the panel the largest.</li>
+          <li><strong>What you scan for.</strong> Type, size, who uploaded it and when.</li>
+          <li><strong>A menu on every row.</strong> The same actions as a tile in the grid.</li>
+          <li><strong>Your view, remembered.</strong> Grid or list is a personal preference, so it’s saved in your browser. Grid is the default.</li>
+        </ol>
+        <figcaption>Same files, a view for finding one.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-panel">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · preview</p><h2 id="s-panel">Open it without leaving</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>A click opens the file in <strong>the same side panel Tasks and Blogs use</strong>, so it already feels familiar.</li>
+        <li>The no-jump rule holds here too. While an image loads, <strong>a placeholder sits at exactly the size it will be drawn</strong>, and the image fades in where it was. That’s the recording at the top.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="shot-frame">
+          <img src={img('preview-view.webp')} width="1600" height="947" loading="lazy" decoding="async" alt="An image open in the side panel: the Library narrows to the left with its title, Upload, tabs and grid, and the panel on the right shows the file name, an Ask about this file button, download, full screen and close, the whole flowchart image, and a footer reading PNG, 62.18 KB, uploaded by Mariappan Subramanian, 30 Sept 2026.">
+          <span class="shot-mark" style="--l: 2%; --t: 9.5%; --w: 33.1%; --h: 8.1%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 43.8%; --t: 15.9%; --w: 48.6%; --h: 75%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 78.5%; --t: 7.5%; --w: 11%; --h: 3.8%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 90%; --t: 7.5%; --w: 7.9%; --h: 3.8%" aria-hidden="true"></span>
+          <span class="shot-mark" style="--l: 38.1%; --t: 94.8%; --w: 31.4%; --h: 3.2%" aria-hidden="true"></span>
+          <span class="shot-num" style="--l: 2%; --t: 9.5%" aria-hidden="true">1</span>
+          <span class="shot-num" style="--l: 43.8%; --t: 15.9%" aria-hidden="true">2</span>
+          <span class="shot-num" style="--l: 78.5%; --t: 7.5%" aria-hidden="true">3</span>
+          <span class="shot-num" style="--l: 97.9%; --t: 7.5%" aria-hidden="true">4</span>
+          <span class="shot-num" style="--l: 38.1%; --t: 94.8%" aria-hidden="true">5</span>
+        </div>
+        <ol class="shot-notes">
+          <li><strong>The page makes room.</strong> It tightens its margins, and the open file stays outlined so you don’t lose your place.</li>
+          <li><strong>Shown whole, never stretched.</strong> An image is never scaled up past its real size.</li>
+          <li><strong>Ask about this file.</strong> Starts a chat with it attached. More on that below.</li>
+          <li><strong>Download, full screen, close.</strong> A download keeps the file’s original name, even with accents or emoji, and the page stays where it is.</li>
+          <li><strong>The facts, quietly.</strong> Type, size, who uploaded it and when.</li>
+        </ol>
+        <figcaption>Look closer without losing the grid.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-pdf">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Loading · PDFs</p><h2 id="s-pdf">A skeleton that steps aside</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>PDFs open in <strong>the browser’s own viewer</strong>. Until it’s ready, you see a skeleton page: a heading and a few lines.</li>
+        <li>Some browsers never say a PDF has finished loading. So <strong>the skeleton steps aside after eight seconds</strong>, whatever happens.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="lib-video">
+          <video src={img('pdf.mp4')} poster={img('pdf-poster.webp')} width="1600" height="948" controls muted loop playsinline preload="none" aria-label="Screen recording: a PDF card is clicked in the Library. Its tile gets an outline, the side panel opens on a skeleton page with a heading and paragraph lines, then the browser’s PDF viewer takes over with page thumbnails and the document."></video>
+        </div>
+        <figcaption>A placeholder should never hide the real thing for good.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-chat">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Into the chat</p><h2 id="s-chat">From the Library into chat</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>Built once, as a common module.</strong> An upload from a chat, the blog image picker or the Library shows up in all of them. And since artifacts are made in chat, any file here can feed one.</li>
+        <li><strong>Nothing is sent for you.</strong> Ask about this file opens a new chat with the file in the composer, and the first message is whatever you type. Auto-sending “Tell me about this file” would put words in your mouth.</li>
+      </ul>
+      <div class="thumbs">
+        {intoChat.map((s, i) => (
+          <figure class="thumb">
+            <div class="shot-frame">
+              <img src={img(s.src)} width="960" height="720" loading="lazy" decoding="async" alt={s.alt}>
+              <span class="shot-num" style="--l: 6%; --t: 10%" aria-hidden="true">{i + 1}</span>
+            </div>
+            <figcaption>{s.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-details">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">The details</p><h2 id="s-details">Calm is a lot of small things</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>These are the ones I’m quietly proudest of, because <strong>if they work, no one sees them</strong>.</li>
+      </ul>
+      <ul class="calls">
+        {details.map((d, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{d.name}</h3>
+            <p>{d.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What I’d keep</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`, !l.miss && 'lessons-solo']}>
+            {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">If it feels like nothing happened, it worked.</blockquote>
+  </div>
+</StudioLayout>
+
+<style>
+  /* Deck styles from the work stories, as in kb-homepage.astro. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons .lessons-solo { grid-column: 1 / -1; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 07: the small details, one box each. */
+  .calls { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .calls li { display: grid; gap: .4rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .calls h3 { margin: 0; font-size: 1.3rem; line-height: 1.15; }
+  .calls p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
+  @media (max-width: 559px) { .calls { grid-template-columns: 1fr; } }
+
+  /* Real screenshots with coral hand-drawn marks and numbers. Screenshots keep
+     their own light colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-num { position: absolute; left: var(--l); top: var(--t); display: grid; place-items: center; width: 1.6rem; height: 1.6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -50%) rotate(-6deg); }
+  .shot-notes { list-style: none; counter-reset: note; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem 1.5rem; margin: 1.4rem 0 0; padding: 0; }
+  .shot-notes li { counter-increment: note; position: relative; padding-left: 2.1rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  .shot-notes li::before { content: counter(note); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .shot-notes strong { color: var(--ink); font-weight: 500; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 559px) {
+    .shot-notes { grid-template-columns: 1fr; }
+    .shot-num { width: 1rem; height: 1rem; font-size: .8rem; box-shadow: 1px 1px 0 var(--shadow-ink); }
+    .shot-mark { border-width: 1.5px; }
+  }
+
+  /* Recordings, framed like the screenshots. */
+  .lib-video { overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .lib-video video { display: block; width: 100%; height: auto; }
+
+  /* Slide 02: the grid's rules, as chips under the recording. */
+  .rules { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: 1.2rem 0 0; padding: 0; }
+  .rules li { padding: .3rem .8rem; font-size: .8rem; line-height: 1.35; color: var(--ink); border: 1.5px solid var(--border); border-radius: 999px; background: var(--paper-2); }
+
+  /* Slide 06: three steps into chat, small frames in a row. */
+  .thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; margin-top: var(--space-4); }
+  .thumb { margin: 0; max-width: none; }
+  .thumb .shot-frame { transform: none; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .thumb figcaption { margin-top: .7rem; font-size: .85rem; line-height: 1.4; color: var(--ink-faint); }
+  @media (max-width: 719px) { .thumbs { grid-template-columns: 1fr; } }
+
+  /* The Sketch tab: the drawing in a frame like the live one. */
+  .lib-sketch { margin: 0; }
+  .lib-frame { display: block; aspect-ratio: 1600 / 948; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .lib-frame :global(.sk) { display: block; width: 100%; height: 100%; }
+
+  .closer { margin-top: var(--space-5); }
+</style>

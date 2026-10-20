@@ -27,6 +27,23 @@ export interface StudioPiece {
 
 export const studio: StudioPiece[] = [
   {
+    slug: 'library',
+    title: 'Designing the Library in Strive',
+    context: 'Strivelabs · Library',
+    frame: 'Library / Grid',
+    hook: 'One home for every file in the workspace, and a page that never jumps while it loads.',
+    tags: ['Loading states', 'File library'],
+    accent: 'coral',
+    preview: {
+      kind: 'video',
+      src: '/images/experiments/library/loop.mp4',
+      poster: '/images/experiments/library/loop-poster.webp',
+      width: 960,
+      height: 500,
+      alt: 'The live Library in Strive: a skeleton grid of soft tiles in mixed heights fills in with screenshots and PDF cards at exactly those sizes, then a file opens in the side panel and fades in where its placeholder sat.',
+    },
+  },
+  {
     slug: 'blog-refresh',
     title: 'Reviewing an agent’s edits, block by block',
     context: 'Strivelabs · Blog refresh',
