@@ -1,0 +1,98 @@
+---
+// Card sketch for the public share story.
+// On the left, an artifact panel with the Share control open: Share and Export
+// tabs, General access with "Anyone with the link" picked, and Copy link. A dashed
+// arrow carries the link to a signed-out browser on the right, where the page
+// opens bare: "Shared from" the workspace and a small "Made with" mark. Everything
+// that matters sits in the top band so the 16:9 crop keeps it; below the fold, the
+// page a turned-off link gets. Strive orange is the one fixed colour.
+---
+<svg class="sk" viewBox="0 0 600 440" preserveAspectRatio="xMinYMin slice" role="img" aria-label="Sketch of sharing an artifact: on the left, a page the agent wrote, with its Share control open. It has Share and Export tabs, General access with two choices, members only or anyone with the link, the second one picked, and a Copy link button. A dashed arrow carries the link to a browser on the right, signed out, where the same page opens with “Shared from Acme” and a small “Made with” mark. Below, the page a turned-off link shows: a crossed-out link and “This link isn’t available”.">
+  <rect width="600" height="440" class="f-page"/>
+
+  <!-- The artifact panel, with the agent's page behind the popover. -->
+  <rect x="20" y="24" width="330" height="290" rx="10" class="f-card s-soft" stroke-width="1.5"/>
+  <rect x="34" y="40" width="150" height="7" rx="3.5" class="f-bar"/>
+  <rect x="262" y="34" width="56" height="20" rx="10" fill="none" class="s-soft" stroke-width="1.4"/>
+  <path d="M274 48 v-8 m-3 3 l3 -3 3 3 M271 46 v3 h6 v-3" class="s-ink" stroke-width="1.1"/>
+  <text x="284" y="48" font-size="10" font-weight="500">Share</text>
+  <line x1="20" y1="64.5" x2="350" y2="64.5" class="s-line"/>
+  <rect x="34" y="80" width="64" height="5" rx="2.5" fill="#f26b1d" fill-opacity=".55"/>
+  <text x="34" y="112" font-size="20" class="t-display">Campaign</text>
+  <text x="34" y="136" font-size="20" class="t-display">guide</text>
+  <rect x="34" y="152" width="100" height="5" rx="2.5" class="f-bar-2"/>
+  <rect x="34" y="164" width="90" height="5" rx="2.5" class="f-bar-2"/>
+  <rect x="34" y="188" width="96" height="40" rx="6" class="f-tint"/>
+  <rect x="34" y="236" width="96" height="40" rx="6" class="f-tint"/>
+
+  <!-- The Share control: tabs, General access, Copy link. -->
+  <g class="sk-lift">
+    <rect x="146" y="70" width="196" height="232" rx="10" class="f-paper" stroke="#f26b1d" stroke-opacity=".6" stroke-width="1.5"/>
+    <rect x="158" y="82" width="172" height="22" rx="6" class="f-tint"/>
+    <rect x="161" y="85" width="84" height="16" rx="5" class="f-card s-soft"/>
+    <text x="203" y="96.5" font-size="9" font-weight="600" text-anchor="middle">Share</text>
+    <text x="287" y="96.5" font-size="9" text-anchor="middle" class="t-soft">Export</text>
+    <text x="158" y="124" font-size="8.5" class="t-soft">General access</text>
+
+    <!-- Members only: a lock, not picked. -->
+    <circle cx="172" cy="146" r="9" class="f-tint"/>
+    <rect x="168" y="146" width="8" height="6" rx="1.2" class="f-ink" fill-opacity=".55"/>
+    <path d="M169.5 146 v-2.5 a2.5 2.5 0 0 1 5 0 v2.5" class="s-ink" stroke-width="1.1"/>
+    <rect x="188" y="140" width="92" height="5" rx="2.5" class="f-bar"/>
+    <rect x="188" y="150" width="64" height="4" rx="2" class="f-bar-2"/>
+    <circle cx="318" cy="146" r="5.5" fill="none" class="s-soft" stroke-width="1.4"/>
+
+    <!-- Anyone with the link: a globe, picked. -->
+    <rect x="156" y="164" width="176" height="40" rx="8" fill="none" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1.3"/>
+    <circle cx="172" cy="184" r="9" class="f-tint"/>
+    <circle cx="172" cy="184" r="5" class="s-ink" stroke-width="1.1"/>
+    <path d="M167 184 h10 M172 179 c-2.5 3 -2.5 7 0 10 c2.5 -3 2.5 -7 0 -10" class="s-ink" stroke-width="1"/>
+    <text x="188" y="181" font-size="8.5" font-weight="500">Anyone with the link</text>
+    <rect x="188" y="188" width="104" height="4" rx="2" class="f-bar-2"/>
+    <circle cx="318" cy="184" r="5.5" class="f-ink"/>
+    <circle cx="318" cy="184" r="2" class="f-paper"/>
+
+    <rect x="158" y="214" width="96" height="4" rx="2" class="f-bar-2"/>
+    <line x1="146" y1="236.5" x2="342" y2="236.5" class="s-line"/>
+    <rect x="158" y="256" width="96" height="4" rx="2" class="f-bar-2"/>
+    <rect x="266" y="246" width="64" height="22" rx="11" fill="none" stroke="var(--ink)" stroke-opacity=".4" stroke-width="1.3"/>
+    <text x="298" y="260.5" font-size="9" font-weight="500" text-anchor="middle">Copy link</text>
+  </g>
+
+  <!-- The link travels. -->
+  <path d="M336 252 C 368 252, 372 196, 396 172" class="s-ink" stroke="#f26b1d" stroke-dasharray="4 4"/>
+  <path d="M386 172 l10 0 -2 10" class="s-ink" stroke="#f26b1d"/>
+
+  <!-- Signed out, somewhere else: the page opens bare. -->
+  <g class="sk-lift">
+    <rect x="404" y="40" width="176" height="262" rx="10" class="f-card s-soft" stroke-width="1.5"/>
+    <circle cx="418" cy="54" r="3" class="f-bar"/>
+    <circle cx="428" cy="54" r="3" class="f-bar"/>
+    <circle cx="438" cy="54" r="3" class="f-bar"/>
+    <rect x="450" y="47" width="120" height="14" rx="7" class="f-tint"/>
+    <text x="458" y="57.5" font-size="8" class="t-soft" style="font-family: var(--font-mono)">/share/k3Jx…</text>
+    <line x1="404" y1="70.5" x2="580" y2="70.5" class="s-line"/>
+    <rect x="416" y="82" width="62" height="5" rx="2.5" class="f-bar"/>
+    <text x="416" y="100" font-size="8" class="t-soft">Shared from Acme</text>
+    <text x="536" y="92" font-size="7.5" class="t-soft" text-anchor="end">Made with</text>
+    <path d="M546 84 l4 4 -4 4 M552 84 l4 4 -4 4" stroke="#f26b1d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="404" y1="110.5" x2="580" y2="110.5" class="s-line"/>
+    <rect x="418" y="122" width="148" height="168" rx="6" class="f-paper s-soft"/>
+    <rect x="430" y="134" width="40" height="4" rx="2" fill="#f26b1d" fill-opacity=".55"/>
+    <text x="430" y="156" font-size="13" class="t-display">Campaign</text>
+    <text x="430" y="172" font-size="13" class="t-display">guide</text>
+    <rect x="430" y="182" width="110" height="4" rx="2" class="f-bar-2"/>
+    <rect x="430" y="192" width="90" height="4" rx="2" class="f-bar-2"/>
+    <rect x="430" y="206" width="124" height="70" rx="5" class="f-tint"/>
+    <path d="M438 264 l18 -14 16 6 18 -18 18 8 22 -20" class="s-ink" stroke="#f26b1d" stroke-opacity=".75"/>
+  </g>
+  <text x="492" y="320" font-size="14" text-anchor="middle" fill="#f26b1d" style="font-family: var(--font-hand)">no sign-in</text>
+
+  <!-- Below the fold of the crops: what a turned-off link shows. -->
+  <rect x="150" y="346" width="300" height="70" rx="10" fill="none" stroke="var(--ink)" stroke-opacity=".3" stroke-width="1.3" stroke-dasharray="5 4"/>
+  <rect x="178" y="371" width="16" height="10" rx="5" class="s-ink" stroke-opacity=".55"/>
+  <rect x="198" y="371" width="16" height="10" rx="5" class="s-ink" stroke-opacity=".55"/>
+  <line x1="184" y1="364" x2="208" y2="388" class="s-ink" stroke-opacity=".55"/>
+  <text x="224" y="378" font-size="11" font-weight="600">This link isn’t available</text>
+  <rect x="224" y="388" width="150" height="4" rx="2" class="f-bar-2"/>
+</svg>

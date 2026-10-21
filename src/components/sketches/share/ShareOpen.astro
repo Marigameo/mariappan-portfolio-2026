@@ -1,0 +1,24 @@
+---
+/* How a public link opens: the viewer's tab trades the slug for the render token
+   the artifact frame already used, and the frame carries on as it always has. The
+   only new step on the old path is checking the link is still live. */
+import Sequence from '../studio/Sequence.astro';
+interface Props { caption?: string }
+const { caption = 'Everything after the slug runs on routes that already shipped. Sharing added one table, two routes and one check.' } = Astro.props;
+---
+<Sequence
+  lanes={[
+    { label: 'Viewer · their tab', sub: 'anyone with the link, signed out', tone: 'coral' },
+    { label: 'Frame · sandboxed', sub: 'the page the agent wrote', tone: 'teal' },
+    { label: 'Strive · server', sub: 'the routes that already ship', tone: 'blue' },
+  ]}
+  steps={[
+    { from: 0, to: 2, label: '/share/‹slug›', note: 'no sign-in, no cookie' },
+    { from: 2, to: 2, label: 'Slug → a live link', note: 'then mints the token the frame already uses' },
+    { from: 2, to: 0, label: 'title · org name · frame URL' },
+    { from: 1, to: 2, label: 'page + images, token in the path', note: 'no cookie, as always' },
+    { from: 2, to: 2, label: 'One new check', note: 'is the link still live?' },
+  ]}
+  alt="Sequence: the viewer’s tab, signed out, asks Strive for /share/ with the slug. Strive looks the slug up, finds a live link, and mints the same render token the artifact frame already uses. It answers with the page title, the workspace name and the frame URL. The sandboxed frame then asks for the page and its images with the token in the path and no cookie, as it always has. The one new check on that path is whether the link is still live."
+  caption={caption}
+/>

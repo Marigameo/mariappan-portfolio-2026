@@ -42,10 +42,19 @@ export interface Highlight {
   hook: string;
   tags: string[];
   accent: 'coral' | 'blue' | 'teal' | 'violet';
-  sketch: 'design-ecosystem';
+  sketch: 'design-ecosystem' | 'public-share';
 }
 
 export const highlights: Highlight[] = [
+  {
+    href: '/work/public-share/',
+    title: 'Sharing artifacts in Strive',
+    context: 'Strivelabs · Oct 2026',
+    hook: 'A public link for the pages the agent writes, built on top of what already shipped.',
+    tags: ['Sharing', 'Security'],
+    accent: 'violet',
+    sketch: 'public-share',
+  },
   {
     href: '/work/design-ecosystem/',
     title: 'Strive’s design ecosystem',

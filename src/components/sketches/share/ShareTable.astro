@@ -1,0 +1,53 @@
+---
+/* One share table for every shareable thing: it names an entity by type and id and
+   knows nothing else about it. Each kind plugs in a small resolver that answers
+   three questions. Artifacts are inked (live now); reports and chats are ghosts,
+   waiting to plug in. On a phone the plugs stack. */
+const columns = ['entity type', 'entity id', 'pinned version', 'slug', 'turned off?'];
+const plugs = [
+  { name: 'Artifact', when: 'now', tone: 'coral' },
+  { name: 'Report', when: 'next', tone: 'ghost' },
+  { name: 'Chat', when: 'later', tone: 'ghost' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet st" role="img" aria-label="One share table, drawn as a box with five columns: entity type, entity id, pinned version, slug, and whether it has been turned off. Below it, three plugs: Artifact, inked in, live now; Report and Chat, dashed, to plug in later. Each plug is a resolver that answers three questions: does it exist, what does a version mean for it, and what does a stranger see.">
+    <div class="sk-box sk-box--blue sk-lean-1 st-table">
+      <p class="sk-hdr st-hdr">share link</p>
+      <ul class="st-cols">{columns.map((c) => <li>{c}</li>)}</ul>
+    </div>
+    <ol class="st-plugs">
+      {plugs.map((p, i) => (
+        <li class:list={['sk-box', `sk-box--${p.tone}`, `sk-lean-${i + 2}`, p.tone === 'ghost' && 'st-ghost']}>
+          <strong>{p.name}</strong>
+          <span class="st-when">{p.when}</span>
+          <span class="st-sub">resolver</span>
+        </li>
+      ))}
+    </ol>
+    <p class="sk-hand st-note">Does it exist? What does a version mean for it? What does a stranger see?</p>
+  </div>
+  <figcaption>The table knows a type and an id. Each kind answers the rest.</figcaption>
+</figure>
+
+<style>
+  .st { display: grid; gap: 1.6rem; padding: 1.3rem 1.2rem 1.1rem; }
+  .st-table { justify-self: center; width: min(100%, 34rem); padding: .7rem .9rem .8rem; }
+  .st-hdr { font-size: .64rem; color: var(--c); }
+  .st-cols { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: .45rem 0 0; padding: 0; }
+  .st-cols li { padding: .15rem .55rem; font-family: var(--font-mono); font-size: .68rem; color: var(--ink); border: 1px solid var(--line); border-radius: 999px; background: var(--paper-2); }
+
+  /* A short dashed stub runs up from each plug to the table. */
+  .st-plugs { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; }
+  .st-plugs li { position: relative; display: grid; gap: .1rem; justify-items: center; padding: .6rem .7rem .65rem; text-align: center; }
+  .st-plugs li::before { content: ""; position: absolute; left: 50%; bottom: 100%; height: 1.2rem; border-left: 1.5px dashed var(--ink-faint); }
+  .st-plugs strong { font-size: .95rem; font-weight: 500; color: var(--ink); }
+  .st-ghost strong { color: var(--ink-faint); }
+  .st-when { font-family: var(--font-hand); font-size: 1.05rem; line-height: 1; color: var(--c, var(--ink-faint)); }
+  .st-ghost .st-when { color: var(--ink-faint); }
+  .st-sub { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .st-note { margin: 0 !important; text-align: center; font-size: 1.15rem; }
+  @media (max-width: 459px) {
+    .st-plugs { grid-template-columns: 1fr; gap: 1.4rem; }
+  }
+</style>

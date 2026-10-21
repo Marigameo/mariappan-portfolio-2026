@@ -1,0 +1,372 @@
+---
+/* Public share links for artifacts: anyone with the link can open a page the agent
+   wrote, without signing in. Told from the CTO's whiteboard sketch to the version
+   that's live: the find that made it an add-on, the calls on the link, the images
+   and the table, the redesign after real use, what a stranger sees, and what
+   testing and review caught. Same deck as the studio stories, led by the real
+   UI, without a blog: it is linked from the Stories room on /experiments/, like
+   design-ecosystem. Media lives in public/images/experiments/share/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import SketchLive from '../../components/SketchLive.astro';
+import PublicShare from '../../components/sketches/PublicShare.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import ShareOpen from '../../components/sketches/share/ShareOpen.astro';
+import ShareTable from '../../components/sketches/share/ShareTable.astro';
+
+const img = (f: string) => `/images/experiments/share/${f}`;
+
+const pair = [
+  { label: 'Before', src: 'before-public.webp', width: 1564, height: 560, alt: 'The first share popover on an artifact: separate share and download icons in the panel header, and a Share this page popover with one line of copy, the link in a box, a Copy link button, “Shows the current version (v1)”, and Stop sharing in red.' },
+  { label: 'After', src: 'after-public.webp', width: 1600, height: 874, alt: 'The live Share control: a labelled Share button in the panel header, and a popover with the page title, Share and Export tabs, and General access with two choices, Only people in Strivelabs Demo and Anyone with the link, the second one picked. Below it, “Shows the current version (v1)”, and a footer reading “Anyone with this link can view it.” with a Copy link button.' },
+];
+
+const thumbs = [
+  { src: 'before-create.webp', width: 1564, height: 560, caption: 'Before: a button to make a link, beside separate Share and Download icons.', alt: 'The first popover before a link exists: Share this page, one line saying anyone with the link can view it, and a Create public link button.' },
+  { src: 'after-private.webp', width: 1600, height: 876, caption: 'Members only still has something to copy: a private link.', alt: 'The live Share tab with Only people in Strivelabs Demo picked, “Members sign in to open it.”, and a footer with a Copy private link button.' },
+  { src: 'after-export.webp', width: 1600, height: 876, caption: 'Export says it plainly: images won’t load in the downloaded file.', alt: 'The live Export tab: HTML file, “Version 1 as one .html file. Images won’t load in the downloaded file.”, and a Download button.' },
+];
+
+const dead = [
+  { label: 'Before', src: 'dead-before.webp', width: 1078, height: 420, alt: 'The first dead-link state: a crossed-out link icon, “This link isn’t available” and one grey line, alone on a white page.' },
+  { label: 'After', src: 'dead-after.webp', full: 'dead-after-full.webp', width: 1078, height: 420, alt: 'The live dead-link page: a crossed-out link icon in a soft circle, “This link isn’t available”, a line saying the person who shared it may have turned the link off or the page has been removed, and a Go to Strivelabs button. Full size, the Strivelabs logo sits top left.' },
+];
+
+const details = [
+  { name: 'Pinned to what you shared', text: 'A link shows the version it was shared at. Later edits from the agent stay private until someone moves the link to the new version.' },
+  { name: 'A dropdown I didn’t build', text: 'Claude uses a dropdown for General access. Inside our popover, a dropdown opens a layer of its own and closes the popover on the first click. Two radio rows do the same job.' },
+  { name: 'Arrow keys that can’t publish', text: 'A review suggested arrow keys between the two choices. Radios pick as focus moves, so one stray key press could make a page public. I said no.' },
+  { name: 'Guests still get Export', text: 'A guest can’t share, but can still download. The control shows what each person can do, and hides when there’s nothing.' },
+  { name: 'Safe on a partner’s domain', text: 'The dead-link page and the “Made with” mark take the partner’s own name and logo, so a white-label domain never says Strive.' },
+  { name: 'Every dead link looks the same', text: 'Turned off, deleted or never there: the same page, so the address tells a stranger nothing.' },
+];
+
+const lessons = [
+  { miss: 'Fixed the proxy by adding the two missing paths.', lesson: 'Fix the mechanism, not the symptom. A list of paths will always miss the next one.' },
+  { miss: 'Built the first popover around “Create public link” and “Stop sharing”.', lesson: 'Make access a state you set, not two actions you hunt for.' },
+  { lesson: 'Read the code before drawing boxes. Half the feature had already shipped.' },
+  { lesson: 'Say no on purpose. Every review finding I skipped has a one-line reason, usually that it would change something people rely on.' },
+];
+---
+<WorkLayout
+  title="Sharing artifacts in Strive — public links for agent-written pages"
+  description="Public share links for the pages Strive’s agent writes: anyone with the link can open one without signing in. Built as an add-on to what already shipped, from a whiteboard sketch to a sharing model, with the calls on security, the redesign after real use, and what testing caught."
+  ogDescription="Anyone with the link can open a page Strive’s agent wrote, no sign-in. Built as an add-on, not a new system: one table, two routes and one check."
+  eyebrow="Strivelabs · Design engineer · Oct 2026"
+  heading="Sharing artifacts in Strive"
+  facts={[
+    { label: 'My part', value: 'The design doc and the frontend, with the backend paired with Claude Code' },
+    { label: 'Built in', value: 'Two days, from a whiteboard sketch' },
+    { label: 'Status', value: 'Live for every customer' },
+  ]}
+  link={{ href: 'https://strivelabs.ai/', label: 'strivelabs.ai' }}
+  schema={{
+    name: 'Sharing artifacts in Strive',
+    url: 'https://strivelabs.ai/',
+    description: 'Public share links for agent-written artifacts in Strive: a stored random slug that mints the existing sandboxed render token, images scoped to the artifact, one generic share table with a resolver per entity type, and a General access control with Share and Export tabs.',
+    inLanguage: 'en',
+    keywords: 'UX design, UX for AI, public share links, sharing, access control, artifacts, sandboxed iframe, security, design engineering, pairing with Claude Code',
+  }}
+>
+  <Fragment slot="lede">Agent-written pages in Strive could only be opened inside the workspace. Public links let anyone with the link open one without signing in, taking after Claude’s and Lovable’s share. I built it as <mark class="hl">an add-on, not a new system</mark>: one table, two routes and one check on top of what already shipped.</Fragment>
+
+  <div class="story">
+    <SketchLive id="share" start="live" live={{ kind: 'video', src: img('final.mp4'), poster: img('final-poster.webp'), width: 1600, height: 966, alt: 'Screen recording in Strive: a chat that made a Google Ads campaign guide, and the guide open in a side panel. The labelled Share button opens a popover with Share and Export tabs. General access starts at Only people in Strivelabs Demo with a Copy private link button. The Export tab shows the HTML download, then back on Share, Anyone with the link is picked, the footer changes to Copy link, and a toast says Link copied.' }} caption="Live today: open Share, glance at Export, pick Anyone with the link, copy.">
+      <figure class="sk-fig ps-sketch">
+        <span class="ps-frame"><PublicShare /></span>
+      </figure>
+    </SketchLive>
+
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">A whiteboard and one sentence</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Artifacts are the pages Strive’s agent writes in chat: reports, guides, plans. Our CTO sketched two flows on a whiteboard, signed in and shared, and the brief was one sentence: <strong>let anyone with the link open one, without signing in</strong>, as an add-on to the artifact and file work that already shipped.</li>
+        <li>I own the frontend, and backend isn’t my home ground. So <strong>I paired with Claude Code</strong> on the investigation, the design doc and the server side, and kept the brief, the product and scope calls, the testing and the redesign. Design first, reviewed, then build.</li>
+      </ul>
+      <!-- TODO: the CTO's whiteboard photo goes here, as <Whiteboard> from sketches/genui. -->
+    </section>
+
+    <section class="slide" aria-labelledby="s-find">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">The find</p><h2 id="s-find">The frame never had a session</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Before drawing any boxes, I read what had already merged. Artifacts render in a sandboxed frame, so the browser never sends it the login cookie anyway. <strong>Every request it makes carries a signed token in its path.</strong></li>
+        <li>So a public viewer is just someone without a session, and the frame never had one either. The link only needs <strong>another way to hand out that token</strong>. The page route, the image route and the sandbox stay as they are.</li>
+      </ul>
+      <ShareOpen />
+    </section>
+
+    <section class="slide" aria-labelledby="s-link">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Design call · the link</p><h2 id="s-link">A public link is a password</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>My first question: could the Clerk session token be the share credential, or did we need our own JWT? Neither. A session token would hand out the sharer’s whole account, and <strong>a JWT can’t be turned off</strong> without a table anyway.</li>
+        <li>So the link is a random id in a row, the way ChatGPT and Claude do it. When our CTO asked how the string is made, I compared it with UUIDs, nanoid and short codes. A link anyone can forward is a password, so <strong>its length is a security setting</strong>, not a style choice.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Session token or a JWT', tone: 'ghost', items: ['A session token hands out the sharer’s whole account', 'A JWT can’t be turned off on its own', 'A JWT runs 200+ characters anyone can decode'] }}
+        right={{ title: 'A random id in a row', stamp: 'picked', tone: 'coral', items: ['Opens one page, read only', 'Stops working on its next request', '22 characters, 128 random bits'] }}
+        alt="Two sides compared. Left, dashed, the session token or a JWT: a session token hands out the sharer’s whole account, a JWT can’t be turned off on its own, and a JWT runs 200 or more characters anyone can decode. Right, inked in coral and stamped picked, a random id stored in a row: it opens one page, read only, it stops working on its next request once turned off, and it’s 22 characters with 128 random bits."
+        caption="Short, boring and revocable. Two credentials, each doing one job."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-images">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · images</p><h2 id="s-images">Scope it to the page, not the workspace</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The sketch had shared links check that an image <strong>belongs to the workspace</strong>. It looks like a fair simplification. But file ids count up, so one public link could have walked from <code>asset/1</code> to <code>asset/N</code>: every image the workspace ever uploaded.</li>
+        <li>So images stay checked against <strong>the page they belong to</strong>, the check that already shipped. I put each correction in the design doc next to the code it came from, so it read as a fact, not an opinion.</li>
+      </ul>
+      <Versus
+        left={{ title: 'In the sketch · the workspace', tone: 'ghost', items: ['One link, every upload in the workspace', 'Ids anyone can count up'] }}
+        right={{ title: 'Shipped · this page', stamp: 'kept', tone: 'teal', items: ['Only the images on this page', 'A guessed id gets a 404'] }}
+        alt="Two image checks compared. Left, dashed, the sketch’s check that an image belongs to the workspace: one link opens every upload in the workspace, through ids anyone can count up. Right, inked in teal and stamped kept, the shipped check that an image is linked to this page: only the images on this page load, and a guessed id gets a 404."
+        caption="A simplification that looked fair was an open door."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-table">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Design call · the table</p><h2 id="s-table">One table for every shareable thing</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The first draft had a share table just for artifacts. Reviewing it, I asked for <strong>one generic table</strong> instead, the way our relations table already works, because reports and chats would want sharing next.</li>
+        <li>Each kind plugs in <strong>a small resolver</strong>: does it exist, what does a version mean for it, and what does a stranger see. Reports and chats can join without a migration or new routes. Generic one step ahead, and no further.</li>
+      </ul>
+      <ShareTable />
+    </section>
+
+    <section class="slide" aria-labelledby="s-after">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Before · after</p><h2 id="s-after">Access is a state, not two buttons</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The first version worked. Then I used it, and changed the model rather than polishing it. Claude and ChatGPT keep sharing and exporting under one control, so <strong>Share and Export became two tabs</strong> of one, with room for people and roles later.</li>
+        <li>“Create public link” and “Stop sharing” became <strong>General access</strong>: members only, or anyone with the link. Picking one turns the link on, and picking the other turns it off. The bare share glyph became a small labelled Share button.</li>
+      </ul>
+      <div class="pair">
+        {pair.map((p) => (
+          <figure class="pair-shot">
+            <p class:list={['pair-label', `pair-label--${p.label.toLowerCase()}`]}>{p.label}</p>
+            <button class="zoom" type="button" data-full={img(p.src)} aria-label={`View full size: ${p.alt}`}>
+              <span class="shot-frame"><img src={img(p.src)} width={p.width} height={p.height} loading="lazy" decoding="async" alt={p.alt}></span>
+              <span class="zoom-icon rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+            </button>
+          </figure>
+        ))}
+      </div>
+      <div class="thumbs">
+        {thumbs.map((t) => (
+          <figure class="thumb">
+            <button class="zoom" type="button" data-full={img(t.src)} aria-label={`View full size: ${t.alt}`}>
+              <span class="shot-frame"><img src={img(t.src)} width={t.width} height={t.height} loading="lazy" decoding="async" alt={t.alt}></span>
+              <span class="zoom-icon zoom-icon--small rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+            </button>
+            <figcaption>{t.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-stranger">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">The other side</p><h2 id="s-stranger">What a stranger sees</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>A shared page is bare: the title, <strong>“Shared from” and the workspace’s name</strong>, the page itself and a small “Made with” mark. No sign-in, no chat, no app around it. The name builds trust and costs nothing.</li>
+        <li>A dead link is a first impression too, for someone outside the company. So the plain error became <strong>a branded page</strong> that says why in one line and offers a way in.</li>
+      </ul>
+      <figure class="shot-fig">
+        <button class="zoom" type="button" data-full={img('public-view-full.webp')} aria-label="View the shared page full size">
+          <span class="shot-frame">
+            <img src={img('public-view.webp')} width="1600" height="834" loading="lazy" decoding="async" alt="A shared artifact opened signed out: a slim header with the title, Google Ads Campaign Setup, Execution and Maintenance Guide, and “Shared from Strivelabs” under it, and “Made with” and the Strive mark on the right. Below, the guide itself: its eyebrow, headline, summary, a metrics row and a summary list.">
+            <span class="shot-mark" style="--l: 1.2%; --t: 1.4%; --w: 25%; --h: 4.6%" aria-hidden="true"></span>
+            <span class="shot-mark" style="--l: 92.4%; --t: 1.6%; --w: 6.6%; --h: 4.2%" aria-hidden="true"></span>
+            <span class="shot-mark" style="--l: 21.2%; --t: 11%; --w: 57.8%; --h: 86%" aria-hidden="true"></span>
+            <span class="shot-num" style="--l: 26.2%; --t: 1.4%" aria-hidden="true">1</span>
+            <span class="shot-num" style="--l: 92.4%; --t: 1.6%" aria-hidden="true">2</span>
+            <span class="shot-num" style="--l: 21.2%; --t: 11%" aria-hidden="true">3</span>
+          </span>
+          <span class="zoom-icon zoom-icon--bottom rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+        </button>
+        <ol class="shot-notes">
+          <li><strong>Title, and who shared it.</strong> “Shared from” and the workspace’s name.</li>
+          <li><strong>Made with.</strong> A small mark, and the partner’s own on a white-label domain.</li>
+          <li><strong>The page, untouched.</strong> The same stored page, images included, in the same sandbox.</li>
+        </ol>
+        <figcaption>Opened in a private window. Nothing else from the app comes along.</figcaption>
+      </figure>
+      <figure class="shot-fig">
+        <div class="pair pair--side">
+          {dead.map((p) => (
+            <div class="pair-shot">
+              <p class:list={['pair-label', `pair-label--${p.label.toLowerCase()}`]}>{p.label}</p>
+              <button class="zoom" type="button" data-full={img(p.full ?? p.src)} aria-label={`View full size: ${p.alt}`}>
+                <span class="shot-frame"><img src={img(p.src)} width={p.width} height={p.height} loading="lazy" decoding="async" alt={p.alt}></span>
+                <span class="zoom-icon zoom-icon--small rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+              </button>
+            </div>
+          ))}
+        </div>
+        <figcaption>A plain error, then a page with the brand, one line of why, and a way in.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-details">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">The details</p><h2 id="s-details">Small calls, said out loud</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Nobody sees most of these. <strong>Each one is still a decision</strong>, so each has a reason written down.</li>
+      </ul>
+      <ul class="calls">
+        {details.map((d, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{d.name}</h3>
+            <p>{d.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-smudges">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">Smudges</p><h2 id="s-smudges">Two 404s and a leaky address</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>My first local test returned a 404, and the next one broke artifacts even for signed-in people. Neither was in the code: <strong>a local proxy forwarded only a fixed list of paths</strong>, and the local render secret was empty. I added the missing paths first. A review then asked why the proxy needed a list at all, so it became one catch-all, and the next new route can’t quietly 404.</li>
+        <li>My own code review caught a real one. Product analytics recorded every page address, <strong>so the share link went along with it</strong>, and anyone with analytics access could have opened shared pages. The link is now masked before any event leaves the browser.</li>
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What I’d keep</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 4) + 1}`]}>
+            {l.miss && <p class="lessons-miss"><span>Miss</span>{l.miss}</p>}
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">The best feature was the one already half-built.</blockquote>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</WorkLayout>
+
+<style>
+  /* Deck styles from blog-refresh.astro, trimmed to what this story uses. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 08: the small calls, one box each. */
+  .calls { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .calls li { display: grid; gap: .4rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .calls h3 { margin: 0; font-size: 1.3rem; line-height: 1.15; }
+  .calls p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
+  @media (max-width: 559px) { .calls { grid-template-columns: 1fr; } }
+
+  /* Real screenshots with coral hand-drawn marks and numbers. Screenshots keep
+     their own light colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-mark { position: absolute; left: var(--l); top: var(--t); width: var(--w); height: var(--h); border: 2px solid var(--coral); border-radius: 14px 8px 16px 9px / 9px 16px 8px 14px; transform: rotate(-.8deg); pointer-events: none; }
+  .shot-num { position: absolute; left: var(--l); top: var(--t); display: grid; place-items: center; width: 1.6rem; height: 1.6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; box-shadow: 2px 2px 0 var(--shadow-ink); transform: translate(-50%, -50%) rotate(-6deg); }
+  .shot-notes { list-style: none; counter-reset: note; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem 1.5rem; margin: 1.4rem 0 0; padding: 0; }
+  .shot-notes li { counter-increment: note; position: relative; padding-left: 2.1rem; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+  .shot-notes li::before { content: counter(note); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: #fff; background: var(--coral); border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transform: rotate(-6deg); }
+  .shot-notes strong { color: var(--ink); font-weight: 500; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  @media (max-width: 719px) { .shot-notes { grid-template-columns: 1fr; } }
+  @media (max-width: 559px) {
+    .shot-num { width: 1rem; height: 1rem; font-size: .8rem; box-shadow: 1px 1px 0 var(--shadow-ink); }
+    .shot-mark { border-width: 1.5px; }
+  }
+
+  /* The opening figure's Sketch tab: the card drawing, framed like the live one. */
+  .ps-sketch { margin: 0; }
+  .ps-frame { display: block; aspect-ratio: 1600 / 966; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .ps-frame :global(.sk) { display: block; width: 100%; height: 100%; }
+
+  /* Slide 06: three more states, small frames in a row. */
+  .thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; margin-top: var(--space-4); }
+  .thumb { margin: 0; max-width: none; }
+  .thumb .shot-frame { transform: none; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .thumb figcaption { margin-top: .7rem; font-size: .85rem; line-height: 1.4; color: var(--ink-faint); }
+  @media (max-width: 719px) { .thumbs { grid-template-columns: 1fr; } }
+
+  /* Before over after, full width. The old dead-link state is a small crop, so it
+     keeps a narrower frame instead of blowing up. */
+  .pair { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
+  .pair-shot { margin: 0; max-width: none; }
+  .pair-label { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; }
+  .pair-label--before { color: var(--coral); }
+  .pair-label--after { color: var(--teal); }
+  .shot-fig .pair { margin-top: 0; }
+  .pair--side { grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+  @media (max-width: 559px) { .pair--side { grid-template-columns: 1fr; } }
+
+  /* A screenshot that opens full size: the whole frame is the button, with a zoom
+     badge in a corner, kept clear of the marks. */
+  .zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; text-align: inherit; cursor: zoom-in; }
+  .zoom .shot-frame { display: block; transition: transform .2s ease; }
+  .zoom:hover .shot-frame { transform: rotate(0deg) translateY(-2px); }
+  .zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 10px; }
+  .zoom-icon { position: absolute; top: .7rem; right: .7rem; }
+  .zoom-icon--bottom { top: auto; bottom: .7rem; }
+  .zoom-icon--small { top: .45rem; right: .45rem; width: 2rem; height: 2rem; }
+  .zoom:hover .zoom-icon { background: var(--ink); color: var(--paper); }
+  .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+
+  .closer { margin-top: var(--space-5); }
+</style>

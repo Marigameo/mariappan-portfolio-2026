@@ -13,11 +13,11 @@ import Icon from '../components/Icon.astro';
 import Thenga from '../components/mascots/Thenga.astro';
 import CoconutHeap from '../components/mascots/CoconutHeap.astro';
 import DesignEcosystem from '../components/sketches/DesignEcosystem.astro';
+import PublicShare from '../components/sketches/PublicShare.astro';
 import KbGraph from '../components/sketches/kb/KbGraph.astro';
 import KbProps from '../components/sketches/kb/KbProps.astro';
 import ChatMode from '../components/sketches/chat/ChatMode.astro';
 import RoomDoors from '../components/RoomDoors.astro';
-import NextRoom from '../components/NextRoom.astro';
 import { rooms } from '../data/rooms';
 import { moods, shelves, experiments, experimentCount, highlights } from '../data/experiments';
 import { studio, studioHref } from '../data/studio';
@@ -25,7 +25,7 @@ import { site } from '../data/site';
 
 const description = 'Thenga’s studio + yard: UI redesigns told as stories (the before, the after and the lessons), plus a heap of apps, ventures and night hacks, each with what I found inside.';
 const n = experiments.length;
-const sketches = { 'design-ecosystem': DesignEcosystem };
+const sketches = { 'design-ecosystem': DesignEcosystem, 'public-share': PublicShare };
 const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': ChatMode };
 ---
 <BaseLayout title={`Thenga’s studio + yard — experiments | ${site.name}`} description={description} current="experiments">
@@ -86,14 +86,13 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
           );
         })}
       </ul>
-      <NextRoom from="studio" />
     </section>
 
     <section class="room picks" id="stories" aria-labelledby="highlights-title" data-room-panel>
       <header class="shelf-head">
         <p class="eyebrow">Highlights</p>
         <h2 id="highlights-title">Stories from the yard</h2>
-        <p>The experiments that grew into stories of their own, in full.</p>
+        <p>Bigger than a redesign: features built end to end, told in full.</p>
       </header>
       <ul class="picks-list">
         {highlights.map((h) => {
@@ -114,7 +113,6 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
           );
         })}
       </ul>
-      <NextRoom from="stories" />
     </section>
 
     <section class="room yard-room" id="yard" aria-labelledby="yard-title" data-room-panel>
@@ -156,7 +154,6 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
           </ul>
         </section>
       ))}
-      <NextRoom from="yard" />
     </section>
 
     <p style="margin-top: var(--space-5)">
@@ -234,7 +231,7 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
   const bar = document.querySelector<HTMLElement>('[data-doors]');
   const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-doors] [data-room]'));
   const mini = document.querySelector<HTMLElement>('[data-rooms-mini]');
-  const jumps = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-room-jump], [data-go-room]'));
+  const jumps = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-room-jump]'));
   const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
   const chips = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-yard-filter] [data-shelf]'));
   const patches = Array.from(document.querySelectorAll<HTMLElement>('[data-patch]'));
@@ -281,11 +278,11 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
       });
     });
     panels.forEach((p) => { p.setAttribute('role', 'tabpanel'); p.setAttribute('aria-labelledby', `tab-${p.id}`); });
-    // The mini bar and the "Next room" hand-offs switch rooms too, then hand focus
-    // to that room's door so keyboard users land where the room starts.
+    // The mini bar switches rooms too, then hands focus to that room's door so
+    // keyboard users land where the room starts.
     jumps.forEach((j) => j.addEventListener('click', (e) => {
       e.preventDefault();
-      const id = (j.dataset.roomJump ?? j.dataset.goRoom)!;
+      const id = j.dataset.roomJump!;
       selectRoom(id, true);
       history.replaceState(null, '', `#${id}`);
       tabs.find((t) => t.dataset.room === id)?.focus({ preventScroll: true });

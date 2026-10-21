@@ -19,7 +19,7 @@ export interface Room {
 
 export const rooms: Room[] = [
   { id: 'studio', name: 'The studio', count: studio.length, blurb: 'Screens I’ve redrawn: the before, the after, and the smudges in between.', thenga: { hobby: 'brush' } },
-  { id: 'stories', name: 'Stories', count: highlights.length, blurb: 'The experiments that grew into stories of their own, in full.', thenga: { hobby: 'pen' } },
+  { id: 'stories', name: 'Stories', count: highlights.length, blurb: 'Bigger than a redesign: features built end to end, told in full.', thenga: { hobby: 'pen' } },
   { id: 'yard', name: 'The yard', count: experimentCount, blurb: 'Shipped apps, a pivot, college ventures and night hacks.', thenga: { mood: 'cracked' } },
 ];
 
