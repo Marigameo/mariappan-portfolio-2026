@@ -130,7 +130,7 @@ type MetricsGridProps = z.infer&lt;typeof metricsGrid&gt;;`;
   <blockquote>The entire chat is that handler plus state.</blockquote>
 
   <h3 id="who-says-continue">Who says continue? The browser.</h3>
-  <p>The server never loops on its own. Each request makes one model call, saves the turn, and only then closes the stream. The browser takes it from there: it waits on approvals and widget answers, runs the tools, and asks for more only once the 204 comes back.</p>
+  <p>The server never loops on its own. Each request makes one model call, saves the turn, and only then closes the stream. The browser takes it from there: it waits on approvals and widget answers, has the server run the tools, and asks for more only once the 204 comes back.</p>
   <p>Nothing is held open between rounds, so a turn can wait on a person for as long as it needs to.</p>
 
   <ContinueGate />
