@@ -27,7 +27,8 @@ Check these before writing a new figure. Components under `studio/` and `genui/`
 |---|---|---|
 | Side-by-side comparison, before/after, two options | `studio/Versus.astro` | `left`, `right`: `{ title, tone: 'ghost'|'coral'|'blue'|'teal'|'violet', items[], stamp?, minus? }`, `mid` ('vs' or '&'), `marks` ('plus-minus' or 'dot'), `alt`, `caption` |
 | A flow of 3 to 4 steps with a loop-back note | `studio/StudioLoop.astro` | `steps: { kicker, label, sub, tone }[]`, `note`, `caption`, `alt` |
-| Who talks to whom (3 lanes) | `studio/Sequence.astro` | `lanes` (3 × `{ label, sub, tone }`), `steps: { from, to, label, note? }[]`, `alt`, `caption` |
+| Who talks to whom (3 lanes) | `studio/Sequence.astro` | `lanes` (3 × `{ label, sub, tone }`), `steps: { from, to, label, note? }[]`, `loop?: { from, to, label }` (a dashed bracket round the steps that repeat, numbered from 1), `alt`, `caption` |
+| A decision gate: questions with side exits, then what happens if you pass | `genui/Gate.astro` | `start`, `then[]`: `{ kicker, label, sub, tone }`, `checks: { q, when: 'yes'|'no', out }[]`, `pass` (handwritten), `alt`, `caption` |
 | A months-long arc with a pivot | `genui/ArcTimeline.astro` | `phases: { label, tone: 'grey'|'coral'|'teal', items: { period, title, detail, pivot? }[] }[]`, `caption` |
 | Code | `genui/Snippet.astro` | `caption`, `code` (pre-escaped HTML), `editor?` |
 | Sentence-cell table | `genui/ProseTable.astro` | `caption`, with `<thead>`/`<tbody>` in the slot |

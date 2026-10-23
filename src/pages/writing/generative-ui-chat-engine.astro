@@ -9,6 +9,8 @@ import OneTurnOneStream from '../../components/sketches/genui/OneTurnOneStream.a
 import BlockAnatomy from '../../components/sketches/genui/BlockAnatomy.astro';
 import RendererMapping from '../../components/sketches/genui/RendererMapping.astro';
 import StreamingParser from '../../components/sketches/genui/StreamingParser.astro';
+import ChatTurnTrace from '../../components/sketches/genui/ChatTurnTrace.astro';
+import ContinueGate from '../../components/sketches/genui/ContinueGate.astro';
 import BehaviourSlot from '../../components/sketches/genui/BehaviourSlot.astro';
 import Whiteboard from '../../components/sketches/genui/Whiteboard.astro';
 import Snippet from '../../components/sketches/genui/Snippet.astro';
@@ -122,7 +124,16 @@ type MetricsGridProps = z.infer&lt;typeof metricsGrid&gt;;`;
 
   <h3 id="the-event-vocabulary">The event vocabulary: one stream, one handler</h3>
   <p>Everything travels over a single SSE stream with a small set of event types: streaming content, streaming reasoning, tool calls, tool-argument streaming (start and content), conversation metadata, and citations. One handler in the client switches on these.</p>
+
+  <ChatTurnTrace />
+
   <blockquote>The entire chat is that handler plus state.</blockquote>
+
+  <h3 id="who-says-continue">Who says continue? The browser.</h3>
+  <p>The server never loops on its own. Each request makes one model call, saves the turn, and only then closes the stream. The browser takes it from there: it waits on approvals and widget answers, runs the tools, and asks for more only once the 204 comes back.</p>
+  <p>Nothing is held open between rounds, so a turn can wait on a person for as long as it needs to.</p>
+
+  <ContinueGate />
 
   <h3 id="behaviours-and-slots">Behaviours and slots: messages that stay alive</h3>
   <p>A block can carry a <strong>behaviour</strong>: an attached action, triggered either by a click or automatically on render. A click behaviour usually starts a new chat turn. An automatic one mounts a live agent view inside the message, a component that fetches its own data, polls, holds editable state, and writes back. We call those <strong>slots</strong>. They are the reason a chat message can be a task queue that is still updating while you scroll past it.</p>

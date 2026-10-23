@@ -1,0 +1,35 @@
+---
+/* One chat turn, call by call, as the code does it: the server makes one model
+   call per request, saves the turn before it closes the stream, and the browser
+   drives the tool loop with /execute_tools and CONTINUE. The bracket marks the
+   steps that repeat. */
+import Sequence from '../studio/Sequence.astro';
+---
+<Sequence
+  lanes={[
+    { label: 'App · browser', sub: 'the chat, holds the session', tone: 'blue' },
+    { label: 'Strive server', sub: 'one model call per request', tone: 'violet' },
+    { label: 'Model', sub: 'writes text and tool calls', tone: 'coral' },
+  ]}
+  steps={[
+    { from: 0, to: 1, label: 'POST /trigger_chat_workflow', note: 'the first message, no chat yet' },
+    { from: 1, to: 1, label: 'Open an execution', note: 'title from your words · system prompt saved' },
+    { from: 1, to: 0, label: 'execution id', note: 'into the URL; every call after carries it' },
+    { from: 0, to: 1, label: 'POST /chat · PROMPT', note: 'your message' },
+    { from: 1, to: 0, label: '200 · text/event-stream', note: 'headers go once the checks pass; a 401 or 402 comes back before any of it' },
+    { from: 1, to: 2, label: 'stream(history, tools)', note: 'the whole conversation, every time' },
+    { from: 2, to: 1, label: 'thinking · text · tool args' },
+    { from: 1, to: 0, label: 'SSE · CONTENT_STREAM …', note: 'text lands as it streams; a widget mounts when its args close' },
+    { from: 1, to: 1, label: 'Save the turn', note: 'prompt + reply rows · usage' },
+    { from: 1, to: 0, label: 'TOOL_CALLS [ … ]', note: 'the last event; none means the turn is over' },
+    { from: 1, to: 1, label: 'Commit, then close', note: 'the stream ends only once the turn is saved' },
+    { from: 0, to: 0, label: 'Stream closed: go?', note: 'tool calls seen, nothing waiting on the user' },
+    { from: 0, to: 1, label: 'POST /execute_tools', note: 'plus whatever the user answered' },
+    { from: 1, to: 1, label: 'Run the tools, one by one', note: 'ui_* just ack “rendered” · outputs saved, committed' },
+    { from: 1, to: 0, label: '204 No Content', note: 'only after the last tool finishes' },
+    { from: 0, to: 1, label: 'POST /chat · CONTINUE', note: 'same execution id, back up to 5' },
+  ]}
+  loop={{ from: 5, to: 16, label: 'round again, until a stream ends with no tool calls' }}
+  alt="Sequence: on the first message the app asks the Strive server to start a chat. The server opens an execution, titles it from your words and saves the system prompt, then returns an execution id that every later call carries. The app posts the prompt to /chat. Once its checks pass, the server answers 200 with an event stream; an auth or credits failure comes back as a plain error before that. The server streams the whole conversation and the tools to the model, which streams back thinking, text and tool arguments. The server forwards them to the app as server-sent events: text renders as it arrives and each widget mounts when its arguments close. The server saves the turn, sends the list of tool calls as the last event, commits, and only then closes the stream. When the stream closes, the app checks that there were tool calls and that nothing is waiting on the user. It posts /execute_tools with any answers; the server runs the tools one by one, saves their outputs and answers 204 No Content only after the last one finishes. Then the app posts /chat with CONTINUE on the same execution id. Steps five to sixteen repeat until a stream ends with no tool calls."
+  caption="One request, one model call. The browser keeps the loop going until a stream ends with nothing left to run."
+/>

@@ -1,0 +1,22 @@
+---
+/* When exactly the browser sends CONTINUE: the server never says so. A closed
+   stream, four questions and a 204 do. Zooms into A1's "Stream closed: go?". */
+import Gate from './Gate.astro';
+---
+<Gate
+  start={{ kicker: 'App', label: 'The /chat stream closes', sub: 'the reader hits the end; the server committed the turn before closing it', tone: 'blue' }}
+  checks={[
+    { q: 'Did you press stop?', when: 'yes', out: 'Nothing more. The abort wins, even over a last chunk' },
+    { q: 'Did the stream carry TOOL_CALLS?', when: 'no', out: 'The turn is over: a text-only answer' },
+    { q: 'Does a visible tool need approval?', when: 'yes', out: 'Wait. Approve runs the step below; Reject ends the turn' },
+    { q: 'Is a widget waiting on an answer?', when: 'yes', out: 'Wait for every one. The answers ride along as tool_call_outputs' },
+  ]}
+  pass="through all four? then, in order:"
+  then={[
+    { kicker: 'POST /execute_tools', label: 'Wait for the 204', sub: 'a 401 refreshes the token and retries once; anything else is a toast and a stop', tone: 'blue' },
+    { kicker: 'Host hook', label: 'Tell the host', sub: 'onAfterExecuteTools: the report canvas refetches its HTML here', tone: 'teal' },
+    { kicker: 'POST /chat · CONTINUE', label: 'Open the next stream', sub: 'same execution id; a fresh 200 and round again', tone: 'coral' },
+  ]}
+  alt="When the /chat stream closes, the server has already committed the turn. The app then asks four questions in order. Did you press stop? If so, nothing more happens. Did the stream carry tool calls? If not, the turn is over with a text-only answer. Does a visible tool need approval? If so, it waits: approving runs the next step and rejecting ends the turn. Is an interactive widget waiting on an answer? If so, it waits for every answer, which are sent along as tool call outputs. Only when it gets through all four does it post /execute_tools and wait for the 204; a 401 refreshes the token and retries once, and any other failure shows a toast and stops. Then it tells the host, which is where the report canvas refetches its HTML, and opens the next stream with /chat CONTINUE on the same execution id."
+  caption="The server never says “continue”. A closed stream, four questions and a 204 do."
+/>

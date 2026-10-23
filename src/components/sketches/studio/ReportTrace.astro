@@ -1,0 +1,33 @@
+---
+/* Creating a report, call by call: the scaffold exists before the chat starts,
+   the server holds the one file the agent writes, and the canvas refetches it
+   after every tool round's 204. The model is folded into the server lane; the
+   chat trace in the other post shows that round trip. */
+import Sequence from './Sequence.astro';
+---
+<Sequence
+  lanes={[
+    { label: 'Canvas · sandbox', sub: 'the report the agent writes', tone: 'coral' },
+    { label: 'Host · Strive app', sub: 'Reports page, chat, canvas', tone: 'blue' },
+    { label: 'Strive server', sub: 'the agent, its tools, the file', tone: 'violet' },
+  ]}
+  steps={[
+    { from: 1, to: 2, label: 'POST /insight', note: 'a title + an HTML scaffold' },
+    { from: 2, to: 1, label: 'insight id', note: 'saved; nothing runs yet' },
+    { from: 1, to: 2, label: 'POST /trigger_chat_workflow', note: 'with the insight attached' },
+    { from: 2, to: 2, label: 'Copy into the sandbox', note: '/reports/<id>/index.html' },
+    { from: 2, to: 1, label: 'execution id' },
+    { from: 1, to: 0, label: 'scaffold via srcDoc', note: 'the canvas opens beside the chat' },
+    { from: 1, to: 2, label: '/chat · UPDATE_CONTEXT', note: 'which report this chat is for' },
+    { from: 1, to: 2, label: '/chat · PROMPT', note: '“/report_builder weekly ads recap…”' },
+    { from: 2, to: 1, label: 'stream … TOOL_CALLS', note: 'get_skill · read_file · test queries · update_file' },
+    { from: 1, to: 2, label: 'POST /execute_tools' },
+    { from: 2, to: 2, label: 'Write the file', note: 'overwrite the insight row, mirror to the sandbox' },
+    { from: 2, to: 1, label: '204 No Content', note: 'the file is saved by now' },
+    { from: 1, to: 0, label: 'refetch, swap srcDoc', note: 'no splash · races the reply below' },
+    { from: 1, to: 2, label: '/chat · CONTINUE', note: 'same execution id' },
+  ]}
+  loop={{ from: 9, to: 14, label: 'every tool round, until the agent stops' }}
+  alt="Sequence: the Strive app creates an insight with a title and an HTML scaffold and gets its id back; nothing runs yet. It starts a chat with the insight attached, and the server copies the scaffold into the sandbox before returning an execution id. The canvas opens beside the chat with the scaffold. The app tells the chat which report it is for, then sends the prompt with the report builder command. The agent’s reply streams back and ends in tool calls such as loading the skill, reading the file, testing queries and writing the file. The app asks the server to execute them; the server overwrites the insight’s HTML, mirrors it to the sandbox, and answers 204 once the file is saved. Only then does the app refetch the HTML and swap it into the canvas without a splash, while it continues the chat on the same execution id. Steps nine to fourteen repeat for every tool round until the agent stops."
+  caption="Scaffold first, then the chat. The agent writes one file on the server, and the canvas refetches it after every tool round."
+/>

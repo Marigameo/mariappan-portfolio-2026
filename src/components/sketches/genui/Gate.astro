@@ -1,0 +1,88 @@
+---
+/* A gate: what happened sits at the top, then each question is a plain inked
+   box down the left, with its way out (a stop or a wait) drawn as a ghost box
+   to the right, reached by a hand-lettered "yes" or "no". Whatever gets
+   through every question carries on down the left column, one step at a time.
+   On a phone the main path runs down the left edge and each way out steps in
+   to the right, so an exit never looks like it leads to the next question. */
+import Icon from '../../Icon.astro';
+
+type Tone = '' | 'coral' | 'blue' | 'teal' | 'violet';
+interface Box { kicker: string; label: string; sub: string; tone: Tone }
+interface Check { q: string; when: 'yes' | 'no'; out: string }
+
+interface Props {
+  start: Box;
+  checks: Check[];
+  pass: string;
+  then: Box[];
+  alt: string;
+  caption?: string;
+}
+
+const { start, checks, pass, then, alt, caption } = Astro.props;
+---
+<figure class="sk-fig">
+  <div class="sk-sheet gt" role="img" aria-label={alt}>
+    <div class="gt-row">
+      <div class:list={['sk-box', start.tone && `sk-box--${start.tone}`, 'sk-lean-1', 'gt-box']}>
+        <span class="gt-kicker">{start.kicker}</span>
+        <strong>{start.label}</strong>
+        <span class="gt-sub">{start.sub}</span>
+      </div>
+    </div>
+
+    {checks.map((c, i) => (
+      <>
+        <span class="sk-arrow gt-down" aria-hidden="true"><Icon name="arrow-down" /></span>
+        <div class="gt-row">
+          <div class:list={['sk-box', `sk-lean-${((i + 1) % 4) + 1}`, 'gt-q']}><strong>{c.q}</strong></div>
+          <span class="gt-when sk-hand" aria-hidden="true">{c.when} <Icon name="arrow-right" /></span>
+          <div class="sk-box sk-box--ghost gt-out">{c.out}</div>
+        </div>
+      </>
+    ))}
+
+    <p class="gt-pass sk-hand"><Icon name="arrow-curly" /> {pass}</p>
+
+    {then.map((t, i) => (
+      <>
+        <span class="sk-arrow gt-down" aria-hidden="true"><Icon name="arrow-down" /></span>
+        <div class="gt-row">
+          <div class:list={['sk-box', t.tone && `sk-box--${t.tone}`, `sk-lean-${((i + 2) % 4) + 1}`, 'gt-box']}>
+            <span class="gt-kicker">{t.kicker}</span>
+            <strong>{t.label}</strong>
+            <span class="gt-sub">{t.sub}</span>
+          </div>
+        </div>
+      </>
+    ))}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .gt { display: grid; }
+  .gt-row { display: grid; grid-template-columns: minmax(0, 1fr) 4.2rem minmax(0, 1fr); align-items: center; gap: .6rem; }
+  .gt-row > .sk-box:first-child { grid-column: 1; }
+  .gt-box { display: grid; gap: .25rem; padding: .65rem .75rem .75rem; }
+  .gt-kicker { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  .gt-box strong, .gt-q strong { font-size: .88rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+  .gt-sub { font-size: .74rem; line-height: 1.4; color: var(--ink-faint); }
+  .gt-q { padding: .7rem .8rem; }
+  .gt-when { display: inline-flex; align-items: center; justify-content: center; gap: .15rem; font-size: 1.15rem; }
+  .gt-when :global(.doodle) { width: 1.3rem; height: 1.3rem; }
+  .gt-out { padding: .55rem .75rem; font-size: .8rem; line-height: 1.4; }
+  .gt-down { width: calc((100% - 5.4rem) / 2); display: flex; justify-content: center; padding: .35rem 0; }
+  .gt-down :global(.doodle) { width: 1.3rem; height: 1.3rem; }
+  .gt-pass { margin: .9rem 0 .2rem !important; max-width: none; }
+  .gt-pass :global(.doodle) { width: 1.3rem; height: 1.3rem; transform: scaleY(-1) rotate(20deg); }
+
+  @media (max-width: 559px) {
+    .gt-row { grid-template-columns: 1fr; gap: .3rem; }
+    .gt-when { justify-content: flex-start; padding-left: 2.4rem; }
+    .gt-when :global(.doodle) { transform: rotate(35deg); }
+    .gt-out { margin-left: 2.4rem; }
+    .gt-down { width: auto; justify-content: flex-start; padding-left: .5rem; }
+  }
+</style>

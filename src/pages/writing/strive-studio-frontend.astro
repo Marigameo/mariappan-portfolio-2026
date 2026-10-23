@@ -15,6 +15,7 @@ import ShareInsightsSteps from '../../components/sketches/studio/ShareInsightsSt
 import Versus from '../../components/sketches/studio/Versus.astro';
 import TwoKindsOfUI from '../../components/sketches/studio/TwoKindsOfUI.astro';
 import SandboxBridge from '../../components/sketches/studio/SandboxBridge.astro';
+import ReportTrace from '../../components/sketches/studio/ReportTrace.astro';
 import DesignContext from '../../components/sketches/studio/DesignContext.astro';
 import ReportArchetypes from '../../components/sketches/studio/ReportArchetypes.astro';
 import KpiEmphasis from '../../components/sketches/studio/KpiEmphasis.astro';
@@ -174,6 +175,13 @@ const phases = [
 
   <StudioLoop />
 
+  <h2 id="one-report-call-by-call">One report, call by call</h2>
+  <p>A report exists before the agent says a word. Creating one saves an empty HTML scaffold and starts a chat with it attached, so the canvas opens beside the thread straight away. From then on the server holds the file: the agent reads and writes it with tools, and the canvas refetches it after every round.</p>
+
+  <ReportTrace />
+
+  <p>Editing skips the scaffold and reuses the report. The agent reads the current file, changes what it needs, and the same loop takes it from there. No versions yet: each save overwrites the last.</p>
+
   <h2 id="hosting-a-page-we-didnt-write">Hosting a page we didn’t write</h2>
   <p>Reports render in <code>&lt;iframe sandbox="allow-scripts"&gt;</code>, deliberately <strong>without</strong> <code>allow-same-origin</code>. That one missing token does most of the work: the report runs its own scripts and charts, but it can’t read our cookies, storage or DOM, and it can’t call our API.</p>
   <p>So when it needs data, it has to ask.</p>
@@ -261,7 +269,7 @@ const phases = [
   <CanvasStates />
 
   <ul class="doodle-list">
-    <li><strong>No flicker on edits.</strong> A staged splash on first load only; after that, the page swaps in quietly.</li>
+    <li><strong>No flicker on edits.</strong> A staged splash on first load only; after that, the page swaps in quietly, and only once the file is saved, so it never paints half an edit.</li>
     <li><strong>Honest empty states.</strong> “Report not found” only after the query resolves, and a failed tool turn keeps the previous version.</li>
     <li><strong>A workspace, not a new chat.</strong> “Let’s get cooking!”, starter prompts that fill the composer instead of sending, titles taken from your prompt.</li>
     <li><strong>“Ask about this”</strong> inside a report opens a chat that already knows which report it came from.</li>
