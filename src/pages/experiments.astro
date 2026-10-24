@@ -480,22 +480,27 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
   .art-tag::before { content: ""; width: .8rem; height: .65rem; background: var(--accent); border-radius: 60% 40% 55% 45% / 55% 60% 40% 45%; transform: rotate(-12deg); }
   .art-tag:nth-child(2n)::before { border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%; transform: rotate(18deg); opacity: .7; }
 
-  /* Stories from the yard: wide cards, louder than the coconuts, straight to a story. */
+  /* Stories from the yard: two-up cards, the drawing on top and the words below,
+     louder than the coconuts, straight to a story. A new story just adds a card;
+     one column on a phone. Each drawing shows whole, at its own 600 × 440. */
   .picks { margin-top: var(--space-4); }
   .picks .shelf-head .eyebrow { margin: 0 0 .3rem; }
-  .picks-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.6rem; }
-  .pick-link { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 1.4rem 2rem; padding: 1.2rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 14px 8px 16px 8px / 8px 16px 8px 14px; box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
+  .picks-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.8rem; }
+  .pick { display: flex; }
+  .pick-link { display: flex; flex-direction: column; gap: 1.1rem; width: 100%; padding: 1rem 1rem 1.2rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 14px 8px 16px 8px / 8px 16px 8px 14px; box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
   .pick-link:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
   .pick-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   .pick-shot { display: block; aspect-ratio: 600 / 440; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--paper); transform: rotate(-.8deg); transition: transform .25s ease; }
+  .pick:nth-child(2n) .pick-shot { transform: rotate(.6deg); }
   .pick-link:hover .pick-shot { transform: rotate(0); }
   .pick-shot :global(.sk) { display: block; width: 100%; height: 100%; }
-  .pick-body { display: grid; gap: .5rem; padding-right: .4rem; }
-  .pick-tags { display: flex; align-items: center; gap: .5rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .pick-body { display: flex; flex: 1; flex-direction: column; gap: .45rem; padding: 0 .3rem; }
+  .pick-tags { display: flex; align-items: center; gap: .5rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
   .pick-tags::before { content: ""; width: 1.4rem; height: 2px; background: var(--accent); }
-  .pick-title { font-family: var(--font-display); font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
-  .pick-hook { font-size: 1.02rem; line-height: 1.5; color: var(--ink-soft); }
-  .pick .nut-go { color: var(--accent); }
+  .pick-title { font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 1.75rem); font-weight: 400; line-height: 1.12; letter-spacing: -.015em; }
+  .pick-hook { font-size: .95rem; line-height: 1.45; color: var(--ink-soft); }
+  .pick .nut-go { margin-top: auto; padding-top: .3rem; color: var(--accent); }
+  @media (max-width: 719px) { .picks-list { grid-template-columns: 1fr; } }
   .pick-link:hover .nut-go :global(.doodle) { transform: translateX(4px); }
 
   /* The yard's key: the three kinds of coconut on one slim line, out of step. */
