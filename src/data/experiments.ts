@@ -42,10 +42,19 @@ export interface Highlight {
   hook: string;
   tags: string[];
   accent: 'coral' | 'blue' | 'teal' | 'violet';
-  sketch: 'design-ecosystem' | 'public-share';
+  sketch: 'design-ecosystem' | 'public-share' | 'chat-diagrams';
 }
 
 export const highlights: Highlight[] = [
+  {
+    href: '/work/chat-diagrams/',
+    title: 'Diagrams in Strive chat',
+    context: 'Strivelabs · Sep 2026',
+    hook: 'Teaching the chat when to draw a diagram, and never to show a broken one.',
+    tags: ['UX for AI', 'Diagrams'],
+    accent: 'teal',
+    sketch: 'chat-diagrams',
+  },
   {
     href: '/work/public-share/',
     title: 'Sharing artifacts in Strive',

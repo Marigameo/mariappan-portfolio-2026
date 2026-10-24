@@ -1,0 +1,64 @@
+---
+/* The gate eval as dots: one row per run, six prompts that should draw and four
+   that shouldn't. A teal dot is a diagram drawn when it should be; a dashed one
+   drew in some runs and not others. Hollow dots on the right mean the model
+   stayed quiet, which is the point. The shipped row is inked and stamped, and a
+   handwritten note marks the run that moved nothing. On a phone each row's dots
+   wrap under its label. */
+const runs = [
+  { label: 'Baseline', sub: 'The first tool wording', drew: 2, maybe: 0, score: '2/6', fp: '0/4' },
+  { label: 'Tool rewrite', sub: 'A sharper description', drew: 1, maybe: 1, score: '1–2/6', fp: '0/4', note: 'moved nothing' },
+  { label: 'Prompt lines + skill', sub: 'Two old lines reworded, the skill matched to “walk me through…”', drew: 3, maybe: 0, score: '3/6, twice', fp: '0/4', shipped: true },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ed" role="img" aria-label="Three runs of a 10-prompt eval, drawn as dots: six prompts that should draw a diagram and four that shouldn’t. Baseline, with the first tool wording: 2 of 6 drew, 0 of 4 false positives. A tool rewrite with a sharper description: 1 to 2 of 6, 0 of 4, with a handwritten note saying it moved nothing. Then two old prompt lines reworded and the skill’s description matched to walk-me-through questions: 3 of 6, twice, 0 of 4. That last run is inked in and stamped shipped. The four should-not prompts stay hollow in every run.">
+    <p class="sk-hdr ed-col ed-col--draw">should draw · 6</p>
+    <p class="sk-hdr ed-col ed-col--quiet">shouldn’t · 4</p>
+    {runs.map((r, i) => (
+      <div class:list={['ed-row', r.shipped ? 'sk-box sk-box--teal' : 'sk-box sk-box--ghost', `sk-lean-${i + 1}`]}>
+        <p class="ed-label">
+          <strong>{r.label}</strong>{r.shipped && <span class="ed-stamp">shipped</span>}
+          <span>{r.sub}</span>
+        </p>
+        <p class="ed-dots" aria-hidden="true">
+          {Array.from({ length: 6 }, (_, n) => <span class:list={['ed-dot', n < r.drew ? 'is-drew' : n < r.drew + r.maybe ? 'is-maybe' : '']}></span>)}
+          <em>{r.score}</em>
+        </p>
+        <p class="ed-dots ed-dots--quiet" aria-hidden="true">
+          {Array.from({ length: 4 }, () => <span class="ed-dot"></span>)}
+          <em>{r.fp}</em>
+        </p>
+        {r.note && <p class="sk-hand ed-note">{r.note}</p>}
+      </div>
+    ))}
+  </div>
+  <figcaption>Recall crept up. False positives never left zero.</figcaption>
+</figure>
+
+<style>
+  .ed { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) minmax(0, .9fr); gap: .8rem 1rem; }
+  .ed-col { margin: 0 !important; font-size: .62rem; }
+  .ed-col--draw { grid-column: 2; }
+  .ed-col--quiet { grid-column: 3; }
+  .ed-row { position: relative; grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; padding: .7rem .85rem; }
+  .ed-label { display: grid; gap: .1rem; margin: 0 !important; max-width: none; }
+  .ed-label strong { font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .sk-box--ghost .ed-label strong { color: var(--ink-soft); }
+  .ed-label span:last-child { font-size: .74rem; line-height: 1.35; color: var(--ink-faint); }
+  .ed-stamp { justify-self: start; font-family: var(--font-hand); font-size: 1.05rem; line-height: 1; color: var(--teal); transform: rotate(-6deg); }
+  .ed-dots { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin: 0 !important; max-width: none; }
+  .ed-dots em { margin-left: .35rem; font-family: var(--font-mono); font-style: normal; font-size: .7rem; color: var(--ink-soft); }
+  .ed-dot { width: .8rem; height: .8rem; border: 1.5px solid var(--ink-faint); border-radius: 50%; }
+  .ed-dot.is-drew { border-color: var(--teal); background: var(--teal); }
+  .ed-dot.is-maybe { border: 1.5px dashed var(--teal); background: color-mix(in srgb, var(--teal) 25%, transparent); }
+  .ed-dots--quiet .ed-dot { border-color: var(--teal); }
+  .ed-note { position: absolute; right: .8rem; top: -1rem; margin: 0 !important; transform: rotate(-3deg); }
+
+  @media (max-width: 559px) {
+    .ed { grid-template-columns: 1fr 1fr; }
+    .ed-col--draw { grid-column: 1; }
+    .ed-col--quiet { grid-column: 2; }
+    .ed-label { grid-column: 1 / -1; margin-bottom: .45rem !important; }
+  }
+</style>

@@ -1,0 +1,51 @@
+---
+/* Three layers, one concern each: the tool decides when, the skill teaches how,
+   and the validator is the gate. The first two are prompts, so they sit on the
+   model's side of a dashed line; the validator is code, on the other side, with
+   a handwritten note on why that matters. On a phone the three stack. */
+const layers = [
+  { kicker: 'Tool · when', name: 'ui_mermaid_diagram', sub: 'Always in context, ~350 tokens a turn. Its description is the draw or don’t-draw gate.', tone: 'coral' },
+  { kicker: 'Skill · how', name: 'diagrams', sub: 'Loaded before the first diagram. Which type fits, shapes for chat width, syntax pitfalls.', tone: 'blue' },
+  { kicker: 'Validator · the gate', name: 'the real parser', sub: 'A type policy and size caps. It runs on every call.', tone: 'teal' },
+];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet tl" role="img" aria-label="Three layers side by side. In coral, the tool, ui_mermaid_diagram, decides when: it is always in the model’s context, about 350 tokens a turn, and its description is the draw or don’t-draw gate. In blue, the diagrams skill teaches how: it loads before the first diagram, and covers which type fits, shapes for chat width and syntax pitfalls. A dashed line separates these two prompts from the third: in teal, the validator, the real Mermaid parser with a type policy and size caps, running on every call. A handwritten note says a prompt can be ignored, code can’t.">
+    <p class="sk-hdr tl-side tl-side--prompt">prompts · the model reads them</p>
+    <p class="sk-hdr tl-side tl-side--code">code · runs on every call</p>
+    {layers.map((l, i) => (
+      <div class:list={['sk-box', `sk-box--${l.tone}`, `sk-lean-${i + 1}`, 'tl-box', i === 2 && 'tl-box--code']}>
+        <span class="tl-kicker">{l.kicker}</span>
+        <code>{l.name}</code>
+        <span class="tl-sub">{l.sub}</span>
+      </div>
+    ))}
+    <p class="sk-hand tl-note">a prompt can be ignored. code can’t.</p>
+  </div>
+  <figcaption>When, how, and a gate that isn’t a prompt.</figcaption>
+</figure>
+
+<style>
+  .tl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); column-gap: 1.1rem; row-gap: .6rem; }
+  .tl-side { margin: 0 !important; font-size: .62rem; }
+  .tl-side--prompt { grid-column: 1 / 3; }
+  .tl-side--code { grid-column: 3; padding-left: .9rem; }
+  .tl-box { display: grid; gap: .3rem; align-content: start; padding: .75rem .85rem .85rem; }
+  /* The dashed line between the prompts and the code. */
+  .tl-box--code { position: relative; margin-left: .9rem; }
+  .tl-box--code::before { content: ""; position: absolute; left: -1.5rem; top: -2.2rem; bottom: -.4rem; border-left: 1.5px dashed var(--ink-faint); }
+  .tl-kicker { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  .tl-box code { justify-self: start; font-size: .82rem; color: var(--ink); background: none; padding: 0; }
+  .tl-sub { font-size: .76rem; line-height: 1.4; color: var(--ink-faint); }
+  .tl-note { grid-column: 3; margin: .2rem 0 0 !important; padding-left: .9rem; --c: var(--teal); }
+
+  @media (max-width: 559px) {
+    .tl { grid-template-columns: 1fr; row-gap: .9rem; }
+    .tl-side--prompt { grid-column: 1; order: 0; }
+    .tl-box { order: 1; }
+    .tl-side--code { grid-column: 1; order: 2; margin-top: .6rem !important; padding: .9rem 0 0; border-top: 1.5px dashed var(--ink-faint); }
+    .tl-box--code { order: 3; margin-left: 0; }
+    .tl-box--code::before { display: none; }
+    .tl-note { grid-column: 1; order: 4; padding-left: 0; }
+  }
+</style>
