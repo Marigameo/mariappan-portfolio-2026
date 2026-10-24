@@ -15,7 +15,7 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "@marigameo/agent-clarifier": "0.1.0",
+    "@marigameo/agent-clarifier": "0.2.1",
     "@marigameo/co-presence": "0.1.0",
     "astro": "^7.3.1"
   },

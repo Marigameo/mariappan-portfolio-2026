@@ -22,7 +22,7 @@ type Detail = { id: string; round: string; t: string; d: string; before?: Shot; 
 const details: Detail[] = [
   {
     id: 'limit', round: 'Round 17', t: 'A limit that informs, not scolds',
-    d: '“Up to 2 picks” was a black toast, louder than the picks themselves. Black is for toasts you can press, so now it’s quiet ink text.',
+    d: '“Up to 2 picks” was a black toast, louder than the picks themselves. Now it’s quiet ink text, and so is every other message in the footer.',
     before: { src: 'd-limit-before', w: 880, h: 853, alt: 'Before: a multi-select step with two picks, and a black toast reading Up to 2 picks. Unpick one first, next to the black Continue button.' },
     after: { src: 'd-limit-after', w: 880, h: 853, alt: 'After: the same step, with the message as plain ink text in the footer, and only Continue in black.' },
     look: 'Look at the footer, left of Skip.',
@@ -186,7 +186,7 @@ const details: Detail[] = [
   .dg-pill-h { font-family: var(--font-mono); font-size: .58rem !important; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
   .dg-oval { display: grid; place-items: center; inline-size: 100%; max-inline-size: 11rem; block-size: 5.5rem; padding: 0 1rem; text-align: center; font: .72rem var(--font-sub); color: var(--ink-faint); border: 1.5px dashed var(--coral); border-radius: 999px; }
   .dg-pillshape { display: inline-flex; align-items: center; gap: .45rem; padding: .3rem .4rem .3rem .65rem; font: .74rem var(--font-sub); color: var(--ink-soft); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 999px; box-shadow: 2px 2px 0 var(--shadow-ink); white-space: nowrap; }
-  .dg-pillshape i { inline-size: .45rem; block-size: .45rem; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent); }
+  .dg-pillshape i { inline-size: .45rem; block-size: .45rem; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 18%, transparent); }
   .dg-pillshape b { padding: .1rem .5rem; font-weight: 500; color: var(--ink); background: var(--sand); border-radius: 999px; }
   .dg-comp { inline-size: 100%; padding: .45rem .7rem; font: .74rem var(--font-sub); color: var(--ink-faint); background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 12px; }
 

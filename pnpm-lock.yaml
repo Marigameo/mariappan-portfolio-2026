@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@marigameo/agent-clarifier':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.1
+        version: 0.2.1
       '@marigameo/co-presence':
         specifier: 0.1.0
         version: 0.1.0
@@ -554,8 +554,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@marigameo/agent-clarifier@0.1.0':
-    resolution: {integrity: sha512-L8wlvHv399wZGsnrn8pM6wWaKFt043ZjDGvMNOo/F/rY1pdCIQvIwWYmNk+3MN7agnb7gGC83rSoBA3Laj9A9g==}
+  '@marigameo/agent-clarifier@0.2.1':
+    resolution: {integrity: sha512-zMWAbHESjdqc80R+m0L37AKbDNTLlJSBOnXnb1ZIyj5QOM98ph38dj1UaD37IP8DFqFCvz1M5dNDMQLErMKc5A==}
 
   '@marigameo/co-presence@0.1.0':
     resolution: {integrity: sha512-6phUY7GJbnear0wUin74LHAhoWGnzYIklWvVlDVawS8UboZdcD148ixyKHjfgOz+Bx/KnvA3Nme0LgIiLqWd4Q==}
@@ -2175,7 +2175,7 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.6.0
     optional: true
 
-  '@marigameo/agent-clarifier@0.1.0': {}
+  '@marigameo/agent-clarifier@0.2.1': {}
 
   '@marigameo/co-presence@0.1.0': {}
 
