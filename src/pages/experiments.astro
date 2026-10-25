@@ -15,6 +15,7 @@ import CoconutHeap from '../components/mascots/CoconutHeap.astro';
 import DesignEcosystem from '../components/sketches/DesignEcosystem.astro';
 import PublicShare from '../components/sketches/PublicShare.astro';
 import ChatDiagrams from '../components/sketches/ChatDiagrams.astro';
+import DrawDiagrams from '../components/sketches/DrawDiagrams.astro';
 import KbGraph from '../components/sketches/kb/KbGraph.astro';
 import KbProps from '../components/sketches/kb/KbProps.astro';
 import ChatMode from '../components/sketches/chat/ChatMode.astro';
@@ -26,7 +27,7 @@ import { site } from '../data/site';
 
 const description = 'Thenga’s studio + yard: UI redesigns told as stories (the before, the after and the lessons), plus a heap of apps, ventures and night hacks, each with what I found inside.';
 const n = experiments.length;
-const sketches = { 'design-ecosystem': DesignEcosystem, 'public-share': PublicShare, 'chat-diagrams': ChatDiagrams };
+const sketches = { 'design-ecosystem': DesignEcosystem, 'public-share': PublicShare, 'chat-diagrams': ChatDiagrams, 'draw-diagrams': DrawDiagrams };
 const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': ChatMode };
 ---
 <BaseLayout title={`Thenga’s studio + yard — experiments | ${site.name}`} description={description} current="experiments">

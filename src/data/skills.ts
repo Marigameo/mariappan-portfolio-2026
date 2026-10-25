@@ -4,7 +4,8 @@
 
    To add one: push a leaf onto `skills` with its group. Keep `hook` to one line,
    `when` to the moment you'd reach for it, and `tied` to the skill or thing it
-   pairs with. Groups with no leaves don't show. */
+   pairs with. Groups with no leaves don't show. `story`, when set, links the
+   story of how the skill (or the thing it was proven on) came about. */
 
 export const skillsRepo = 'https://github.com/Marigameo/skills';
 export const installCmd = 'npx skills@latest add marigameo/skills';
@@ -27,6 +28,8 @@ export interface Skill {
   when: string;
   /** "Tied with": what it pairs with. */
   tied: string;
+  /** Optional: the story of how it came about, shown as "How I built it". */
+  story?: string;
 }
 
 export const skills: Skill[] = [
@@ -36,6 +39,15 @@ export const skills: Skill[] = [
     hook: 'Build a UI component the careful way: plan first, stop for a go, audit, then ship.',
     when: 'A card, widget or any self-contained piece of UI.',
     tied: 'Emil Kowalski’s and Jakub Krehel’s skills',
+    story: '/work/agent-clarifier/',
+  },
+  {
+    name: 'draw-diagrams',
+    group: 'craft',
+    hook: 'Add diagrams to your own chat: draw only when it helps, and never show a broken one.',
+    when: 'A chat agent should explain flows, hand-offs or stages.',
+    tied: 'Mermaid 12, any chat stack',
+    story: '/work/draw-diagrams/',
   },
   {
     name: 'ask-clarifier',
@@ -43,6 +55,7 @@ export const skills: Skill[] = [
     hook: 'Wire agent-clarifier in, so your agent asks before it acts, and only when it matters.',
     when: 'A chat agent needs a few answers mid-task.',
     tied: 'agent-clarifier, on npm',
+    story: '/work/agent-clarifier/',
   },
   {
     name: 'show-co-presence',
@@ -50,6 +63,7 @@ export const skills: Skill[] = [
     hook: 'Put co-presence in, so people see who’s on a task, people and agents, and what needs them.',
     when: 'A multi-agent or multiplayer product needs to show who’s on it.',
     tied: 'co-presence, on npm',
+    story: '/work/co-presence/',
   },
 ];
 

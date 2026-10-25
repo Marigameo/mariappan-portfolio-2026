@@ -15,6 +15,7 @@ import Gate from '../../components/sketches/genui/Gate.astro';
 import ThreeLayers from '../../components/sketches/diagrams/ThreeLayers.astro';
 import EvalDots from '../../components/sketches/diagrams/EvalDots.astro';
 import TipTriage from '../../components/sketches/diagrams/TipTriage.astro';
+import { skillsRepo } from '../../data/skills';
 
 const img = (f: string) => `/images/experiments/diagrams/${f}`;
 
@@ -237,6 +238,15 @@ const lessons = [
     </section>
 
     <blockquote class="closer">Drawing a diagram is the easy half. Knowing when to draw one is the product.</blockquote>
+
+    <aside class="next-skill wobbly wobbly--2" aria-labelledby="next-skill-title">
+      <p class="next-skill-eyebrow"><Icon name="github" />The skill · open source</p>
+      <p class="next-skill-title" id="next-skill-title"><strong>Want this in your own chat?</strong> Wire it up with <code>draw-diagrams</code>, the skill I built from these lessons.</p>
+      <p class="next-skill-links">
+        <a href={`${skillsRepo}/tree/main/skills/draw-diagrams`} rel="noopener">Open it on GitHub<Icon name="arrow-right" /></a>
+        <a href="/work/draw-diagrams/">How I built the skill<Icon name="arrow-right" /></a>
+      </p>
+    </aside>
   </div>
 
   <dialog class="lightbox" data-lightbox aria-label="Screenshot">
@@ -317,4 +327,16 @@ const lessons = [
   .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
 
   .closer { margin-top: var(--space-5); }
+
+  /* The last word: the same lessons, packaged as a skill anyone can wire up. */
+  .next-skill { display: grid; gap: .6rem; margin-top: var(--space-4); padding: 1.3rem 1.4rem; box-shadow: 4px 5px 0 var(--shadow-ink); }
+  .next-skill p { margin: 0 !important; max-width: none; }
+  .next-skill-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .next-skill-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .next-skill-title { font-size: 1.15rem; line-height: 1.45; color: var(--ink-soft); }
+  .next-skill-title strong { display: block; font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; color: var(--ink); margin-bottom: .3rem; }
+  .next-skill-links { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; }
+  .next-skill-links a { display: inline-flex; align-items: center; gap: .35rem; font-weight: 500; color: var(--coral); text-decoration: none; }
+  .next-skill-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .next-skill-links :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; }
 </style>

@@ -54,15 +54,18 @@ const jsonLd = {
         <ul class="leaf-list">
           {g.leaves.map((s) => (
             <li class="leaf">
-              <a class="leaf-card" href={skillHref(s)} rel="noopener">
+              <div class="leaf-card">
                 <span class="leaf-name">{s.name}</span>
                 <span class="leaf-hook">{s.hook}</span>
                 <span class="leaf-facts">
                   <span><b>Read it when</b>{s.when}</span>
                   <span><b>Tied with</b>{s.tied}</span>
                 </span>
-                <span class="leaf-go">Read the leaf<Icon name="arrow-right" /></span>
-              </a>
+                <span class="leaf-links">
+                  <a class="leaf-go" href={skillHref(s)} rel="noopener" aria-label={`Read the ${s.name} leaf`}>Read the leaf<Icon name="arrow-right" /></a>
+                  {s.story && <a class="leaf-story" href={s.story} aria-label={`How I built ${s.name}`}>How I built it<Icon name="arrow-right" /></a>}
+                </span>
+              </div>
             </li>
           ))}
         </ul>
@@ -106,7 +109,7 @@ const jsonLd = {
   .bundle-head p { margin: 0; }
 
   /* Each skill is a leaf: long, rounded ends, tan with darker tips, two string holes. */
-  .leaf-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 1.4rem; }
+  .leaf-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr)); gap: 1.4rem; }
   .leaf-card {
     --olai-a: #efd9a2; --olai-b: #dcbd7a; --olai-edge: #b48c4c; --olai-ink: #2e2210;
     position: relative; height: 100%; display: flex; flex-direction: column; gap: .5rem; padding: 1.1rem 2.6rem 1.1rem;
@@ -124,8 +127,17 @@ const jsonLd = {
   .leaf-facts { display: grid; gap: .3rem; font-size: .87rem; line-height: 1.4; color: color-mix(in srgb, var(--olai-ink) 82%, transparent); }
   .leaf-facts span { display: grid; grid-template-columns: 6.4rem 1fr; gap: .5rem; }
   .leaf-facts b { font-family: var(--font-hand); font-size: 1.12rem; line-height: 1.15; font-weight: 700; color: #a8432f; }
-  .leaf-go { margin-top: auto; padding-top: .3rem; display: inline-flex; align-items: center; gap: .3rem; font-family: var(--font-hand); font-size: 1.2rem; font-weight: 700; color: #a8432f; }
-  .leaf-go :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+  /* The whole leaf still opens the skill: "Read the leaf" stretches over the card.
+     "How I built it" sits above that, so it stays its own link. */
+  .leaf-links { margin-top: auto; padding-top: .3rem; display: flex; flex-wrap: wrap; align-items: center; gap: .2rem 1.2rem; }
+  .leaf-go, .leaf-story { display: inline-flex; align-items: center; gap: .3rem; font-family: var(--font-hand); font-size: 1.2rem; font-weight: 700; text-decoration: none; }
+  .leaf-go { color: #a8432f; }
+  .leaf-go::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .leaf-go:focus-visible { outline: none; }
+  .leaf-card:has(.leaf-go:focus-visible) { outline: 2px solid var(--blue); outline-offset: 4px; }
+  .leaf-story { position: relative; z-index: 1; font-size: 1.05rem; color: var(--olai-ink); opacity: .8; }
+  .leaf-story:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+  .leaf-go :global(.doodle), .leaf-story :global(.doodle) { width: 1.1rem; height: 1.1rem; }
   :global([data-theme="dark"]) .leaf-card { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; --olai-ink: #241a0b; }
   @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .leaf-card { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; --olai-ink: #241a0b; } }
 

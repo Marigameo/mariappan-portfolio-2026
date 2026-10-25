@@ -42,7 +42,7 @@ export interface Highlight {
   hook: string;
   tags: string[];
   accent: 'coral' | 'blue' | 'teal' | 'violet';
-  sketch: 'design-ecosystem' | 'public-share' | 'chat-diagrams';
+  sketch: 'design-ecosystem' | 'public-share' | 'chat-diagrams' | 'draw-diagrams';
 }
 
 export const highlights: Highlight[] = [
@@ -54,6 +54,15 @@ export const highlights: Highlight[] = [
     tags: ['UX for AI', 'Diagrams'],
     accent: 'teal',
     sketch: 'chat-diagrams',
+  },
+  {
+    href: '/work/draw-diagrams/',
+    title: 'A diagram skill, built for chat',
+    context: 'Open source · Oct 2026',
+    hook: 'Most Mermaid skills help an agent write a diagram. This one helps a chat know when to draw one.',
+    tags: ['Agent skills', 'Diagrams'],
+    accent: 'blue',
+    sketch: 'draw-diagrams',
   },
   {
     href: '/work/public-share/',

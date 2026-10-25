@@ -270,6 +270,7 @@
         if (lbCap) lbCap.textContent = alt;
         lightbox.showModal();
         lightbox.scrollTop = 0;
+        lightbox.scrollLeft = 0;
       });
     });
     lightbox.querySelectorAll("[data-lightbox-close]").forEach(function (b) { b.addEventListener("click", function () { lightbox.close(); }); });

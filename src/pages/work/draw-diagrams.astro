@@ -1,0 +1,379 @@
+---
+/* draw-diagrams: a public skill for adding Mermaid diagrams to your own chat.
+   The story of the skill itself: why it was worth building, what public Mermaid
+   skills cover today and what a chat needs that they don't, the four layers it
+   adds, the care in accessibility, theming, reuse and security, the calls and
+   their reasons, and how it was proven. A sibling of /work/chat-diagrams/ (the
+   shipped feature it grew from): the same deck, led by real renders from the
+   build bench, without a blog. Linked from the Stories room on /experiments/,
+   the skill's card on /skills/, and the end of the chat-diagrams story.
+   Source: the build journal and research report in process/draw-diagrams/
+   (not published). Media lives in public/images/experiments/draw-diagrams/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import Gate from '../../components/sketches/genui/Gate.astro';
+import ProseTable from '../../components/sketches/genui/ProseTable.astro';
+import { skillsRepo, installCmd } from '../../data/skills';
+
+const img = (f: string) => `/images/experiments/draw-diagrams/${f}`;
+const skillUrl = `${skillsRepo}/tree/main/skills/draw-diagrams`;
+
+const compare = [
+  { row: 'Who it’s for', most: 'An agent writing diagrams into docs or images', ours: 'A chat where your model draws for your users' },
+  { row: 'When to draw', most: 'Mostly how to draw. 3 of 15 say when not to', ours: 'A tool that decides when. Numbers go to charts, one diagram per answer' },
+  { row: 'Checking', most: 'A few check, and only while the agent writes', ours: 'The real parser on every call, a repair hint, one retry, then prose' },
+  { row: 'When it breaks', most: 'A broken diagram or raw source can show', ours: 'Nothing shows, live or on reload' },
+  { row: 'Look', most: 'Theme presets, or colours fixed for light mode', ours: 'Meaning mapped to your theme, in light and dark' },
+  { row: 'Model styling', most: 'Kept. Some still recommend a deprecated directive', ours: 'Stripped, so the theme always wins' },
+  { row: 'Accessibility', most: 'A few mention contrast', ours: 'Measured contrast, a 10px text floor, a name for screen readers' },
+  { row: 'Security', most: 'Rarely covered', ours: 'Model output is untrusted. HTML and links are stripped' },
+  { row: 'Proof', most: 'No test of when it draws', ours: 'An eval of when it draws, and a fresh agent building from it' },
+];
+
+const contrast = [
+  { pair: 'Labels on steps and washes', light: '14.5–17.7', dark: '11.0–16.1', needs: '4.5' },
+  { pair: 'Muted text: edge labels, headings', light: '4.6–4.8', dark: '6.3–6.9', needs: '4.5' },
+  { pair: 'Connectors', light: '4.6–4.8', dark: '3.4–3.7', needs: '3' },
+  { pair: 'The main path', light: '5.2', dark: '7.0', needs: '3' },
+  { pair: 'Outcome borders on their wash', light: '4.7–5.9', dark: '5.1–7.3', needs: '3' },
+];
+
+const vocab = [
+  { code: '==>', text: 'The one main path' },
+  { code: ':::accent', text: 'The step that matters' },
+  { code: ':::success / warning / danger', text: 'Good, at-risk and bad outcomes' },
+  { code: ':::muted', text: 'Out of scope' },
+  { code: '-.->', text: 'Optional, or a loop back' },
+];
+
+const calls = [
+  { call: 'A skill, not a package', why: 'No dependency to keep in sync. You copy what your stack needs and own it.' },
+  { call: 'A generic look, not my design system', why: 'Nobody should have to inherit my tokens to get a good diagram. Rules and Tailwind defaults travel.' },
+  { call: 'Framework-neutral', why: 'Chats are built on everything. The core is plain code, with notes for React, Vue, Svelte and plain JS.' },
+  { call: 'Draw only after the server’s verdict', why: 'Drawing as soon as the arguments arrived flashed diagrams the server then rejected.' },
+  { call: 'Fail open', why: 'A validator outage must never block chat. The browser parses again and hides anything broken.' },
+  { call: 'One retry, then prose', why: 'A second failure rarely fixes itself, and the user is waiting.' },
+  { call: 'Class, requirement, git and C4 off by default', why: 'They parse, but haven’t passed the light and dark check. Turning one on is one line.' },
+  { call: 'A caption that’s a string, not null', why: 'It stays valid under every provider’s strict tool mode.' },
+];
+
+const lessons = [
+  { miss: 'Planned to ship my product’s theme as code.', lesson: 'Share the rules, not the tokens. A DESIGN.md and Tailwind defaults travel. My design system doesn’t.' },
+  { miss: 'Set a fixed shrink floor, 75% and then 80%. Labels still dropped under 10px on a phone.', lesson: 'Measure, don’t assume. The renderer now reads the smallest text in each diagram.' },
+  { miss: 'Trusted Mermaid’s strict mode with model output.', lesson: 'Test with a hostile input. An image tag and a link got through, so the renderer strips them first.' },
+  { miss: 'Called the docs done once they read well.', lesson: 'Hand them to a stranger. A fresh agent found a blocker in its first build.' },
+];
+---
+<WorkLayout
+  title="draw-diagrams — a diagram skill built for chat"
+  description="draw-diagrams is a skill for adding Mermaid diagrams to your own chat. Most Mermaid skills help an agent write a diagram; this one helps a chat know when to draw one, never show a broken one, and look considered in light and dark. Why it was worth building, how it differs, and the care behind it: accessibility, theming, reuse and security."
+  ogDescription="Most Mermaid skills help an agent write a diagram. This one helps a chat know when to draw one, never show a broken one, and look considered in light and dark."
+  eyebrow="Open source · Design engineer · Oct 2026"
+  heading="A diagram skill, built for chat"
+  facts={[
+    { label: 'My part', value: 'Designed and built it, pairing with Claude Code' },
+    { label: 'Tested on', value: 'Mermaid 12.2, two rounds of a wiring test' },
+    { label: 'Status', value: 'Published in my skills repo' },
+  ]}
+  link={{ href: skillUrl, label: 'GitHub' }}
+  schema={{
+    name: 'draw-diagrams',
+    url: skillUrl,
+    description: 'A framework-neutral agent skill for adding Mermaid diagrams to a chat product: a tool whose description decides when to draw, runtime guidance for the model, a server gate on the real parser, a renderer that hides failures and strips model styling, a Tailwind-based light and dark theme, measured accessibility, and an eval.',
+    inLanguage: 'en',
+    keywords: 'agent skills, Mermaid, diagrams in chat, UX for AI, tool calling, validation, security, theming, accessibility, design engineering',
+  }}
+>
+  <Fragment slot="lede">Most Mermaid skills help an agent write a diagram. This one helps you build a chat that <mark class="hl">knows when to draw one</mark>, never shows a broken one, and looks considered in light and dark. It’s what I learnt shipping diagrams in Strive’s chat, rebuilt so any chat can use it.</Fragment>
+
+  <div class="story">
+    <figure class="shot-fig">
+      <button class="zoom" type="button" data-full-tall data-full={img('before-after-light.webp')} data-full-alt="Left, Mermaid out of the box. Right, the skill’s starter theme." aria-label="View the comparison full size">
+        <span class="shot-frame">
+          <img src={img('before-after-light.webp')} width="1240" height="700" decoding="async" alt="The same diagram twice, side by side: how a support ticket gets resolved. On the left, Mermaid out of the box: lavender boxes with purple borders, heavy black arrows and grey label tags. On the right, the skill’s starter theme: white rounded steps with hairline borders, a bold blue main path with blue arrowheads, the step that matters in a light blue wash, the solved outcome in green, the spam branch muted and dashed, pill-shaped edge labels, and a one-line caption under it.">
+          <span class="ba-tag ba-tag--left" aria-hidden="true">Mermaid, out of the box</span>
+          <span class="ba-tag ba-tag--right" aria-hidden="true">The starter theme</span>
+        </span>
+        <span class="zoom-icon zoom-icon--bottom rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+      </button>
+      <figcaption>Same source, two looks.</figcaption>
+    </figure>
+
+    <section class="slide" aria-labelledby="s-why">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Why</p><h2 id="s-why">Easy to turn on, hard to get right</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Turning on Mermaid in a chat is a prompt line away. Making it good isn’t. Every team that adds it meets <strong>the same four walls</strong>: it draws for everything, shows broken diagrams, looks generated, and trusts whatever the model writes.</li>
+        <li>I’d worked through all four shipping <a href="/work/chat-diagrams/">diagrams in Strive’s chat</a>. So I wanted anyone to get there too: <strong>good-looking, meaningful diagrams from the first wiring</strong>, without inheriting my product to get them.</li>
+      </ul>
+      <Versus
+        left={{ title: 'Turning it on', tone: 'ghost', items: ['One prompt line', 'Draws for every answer', 'Broken source on screen', 'Mermaid’s default look, light only', 'Model output trusted as is'] }}
+        right={{ title: 'Getting it right', stamp: 'the skill', tone: 'coral', items: ['A tool that decides when', 'Only when a picture helps', 'A broken diagram never shows', 'A considered look, light and dark', 'Model output treated as untrusted'] }}
+        alt="Two ways to add diagrams to a chat. Left, dashed, turning it on: one prompt line, it draws for every answer, broken source shows on screen, Mermaid’s default look in light only, and model output is trusted as is. Right, in coral and stamped the skill, getting it right: a tool that decides when, drawing only when a picture helps, a broken diagram never shows, a considered look in light and dark, and model output treated as untrusted."
+        caption="Rendering a diagram is solved. Knowing when to draw one isn’t."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-research">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Research</p><h2 id="s-research">What’s out there today</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Before writing a line, I read 15 public Mermaid skills from source, not from listings. They’re good at what they do, and <strong>nearly every one is for docs or images</strong>: an agent writing a diagram into a file. The one that touched a chat covered only the renderer.</li>
+        <li>A chat needs different things. Only three say when not to draw, the few that check a diagram do it while the agent writes, colours are fixed for light mode, and none strips model styling or tests when the model draws. <strong>That gap is what this skill fills</strong>.</li>
+      </ul>
+      <ProseTable caption="What a chat needs, compared">
+        <thead>
+          <tr><th scope="col"></th><th scope="col">draw-diagrams</th><th scope="col">Most Mermaid skills</th></tr>
+        </thead>
+        <tbody>
+          {compare.map((c) => <tr><th scope="row">{c.row}</th><td>{c.ours}</td><td>{c.most}</td></tr>)}
+        </tbody>
+      </ProseTable>
+    </section>
+
+    <section class="slide" aria-labelledby="s-idea">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">The idea</p><h2 id="s-idea">Built for the chat, not the doc</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Teaching a model to write Mermaid is one layer. A chat needs four: <strong>a tool whose description decides when to draw</strong>, guidance that teaches how, a gate that runs the real parser on every call, and a renderer that draws only what the gate accepted.</li>
+        <li>When to draw is the product, so it’s the part that gets measured: <strong>an eval of six prompts that should draw and four that shouldn’t</strong>, run through your real chat, before and after every prompt change.</li>
+      </ul>
+      <StudioLoop
+        steps={[
+          { kicker: 'Decide', label: 'The tool’s description', sub: 'draw when a picture helps; numbers go to charts', tone: 'coral' },
+          { kicker: 'Teach', label: 'The model’s guidance', sub: 'the right type, a chat-width shape, safe syntax', tone: '' },
+          { kicker: 'Check', label: 'The server gate', sub: 'the real parser, a repair hint, one retry', tone: 'blue' },
+          { kicker: 'Draw', label: 'The renderer', sub: 'accepted diagrams only, themed and named', tone: 'teal' },
+        ]}
+        note="an eval checks the first step, before and after every change"
+        alt="Four layers in a row. Decide, in coral: the tool’s description draws only when a picture helps, and sends numbers to charts. Teach: the model’s guidance picks the right type, a chat-width shape and safe syntax. Check, in blue: the server gate runs the real parser, gives a repair hint and allows one retry. Draw, in teal: the renderer draws accepted diagrams only, themed and named for screen readers. A handwritten note says an eval checks the first step, before and after every change."
+        caption="Most skills are only the second box."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-a11y">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Care · accessibility</p><h2 id="s-a11y">Readable by everyone</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Contrast is measured, not assumed. The quiet grey connectors I’d carried over came out at <strong>2.56:1</strong>, under the 3:1 a line needs. They’re 4.8:1 now, and a dash, not a paler grey, says “optional”.</li>
+        <li>Meaning never rides on colour alone: the label says it, the main path is thicker as well as coloured, and muted steps are dashed. Text never drops under <strong>10px</strong>, measured per diagram, and every diagram is named for screen readers from its title and caption.</li>
+      </ul>
+      <ProseTable caption="Contrast for the default palette (WCAG ratio)">
+        <thead>
+          <tr><th scope="col">Pair</th><th scope="col">Light</th><th scope="col">Dark</th><th scope="col">Needs</th></tr>
+        </thead>
+        <tbody>
+          {contrast.map((c) => <tr><th scope="row">{c.pair}</th><td>{c.light}</td><td>{c.dark}</td><td>{c.needs}</td></tr>)}
+        </tbody>
+      </ProseTable>
+    </section>
+
+    <section class="slide" aria-labelledby="s-theme">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Care · theming</p><h2 id="s-theme">Meaning, mapped to any theme</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The model never picks a colour. It marks what a step <strong>means</strong>: the main path, the step that matters, a good, at-risk or bad outcome, or something out of scope. The theme decides how that looks, in light and dark.</li>
+        <li>Colours are named by role, with Tailwind defaults you can swap for your own, even oklch tokens. Along the way it fixes what Mermaid gets wrong on its own: <strong>a grey shadow that glows in dark mode</strong>, hard-wired journey colours, and arrowheads that ignore the main path.</li>
+      </ul>
+      <figure class="shot-fig">
+        <button class="zoom" type="button" data-full-tall data-full={img('brand.webp')} data-full-alt="A violet brand dropped in: light on the left, dark on the right." aria-label="View the brand comparison full size">
+          <span class="shot-frame">
+            <img src={img('brand.webp')} width="1240" height="700" loading="lazy" decoding="async" alt="The support-ticket diagram with a violet brand colour dropped in, in light mode on the left and dark mode on the right. In both, the main path and the step that matters turn violet, the solved outcome stays green, the spam branch stays muted and dashed, and the rest of the diagram stays in quiet greys.">
+            <span class="ba-tag ba-tag--left" aria-hidden="true">Your brand, light</span>
+            <span class="ba-tag ba-tag--right" aria-hidden="true">Your brand, dark</span>
+          </span>
+          <span class="zoom-icon zoom-icon--bottom rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+        </button>
+        <ul class="vocab" aria-label="What the model writes, and what it means">
+          {vocab.map((v) => <li><code>{v.code}</code>{v.text}</li>)}
+        </ul>
+        <figcaption>The model says what a step means. Your theme decides how it looks.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-reuse">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Care · reuse and safety</p><h2 id="s-reuse">Copy it, don’t adopt it</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>It works with any framework and the main model providers: tool definitions for Anthropic, OpenAI and the Vercel AI SDK, all type-checked, and <strong>four code files you copy as they are</strong>. The server gate fails open, so an outage never blocks chat.</li>
+        <li>The source is model output, so it’s treated as untrusted. With Mermaid’s strict mode on, <strong>an image tag and a click link still got through</strong>, so the renderer strips HTML, links and styling before Mermaid sees them.</li>
+      </ul>
+      <Gate
+        start={{ kicker: 'Model output', label: 'A diagram from draw_diagram', sub: 'Untrusted: it may carry HTML, links or styling', tone: 'coral' }}
+        checks={[
+          { q: 'A chart type, or over 80 lines?', when: 'yes', out: 'Sent back with a hint, never drawn' },
+          { q: 'Does it parse once HTML, links and styling are stripped?', when: 'no', out: 'Nothing is drawn, live or on reload' },
+        ]}
+        pass="clean, parsed, and the server said rendered"
+        then={[
+          { kicker: 'In chat', label: 'Drawn with the theme', sub: 'Named for screen readers from its title and caption', tone: 'teal' },
+        ]}
+        alt="A gate for every diagram. It starts, in coral, with model output: a diagram from draw_diagram, untrusted because it may carry HTML, links or styling. First question: is it a chart type, or over 80 lines? If yes, it’s sent back with a hint and never drawn. Second: does it parse once HTML, links and styling are stripped? If no, nothing is drawn, live or on reload. A handwritten note says what passes: clean, parsed, and the server said rendered. Then, in teal, it’s drawn in chat with the theme, named for screen readers from its title and caption."
+        caption="Treat it like any input you didn’t write."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-calls">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Design calls</p><h2 id="s-calls">The calls, and why</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Every default in the skill has its reason written next to it, so you can <strong>argue with it instead of guessing</strong>.</li>
+        <li>Many of the calls are about restraint: <strong>what to leave out, turn off or wait for</strong>, so a diagram only shows up when it’s right.</li>
+      </ul>
+      <ProseTable caption="Calls I made, and why">
+        <thead>
+          <tr><th scope="col">The call</th><th scope="col">Why</th></tr>
+        </thead>
+        <tbody>
+          {calls.map((c) => <tr><th scope="row">{c.call}</th><td>{c.why}</td></tr>)}
+        </tbody>
+      </ProseTable>
+    </section>
+
+    <section class="slide" aria-labelledby="s-proof">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Proof</p><h2 id="s-proof">Tested before trusted</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Every rule was rendered on Mermaid 12.2, in light, dark and at phone width, before it was written down. Pitfalls other skills still repeat were checked too: one no longer applies, and one (<code>a---ops</code>) <strong>silently draws the wrong thing</strong>.</li>
+        <li>Then <strong>a fresh agent built a chat from the skill alone</strong>, with a stubbed model. Round one found a blocker: the retry never ran. Round two resolved 12 of 15 issues and surfaced six more, all fixed.</li>
+      </ul>
+      <StudioLoop
+        steps={[
+          { kicker: 'Read', label: 'Only the skill', sub: 'no context from the build, no edits allowed', tone: '' },
+          { kicker: 'Build', label: 'A React chat', sub: 'a stubbed model that streams tool calls', tone: 'blue' },
+          { kicker: 'Log', label: 'FRICTION.md', sub: 'file, line and severity for every gap', tone: 'coral' },
+          { kicker: 'Fix', label: 'The skill, not the app', sub: 'then the same agent builds again', tone: 'teal' },
+        ]}
+        note="two rounds: 15 issues, then 6 new ones"
+        alt="A loop of four steps. A fresh agent reads only the skill, with no context from the build and no edits allowed. It builds a React chat with a stubbed model that streams tool calls. It logs every gap in FRICTION.md with file, line and severity. I fix the skill, not the app, and the same agent builds again. A handwritten note says: two rounds, 15 issues, then 6 new ones."
+        caption="A reread can’t find what a stranger trips on."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What I’d tell day-zero me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 4) + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">A diagram should earn its place. This skill is how any chat makes sure it does.</blockquote>
+
+    <a class="deep-dive wobbly wobbly--2" href={skillUrl} rel="noopener">
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="github" />The skill · open source</span>
+        <strong>Want diagrams in your own chat?</strong>
+        <span class="deep-dive-sub">Wire them up with <code>draw-diagrams</code>: the tool, the gate, the renderer, the look and an eval, with tested code to copy.</span>
+        <code class="install">{installCmd}</code>
+        <span class="deep-dive-go">Open it on GitHub<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+    <p class="sibling">Where it started: <a href="/work/chat-diagrams/">Diagrams in Strive chat</a>.</p>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</WorkLayout>
+
+<style>
+  /* Deck styles from chat-diagrams.astro, trimmed to what this story uses. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+  .story :global(.table-fig) { margin-top: var(--space-3); }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Real renders from the build bench. They keep their own colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; display: block; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+
+  /* A handwritten label on each half of a side-by-side render. */
+  .ba-tag { position: absolute; top: -.9rem; padding: .1rem .6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1.2; color: #fff; background: var(--coral); border-radius: 6px 3px 7px 4px / 4px 7px 3px 6px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-3deg); white-space: nowrap; }
+  .ba-tag--left { left: 3%; background: var(--ink-soft); }
+  .ba-tag--right { left: 53%; }
+  @media (max-width: 559px) { .ba-tag { top: -.75rem; font-size: .85rem; padding: .05rem .4rem; } }
+
+  /* A render that opens full size: the whole frame is the button. */
+  .zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; text-align: inherit; cursor: zoom-in; }
+  .zoom .shot-frame { transition: transform .2s ease; }
+  .zoom:hover .shot-frame { transform: rotate(0deg) translateY(-2px); }
+  .zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 10px; }
+  .zoom-icon { position: absolute; right: .7rem; }
+  .zoom-icon--bottom { bottom: .7rem; }
+  .zoom:hover .zoom-icon { background: var(--ink); color: var(--paper); }
+  .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+
+  /* Slide 05: the model's vocabulary as chips under the render. */
+  .vocab { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: 1.2rem 0 0; padding: 0; }
+  .vocab li { display: inline-flex; align-items: baseline; gap: .5rem; padding: .3rem .8rem; font-size: .8rem; line-height: 1.35; color: var(--ink); border: 1.5px solid var(--border); border-radius: 999px; background: var(--paper-2); }
+  .vocab code { font-size: .76rem; color: var(--coral); background: none; padding: 0; }
+
+  .closer { margin-top: var(--space-5); }
+
+  /* The end card: to the skill, in the deep-dive card's shape, without a cover. */
+  .deep-dive { display: block; margin-top: var(--space-4); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-body { display: grid; gap: .55rem; padding: .3rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .install { justify-self: start; max-width: 100%; overflow-x: auto; padding: .35rem .7rem; font-size: .82rem; white-space: nowrap; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 8px; }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .2rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+  .sibling { margin-top: var(--space-3) !important; font-size: .95rem; color: var(--ink-soft); }
+</style>
