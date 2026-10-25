@@ -1,8 +1,8 @@
 ---
 /* Diagrams in Strive chat: the agent draws a Mermaid diagram when a flow, a
    hand-off or a deal's stages would read better as a picture, and never shows a
-   broken one. Told from a customer's ask to the version that's live: the three
-   layers, the calls on the tool, on Mermaid and on the gate, the visual language,
+   broken one. Told from a friend's one-line tip, triaged into what to build and
+   what not to, to the version that's live: the three layers, the calls on the tool, on Mermaid and on the gate, the visual language,
    the toolbar, and the eval that found the real blocker. Same deck as
    public-share, led by the real UI, without a blog: it is linked from the Stories
    room on /experiments/. Media lives in public/images/experiments/diagrams/. */
@@ -14,6 +14,7 @@ import Versus from '../../components/sketches/studio/Versus.astro';
 import Gate from '../../components/sketches/genui/Gate.astro';
 import ThreeLayers from '../../components/sketches/diagrams/ThreeLayers.astro';
 import EvalDots from '../../components/sketches/diagrams/EvalDots.astro';
+import TipTriage from '../../components/sketches/diagrams/TipTriage.astro';
 
 const img = (f: string) => `/images/experiments/diagrams/${f}`;
 
@@ -52,7 +53,7 @@ const lessons = [
     keywords: 'UX for AI, Mermaid, diagrams in chat, tool calling, agent skills, prompt evaluation, validation, design tokens, theming, design engineering, pairing with Claude Code',
   }}
 >
-  <Fragment slot="lede">A customer’s sales team explains everything with flowcharts. Ask Strive’s chat how a lead becomes a customer, though, and it answered with a numbered list. Now it can draw the flow. I built it around two rules: <mark class="hl">draw only when it helps, and never show a broken one</mark>.</Fragment>
+  <Fragment slot="lede">“Adding mermaid charts to easily explain stuff.” A one-line tip on WhatsApp from a friend, after his sales team saw it in another tool. Strive’s chat could already draw one by accident. The real work was deciding when it should, and what it shouldn’t. I landed on two rules: <mark class="hl">draw only when it helps, and never show a broken one</mark>.</Fragment>
 
   <div class="story">
     <SketchLive id="diagrams" start="live" live={{ kind: 'video', src: img('hero.mp4'), poster: img('hero-poster.webp'), width: 1600, height: 834, alt: 'Screen recording in Strive chat: asked to explain a daily AEO citations routine step by step, the answer opens with a line of prose and a diagram titled Daily AEO Citations Routine, How It Works. The flow runs from a 9 AM trigger through scanning citation sources, with the owned-pages check in an orange wash. The expand button opens it in a dialog, zoomed from 100% to 75% and 50%, then it closes, the PNG downloads, and the copied source is pasted into the composer: a flowchart with ==> main-path arrows and :::accent and :::success classes.' }} caption="Live today: an answer that draws, then expand, zoom, download and copy the source.">
@@ -64,12 +65,13 @@ const lessons = [
     <section class="slide" aria-labelledby="s-back">
       <header class="slide-head">
         <span class="slide-num" aria-hidden="true">01</span>
-        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Drawn by accident</h2></div>
+        <div><p class="slide-kicker">The ask</p><h2 id="s-back">A tip, not a spec</h2></div>
       </header>
       <ul class="doodle-list slide-points">
-        <li>The customer had seen diagrams in another tool’s chat. Strive’s chat could already draw a Mermaid block, but <strong>only by accident</strong>: our markdown renderer happened to support it, and nothing told the model to write one.</li>
-        <li>That path had rough edges, so I started with the two rules, and <strong>everything else serves them</strong>. I designed it end to end and built it pairing with Claude Code.</li>
+        <li>The tip was one line, so <strong>before saying yes</strong> I asked three things: does it fit Strive, what’s worth building, and what isn’t?</li>
+        <li>It fit. Strive’s chat could already draw a Mermaid block, but <strong>only by accident</strong>: our markdown renderer happened to support it, and nothing told the model to write one. That path had rough edges, so I started with the two rules, and <strong>everything else serves them</strong>. I designed it end to end and built it pairing with Claude Code.</li>
       </ul>
+      <TipTriage />
       <Versus
         left={{ title: 'Mermaid by accident', tone: 'ghost', items: ['Mermaid’s default theme, light only', 'A red error box with the raw source', 'Re-rendered on every streamed chunk', 'No expand, download or copy'] }}
         right={{ title: 'Built on purpose', stamp: 'now', tone: 'coral', items: ['Themed from our own tokens, light and dark', 'A broken diagram renders nothing', 'Drawn once the source is complete', 'Expand, zoom, download and copy'] }}

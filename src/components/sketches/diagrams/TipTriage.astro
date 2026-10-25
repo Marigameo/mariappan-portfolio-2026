@@ -1,0 +1,60 @@
+---
+/* The ask, triaged: a friend's one-line tip in a chat bubble, then three notes
+   on it. Does it fit, what's worth building, and what isn't, drawn as a ghost
+   because it's the work we chose not to do. Its first line is the real call:
+   only the Mermaid types a marketing answer needs. On a phone the notes stack. */
+const notes = [
+  { kicker: 'Does it fit?', title: 'Yes, half of it was there', items: ['Chat already drew Mermaid, by accident', 'Models already know the language'], tone: 'blue' },
+  { kicker: 'Worth building', title: 'Drawing on purpose', items: ['When to draw: a tool, not a prompt line', 'A gate: the real parser', 'A theme from our own tokens', 'Expand, zoom, download, copy'], tone: 'coral' },
+];
+const skip = ['Charts with numbers: the chart tools own them', 'Routine diagrams: they stay on React Flow', 'Styling the model writes', 'More than one per answer'];
+---
+<figure class="sk-fig">
+  <div class="sk-sheet tt" role="img" aria-label="A tip, triaged. A chat bubble from a friend on WhatsApp reads: adding mermaid charts to easily explain stuff. A handwritten note says: three questions before a yes. In blue, does it fit? Yes, half of it was there: chat already drew Mermaid by accident, and models already know the language. In coral, worth building, drawing on purpose: when to draw, through a tool rather than a prompt line; a gate, the real parser; a theme from our own tokens; and expand, zoom, download and copy. In dashed lines, what isn’t: not every Mermaid type, only the ones a marketing answer needs right away, so the skill stays small and actually gets used. Also left out: charts with numbers, which the chart tools own; routine diagrams, which stay on React Flow; styling the model writes; and more than one diagram per answer.">
+    <div class="tt-tip">
+      <div class="sk-box sk-lean-1 tt-bubble">
+        <span class="tt-from">A friend · WhatsApp</span>
+        <p>“Adding mermaid charts to easily explain stuff.”</p>
+      </div>
+      <p class="sk-hand tt-hand">three questions before a yes ↓</p>
+    </div>
+    {notes.map((n, i) => (
+      <div class:list={['sk-box', `sk-box--${n.tone}`, `sk-lean-${i + 2}`, 'tt-note']}>
+        <span class="tt-kicker">{n.kicker}</span>
+        <strong>{n.title}</strong>
+        <ul>{n.items.map((k) => <li>{k}</li>)}</ul>
+      </div>
+    ))}
+    <div class="sk-box sk-box--ghost sk-lean-4 tt-note tt-note--skip">
+      <span class="tt-kicker">What isn’t</span>
+      <strong>Not every Mermaid type</strong>
+      <span class="tt-lead">Only the ones a marketing answer needs right away, so the skill stays small and actually gets used.</span>
+      <ul>{skip.map((k) => <li>{k}</li>)}</ul>
+    </div>
+  </div>
+  <figcaption>One line of feedback, three questions before building.</figcaption>
+</figure>
+
+<style>
+  .tt { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; }
+  .tt-tip { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.4rem; margin-bottom: .4rem; }
+  /* A chat bubble: the bottom-left corner pinched, like the message it was. */
+  .tt-bubble { display: grid; gap: .25rem; max-width: 24rem; padding: .65rem .9rem .75rem; border-bottom-left-radius: 2px; }
+  .tt-bubble p { margin: 0 !important; font-size: .95rem; line-height: 1.4; color: var(--ink); }
+  .tt-from { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .tt-hand { margin: 0 !important; }
+
+  .tt-note { display: grid; gap: .35rem; align-content: start; padding: .75rem .85rem .85rem; }
+  .tt-kicker { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+  .tt-note strong { font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .tt-note ul { list-style: none; margin: .1rem 0 0; padding: 0; display: grid; gap: .3rem; }
+  .tt-note li { position: relative; padding-left: 1rem; font-size: .78rem; line-height: 1.4; color: var(--ink-faint); }
+  .tt-note li::before { content: "•"; position: absolute; left: 0; color: var(--c); }
+  .tt-note--skip .tt-kicker { color: var(--ink-faint); }
+  .tt-note--skip li::before { content: "–"; color: var(--ink-faint); }
+  .tt-lead { font-size: .8rem; line-height: 1.4; color: var(--ink); }
+
+  @media (max-width: 559px) {
+    .tt { grid-template-columns: 1fr; }
+  }
+</style>
