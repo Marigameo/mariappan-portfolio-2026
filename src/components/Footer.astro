@@ -32,13 +32,17 @@ const year = new Date().getFullYear();
     <p class="eyebrow">Say hello</p>
     <h2>Let's build something people feel.</h2>
     <p class="sub">Open for work, talks, and good product tangents. Human in the loop, always.</p>
-    <ul class="footer-links" aria-label="Contact and profiles">
-      <li><a class="pill pill--solid" href={`mailto:${site.email}`}><Icon name="mail" />Email me</a></li>
-      <li><a class="pill" href={site.links.linkedin} rel="me noopener"><Icon name="linkedin" />LinkedIn</a></li>
-      <li><a class="pill" href={site.links.github} rel="me noopener"><Icon name="github" />GitHub</a></li>
-      <li><a class="pill" href={site.links.x} rel="me noopener"><Icon name="x" />X</a></li>
-      <li><a class="pill" href={site.links.instagram} rel="me noopener"><Icon name="instagram" />Instagram</a></li>
-    </ul>
+    <div class="footer-links" role="group" aria-label="Contact and profiles">
+      <ul role="list">
+        <li><a class="pill pill--solid" href={`mailto:${site.email}`}><Icon name="mail" />Email me</a></li>
+        <li><a class="pill" href={site.links.linkedin} rel="me noopener"><Icon name="linkedin" />LinkedIn</a></li>
+      </ul>
+      <ul role="list">
+        <li><a class="pill" href={site.links.github} rel="me noopener"><Icon name="github" />GitHub</a></li>
+        <li><a class="pill" href={site.links.x} rel="me noopener"><Icon name="x" />X</a></li>
+        <li><a class="pill" href={site.links.instagram} rel="me noopener"><Icon name="instagram" />Instagram</a></li>
+      </ul>
+    </div>
     <p class="footer-credit">© <span data-year>{year}</span> {site.name} · Crafted with care (and caffeine) in India <Icon name="heart" /></p>
   </div>
   <div class="footer-land" aria-hidden="true">

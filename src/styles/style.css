@@ -164,8 +164,9 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .section--sand { background: var(--sand); }
 .grid { display: grid; gap: var(--space-3); }
 @media (min-width: 640px) { .grid--2 { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 900px) { .grid--3 { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 640px) and (max-width: 899px) { .grid--3 { grid-template-columns: repeat(2, 1fr); } }
+/* Three columns only from 1100px: at 900-1099 (an open iPhone Duo is 951) three put the middle ticket on the fold; two split around it. */
+@media (min-width: 1100px) { .grid--3 { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 640px) and (max-width: 1099px) { .grid--3 { grid-template-columns: repeat(2, 1fr); } }
 .cluster { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
 
 /* Curvy fold separators. Place a .wave as the FIRST child of the lower section:
@@ -462,7 +463,17 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .section-head--row > div { max-width: 44rem; }
 .section-head--row .pill { margin-bottom: .35rem; }
 .library { display: grid; gap: var(--space-4) var(--space-3); }
-@media (min-width: 900px) { .library { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); } }
+/* Two shelves side by side from 900px, three from 1100px. At 900-1099 three left the full Tech shelf no room (its books ran
+   50px into the next shelf at 951) and put the middle shelf on an open iPhone Duo's fold; two put the gap there instead.
+   An odd last shelf takes the full row. */
+@media (min-width: 900px) {
+  .library { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+  .library > .shelf:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (min-width: 1100px) {
+  .library { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .library > .shelf:last-child:nth-child(odd) { grid-column: auto; }
+}
 .shelf { position: relative; padding-bottom: 1.7rem; min-width: 0; container-type: inline-size; }
 .shelf-books { display: flex; align-items: flex-end; gap: .35rem; padding: 1rem 1.2rem 0; min-height: 15.5rem; }
 .book { --c: var(--coral); position: relative; display: flex; align-items: center; justify-content: center; width: var(--bw, 2.8rem); height: var(--bh, 12.5rem); flex: 0 1 auto; min-width: 1.75rem; background: var(--c); color: var(--book-ink); border: 1.5px solid var(--ink); border-radius: 3px 5px 5px 3px; text-decoration: none; writing-mode: vertical-rl; font-family: var(--font-body); font-weight: 500; font-size: .84rem; letter-spacing: .01em; line-height: 1.1; padding: 1.15rem .3rem; text-align: center; box-shadow: inset -4px 0 0 rgba(0, 0, 0, .14), inset 3px 0 0 rgba(255, 255, 255, .22); transform-origin: bottom center; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
@@ -480,6 +491,9 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .shelf-deco .doodle { width: 2.3rem; height: 2.3rem; stroke-width: 1.5; }
 @container (max-width: 26rem) { .shelf-books { gap: .25rem; padding-inline: .8rem; } }
 @container (max-width: 19rem) { .shelf-deco { display: none; } }
+/* A full shelf (nine or more books) has no room left for its prop under 22rem: on a 382px screen the Tech shelf's doodle
+   hung 45px past the shelf, off the edge of the page. Shelves with fewer books keep theirs. */
+@container (max-width: 22rem) { .shelf-books:has(> .book:nth-of-type(9)) > .shelf-deco { display: none; } }
 .plank { position: relative; height: .9rem; margin: 0 -.2rem; background: var(--sand-2); border: 1.5px solid var(--ink); border-radius: 6px 14px 6px 14px / 14px 6px 14px 6px; box-shadow: 3px 3px 0 var(--shadow-ink); }
 .plank::after { content: ""; position: absolute; left: 1rem; right: 1rem; top: calc(100% + 3px); height: .7rem; background: linear-gradient(var(--line), transparent); pointer-events: none; }
 .shelf-label { position: absolute; left: 1.1rem; bottom: .25rem; margin: 0; display: inline-flex; align-items: center; gap: .35rem; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); padding: .3rem .55rem; border-radius: 4px 8px 4px 8px / 8px 4px 8px 4px; transform: rotate(-1.5deg); z-index: 2; max-width: none; }
@@ -1005,7 +1019,17 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .footer-inner .eyebrow::before { display: none; }
 .footer-inner h2 { font-size: clamp(2.4rem, 6vw, 4.2rem); margin-bottom: .8rem; }
 .footer-inner .sub { margin: 0 auto 1.6rem; max-width: 34rem; color: var(--ink-soft); }
-.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; list-style: none; padding: 0; margin: 0 0 var(--space-4); }
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: 0 0 var(--space-4); }
+/* Two lists (contact, profiles) that lay out as one row everywhere: display: contents hands their items to .footer-links. */
+.footer-links ul { display: contents; list-style: none; margin: 0; padding: 0; }
+/* The crease of an open book-style foldable (iPhone Duo: 951px wide in Safari 27.1) runs down the middle, through the
+   middle of five centred pills. On touch screens of that width only, the two groups sit either side of the centre, so
+   the gap lands on the fold. No web API reports the fold by default: delete this when Viewport Segments ships unflagged. */
+@media (pointer: coarse) and (min-width: 900px) and (max-width: 1000px) {
+  .footer-links { display: grid; grid-template-columns: 1fr 1fr; column-gap: .5rem; }
+  .footer-links ul { display: flex; gap: .5rem; }
+  .footer-links ul:first-child { justify-content: flex-end; }
+}
 .footer-credit { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin: 0; max-width: none; }
 .footer-credit .doodle { color: var(--coral); width: .9rem; height: .9rem; }
 /* the land: layered hills + a pond, planted illustrations that sway, and small
