@@ -16,6 +16,7 @@ import Thatpam from '../sketches/Thatpam.astro';
 import DforDoubts from '../sketches/DforDoubts.astro';
 import AgentClarifier from '../sketches/AgentClarifier.astro';
 import CoPresence from '../sketches/CoPresence.astro';
+import FitIphoneDuo from '../sketches/FitIphoneDuo.astro';
 
 const strive = { company: 'Strivelabs', meta: 'Design engineer · 2024 → now', live: true };
 const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2021 → 2024' };
@@ -59,6 +60,11 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
   </Rail>
 
   <Rail id="rail-indie" icon="lightbulb" title="Side builds" meta="Solo, outside the day job. Idea → pixels, sometimes → payments.">
+    <WorkCard href="/work/fit-iphone-duo/" accent="violet" title="fit-iphone-duo" tags={['Agent skill', 'Responsive web']} craft
+      part="Solo, paired with Claude: the research, every call, the trial on my own site" shipped="Open source in my skills repo · playground live">
+      <FitIphoneDuo slot="sketch" />
+      Fitting a website to Apple’s foldable, a prompt away: a skill that knows the sizes Safari really gives a page.
+    </WorkCard>
     <WorkCard href="/work/co-presence/" accent="blue" title="co-presence" tags={['Design engineering', 'Multi-agent']} craft
       part="Solo, paired with Claude: every step, every call" shipped="v0.1.0 on npm · open source">
       <CoPresence slot="sketch" />

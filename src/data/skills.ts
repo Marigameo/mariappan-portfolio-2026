@@ -50,6 +50,14 @@ export const skills: Skill[] = [
     story: '/work/draw-diagrams/',
   },
   {
+    name: 'fit-iphone-duo',
+    group: 'craft',
+    hook: 'Fit a website to iPhone Duo: audit it at the sizes Safari really gives it, fix the causes, prove it.',
+    when: 'A site looks off on Apple’s foldable, or you want it ready before it does.',
+    tied: 'Playwright WebKit, the iPhone Duo playground',
+    story: '/work/fit-iphone-duo/',
+  },
+  {
     name: 'ask-clarifier',
     group: 'use',
     hook: 'Wire agent-clarifier in, so your agent asks before it acts, and only when it matters.',

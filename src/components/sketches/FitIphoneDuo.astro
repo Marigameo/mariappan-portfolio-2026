@@ -1,0 +1,68 @@
+---
+// Card sketch for the fit-iphone-duo story.
+// The problem in two drawings. Left, the closed phone: Safari keeps a column down
+// the right (grey, with the Dynamic Island in it), so the page gets 382 wide, not
+// the screen's 466. Right, the same page on the open screen: the crease runs down
+// the middle (coral, dashed) and the lone centred button sits right on it, ringed.
+// The cards under it are two columns, so their gap takes the crease, which is the
+// fix the skill reaches for. Everything sits in the top 16:9 of the 600x440 box,
+// since card frames crop the bottom. Colours come from the .sk rules.
+const mid = 382;
+---
+<svg class="sk" viewBox="0 0 600 440" preserveAspectRatio="xMinYMin slice" role="img" aria-label="Sketch of a website on iPhone Duo. On the left, the closed phone: Safari keeps a grey column down the right edge, so the page is 382 wide, not 466. An arrow points to the open phone on the right, where a dashed crease runs down the middle of the screen and the page’s lone centred button, Start free, sits right on it, ringed in coral, with a handwritten note: on the crease. The two cards below it leave their gap on the crease.">
+  <rect width="600" height="440" class="f-page"/>
+
+  <!-- Closed: the page, and Safari's column beside it. -->
+  <g class="sk-lift">
+    <rect x="24" y="30" width="104" height="152" rx="17" class="f-card" stroke="var(--ink)" stroke-width="2"/>
+    <rect x="29" y="35" width="94" height="142" rx="12" class="f-bar-2"/>
+    <rect x="29" y="35" width="77" height="121" rx="11" class="f-paper"/>
+    <rect x="110" y="44" width="6" height="18" rx="3" class="f-ink"/>
+    <rect x="36" y="44" width="26" height="5" rx="2" class="f-bar"/>
+    <rect x="41" y="62" width="54" height="7" rx="2" class="f-bar"/>
+    <rect x="46" y="73" width="44" height="7" rx="2" class="f-bar"/>
+    <rect x="48" y="92" width="40" height="12" rx="6" class="f-ink"/>
+    <rect x="36" y="116" width="64" height="30" rx="4" class="f-tint"/>
+  </g>
+  <text x="24" y="206" font-size="11" style="font-family: var(--font-mono)">382 wide</text>
+  <text x="88" y="207" font-size="15" style="fill: var(--coral); font-family: var(--font-hand)">not 466</text>
+
+  <path d="M142 106 H176" class="s-ink" stroke-opacity=".6"/>
+  <path d="M170 100 l7 6 -7 6" class="s-ink" stroke-opacity=".6"/>
+
+  <!-- Open: the crease down the middle, and a button on it. -->
+  <g class="sk-lift">
+    <rect x="188" y="24" width="388" height="274" rx="24" class="f-card" stroke="var(--ink)" stroke-width="2"/>
+    <rect x="195" y="31" width="374" height="260" rx="18" class="f-bar-2"/>
+    <rect x="195" y="50" width="374" height="227" class="f-paper"/>
+    <rect x="330" y="36" width="104" height="10" rx="5" class="f-card"/>
+
+    <rect x="210" y="60" width="40" height="6" rx="2" class="f-bar"/>
+    <rect x="478" y="61" width="18" height="4" rx="2" class="f-bar-2"/>
+    <rect x="503" y="61" width="18" height="4" rx="2" class="f-bar-2"/>
+    <rect x="528" y="61" width="26" height="4" rx="2" class="f-bar-2"/>
+
+    <rect x={mid - 70} y="82" width="140" height="12" rx="3" class="f-bar"/>
+    <rect x={mid - 52} y="100" width="104" height="12" rx="3" class="f-bar"/>
+    <rect x={mid - 82} y="122" width="164" height="5" rx="2" class="f-bar-2"/>
+    <rect x={mid - 66} y="131" width="132" height="5" rx="2" class="f-bar-2"/>
+
+    <rect x={mid - 40} y="149" width="80" height="22" rx="11" class="f-ink"/>
+    <text x={mid} y="164" font-size="10" font-weight="500" text-anchor="middle" class="t-on-ink">Start free</text>
+
+    <rect x="210" y="194" width="165" height="64" rx="8" class="f-card s-soft" stroke-width="1.5"/>
+    <rect x="389" y="194" width="165" height="64" rx="8" class="f-card s-soft" stroke-width="1.5"/>
+    <rect x="222" y="208" width="70" height="6" rx="2" class="f-bar"/>
+    <rect x="222" y="222" width="120" height="4" rx="2" class="f-bar-2"/>
+    <rect x="401" y="208" width="70" height="6" rx="2" class="f-bar"/>
+    <rect x="401" y="222" width="120" height="4" rx="2" class="f-bar-2"/>
+
+    <line x1={mid} y1="31" x2={mid} y2="291" stroke="var(--coral)" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <ellipse cx={mid} cy="160" rx="54" ry="19" fill="none" stroke="var(--coral)" stroke-width="2" transform={`rotate(-4 ${mid} 160)`}/>
+  </g>
+  <text x="444" y="166" font-size="16" style="fill: var(--coral); font-family: var(--font-hand)">on the crease</text>
+</svg>
+
+<style>
+  .t-on-ink { fill: var(--paper-2) !important; }
+</style>

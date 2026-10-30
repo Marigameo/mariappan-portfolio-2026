@@ -1,0 +1,65 @@
+---
+/* The five sizes Safari 27.1 gives a web page on iPhone Duo, drawn to one scale. Each
+   screen is the dashed outline, your page is the coral rectangle inside it, and the
+   grey is what Safari keeps for its own bars. The crease is a dashed line on the open
+   screen; on Open, tall its height is an estimate, so it's dotted. Split View has your
+   page on the left and another app on the right. Numbers from WebKit's "Features for
+   Safari 27.1" (the playground's poses.json); where each bar sits is estimated, as in
+   the playground. Each pose is its own small SVG so the row wraps on a phone. */
+interface Rect { x: number; y: number; w: number; h: number }
+interface Pose { name: string; size: string; note?: string; w: number; h: number; pages: Rect[]; other?: Rect; crease?: 'v' | 'h' }
+const poses: Pose[] = [
+  { name: 'Closed', size: '382 × 580', note: 'the screen is 466', w: 466, h: 678, pages: [{ x: 0, y: 0, w: 382, h: 580 }] },
+  { name: 'Closed, wide', size: '594 × 368', w: 678, h: 466, pages: [{ x: 0, y: 0, w: 594, h: 368 }] },
+  { name: 'Open', size: '951 × 585', w: 951, h: 669, pages: [{ x: 0, y: 49, w: 951, h: 585 }], crease: 'v' },
+  { name: 'Open, tall', size: '669 × 867', w: 669, h: 951, pages: [{ x: 0, y: 49, w: 669, h: 867 }], crease: 'h' },
+  { name: 'Split View', size: '385 × 571', note: 'each window', w: 951, h: 669, pages: [{ x: 84, y: 49, w: 385, h: 571 }], other: { x: 482, y: 49, w: 385, h: 571 } },
+];
+const alt = 'The five sizes Safari gives a web page on iPhone Duo, drawn to scale, with Safari’s own bars shaded grey. Closed: the screen is 466 wide, but Safari keeps a column down the right, so the page gets 382 by 580. Closed, wide: 594 by 368, the shortest. Open: 951 by 585, with the crease down the middle. Open, tall: 669 by 867, with the crease across, its height estimated. Split View: 385 by 571 for each window, your page beside another app.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ps" role="img" aria-label={alt}>
+    <ul class="ps-row" aria-hidden="true">
+      {poses.map((p) => (
+        <li>
+          <svg class="ps-svg" viewBox={`-6 -6 ${p.w + 12} ${p.h + 12}`} style={`--w: ${p.w + 12}`}>
+            <rect x="-4" y="-4" width={p.w + 8} height={p.h + 8} rx="54" class="ps-body" />
+            <rect x="0" y="0" width={p.w} height={p.h} rx="46" class="ps-chrome" />
+            {p.pages.map((r) => <rect x={r.x} y={r.y} width={r.w} height={r.h} class="ps-page" />)}
+            {p.other && <rect x={p.other.x} y={p.other.y} width={p.other.w} height={p.other.h} class="ps-other" />}
+            {p.crease === 'v' && <line x1={p.w / 2} y1="0" x2={p.w / 2} y2={p.h} class="ps-crease" />}
+            {p.crease === 'h' && <line x1="0" y1={p.h / 2} x2={p.w} y2={p.h / 2} class="ps-crease ps-crease--est" />}
+          </svg>
+          <strong>{p.name}</strong>
+          <span class="ps-size">{p.size}</span>
+          {p.note && <span class="ps-note">{p.note}</span>}
+        </li>
+      ))}
+    </ul>
+    <p class="ps-key" aria-hidden="true"><span class="ps-swatch ps-swatch--page"></span>your page <span class="ps-swatch ps-swatch--chrome"></span>Safari’s bars <span class="ps-swatch ps-swatch--crease"></span>the crease</p>
+  </div>
+  <figcaption>The sizes WebKit published for Safari 27.1, to scale. Where each bar sits is estimated.</figcaption>
+</figure>
+
+<style>
+  .ps { --s: .17; }
+  .ps p { margin: 0 !important; max-width: none; }
+  .ps-row { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 1.6rem 1.4rem; }
+  .ps-row li { display: grid; justify-items: center; gap: .1rem; text-align: center; }
+  .ps-svg { display: block; width: calc(var(--w) * var(--s) * 1px); height: auto; margin-bottom: .45rem; overflow: visible; }
+  .ps-body { fill: none; stroke: var(--ink); stroke-width: 3; vector-effect: non-scaling-stroke; }
+  .ps-chrome { fill: var(--ink); fill-opacity: .12; }
+  .ps-page { fill: color-mix(in srgb, var(--coral) 22%, var(--paper-2)); stroke: var(--coral); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .ps-other { fill: var(--paper-2); stroke: var(--ink); stroke-opacity: .35; stroke-width: 1.5; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
+  .ps-crease { stroke: var(--coral); stroke-width: 2; stroke-dasharray: 6 4; vector-effect: non-scaling-stroke; }
+  .ps-crease--est { stroke-dasharray: 2 4; }
+  .ps-row strong { font-size: .85rem; font-weight: 500; color: var(--ink); }
+  .ps-size { font-family: var(--font-mono); font-size: .72rem; color: var(--coral); }
+  .ps-note { font-family: var(--font-hand); font-size: 1rem; line-height: 1.1; color: var(--ink-soft); }
+  .ps-key { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .35rem .5rem; margin-top: 1.4rem !important; font-size: .78rem; color: var(--ink-faint); }
+  .ps-swatch { display: inline-block; width: .9rem; height: .6rem; margin-left: .5rem; border-radius: 2px; }
+  .ps-swatch--page { background: color-mix(in srgb, var(--coral) 22%, var(--paper-2)); border: 1.5px solid var(--coral); }
+  .ps-swatch--chrome { background: color-mix(in srgb, var(--ink) 12%, transparent); }
+  .ps-swatch--crease { height: 0; border-top: 2px dashed var(--coral); border-radius: 0; }
+  @media (max-width: 639px) { .ps { --s: .12; } .ps-row { gap: 1.2rem 1rem; } }
+</style>

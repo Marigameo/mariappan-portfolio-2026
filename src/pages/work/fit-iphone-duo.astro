@@ -1,0 +1,518 @@
+---
+/* fit-iphone-duo, told as a case study rather than a build log: Apple's new foldable
+   and a guide written for apps, my doubt that the web needed anything, what convinced
+   me (Safari keeps a column, so the page is 382 wide, not 466, and nobody showed the
+   worst sizes), the research, the idea that fixing it should be a prompt away, fixing
+   causes instead of the device, a report you decide from, the playground as the
+   support act, the calls, the results, credits, lessons and what's still estimated.
+   The skill is the product; the playground is how people see the problem and check a
+   fix. Renders are real: the sample report from the skill's sample-report/ folder and
+   the playground from its process/ folder. Sources: the skill's journey/ notes and both
+   repos' journals (not published). Media lives in public/images/work/fit-iphone-duo/.
+   New figures live in ../../components/sketches/duo/. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Versus from '../../components/sketches/studio/Versus.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import ProseTable from '../../components/sketches/genui/ProseTable.astro';
+import PoseShelf from '../../components/sketches/duo/PoseShelf.astro';
+import { skillsRepo, installCmd } from '../../data/skills';
+
+const img = (f: string) => `/images/work/fit-iphone-duo/${f}`;
+const skillUrl = `${skillsRepo}/tree/main/skills/fit-iphone-duo`;
+const playground = 'https://marigameo.github.io/iphone-duo-playground/';
+const report = `${playground}report/`;
+const hig = 'https://developer.apple.com/design/human-interface-guidelines/designing-for-iphone-duo';
+const webkit = 'https://webkit.org/blog/18486/webkit-features-for-safari-27-1/';
+const description = 'fit-iphone-duo, a skill that makes a website work on iPhone Duo, Apple’s book-style foldable: why I doubted the web needed it, what convinced me, how it audits at the sizes Safari really gives a page, fixes the causes and proves it, and what I learnt. Built by me, paired with Claude.';
+
+const rules = [
+  { apple: 'Build your app to resize', web: 'Opening the phone resizes the page without a reload. Never read the width once and keep it.' },
+  { apple: 'Keep interactive elements out of the fold', web: 'Small controls stay off the centre line of the open screen. Text, images and long rows may cross it.' },
+  { apple: 'Prefer an even number of columns', web: 'Two or four columns on the open screen, so a gap takes the crease, not a card.' },
+  { apple: 'Move only what’s necessary', web: 'The smallest fix that holds at every width. No redesign nobody asked for.' },
+  { apple: 'Controls sit on the trailing side', web: 'Safari puts its own column there, so the page gets 382 wide, and Safari paints your background colour behind it.' },
+  { apple: 'Avoid metrics tied to a specific screen', web: 'No device detection. The user agent says “iPhone” at every size, even 951 wide.' },
+];
+
+const calls = [
+  { call: 'The playground first', why: 'It shows the problem in a minute, and it became the skill’s test bench.' },
+  { call: 'WebKit’s real sizes', why: 'Screen pixels divided by three isn’t what Safari gives a page.' },
+  { call: 'WebKit for the audit, Xcode optional', why: 'The same engine family as Safari, on any OS. Most people don’t have Xcode 27.1, so the Safari pass runs only where it can, and says when it didn’t.' },
+  { call: 'Fix the cause, not a patch block', why: 'A patch for one device’s widths breaks on the next one.' },
+  { call: 'The fold APIs as an extra, never required', why: 'They sit behind Safari flags that are off by default. Almost no visitor has them.' },
+  { call: '“Go” covers safe fixes and picks only', why: 'Fast for people who’d rather delegate. Anything that changes content stays the owner’s call.' },
+  { call: 'Estimates labelled where you see them', why: 'Being more honest than the previewers is the whole point.' },
+];
+
+const credits = [
+  { href: hig, source: 'Apple', title: 'Designing for iPhone Duo, and its four Tech Talks', note: 'The rules: the fold, even columns, move only what’s necessary.' },
+  { href: webkit, source: 'WebKit', title: 'Features for Safari 27.1', note: 'The five sizes Safari gives a page, and the fold APIs behind flags.' },
+  { href: 'https://github.com/mirzaaghazadeh/iphone-duo-skills', source: 'mirzaaghazadeh', title: 'iphone-duo-skills', note: 'The clean skill for apps that got me asking about the web.' },
+  { href: 'https://github.com/gurovdigital/duo-ready', source: 'Pavel Gurov', title: 'duo-ready', note: 'The first web skill. The crease check and its 240px threshold started here.' },
+  { href: 'https://dev.to/tyoukyou23/i-measured-what-safari-actually-gives-your-web-page-on-iphone-duo-8jp', source: 'tyoukyou23 on dev.to', title: 'I measured what Safari actually gives your web page on iPhone Duo', note: 'The mid-fold resize, measured on the simulator.' },
+  { href: 'https://github.com/chuspeeism/iphone-duo', source: 'chuspeeism', title: 'iphone-duo', note: 'The glass fold the playground borrows, without Three.js.' },
+  { href: 'https://github.com/emilkowalski/skills', source: 'Emil Kowalski', title: 'Design engineering and animation skills', note: 'The audits that polished the playground.' },
+];
+
+const levels = [
+  { name: 'Safe fix', text: 'Made on your go', tone: 'teal' },
+  { name: 'My pick', text: 'Made, then shown to you', tone: 'violet' },
+  { name: 'Needs you', text: 'Waits for your answer', tone: 'coral' },
+  { name: 'Leave', text: 'Harmless, with the reason', tone: 'ink-faint' },
+];
+
+const stats = [
+  { value: '5', label: 'Real sites, first', sub: 'strivelabs.ai, Tailwind, Bootstrap, Wikipedia and Stripe. About a minute each', ink: 'coral' },
+  { value: '3 of 4', label: 'False alarms, on my own site', sub: 'The first “must fix” list was mostly the skill’s mistakes. Six fixes to the skill followed', ink: 'blue' },
+  { value: '10 → 0', label: 'Left to change, on my homepage', sub: '6 fixed in two CSS files, 4 left on purpose, each with its reason', ink: 'teal' },
+  { value: '33', label: 'Self-test checks', sub: 'Three pages with problems planted on purpose, and the judgement calls', ink: 'violet' },
+];
+
+const lessons = [
+  { miss: 'Trusted an online previewer’s idea of the screen.', lesson: 'Ask where the numbers come from. Screen pixels divided by three isn’t what Safari gives a page.' },
+  { miss: 'Assumed a decent responsive site needs nothing.', lesson: 'Mostly true. The breaks hide at the edges: a 368px-tall screen, the crease, a width read once.' },
+  { miss: 'Ran the first audit on my own site and believed the list.', lesson: 'Test on a site you know by heart. You spot a false alarm in a second.' },
+  { miss: 'Shipped a report you had to cross-read with screenshots.', lesson: 'The output is the product. Pictures and a plan get decisions made.' },
+];
+---
+<WorkLayout
+  title="fit-iphone-duo — fitting websites to Apple’s foldable"
+  description={description}
+  ogDescription="Your site doesn’t have to be ready for Apple’s foldable today. When you want it to be, it should be a prompt away."
+  eyebrow="Open source · Design engineer · Oct 2026"
+  heading="fit-iphone-duo"
+  facts={[
+    { label: 'Role', value: 'Solo build, paired with Claude' },
+    { label: 'Status', value: 'Open source (MIT), in my skills repo. Playground live' },
+  ]}
+  link={{ href: skillUrl, label: 'GitHub' }}
+  schema={{
+    name: 'fit-iphone-duo',
+    url: skillUrl,
+    description: 'An agent skill that makes a website work on iPhone Duo in Safari 27.1: it audits the site in WebKit at the five viewports Safari really gives a page and at the crease, sorts every finding into a level, fixes the causes in the site’s own code on the owner’s go, and proves the fix with a second audit. With a playground that shows any site at those sizes.',
+    inLanguage: 'en',
+    keywords: 'iPhone Duo, foldable, responsive web design, Safari 27.1, agent skills, Playwright, WebKit, design engineering, audit, designing with Claude',
+  }}
+>
+  <Fragment slot="lede">Apple’s iPhone Duo gives a web page five new sizes and a crease down the middle. Your site doesn’t have to be ready for it today. But when you want it to be, it should be <mark class="hl">a prompt away</mark>, without learning Apple’s fine print first. That’s this skill.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The aim</h3>
+      <p>Find out whether the web really needs to care about Apple’s foldable. If it does, make fitting a site to it a prompt away, so nobody has to remember the sizes, the bars or the fold.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The question.</strong> Is there a real problem, and what part of it has nobody solved?</li>
+          <li><strong>Every call.</strong> The playground first, WebKit over Xcode, the name, the credits, what the report should feel like.</li>
+          <li><strong>The trial.</strong> My own site, end to end, to see if the skill holds.</li>
+        </ul>
+        <p>Claude researched, built and tested. I set the direction and made the calls.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Considered</h3>
+      <p>Safari’s real sizes, not estimates. WebKit as the audit engine, on any OS. Fixes at the cause, never device detection. A report you decide from. Honest about what’s still estimated. Open source on <a href={skillUrl} rel="noopener">GitHub</a>, with a <a href={playground} rel="noopener">live playground</a>.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <figure class="shot-fig">
+      <button class="zoom" type="button" data-full-tall data-full={img('report-full.webp')} data-full-alt="The sample report from the skill, at full length." aria-label="View the sample report full size">
+        <span class="shot-frame">
+          <img src={img('report.webp')} width="1600" height="1160" decoding="async" alt="The report the skill hands you, titled iPhone Duo audit. It says which engine ran and that the Safari pass was skipped. Four tiles count the findings by level: 2 Needs you, 5 My pick, 10 Safe fix, 2 Leave. Beside them: reply go and your agent makes 8 safe fixes and 3 of its picks, which clear 15 items; 2 need your answer first, each asked as a plain question. Below, the page at all five sizes, each marked with what broke, such as scrolls sideways or 1 on the crease.">
+        </span>
+        <span class="zoom-icon zoom-icon--bottom rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+      </button>
+      <figcaption>What the skill hands you: a plan up top, then a card per finding. This sample is for a made-up site.</figcaption>
+    </figure>
+    <p class="more-note"><a href={report} rel="noopener">Open the live sample <span class="nowrap">report<Icon name="arrow-right" /></span></a></p>
+
+    <section class="slide" aria-labelledby="s-problem">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">The problem</p><h2 id="s-problem">A guide for apps, a gap for the web</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I was reading <a href={hig} rel="noopener">Apple’s design guidelines</a> and found a new one: designing for iPhone Duo, Apple’s book-style foldable. In depth, with the reasons behind every rule, but <strong>written for apps</strong>.</li>
+        <li>Then I found a skill for it, super clean, for building apps with agents. Nothing like it for websites. If foldables end up in more hands, <strong>we’ll care about them the way we care about mobile first today</strong>.</li>
+      </ul>
+      <Versus
+        left={{ title: 'An app on iPhone Duo', tone: 'blue', items: ['Apple’s APIs nudge controls off the fold', 'Told when the phone folds', 'A clean agent skill already exists'] }}
+        right={{ title: 'A website in Safari', tone: 'coral', items: ['Nothing moves off the fold by itself', 'Never told it folded: the APIs are behind flags', 'No up-to-date skill for it'] }}
+        marks="dot"
+        alt="Same device, two worlds. An app on iPhone Duo: Apple’s APIs nudge controls off the fold, the app is told when the phone folds, and a clean agent skill already exists. A website in Safari: nothing moves off the fold by itself, the page is never told it folded because the APIs are behind flags, and there’s no up-to-date skill for it."
+        caption="Same device. Apps get help. Websites get new sizes."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-doubt">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Hesitation</p><h2 id="s-doubt">Does the web even need this?</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I stepped back first. A decent responsive site should cope without a dedicated fix. Was anything here <strong>really pressing</strong>, or was it a solution looking for a problem?</li>
+        <li>So I tried the online previewers and the one web skill out there, to see <strong>whether someone had solved it already, and how well</strong>. If they had, there was nothing to build.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-2" aria-label="My doubt, before building anything">
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-q"><span>Me</span>“Any decent responsive website should work without hassle as it is, even without any dedicated fixes or audits.”</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
+      </aside>
+    </section>
+
+    <section class="slide" aria-labelledby="s-convinced">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">What convinced me</p><h2 id="s-convinced">Safari keeps a column for itself</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The previewers all made the same mistake: the screen’s pixels divided by three, called the page. But Safari doesn’t give a page the whole screen. On the closed phone its controls take a column down the right, so <strong>a page gets 382px, not 466</strong>.</li>
+        <li><a href={webkit} rel="noopener">WebKit had published the real sizes</a> on 23 October. They hold <strong>two sizes nobody showed</strong>: 368px tall when the closed phone turns sideways, and 385px wide in Split View. And on the open screen, a centred button lands right on the crease, where Apple says it’s hard to tap.</li>
+        <li>That was the gap: <strong>the real sizes, and a way to fix what breaks at them</strong>.</li>
+      </ul>
+      <PoseShelf />
+    </section>
+
+    <section class="slide" aria-labelledby="s-research">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Research</p><h2 id="s-research">Read first, then cut</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Apple’s guide and its four Tech Talks, WebKit’s notes, nine previewers, nine agent skills and the articles that measured what breaks. <strong>Every source saved, and rated by how far to trust it</strong>.</li>
+        <li>Apple writes for apps, so each rule needed a reading for the web. Some things don’t belong in a web skill at all: native APIs, cameras, layouts that only work with the fold flags on, and <strong>any kind of device detection</strong>.</li>
+      </ul>
+      <ProseTable caption="Apple’s rules for apps, read for the web">
+        <thead>
+          <tr><th scope="col">Apple says</th><th scope="col">On the web</th></tr>
+        </thead>
+        <tbody>
+          {rules.map((r) => <tr><th scope="row">{r.apple}</th><td>{r.web}</td></tr>)}
+        </tbody>
+      </ProseTable>
+    </section>
+
+    <section class="slide" aria-labelledby="s-idea">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">The idea</p><h2 id="s-idea">A prompt away</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>You don’t have to fit your site to iPhone Duo today. But when you want to, it shouldn’t be much work. You shouldn’t have to remember <strong>five sizes, where Safari keeps its bars, or what Apple says about the fold</strong>.</li>
+        <li>So the skill carries all of it. Say “make my site work on iPhone Duo”, and your agent finds what breaks, <strong>shows you, and fixes it in your own code</strong>.</li>
+      </ul>
+      <StudioLoop
+        steps={[
+          { kicker: 'Audit', label: 'Five sizes, in WebKit', sub: 'every page with controls, the crease drawn in', tone: '' },
+          { kicker: 'Triage', label: 'A level for each finding', sub: 'safe fix, my pick, needs you, or leave', tone: 'coral' },
+          { kicker: 'Your go', label: 'One word', sub: 'safe fixes and picks are made; questions wait for answers', tone: 'blue' },
+          { kicker: 'Prove', label: 'Audit again', sub: 'fixed, still there or new, item by item', tone: 'teal' },
+        ]}
+        note="nothing in your code changes before your go"
+        alt="Four steps in a row. Audit: the site at five sizes in WebKit, every page with controls, the crease drawn in. Triage, in coral: a level for each finding, safe fix, my pick, needs you or leave. Your go, in blue: one word, and the safe fixes and picks are made while questions wait for answers. Prove, in teal: audit again, and each item is marked fixed, still there or new. A handwritten note says nothing in your code changes before your go."
+        caption="You answer what’s yours. The skill does the rest."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-cause">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Approach</p><h2 id="s-cause">Fix the cause, never the device</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The quick fix is a patch: detect iPhone Duo, add a block of CSS for its widths. It breaks on the next foldable, and <strong>the user agent says “iPhone” at every size</strong> anyway.</li>
+        <li>So the skill fixes the cause, and only that: a layout that holds from 382 to 951, an even number of columns, a pair of buttons instead of one centred alone. It’s Apple’s own rule: <strong>move only what’s necessary</strong>.</li>
+        <li>Some rows have no clean fix, like five links centred in a footer. For those there’s <strong>one labelled last resort</strong>: a rule for touch screens at the open width only. My own footer needed it.</li>
+      </ul>
+      <Versus
+        left={{ title: 'A patch for the device', tone: 'ghost', items: ['Detect the device, then branch', 'A block of CSS for its widths', 'Breaks on the next foldable'] }}
+        right={{ title: 'A fix at the cause', stamp: 'the skill', tone: 'coral', items: ['Holds at any width, 382 to 951', 'The smallest move that works', 'Never reads the user agent'] }}
+        alt="Two ways to fix a site for iPhone Duo. Left, dashed, a patch for the device: detect the device then branch, a block of CSS for its widths, and it breaks on the next foldable. Right, in coral and stamped the skill, a fix at the cause: it holds at any width from 382 to 951, it’s the smallest move that works, and it never reads the user agent."
+        caption="Fit the layout, not the phone."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-report">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Design call · output</p><h2 id="s-report">Decide from pictures, not text</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The first report was text, plus screenshots to read alongside it. I asked what would make it quicker to grasp, and for a <strong>“shall I just do it?” mode</strong> for people who’d rather leave the decisions to the agent.</li>
+        <li>Now every finding is a card with the problem outlined on a screenshot, sorted into four levels. <strong>“Go” makes the safe fixes and the agent’s picks.</strong> Anything that changes content waits for you.</li>
+      </ul>
+      <aside class="qa sk-box sk-lean-1" aria-label="My ask for the report">
+        <div class="qa-row qa-row--me">
+          <p class="qa-bubble qa-q"><span>Me</span>“I’m trying to understand what kind of output would make the audit review easier and faster to grasp, and make decisions.”</p>
+          <img class="qa-av qa-av--me" src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+        </div>
+      </aside>
+      <figure class="shot-fig">
+        <button class="zoom" type="button" data-full={img('report-card.webp')} data-full-alt="One card from the sample report: a control on the crease." aria-label="View the report card full size">
+          <span class="shot-frame">
+            <img src={img('report-card.webp')} width="1520" height="680" loading="lazy" decoding="async" alt="One card from the report. On the left, the open screen with a red dashed line down the middle, the crease, running straight through a lone Start writing, free button, outlined in blue. On the right: Control on the crease, marked Needs you and To fix, 200px wide across the crease at x 475.5. Under Your call, the question: add a second button so the gap lands on the crease, or move the one button left on wide screens? Under Options, why: a pair is the smaller change, but it adds a call to action, which is a content decision. Then the file and line.">
+          </span>
+          <span class="zoom-icon zoom-icon--bottom rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+        </button>
+        <ul class="levels" aria-label="The four levels">
+          {levels.map((l) => <li style={`--c: var(--${l.tone})`}><b>{l.name}</b>{l.text}</li>)}
+        </ul>
+        <figcaption>A content change is never the agent’s call. It asks.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-playground">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">The support act</p><h2 id="s-playground">A playground that tells the truth</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The skill is the product. <a href={playground} rel="noopener">The playground</a> is where you see the problem first and check the fix after: <strong>your site at the five sizes</strong>, Safari’s bars where they sit, the crease drawn in, on a device sized from Apple’s own dimensions.</li>
+        <li>Open or close it, and your page resizes <strong>without a reload</strong>, through the in-between size Safari reports mid-fold, as on the device. Anything that’s an estimate is labelled on screen.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="pair">
+          <button class="zoom" type="button" data-full={img('playground-closed.webp')} data-full-alt="The playground, closed: the page 382 wide beside Safari’s column." aria-label="View the closed phone full size">
+            <span class="shot-frame">
+              <img src={img('playground-closed.webp')} width="640" height="800" loading="lazy" decoding="async" alt="The playground with the phone closed. A sample page, Fold Notes, fills 382 by 580 of the screen, and Safari’s controls run down a column on the right, with the Dynamic Island, the time and the back, forward, share, bookmarks and tabs buttons. Under the device: 382 by 580 CSS px, no crease, and a toolbar to switch between Closed, Closed wide, Open, Open tall and Split View.">
+              <span class="ba-tag ba-tag--left" aria-hidden="true">Closed</span>
+            </span>
+          </button>
+          <button class="zoom" type="button" data-full={img('playground-open.webp')} data-full-alt="The playground, open and folded: the crease down the middle." aria-label="View the open phone full size">
+            <span class="shot-frame">
+              <img src={img('playground-open.webp')} width="1040" height="800" loading="lazy" decoding="async" alt="The playground with the phone open and folded. The same page fills the wide screen with Safari’s bars at the top and bottom, and a red dashed crease runs down the middle, between its two buttons. A Fold note above explains: partly folded, the screen curves here and small controls are hard to tap; keep buttons, links and fields off this line, while text and images can cross it.">
+              <span class="ba-tag ba-tag--left" aria-hidden="true">Open, folded</span>
+            </span>
+          </button>
+        </div>
+        <figcaption>The sample page follows its own advice: on the open screen, the crease falls between its two buttons.</figcaption>
+      </figure>
+      <p class="more-note"><a href={playground} rel="noopener">Try your site in the <span class="nowrap">playground<Icon name="arrow-right" /></span></a></p>
+    </section>
+
+    <section class="slide" aria-labelledby="s-calls">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">With AI</p><h2 id="s-calls">I made the calls, Claude did the legwork</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>We worked as a pair in Claude Code. Claude researched, built and tested; <strong>I made the calls</strong>, from options with a recommendation. Research came before any code, and every call is written down with its reason.</li>
+        <li>Outside skills were <strong>audited first, never applied blindly</strong>. A reviewer that wrote none of the code read it, and every test was proven by planting the bug it should catch.</li>
+      </ul>
+      <ProseTable caption="The calls, and why">
+        <thead>
+          <tr><th scope="col">The call</th><th scope="col">Why</th></tr>
+        </thead>
+        <tbody>
+          {calls.map((c) => <tr><th scope="row">{c.call}</th><td>{c.why}</td></tr>)}
+        </tbody>
+      </ProseTable>
+    </section>
+
+    <section class="slide" aria-labelledby="s-results">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">Results</p><h2 id="s-results">Tested on real sites, then on mine</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Five real sites first. Each of the big four had something on the crease, like <strong>Tailwind’s ⌘K search and Stripe’s Resources menu</strong>. Early false alarms went: links inside sentences may cross the fold, and two columns of text aren’t a grid.</li>
+        <li>Then my own site, the one I know by heart. The first list said four things must be fixed, and <strong>three were the skill’s own mistakes</strong>. Six fixes to the skill later, the whole loop ran on it: audit, triage, my answers, fix, audit again. <strong>Two CSS files changed, and nothing left to change.</strong></li>
+      </ul>
+      <ul class="stats">
+        {stats.map((s, i) => (
+          <li class:list={['sk-box', `sk-box--${s.ink}`, `sk-lean-${i + 1}`]}>
+            <b>{s.value}</b>
+            <strong>{s.label}</strong>
+            <span>{s.sub}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-credits">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">11</span>
+        <div><p class="slide-kicker">Credits</p><h2 id="s-credits">Built on others’ work</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Most of what this skill knows, <strong>someone else found first</strong>. Apple wrote the rules, WebKit published the numbers, and others measured, built and shared before me.</li>
+        <li>duo-ready was the first web skill, and a good one. This one differs in <strong>using Safari’s real sizes, fixing causes, checking behaviour as well as layout, and auditing in WebKit</strong>.</li>
+      </ul>
+      <div class="reads sk-box sk-lean-2">
+        <p class="reads-title">Learnt from</p>
+        <ul>
+          {credits.map((c) => (
+            <li><a href={c.href} rel="noopener"><span>{c.source}</span>{c.title}</a><em>{c.note}</em></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">12</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What I’d tell day-zero me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 4) + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-next">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">13</span>
+        <div><p class="slide-kicker">Limits &amp; next</p><h2 id="s-next">Honest about what’s left</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The audit runs in WebKit through Playwright, not in Safari itself, and the playground runs in your own browser. <strong>Both say so where you can see it.</strong></li>
+        <li>A few numbers are still estimates: where the crease sits on the open, tall screen, and where Safari draws its bars. The skill’s Safari simulator pass is written, but <strong>it has never run</strong>, because I skipped installing Xcode.</li>
+      </ul>
+      <p class="next"><span>Next</span>A real device, the simulator pass, and more sites from the people who try it.</p>
+    </section>
+
+    <blockquote class="closer">You don’t have to fit your site to a foldable today. When you want to, it’s a prompt away.</blockquote>
+
+    <a class="deep-dive wobbly wobbly--2" href={skillUrl} rel="noopener">
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="github" />The skill · open source</span>
+        <strong>Want your site to fit iPhone Duo?</strong>
+        <span class="deep-dive-sub">Ask your agent with <code>fit-iphone-duo</code>: an audit at Safari’s real sizes, a report you decide from, and fixes in your own code.</span>
+        <code class="install">{installCmd}</code>
+        <span class="deep-dive-go">Open it on GitHub<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+    <div class="get-it">
+      <a class="get-link" href={playground} rel="noopener">Playground <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={report} rel="noopener">Sample report <Icon name="external" class="doodle--thin" /></a>
+    </div>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</WorkLayout>
+
+<style>
+  /* The deck styles shared with the other stories, plus this story's levels, pair and stats. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+  .story :global(.table-fig) { margin-top: var(--space-3); }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+
+  /* My own words, as a chat bubble beside my portrait. */
+  .qa { margin-top: var(--space-3); padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .9rem; }
+  .qa-row { display: flex; align-items: flex-end; gap: .65rem; }
+  .qa-row--me { justify-content: flex-end; }
+  .qa-bubble { margin: 0 !important; max-width: min(36rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; color: var(--ink) !important; background: var(--sand); border: 1.5px solid var(--line); border-radius: 14px 14px 14px 4px; }
+  .qa-bubble span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--violet); }
+  .qa-q { color: var(--ink-soft) !important; font-style: italic; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border-color: color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 4px 14px; }
+  .qa-q span { font-style: normal; color: var(--teal); }
+  .qa-av { position: relative; flex: none; width: 2.4rem; height: 2.4rem; overflow: hidden; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--sand-2); }
+  .qa-av--me { object-fit: cover; }
+
+  /* Real renders. They keep their own colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; display: block; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  .ba-tag { position: absolute; top: -.9rem; padding: .1rem .6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1.2; color: #fff; background: var(--coral); border-radius: 6px 3px 7px 4px / 4px 7px 3px 6px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-3deg); white-space: nowrap; }
+  .ba-tag--left { left: 4%; }
+  @media (max-width: 559px) { .ba-tag { top: -.75rem; font-size: .85rem; padding: .05rem .4rem; } }
+
+  .zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; text-align: inherit; cursor: zoom-in; }
+  .zoom .shot-frame { transition: transform .2s ease; }
+  .zoom:hover .shot-frame { transform: rotate(0deg) translateY(-2px); }
+  .zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 10px; }
+  .zoom-icon { position: absolute; right: .7rem; }
+  .zoom-icon--bottom { bottom: .7rem; }
+  .zoom:hover .zoom-icon { background: var(--ink); color: var(--paper); }
+  .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+
+  /* Slide 07: the four levels as chips under the card. */
+  .levels { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: 1.2rem 0 0; padding: 0; }
+  .levels li { display: inline-flex; align-items: baseline; gap: .5rem; padding: .3rem .8rem; font-size: .8rem; line-height: 1.35; color: var(--ink-soft); border: 1.5px solid var(--border); border-radius: 999px; background: var(--paper-2); }
+  .levels b { font-weight: 600; color: var(--c); }
+
+  /* Slide 08: the playground closed and open, side by side at the same height (the
+     columns follow the crops, 640 and 1040 wide); stacked on a phone. */
+  .pair { display: grid; grid-template-columns: 640fr 1040fr; gap: 1.4rem; }
+  .pair .zoom:nth-child(2) .shot-frame { transform: rotate(.5deg); }
+  @media (max-width: 639px) { .pair { grid-template-columns: 1fr; gap: 1.6rem; } }
+
+  /* Slide 10: the numbers, pinned up. */
+  .stats { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-block: var(--space-3) 0; padding: 0; }
+  @media (max-width: 559px) { .stats { grid-template-columns: 1fr; } }
+  .stats li { display: flex; flex-direction: column; gap: .15rem; padding: 1rem 1.05rem 1.1rem; }
+  .stats b { font-family: var(--font-display); font-size: 2.1rem; line-height: 1; letter-spacing: -.02em; color: var(--c); }
+  .stats strong { margin-top: .35rem; font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .stats span { font-size: .78rem; line-height: 1.4; color: var(--ink-faint); }
+
+  /* Slide 11: what I learnt from, as a card of links. */
+  .reads { margin-top: var(--space-3); padding: 1rem 1.1rem 1.1rem; max-width: 44rem; }
+  .reads-title { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .reads ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+  .reads li a { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+  .reads li a:hover { text-decoration-color: var(--ink); }
+  .reads li a span { display: block; font-size: .78rem; color: var(--ink-faint); text-decoration: none; }
+  .reads li em { display: block; font-size: .82rem; font-style: normal; color: var(--ink-soft); }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  .next { margin: 1.4rem 0 0 !important; max-width: 60ch; font-size: .95rem !important; color: var(--ink-soft); }
+  .next span { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  .closer { margin-top: var(--space-5); }
+
+  /* The end card: to the skill, in the deep-dive card's shape, as in draw-diagrams. */
+  .deep-dive { display: block; margin-top: var(--space-4); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-body { display: grid; gap: .55rem; padding: .3rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .install { justify-self: start; max-width: 100%; overflow-x: auto; padding: .35rem .7rem; font-size: .82rem; white-space: nowrap; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 8px; }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .2rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+  .get-it { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .8rem; margin-top: var(--space-3); }
+  .get-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .85rem; font-size: .88rem; font-weight: 500; color: var(--ink); text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px; }
+  .get-link:hover { border-color: var(--ink); }
+  .get-link :global(.doodle) { width: .85rem; height: .85rem; }
+</style>
