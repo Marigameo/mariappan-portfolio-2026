@@ -10,7 +10,8 @@
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "DENY"
+    # Framing is refused everywhere except here and the iPhone Duo playground (hosted, or run locally).
+    Content-Security-Policy = "frame-ancestors 'self' https://marigameo.github.io http://localhost:*"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
