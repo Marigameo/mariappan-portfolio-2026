@@ -1,0 +1,93 @@
+---
+/* How the fold slowed down and softened, round by round. Left: open and close
+   drawn as bars to one time scale, the first cut ghosted, the one that shipped
+   in coral. Right: the three easing curves plotted from their formulas
+   (smoothstep, smootherstep, smootherstep on the landing warp), so the flatter
+   ends are visible rather than described. Stacks on a phone. */
+const rounds = [
+  { round: 'Round 04', said: 'the first swing', open: 760, close: 640, tone: 'ghost' },
+  { round: 'Round 05', said: '“It’s too fast”', open: 1150, close: 980, tone: 'blue' },
+  { round: 'Round 08', said: '“slow, as on a real device”', open: 1640, close: 1920, tone: 'coral' },
+];
+const max = 2000;
+
+const W = 160, H = 120;
+const smoothstep = (p: number) => p * p * (3 - 2 * p);
+const smootherstep = (p: number) => p * p * p * (p * (6 * p - 15) + 10);
+const landing = (p: number) => smootherstep(1 - Math.pow(1 - p, 1.4));
+const path = (f: (p: number) => number) =>
+  Array.from({ length: 41 }, (_, i) => i / 40)
+    .map((p, i) => `${i ? 'L' : 'M'}${(p * W).toFixed(1)} ${(H - f(p) * H).toFixed(1)}`)
+    .join(' ');
+const curves = [
+  { d: path(smoothstep), cls: 'ft-c-ghost', label: 'smoothstep · round 04' },
+  { d: path(smootherstep), cls: 'ft-c-blue', label: 'smootherstep · round 05' },
+  { d: path(landing), cls: 'ft-c-coral', label: '+ a longer landing · round 08' },
+];
+const alt = 'The fold’s timing over three rounds, as bars on one scale. Round 04, the first swing, dashed: 760 milliseconds to open, 640 to close. Round 05, after “It’s too fast”, in blue: 1150 to open, 980 to close. Round 08, after “slow, as on a real device”, in coral: 1640 to open and 1920 to close. Beside it, three easing curves from 0 to 1: smoothstep from round 04, smootherstep from round 05, which is flatter at both ends, and round 08’s smootherstep on a time warp that stretches the last part, with a handwritten note: no jolt at either end.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet ft" role="img" aria-label={alt}>
+    <div class="ft-bars">
+      {rounds.map((r) => (
+        <div class:list={['ft-round', `ft-round--${r.tone}`]}>
+          <p class="ft-head"><span class="sk-hdr">{r.round}</span><span class="ft-said">{r.said}</span></p>
+          {(['open', 'close'] as const).map((k) => (
+            <div class="ft-row">
+              <span class="ft-k">{k}</span>
+              <span class="ft-track"><span class="ft-bar" style={`width: ${(r[k] / max) * 100}%`}></span></span>
+              <span class="ft-ms">{r[k]} ms</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+    <div class="ft-plot">
+      <p class="sk-hdr">Easing, start to land</p>
+      <svg viewBox={`-6 -6 ${W + 12} ${H + 12}`} aria-hidden="true">
+        <path d={`M0 0V${H}H${W}`} class="ft-axis"/>
+        {curves.map((c) => <path d={c.d} class={c.cls}/>)}
+      </svg>
+      <ul class="ft-legend" aria-hidden="true">
+        {curves.map((c) => <li class={c.cls}>{c.label}</li>)}
+      </ul>
+      <p class="sk-hand ft-note">no jolt at either end</p>
+    </div>
+  </div>
+  <figcaption>Slower each round, and softer where it starts and lands.</figcaption>
+</figure>
+
+<style>
+  .ft { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.6rem 2rem; align-items: start; }
+  .ft-bars { display: grid; gap: 1.1rem; }
+  .ft-round { --c: var(--ink-faint); }
+  .ft-round--blue { --c: var(--blue); }
+  .ft-round--coral { --c: var(--coral); }
+  .ft-head { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin: 0 0 .35rem !important; max-width: none; }
+  .ft-head .sk-hdr { margin: 0 !important; }
+  .ft-said { font-family: var(--font-hand); font-size: 1.1rem; line-height: 1; color: var(--c); }
+  .ft-row { display: grid; grid-template-columns: 2.6rem 1fr 4rem; align-items: center; gap: .5rem; margin-top: .3rem; }
+  .ft-k, .ft-ms { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .ft-ms { text-align: right; color: var(--ink-soft); }
+  .ft-track { display: block; height: .85rem; }
+  .ft-bar { display: block; height: 100%; border: 1.5px solid var(--c); border-radius: 3px 6px 4px 7px / 6px 3px 7px 4px; background: color-mix(in srgb, var(--c) 18%, var(--paper-2)); }
+  .ft-round--ghost .ft-bar { border-style: dashed; background: none; }
+  .ft-round--coral .ft-bar { box-shadow: 2px 2px 0 var(--shadow-ink); }
+
+  .ft-plot .sk-hdr { font-size: .62rem; line-height: 1.5; }
+  .ft-plot svg { display: block; width: 100%; max-width: 15rem; height: auto; overflow: visible; }
+  .ft-plot path { fill: none; stroke-width: 2; stroke-linecap: round; }
+  .ft-plot .ft-axis { stroke: var(--ink); stroke-opacity: .25; stroke-width: 1.2; }
+  .ft-c-ghost { --c: var(--ink-faint); }
+  .ft-c-blue { --c: var(--blue); }
+  .ft-c-coral { --c: var(--coral); }
+  .ft-plot path.ft-c-ghost { stroke: var(--ink-faint); stroke-dasharray: 4 4; }
+  .ft-plot path.ft-c-blue { stroke: var(--blue); }
+  .ft-plot path.ft-c-coral { stroke: var(--coral); stroke-width: 2.4; }
+  .ft-legend { list-style: none; margin: .8rem 0 0; padding: 0; display: grid; gap: .2rem; }
+  .ft-legend li { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .ft-legend li::before { content: ""; width: 1rem; border-top: 2px solid var(--c); }
+  .ft-legend li.ft-c-ghost::before { border-top-style: dashed; }
+  .ft-note { margin: .5rem 0 0 !important; }
+  @media (max-width: 639px) { .ft { grid-template-columns: 1fr; } }
+</style>

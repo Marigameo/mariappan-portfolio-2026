@@ -27,6 +27,23 @@ export interface StudioPiece {
 
 export const studio: StudioPiece[] = [
   {
+    slug: 'iphone-duo-playground',
+    title: 'Designing the iPhone Duo playground',
+    context: 'Side build · iPhone Duo playground',
+    frame: 'Duo / Open',
+    hook: 'A foldable you can fold in the browser, at the sizes Safari really gives a page.',
+    tags: ['Motion', 'Device preview'],
+    accent: 'blue',
+    preview: {
+      kind: 'video',
+      src: '/images/experiments/duo/loop.mp4',
+      poster: '/images/experiments/duo/loop-poster.webp',
+      width: 960,
+      height: 500,
+      alt: 'The iPhone Duo playground showing mariappan.netlify.app: the closed phone dims, its cover swings open as frosted glass over the blurred page, the page sharpens on the wide open screen, then the cover swings shut and the page wakes on the closed phone.',
+    },
+  },
+  {
     slug: 'library',
     title: 'Designing the Library in Strive',
     context: 'Strivelabs · Library',

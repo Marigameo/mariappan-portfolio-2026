@@ -1,0 +1,96 @@
+---
+// Hero sketch for the iPhone Duo playground story (the studio, Experiments page).
+// The playground as it is now: one header line, the device open on the whole
+// stage with Safari's top bar, a page wireframe, the crease dashed in coral
+// with the Fold marker above it, one caption line and the floating toolbar.
+// Drawn at the playground's own 1440 × 900 proportions, halved. Theme follows
+// the .sk rules; coral is the one accent, for the crease and the handwritten note.
+interface Props { label: string }
+const { label } = Astro.props;
+const poses = [
+  { x: 186, w: 46, t: 'Closed' },
+  { x: 236, w: 58, t: 'Closed, wide' },
+  { x: 298, w: 40, t: 'Open', on: true },
+  { x: 342, w: 52, t: 'Open, tall' },
+  { x: 398, w: 52, t: 'Split View' },
+];
+---
+<svg class="sk pg" viewBox="0 0 720 450" preserveAspectRatio="xMidYMid slice" role="img" aria-label={label}>
+  <rect width="720" height="450" class="f-page"/>
+
+  <!-- One header line: the name on the left, Your site, ⋯ and theme on the right. -->
+  <rect x="14" y="14" width="13" height="11" rx="3" class="s-ink"/>
+  <line x1="20.5" y1="16" x2="20.5" y2="23" class="s-ink pg-thin"/>
+  <text x="34" y="23.5" font-size="10" font-weight="500">iPhone Duo playground</text>
+  <rect x="592" y="11" width="56" height="17" rx="8.5" class="f-bar-2"/>
+  <text x="620" y="22.5" font-size="7.5" text-anchor="middle" class="t-soft">Your site</text>
+  <circle cx="663" cy="19.5" r="8.5" class="f-bar-2"/>
+  <circle cx="685" cy="19.5" r="8.5" class="f-bar-2"/>
+
+  <!-- The Fold marker, outside the device, at the crease's end. -->
+  <rect x="340" y="38" width="40" height="13" rx="6.5" class="f-card pg-pill"/>
+  <text x="360" y="47.5" font-size="7" text-anchor="middle" class="t-soft">ⓘ Fold</text>
+
+  <!-- The device, open: bezel, screen, Safari's top bar. -->
+  <rect x="158" y="60" width="404" height="284" rx="30" class="pg-bezel"/>
+  <rect x="170" y="72" width="380" height="260" rx="20" class="f-card"/>
+  <text x="184" y="85" font-size="7" font-weight="600">9:41</text>
+  <rect x="290" y="76" width="140" height="13" rx="6.5" class="f-page pg-pill"/>
+  <text x="360" y="85.5" font-size="6.5" text-anchor="middle">your-site.com</text>
+  <rect x="512" y="80" width="22" height="5" rx="2" class="f-bar"/>
+
+  <!-- Your page: a heading and text on the left, a picture on the right. -->
+  <rect x="186" y="104" width="30" height="6" rx="3" class="f-bar"/>
+  <rect x="380" y="105" width="150" height="4" rx="2" class="f-bar-2"/>
+  <rect x="186" y="150" width="120" height="13" rx="3" class="f-bar"/>
+  <rect x="186" y="168" width="140" height="13" rx="3" class="f-bar"/>
+  <rect x="186" y="192" width="104" height="5" rx="2.5" class="f-bar-2"/>
+  <rect x="186" y="203" width="150" height="4" rx="2" class="f-bar-2"/>
+  <rect x="186" y="212" width="146" height="4" rx="2" class="f-bar-2"/>
+  <rect x="186" y="221" width="120" height="4" rx="2" class="f-bar-2"/>
+  <rect x="186" y="292" width="40" height="13" rx="6.5" class="f-bar"/>
+  <rect x="231" y="292" width="40" height="13" rx="6.5" class="pg-ghost"/>
+  <rect x="276" y="292" width="40" height="13" rx="6.5" class="pg-ghost"/>
+  <g transform="rotate(-3 462 210)">
+    <rect x="404" y="140" width="116" height="150" rx="4" class="f-tint pg-pill"/>
+    <circle cx="462" cy="196" r="20" class="pg-ghost"/>
+    <path d="M430 280c4-28 20-40 32-40s28 12 32 40" class="pg-ghost"/>
+  </g>
+
+  <!-- Safari's bottom bar, then the crease down the middle. -->
+  <g class="f-bar">
+    <rect x="214" y="316" width="8" height="5" rx="2"/><rect x="286" y="316" width="8" height="5" rx="2"/>
+    <rect x="356" y="315" width="8" height="7" rx="2"/><rect x="426" y="315" width="8" height="7" rx="2"/><rect x="496" y="315" width="8" height="7" rx="2"/>
+  </g>
+  <line x1="360" y1="52" x2="360" y2="346" class="pg-crease"/>
+
+  <!-- The handwritten note. -->
+  <path d="M598 196c-14 4-26 10-38 22" class="pg-note-line"/>
+  <path d="M556 212l4 7 6-5" class="pg-note-line"/>
+  <text x="572" y="172" class="pg-hand">your page, at</text>
+  <text x="572" y="188" class="pg-hand">Safari’s real size</text>
+
+  <!-- One caption line, then the floating toolbar. -->
+  <text x="360" y="366" font-size="8" text-anchor="middle"><tspan font-weight="600">951 × 585</tspan><tspan class="t-soft"> CSS px · crease at x 475.5</tspan></text>
+  <rect x="176" y="380" width="368" height="26" rx="13" class="f-card pg-pill"/>
+  <rect x="182" y="384" width="272" height="18" rx="9" class="f-tint"/>
+  {poses.map((p) => (
+    <g>
+      {p.on && <rect x={p.x} y="385.5" width={p.w} height="15" rx="7.5" class="f-page pg-pill"/>}
+      <text x={p.x + p.w / 2} y="395.5" font-size="6.5" text-anchor="middle" font-weight={p.on ? '600' : '400'} class={p.on ? '' : 't-soft'}>{p.t}</text>
+    </g>
+  ))}
+  <line x1="459" y1="386" x2="459" y2="400" class="s-line"/>
+  <text x="482" y="395.5" font-size="6.5" text-anchor="middle" class="t-soft">Bars</text>
+  <text x="518" y="395.5" font-size="6.5" text-anchor="middle" class="t-soft">Folded</text>
+</svg>
+
+<style>
+  .pg .pg-thin { stroke-width: 1; }
+  .pg .pg-bezel { fill: var(--paper); stroke: var(--ink); stroke-width: 9; }
+  .pg .pg-pill { stroke: var(--ink); stroke-opacity: .16; stroke-width: 1; }
+  .pg .pg-ghost { fill: none; stroke: var(--ink); stroke-opacity: .25; stroke-width: 1.2; }
+  .pg .pg-crease { stroke: var(--coral); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .pg .pg-hand { font-family: var(--font-hand); font-size: 15px; fill: var(--coral); }
+  .pg .pg-note-line { fill: none; stroke: var(--coral); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+</style>

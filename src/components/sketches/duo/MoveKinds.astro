@@ -1,0 +1,69 @@
+---
+/* The four ways the playground moves between poses, one box each, with the pose
+   pairs drawn as little screens at their real proportions (Apple's points, scaled
+   down), so the book fold's logic shows on its own: a tall closed phone opens
+   wide, a wide one opens tall. Fold is coral (the move the device really makes),
+   turn blue, morph teal, swap violet. Two by two, one column on a phone. */
+type Pose = 'closed' | 'wide' | 'open' | 'tall' | 'split';
+const size: Record<Pose, [number, number]> = { closed: [466, 678], wide: [678, 466], open: [951, 669], tall: [669, 951], split: [951, 669] };
+const name: Record<Pose, string> = { closed: 'Closed', wide: 'Closed, wide', open: 'Open', tall: 'Open, tall', split: 'Split View' };
+
+const kinds: { name: string; tone: string; how: string; time: string; pairs: [Pose, Pose][]; note?: string }[] = [
+  { name: 'Fold', tone: 'coral', how: 'The cover swings on the hinge', time: '240 + 1400 ms open · 1500 + 420 close', pairs: [['closed', 'open'], ['closed', 'split'], ['wide', 'tall']], note: 'tall opens wide, wide opens tall' },
+  { name: 'Turn', tone: 'blue', how: 'A quarter turn, then the new layout fades in', time: '640 ms turn + 300 ms fade', pairs: [['closed', 'wide'], ['open', 'tall']] },
+  { name: 'Morph', tone: 'teal', how: 'Fade out, the frame flows, fade in', time: '200 + 720 + 420 ms', pairs: [['closed', 'tall'], ['wide', 'open'], ['wide', 'split']] },
+  { name: 'Swap', tone: 'violet', how: 'Same frame, the screen cross-fades', time: '200 + 420 ms', pairs: [['open', 'split']] },
+];
+
+const px = (pt: number) => `${(pt / 22).toFixed(1)}px`;
+const alt = 'Four ways to move between the five poses, each pair drawn as two small screens at their real proportions. Fold, in coral, where the cover swings on the hinge: Closed to Open, Closed to Split View, and Closed, wide to Open, tall, because a tall closed phone opens wide and a wide one opens tall; 240 plus 1400 milliseconds to open, 1500 plus 420 to close. Turn, in blue, a quarter turn then the new layout fades in: Closed to Closed, wide, and Open to Open, tall; 640 milliseconds plus a 300 millisecond fade. Morph, in teal, for pairs that don’t fold into each other: fade out, the frame flows to the new shape, fade in: Closed to Open, tall, Closed, wide to Open, and Closed, wide to Split View; 200 plus 720 plus 420 milliseconds. Swap, in violet, Open to Split View: same frame, the screen cross-fades, 200 plus 420 milliseconds.';
+---
+<figure class="sk-fig">
+  <div class="sk-sheet mk" role="img" aria-label={alt}>
+    {kinds.map((k, i) => (
+      <div class:list={['sk-box', `sk-box--${k.tone}`, `sk-lean-${i + 1}`, 'mk-kind']}>
+        <p class="sk-hdr">{k.time}</p>
+        <p class="mk-name">{k.name}</p>
+        <p class="mk-how">{k.how}</p>
+        <ul class="mk-pairs" aria-hidden="true">
+          {k.pairs.map(([a, b]) => (
+            <li>
+              {[a, b].map((p, j) => (
+                <>
+                  {j === 1 && <span class="mk-swap">⇄</span>}
+                  <span class="mk-pose">
+                    <span class:list={['mk-dev', `mk-dev--${p}`]} style={`width: ${px(size[p][0])}; height: ${px(size[p][1])}`}></span>
+                    <span class="mk-label">{name[p]}</span>
+                  </span>
+                </>
+              ))}
+            </li>
+          ))}
+        </ul>
+        {k.note && <p class="sk-hand mk-note">{k.note}</p>}
+      </div>
+    ))}
+  </div>
+  <figcaption>Fold only what folds. Everything else gets a move of its own.</figcaption>
+</figure>
+
+<style>
+  .mk { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem 1.2rem; }
+  .mk-kind { display: grid; align-content: start; gap: .25rem; padding: .85rem 1rem 1rem; }
+  .mk-kind .sk-hdr { margin-bottom: .2rem !important; font-size: .6rem; line-height: 1.5; letter-spacing: .12em; }
+  .mk-name { margin: 0 !important; font-family: var(--font-display); font-size: 1.4rem; line-height: 1.1; color: var(--c); }
+  .mk-how { margin: 0 !important; font-size: .82rem; line-height: 1.4; color: var(--ink-soft); max-width: none; }
+  .mk-pairs { list-style: none; margin: .7rem 0 0; padding: 0; display: grid; gap: .8rem; }
+  .mk-pairs li { display: flex; align-items: flex-end; gap: .55rem; }
+  .mk-pose { display: grid; justify-items: center; gap: .3rem; }
+  .mk-dev { position: relative; display: block; border: 1.5px solid var(--ink); border-radius: 4px; background: var(--paper); box-shadow: 2px 2px 0 var(--shadow-ink); }
+  /* The crease on the inner screen, the divider in Split View. */
+  .mk-dev--open::after, .mk-dev--tall::after { content: ""; position: absolute; border: 0 dashed var(--coral); opacity: .8; }
+  .mk-dev--open::after { left: 50%; top: 2px; bottom: 2px; border-left-width: 1px; }
+  .mk-dev--tall::after { top: 50%; left: 2px; right: 2px; border-top-width: 1px; }
+  .mk-dev--split::after { content: ""; position: absolute; left: calc(50% - 1px); top: 0; bottom: 0; width: 2px; background: var(--ink); }
+  .mk-label { font-family: var(--font-mono); font-size: .56rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); white-space: nowrap; }
+  .mk-swap { align-self: center; margin-bottom: 1rem; font-size: 1rem; color: var(--c); }
+  .mk-note { margin: .6rem 0 0 !important; }
+  @media (max-width: 559px) { .mk { grid-template-columns: 1fr; } }
+</style>

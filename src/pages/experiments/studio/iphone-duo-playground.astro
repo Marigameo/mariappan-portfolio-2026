@@ -1,0 +1,353 @@
+---
+/* The studio's iPhone Duo playground story: a design case study of the playground
+   built as the fit-iphone-duo skill's test bench. Same deck as library.astro, led by
+   the real UI: the live playground framing this site as the hero, then old against
+   new (drag to compare) for the stage, Split View and the hints, recordings of the
+   fold and the moves between poses, the small motion, how it was judged in frames,
+   and what dried. Old screenshots come from the playground repo's process/ folder,
+   new ones from the live playground at 1440 × 900. Quotes are mine, from its
+   JOURNAL.md. Media lives in public/images/experiments/duo/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import SketchLive from '../../../components/SketchLive.astro';
+import Icon from '../../../components/Icon.astro';
+import ShotCompare from '../../../components/sketches/agentui/ShotCompare.astro';
+import PlaygroundSketch from '../../../components/sketches/duo/PlaygroundSketch.astro';
+import MoveKinds from '../../../components/sketches/duo/MoveKinds.astro';
+import FoldTempo from '../../../components/sketches/duo/FoldTempo.astro';
+
+const img = (f: string) => `/images/experiments/duo/${f}`;
+const playground = 'https://marigameo.github.io/iphone-duo-playground/';
+
+const poses = [
+  { id: 'closed-portrait', name: 'Closed', size: '382 × 580', w: 679 },
+  { id: 'closed-landscape', name: 'Closed, wide', size: '594 × 368', w: 1279 },
+  { id: 'open-landscape', name: 'Open', size: '951 × 585', w: 1273 },
+  { id: 'open-portrait', name: 'Open, tall', size: '669 × 867', w: 678 },
+  { id: 'split-view', name: 'Split View', size: '385 × 571', w: 1273 },
+];
+
+const details = [
+  { name: 'The toolbar makes room', text: 'Fold appears only where there’s a crease. The groups now slide over for it, instead of jumping 66px and moving Open out from under the pointer.' },
+  { name: 'One thumb that slides', text: 'The selected segment is a clipped copy of the row, so the thumb, colour and bold label move as one, and no text shifts.' },
+  { name: 'Feedback on press', text: 'Buttons press to 0.97 and segments dim the moment they’re touched. The choice still commits on release.' },
+  { name: 'Safari’s progress line', text: 'A thin blue line runs along the address field while your site loads, as in Safari.' },
+  { name: 'Reverse from anywhere', text: 'Pick the pose you came from mid-move, and the turn, morph or fold runs back from where it is. No waiting for it to finish.' },
+  { name: 'Your settings, honoured', text: 'Reduce Motion keeps the fades and drops the swing. Reduce Transparency and Increase Contrast work too.' },
+];
+
+const left = ['Springs for the fold', 'Drag to fold', 'Animated size numbers', 'Press-scale on Safari’s own buttons', 'Ease-in exits'];
+
+const lessons = [
+  { miss: 'Showed my site twice in Split View, as a shortcut.', lesson: 'Draw what the device does, even the dull app next door. A previewer only earns trust by being true.' },
+  { miss: 'Put the explanation on the screen, over the page.', lesson: 'Explain on demand. The page is what people came to see.' },
+  { miss: 'Faded the whole screen between poses. Black glass flashed through.', lesson: 'Fade the contents, never the screen. The screen holds the page’s colour.' },
+  { miss: 'Trusted frames that looked finished. It was the capture clock running on.', lesson: 'Freeze the clock before you judge motion, and measure before you fix it.' },
+];
+---
+<StudioLayout
+  title="Designing the iPhone Duo playground"
+  slug="iphone-duo-playground"
+  description="Designing the iPhone Duo playground: a website at the sizes Safari 27.1 really gives it, inside a drawn iPhone Duo that opens, closes, turns and splits like the real one. The design calls and the motion, told mostly in screenshots and recordings."
+  ogDescription="A website at Safari 27.1’s real iPhone Duo sizes, inside a device that folds like the real one. The design calls and the motion behind it."
+  eyebrow="Side build · iPhone Duo playground"
+  facts={[
+    { label: 'My part', value: 'Every design call, paired with Claude' },
+    { label: 'Built', value: '27 to 28 Oct 2026' },
+    { label: 'Status', value: 'Live, open source (MIT)' },
+  ]}
+  keywords="iPhone Duo, foldable, Safari 27.1, device preview, motion design, CSS 3D, easing, Reduce Motion, design engineering, playground"
+>
+  <Fragment slot="lede">A playground that shows your website at the sizes Safari 27.1 really gives it on iPhone Duo, inside a device that <mark class="hl">opens and closes like the real one</mark>. It started as three panels of numbers. Here’s how it became one device, told mostly in pictures.</Fragment>
+
+  <SketchLive slot="hero" id="duo" start="live" live={{ kind: 'video', src: img('tour.mp4'), poster: img('tour-poster.webp'), width: 1440, height: 900, alt: 'Screen recording of the live playground showing mariappan.netlify.app. The closed phone dims and its cover swings open as frosted glass over the blurred page, which sharpens on the wide open screen. Folded is chosen and a band appears down the crease; hovering the Fold marker above the device opens its note. Split View puts the site beside another app, then the cover swings shut and the page wakes on the closed screen.' }} caption="My site in the playground: open, folded, split and closed, with no reload.">
+    <figure class="sk-fig duo-sketch">
+      <span class="duo-frame"><PlaygroundSketch label="Sketch of the playground: one header line with Your site, more and theme buttons; an iPhone Duo open across the stage with Safari’s address bar, a page with a heading on the left and a picture on the right, and the crease dashed in coral down the middle under a small Fold marker. A handwritten note says your page, at Safari’s real size. Below, one caption line, 951 by 585 CSS px, and a floating toolbar with Closed, Closed wide, Open, Open tall and Split View." /></span>
+    </figure>
+  </SketchLive>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Backstory</p><h2 id="s-back">Five sizes, one honest device</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>I built it as the test bench for my <a href="/work/fit-iphone-duo/">fit-iphone-duo skill</a>. Online previewers divide the screen by three, but Safari keeps a column for its controls, so <strong>a page gets 382px, not 466</strong>.</li>
+        <li>So your site loads in a frame at <strong>exactly the size Safari gives it</strong>, inside an iPhone Duo drawn from Apple’s millimetres. Media queries fire at the real width.</li>
+      </ul>
+      <figure class="shot-fig">
+        <ul class="poses" style={`--cols: ${poses.map((p) => `${p.w}fr`).join(' ')}`}>
+          {poses.map((p) => (
+            <li>
+              <img src={img(`pose-${p.id}.webp`)} width={p.w} height="900" loading="lazy" decoding="async" alt={`My site in the playground, ${p.name}: the page gets ${p.size} CSS pixels, with Safari’s controls where it keeps them.`}>
+              <span class="pose-name">{p.name}</span>
+              <span class="pose-size">{p.size}</span>
+            </li>
+          ))}
+        </ul>
+        <figcaption>My site at all five sizes. The two nobody else showed: 368 tall, and 385 wide.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-stage">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">Design call · the stage</p><h2 id="s-stage">Give the stage to the device</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li><strong>v1 was a dashboard.</strong> A form on the left, a facts table on the right, and the phone squeezed in between. Correct, and hard to look at.</li>
+        <li>So the device took the page: <strong>one header line, one caption line, one floating toolbar</strong>. The facts moved behind ⋯, and the bezel and corners came from Apple’s millimetres, so it feels like holding the phone.</li>
+      </ul>
+      <blockquote class="said"><img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async"><p><span>Me, on v1</span>“The actual preview is the main attraction, so it has to take the most space and attention.”</p></blockquote>
+      <ShotCompare
+        id="stage"
+        before={{ label: 'v1', src: img('m1-closed.webp'), width: 1600, height: 1000, alt: 'The first version: a page title and subtitle, a panel on the left with a URL field, Sample page and Show buttons, pose, Safari controls and fold toggles and a page background swatch, a This pose table on the right with viewport, screen, size class, Safari chrome, crease and pixel ratio, and the closed phone between them with a sample page and a dark probe box on it.' }}
+        after={{ label: 'Now', src: img('now-closed.webp'), width: 1600, height: 1000, alt: 'The playground now: one header line, the closed phone large in the middle showing mariappan.netlify.app with Safari’s column on the right, then one caption line, 382 by 580 CSS px, no crease, and a floating toolbar of poses and Bars or Scrolled.' }}
+        caption="Drag to compare. Same pose, same numbers. The page just got out of the way."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-split">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Design call · Split View</p><h2 id="s-split">Draw what the device does</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>In v1, Split View showed the site twice, side by side. A shortcut, and <strong>not what the device does</strong>.</li>
+        <li>Now your site sits beside a plain “Another app”, <strong>each with its controls on its outer edge</strong>. Every pose gets Safari’s real bars, and the address field is how you load a site.</li>
+      </ul>
+      <blockquote class="said"><img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async"><p><span>Me, on v1</span>“Why is it showing the view 2 times in Split View? Is it how it would show on a real device?”</p></blockquote>
+      <ShotCompare
+        id="split"
+        before={{ label: 'v1', src: img('m1-split.webp'), width: 1600, height: 1000, alt: 'The first version in Split View: the same sample page twice, side by side, each with a dark probe box and a red 100vh hero tag, between the two side panels.' }}
+        after={{ label: 'Now', src: img('now-split.webp'), width: 1600, height: 1000, alt: 'Split View now: mariappan.netlify.app in the left window with Safari’s controls down its outer edge and the address field at the bottom, and a neutral Another app with grey placeholder rows in the right window.' }}
+        caption="Drag to compare. Your site, and whatever else you had open."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-hints">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Design call · hints</p><h2 id="s-hints">Explain on demand</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>A probe box and red chips like “size read once” sat on the screen. <strong>Useful, but on top of the page you came to see.</strong></li>
+        <li>So the explanation moved outside: a small <strong>Fold marker</strong> at the crease that opens on hover, focus or tap. The fake sample became Fold Notes, a real page that follows its own advice, down to a notice that actually dismisses.</li>
+      </ul>
+      <blockquote class="said"><img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async"><p><span>Me, on the probe</span>“Looks ugly here. Make it like an info pointer and reveal it on interaction.”</p></blockquote>
+      <ShotCompare
+        id="hints"
+        before={{ label: 'Round 02', src: img('ux-open.webp'), width: 1600, height: 1000, alt: 'Round 02, open: a sample page called Northwind with a dark probe box in its top left corner reading 8, size read once, layout built for 951 px wide, and the crease as a faint line through the middle.' }}
+        after={{ label: 'Now', src: img('now-tip.webp'), width: 1600, height: 1000, alt: 'Now, open: mariappan.netlify.app fills the screen, and the Fold marker above the device has opened its note: the fold, partly folded the screen curves here and small controls are hard to tap, keep buttons, links and fields off this line, text and images can cross it.' }}
+        caption="Drag to compare. Apple’s rule for the fold, one hover away."
+      />
+    </section>
+
+    <section class="slide" aria-labelledby="s-fold">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Motion · the fold</p><h2 id="s-fold">Fold like glass, not a cut</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Only the cover half swings on the hinge, as <strong>frosted glass in CSS 3D</strong>, borrowing from a <a href="https://github.com/chuspeeism/iphone-duo" rel="noopener">Three.js reference</a> without the dependency. Underneath, your page resizes without a reload, through the in-between size Safari reports mid-fold.</li>
+        <li>Then, round by round: slower, softer at both ends, <strong>clear glass so your page shows through</strong>, and a close that settles onto the closed phone instead of cutting to it.</li>
+      </ul>
+      <blockquote class="said"><img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async"><p><span>Me, round 08</span>“It should be slow, as someone would close or open a real device, not damaging the screen.”</p></blockquote>
+      <figure class="shot-fig">
+        <div class="duo-video">
+          <video src={img('fold.mp4')} poster={img('fold-poster.webp')} width="1440" height="900" controls muted loop playsinline preload="none" aria-label="Screen recording: the closed phone showing mariappan.netlify.app dims, the cover swings open on its left hinge as frosted glass with the page blurred behind it, and the page sharpens on the open screen. Then the cover swings shut, settles onto the closed phone, and the page wakes at the closed size."></video>
+        </div>
+        <figcaption>Open, then close. The glass sharpens as the cover lands.</figcaption>
+      </figure>
+      <FoldTempo />
+    </section>
+
+    <section class="slide" aria-labelledby="s-moves">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Motion · between poses</p><h2 id="s-moves">Fold only what folds</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>A book fold turns a tall closed phone into a wide open one, and a wide one into a tall one. <strong>Forcing a fold between the other pairs looked wrong.</strong></li>
+        <li>So each pair gets its own move: <strong>fold, turn, morph or swap</strong>. And the new page only fades in once it has settled at its size, so it never arrives on a blank white screen.</li>
+      </ul>
+      <blockquote class="said"><img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async"><p><span>Me, round 09</span>“It’s weird, as both are different orientations. Ideally we should fade smoothly.”</p></blockquote>
+      <MoveKinds />
+      <figure class="shot-fig">
+        <div class="duo-video">
+          <video src={img('morph.mp4')} poster={img('morph-poster.webp')} width="1440" height="900" controls muted loop playsinline preload="none" aria-label="Screen recording: the closed phone turns a quarter onto its side and the wide layout fades in. Then it morphs to the open screen: the page fades out, the frame grows to the new shape, and the page fades back in. Open turns a quarter to Open, tall, and Open, tall morphs back down to the closed phone."></video>
+        </div>
+        <figcaption>Turn, morph, turn, morph. Each one runs back from wherever it is.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-details">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Motion · the details</p><h2 id="s-details">Small motion, earned</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Then an audit with Emil Kowalski’s <a href="https://github.com/emilkowalski/skills" rel="noopener">design-engineering and animation skills</a>. My one rule: <strong>anything there to match Apple’s guidelines stays</strong>.</li>
+        <li>Nothing applied blindly. Each idea was <strong>measured or tried first</strong>, then kept only if it added something without changing the feel.</li>
+      </ul>
+      <figure class="shot-fig">
+        <div class="duo-video duo-video--strip">
+          <video src={img('dock.mp4')} poster={img('dock-poster.webp')} width="1680" height="184" muted loop playsinline preload="none" data-inview-video aria-label="Screen recording of the caption and toolbar: going from Closed to Open, the toolbar widens and the pose groups slide over as Flat and Folded fade in. The selected thumb slides between Bars and Scrolled, the caption’s size changes from 585 to 620, Folded is picked and the caption says keep small controls off it, then the theme flips to dark and back."></video>
+        </div>
+        <figcaption>The toolbar making room, the thumb sliding, the theme cross-fading.</figcaption>
+      </figure>
+      <ul class="calls">
+        {details.map((d, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{d.name}</h3>
+            <p>{d.text}</p>
+          </li>
+        ))}
+      </ul>
+      <div class="left">
+        <p class="left-hdr">Left out, on purpose</p>
+        <ul>{left.map((l) => <li>{l}</li>)}</ul>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-frames">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Under the hood</p><h2 id="s-frames">Judge motion in frames</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Motion is easy to misjudge at full speed. So every change was checked in <strong>exact frames, on a paused clock</strong>. Twice, a frame that looked finished was the capture clock running on, not the animation.</li>
+        <li><strong>Measure, then fix.</strong> On the GPU the fold, turn and morph hold 60 fps, so a jank seen in software rendering wasn’t real, and <code>will-change</code> tried as a fix made closing worse. One bug was real: Chromium drew a notice as a blank card after folding to Split View. Giving the page its own layer fixed it.</li>
+      </ul>
+      <figure class="shot-fig">
+        <button class="zoom" type="button" data-full={img('frames-smooth-full.webp')} aria-label="View the frame sheet full size">
+          <span class="shot-frame">
+            <img src={img('frames-smooth.webp')} width="1600" height="1077" loading="lazy" decoding="async" alt="A sheet of frames from round 05, five per row with the time under each: the closed phone turning onto its side and back, the cover swinging open with the page blurred behind it, Split View fading in, and the cover swinging shut onto the closed phone.">
+          </span>
+          <span class="zoom-icon rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+        </button>
+        <figcaption>Round 05, frame by frame: turn, turn back, open, Split View and close.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-dried">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">What dried</p><h2 id="s-dried">What the frames taught me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${i + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <blockquote class="closer">A previewer that cuts between sizes shows you sizes. One that folds shows you what your page goes through.</blockquote>
+    <p class="more-note"><a href={playground} rel="noopener">Try your site in the <span class="nowrap">playground<Icon name="arrow-right" /></span></a><br><a href="/work/fit-iphone-duo/">The skill it was built for <Icon name="arrow-right" /></a></p>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</StudioLayout>
+
+<script>
+  // The toolbar strip is too short for the browser's controls, so it plays while
+  // it's in view and a click pauses it. Under reduced motion it waits, with controls.
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLVideoElement>('[data-inview-video]').forEach((v) => {
+    if (reduce) { v.controls = true; return; }
+    v.addEventListener('click', () => (v.paused ? v.play().catch(() => {}) : v.pause()));
+    new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()), { threshold: 0.6 }).observe(v);
+  });
+</script>
+
+<style>
+  /* Deck styles from the work stories, as in library.astro. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  /* What I said at the time, from the journal: my portrait and a bubble. */
+  :global(.prose) .said { display: flex; align-items: flex-end; gap: .65rem; margin: var(--space-3) 0 0; padding: 0; border: 0; border-radius: 0; background: none; font-family: var(--font-body); font-size: 1rem; font-style: normal; }
+  .said img { flex: none; width: 2.4rem; height: 2.4rem; object-fit: cover; border-radius: 50%; border: 1.5px solid var(--ink); }
+  .said p { margin: 0 !important; max-width: min(36rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; line-height: 1.5; font-style: italic; color: var(--ink-soft) !important; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border: 1.5px solid color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 14px 4px; }
+  .said span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+
+  /* Slide 01: the five poses in a row, at one height. */
+  .poses { list-style: none; display: grid; grid-template-columns: var(--cols); gap: .9rem; align-items: end; margin: 0; padding: 0; }
+  .poses li { display: grid; justify-items: center; gap: .15rem; }
+  .poses img { display: block; width: 100%; height: auto; margin-bottom: .45rem; }
+  .pose-name { font-size: .85rem; font-weight: 500; color: var(--ink); }
+  .pose-size { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .08em; color: var(--ink-faint); }
+  @media (max-width: 719px) {
+    .poses { grid-template-columns: 1fr 1fr; gap: 1.4rem 1rem; }
+    .poses li:nth-child(odd):last-child { grid-column: 1 / -1; width: 70%; justify-self: center; }
+  }
+
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+
+  /* Slide 07: the small motion, one box each, then what stayed out. */
+  .calls { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .calls li { display: grid; gap: .4rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .calls h3 { margin: 0; font-size: 1.3rem; line-height: 1.15; }
+  .calls p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; color: var(--ink-soft); }
+  @media (max-width: 559px) { .calls { grid-template-columns: 1fr; } }
+  .left { margin-top: var(--space-3); text-align: center; }
+  .left-hdr { margin: 0 0 .6rem !important; max-width: none; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .left ul { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: 0; padding: 0; }
+  .left li { padding: .3rem .8rem; font-size: .8rem; line-height: 1.35; color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--coral); border: 1.5px dashed var(--ink-faint); border-radius: 999px; }
+
+  /* Real screenshots and recordings, framed. They keep their own light colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; display: block; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  .duo-video { overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .duo-video video { display: block; width: 100%; height: auto; }
+  .duo-video--strip { max-width: 52rem; margin: 0 auto; }
+
+  .zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; text-align: inherit; cursor: zoom-in; }
+  .zoom .shot-frame { transition: transform .2s ease; }
+  .zoom:hover .shot-frame { transform: rotate(0deg) translateY(-2px); }
+  .zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 10px; }
+  .zoom-icon { position: absolute; top: .7rem; right: .7rem; }
+  .zoom:hover .zoom-icon { background: var(--ink); color: var(--paper); }
+  .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+
+  /* The Sketch tab: the drawing in a frame like the live one. */
+  .duo-sketch { margin: 0; }
+  .duo-frame { display: block; aspect-ratio: 1440 / 900; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .duo-frame :global(.sk) { display: block; width: 100%; height: 100%; }
+
+  .closer { margin-top: var(--space-5); }
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; line-height: 1.6; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+</style>
