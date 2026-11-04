@@ -58,6 +58,14 @@ export const skills: Skill[] = [
     story: '/work/fit-iphone-duo/',
   },
   {
+    name: 'tune-search',
+    group: 'craft',
+    hook: 'Tune search as you type: test it on slow, failing and out-of-order networks, fix the causes, prove it.',
+    when: 'A search, ⌘K palette or picker that jumps, flickers or shows the wrong results.',
+    tied: 'Playwright Chromium, the search lab',
+    story: '/work/tune-search/',
+  },
+  {
     name: 'ask-clarifier',
     group: 'use',
     hook: 'Wire agent-clarifier in, so your agent asks before it acts, and only when it matters.',

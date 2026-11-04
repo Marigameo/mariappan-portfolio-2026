@@ -17,6 +17,7 @@ import DforDoubts from '../sketches/DforDoubts.astro';
 import AgentClarifier from '../sketches/AgentClarifier.astro';
 import CoPresence from '../sketches/CoPresence.astro';
 import FitIphoneDuo from '../sketches/FitIphoneDuo.astro';
+import TuneSearch from '../sketches/TuneSearch.astro';
 
 const strive = { company: 'Strivelabs', meta: 'Design engineer · 2024 → now', live: true };
 const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2021 → 2024' };
@@ -60,6 +61,11 @@ const freshworks = { company: 'Freshworks', meta: 'Senior software engineer · 2
   </Rail>
 
   <Rail id="rail-indie" icon="lightbulb" title="Side builds" meta="Solo, outside the day job. Idea → pixels, sometimes → payments.">
+    <WorkCard href="/work/tune-search/" accent="teal" title="tune-search" tags={['Agent skill', 'Search UX']} craft
+      part="Solo, paired with Claude: the learning, every call, the fix in my own product" shipped="Open source in my skills repo · lab live">
+      <TuneSearch slot="sketch" />
+      My org switcher closed while I typed. Fixing it properly meant learning search from scratch, and became a skill that tunes any search.
+    </WorkCard>
     <WorkCard href="/work/fit-iphone-duo/" accent="violet" title="fit-iphone-duo" tags={['Agent skill', 'Responsive web']} craft
       part="Solo, paired with Claude: the research, every call, the trial on my own site" shipped="Open source in my skills repo · playground live">
       <FitIphoneDuo slot="sketch" />

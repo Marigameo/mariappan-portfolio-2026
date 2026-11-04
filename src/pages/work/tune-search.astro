@@ -1,0 +1,639 @@
+---
+/* tune-search, told as an interactive lesson rather than a case study: the org switcher
+   that closed while I typed, the question I couldn't answer (what's the right height?),
+   stepping back to learn search from scratch, then each lesson as a question the reader
+   answers before a simulation shows untuned and tuned side by side. Then the lab, the
+   skill, how it was tested, and the switcher fixed. The sims are drawn by
+   ../../scripts/tune-search.ts and styled in ../../styles/tune-search.css; without the
+   script the answers simply show. Sources: the skill's journey/search/ journal and
+   research notes (not published). Media lives in public/images/work/tune-search/.
+   The switcher recordings are Mari's own, cropped to the sidebar from full-screen captures. */
+import WorkLayout from '../../layouts/WorkLayout.astro';
+import Icon from '../../components/Icon.astro';
+import StudioLoop from '../../components/sketches/studio/StudioLoop.astro';
+import { skillsRepo, installCmd } from '../../data/skills';
+import '../../styles/tune-search.css';
+
+const img = (f: string) => `/images/work/tune-search/${f}`;
+const skillUrl = `${skillsRepo}/tree/main/skills/tune-search`;
+const lab = 'https://marigameo.github.io/search-lab/';
+const sampleReport = `${skillUrl}/sample-report`;
+const description = 'tune-search, a skill that fixes search as you type: how a broken org switcher in my own product turned into learning search from scratch, a lab to feel the difference, and a skill that finds, fixes and proves it. Told as questions you answer, with simulations of untuned and tuned search. Built by me, paired with Claude.';
+
+// Screen recordings of the real switcher, cropped to the sidebar. They play while in view.
+const recordings = {
+  before: {
+    src: img('switcher-before.mp4'), poster: img('switcher-before.webp'), tag: 'Before',
+    label: 'Screen recording of the org switcher before the fix. The account menu opens from the sidebar and the organisation list appears beside it, tall. Typing “ahr” shrinks the list to one row, the panel drops down beside its menu row, and then it closes.',
+    caption: 'The real switcher. Three letters in, the panel shrinks, drops and closes.',
+  },
+  after: {
+    src: img('switcher-after.mp4'), poster: img('switcher-after.webp'), tag: 'After',
+    label: 'Screen recording of the org switcher after the fix. Typing “ahr”, then “am”, then “l” filters the list while the panel keeps its height, with Add organisation pinned at the bottom, and it stays open throughout.',
+    caption: 'The same switcher after the fix. It keeps its height and stays open as I type.',
+  },
+};
+
+const kinds = [
+  { name: 'Typeahead', sub: 'a dropdown under the box', tone: 'coral' },
+  { name: '⌘K palette', sub: 'a modal you summon', tone: 'blue' },
+  { name: 'Live results page', sub: 'a page that updates as you type', tone: 'teal' },
+  { name: 'Picker', sub: 'pick one from a list, like my switcher', tone: 'violet' },
+];
+
+const learnt = [
+  { value: '7', label: 'topics' },
+  { value: '3', label: 'live teardowns' },
+  { value: '45', label: 'rules' },
+  { value: '6', label: 'principles' },
+];
+
+const principles = [
+  { title: 'Every result knows its query', sub: 'An answer for an old query never lands.' },
+  { title: 'Identity, not position', sub: 'Highlight, rows and dedupe by ID, never by index.' },
+  { title: 'Remove the cause, never reschedule it', sub: '“Dim later” and “resize later” only move the glitch.' },
+  { title: 'People set the timing, frequency sets the motion', sub: 'The more often it happens, the less it moves.' },
+  { title: 'The user owns the input', sub: 'Focus stays, text is never lost, the keyboard’s keys are the keyboard’s.' },
+  { title: 'Prove it in frames', sub: 'A 36ms blink and a working guard both look fine live.' },
+];
+
+const stats = [
+  { value: '12', label: 'Checks, each proven to bite', sub: 'Every one fails the lab’s naive search and passes the tuned one', ink: 'coral' },
+  { value: '33 → 0', label: 'A fresh agent, only the skill', sub: 'On a scrubbed copy: 33 failures found, none left on checks it never saw', ink: 'blue' },
+  { value: '18', label: 'Notes back into the skill', sub: 'That same agent found the harness’s subtlest bug', ink: 'teal' },
+  { value: '36ms', label: 'Wikipedia’s loading row', sub: 'On screen for 36ms. Invisible live, obvious in frames', ink: 'violet' },
+];
+
+const lessons = [
+  { miss: 'Asked for a fix before I knew what right looked like.', lesson: 'Step back and learn the thing. Once I could name the bug, the fix was one rule.' },
+  { miss: 'Fixed a flicker by doing it later: dim later, resize later.', lesson: 'Moving a glitch doesn’t remove it. Remove its cause.' },
+  { miss: 'Watched it live and called it fine.', lesson: 'These bugs last 36ms, or look like waiting. Look at frames.' },
+  { miss: 'Trusted the tuned version because we wrote it.', lesson: 'Test equipment is a product. A check counts only once it fails something broken.' },
+];
+
+const credits = [
+  { href: 'https://www.nngroup.com/articles/response-times-3-important-limits/', source: 'Nielsen Norman Group', title: 'Response times: the 3 important limits', note: 'Why 100ms and 1s, from Card, Miller and Nielsen.' },
+  { href: 'https://github.com/smeijer/spin-delay', source: 'smeijer', title: 'spin-delay', note: 'The delay and minimum pair, as a library.' },
+  { href: 'https://www.w3.org/WAI/ARIA/apg/patterns/combobox/', source: 'W3C', title: 'ARIA combobox pattern', note: 'The keyboard and screen reader contract.' },
+  { href: 'https://github.com/emilkowalski/skills', source: 'Emil Kowalski', title: 'Design engineering skills', note: 'Motion by frequency, not size.' },
+  { href: 'https://github.com/thedaviddias/ux-patterns-for-developers', source: 'thedaviddias', title: 'UX patterns for developers', note: 'The closest prior art: search, autocomplete and palette cards.' },
+];
+
+const play = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg>';
+---
+<WorkLayout
+  title="tune-search — search that doesn’t jump, flicker or lie"
+  description={description}
+  ogDescription="My org switcher closed while I typed. Fixing it properly meant learning search from scratch. Now it’s a skill."
+  eyebrow="Open source · Design engineer · Nov 2026"
+  heading="tune-search"
+  facts={[
+    { label: 'Role', value: 'Solo build, paired with Claude' },
+    { label: 'Status', value: 'Open source (MIT), in my skills repo. Lab live' },
+  ]}
+  link={{ href: skillUrl, label: 'GitHub' }}
+  schema={{
+    name: 'tune-search',
+    url: skillUrl,
+    description: 'An agent skill that fixes search as you type (typeahead dropdowns, ⌘K palettes, live results pages, and the layout and keys of pickers): it finds the searches in a product, audits them in a real browser under slow, failing and out-of-order networks, fixes the causes in the product’s own code on the owner’s go, and proves the fix with the same checks. With a lab that shows the same search untuned and tuned.',
+    inLanguage: 'en',
+    keywords: 'search, combobox, typeahead, command palette, race conditions, loading states, layout shift, accessibility, IME, agent skills, Playwright, design engineering, designing with Claude',
+  }}
+>
+  <Fragment slot="lede">My org switcher closed every time I typed in it. Fixing it properly meant learning what <mark class="hl">search really is</mark>, from scratch. This story asks you the questions I had to answer. Pick one, and watch it play out.</Fragment>
+
+  <Fragment slot="glance">
+    <div class="at-glance-row">
+      <h3>The aim</h3>
+      <p>Fix my switcher the right way, not the quick way. Then make the right way a prompt away for any search, since agents don’t get it right on their own.</p>
+    </div>
+    <div class="at-glance-row">
+      <h3>My part</h3>
+      <div>
+        <ul class="doodle-list">
+          <li><strong>The bug,</strong> and the question behind it: what is the right fix?</li>
+          <li><strong>Every call,</strong> from the scope to what the lab and the report should feel like.</li>
+          <li><strong>The trial</strong> on my own product, tested by hand.</li>
+        </ul>
+        <p>Claude researched, built and tested. I learnt, set the direction and made the calls.</p>
+      </div>
+    </div>
+    <div class="at-glance-row">
+      <h3>Shipped</h3>
+      <p>A skill on <a href={skillUrl} rel="noopener">GitHub</a>, a <a href={lab} rel="noopener">live lab</a> with untuned and tuned side by side, and a switcher that stays open.</p>
+    </div>
+  </Fragment>
+
+  <div class="story">
+    <section class="slide" aria-labelledby="s-bug">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">01</span>
+        <div><p class="slide-kicker">Where it started</p><h2 id="s-bug">A switcher that closed while I typed</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>In our platform, you switch organisations from a menu in the sidebar. Type to find one, and <strong>the panel jumps, then closes</strong>. Open it again, scroll, click.</li>
+        <li>An agent wrote it in one shot. It looked fine, and broke the moment you used it. <strong>Agents don’t catch this kind of bug themselves.</strong></li>
+      </ul>
+      <figure class="rec">
+        <span class="shot-frame"><video src={recordings.before.src} poster={recordings.before.poster} width="930" height="876" muted loop playsinline preload="none" data-inview-video aria-label={recordings.before.label}></video><span class="ba-tag" aria-hidden="true">{recordings.before.tag}</span></span>
+        <figcaption>{recordings.before.caption}</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-question">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">02</span>
+        <div><p class="slide-kicker">The question</p><h2 id="s-question">What is the right fix, though?</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The height changing was clearly the cause. But I wasn’t sure what <strong>right</strong> looked like, and neither was the agent.</li>
+      </ul>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call</p>
+        <p class="call-q">As results filter, what should the panel’s height do?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Fit the results</button>
+          <button class="call-opt" type="button" data-opt>Hold, then resize when typing stops</button>
+          <button class="call-opt" type="button" data-opt data-right>Never shrink while open</button>
+          <button class="call-skip" type="button" data-opt data-skip>Just show me</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="height">
+            <div class="sim-bar"><p>Typing “invoice” into three panels.</p><button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button></div>
+            <div class="sim-stages"></div>
+            <p class="sim-fallback">A jumps twice as you type. B holds, then jumps once, right as you start reading. C never jumps.</p>
+          </div>
+          <p class="call-answer"><strong>Never shrink while open.</strong> Grow-only for a dropdown, a fixed height for a ⌘K palette. Resizing “once typing stops” only moves the jump to the moment you start reading.</p>
+          <aside class="said" aria-label="My first guess">
+            <p><span>My first guess</span>“I’d maintain a constant height for the panel &amp; adjust after a delay just like how it’s debounced.”</p>
+            <img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+          </aside>
+          <p class="rule-chip">Principle 3 · Remove the cause, never reschedule it</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-back">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">03</span>
+        <div><p class="slide-kicker">Stepping back</p><h2 id="s-back">Search turned out to be a family</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>So I stopped fixing, and started learning: what kinds of search there are, how they behave over time, what applies where. <strong>There was far more to it than I’d assumed.</strong></li>
+        <li>Nobody had written it down for agents. The closest skills stop at ARIA roles and keys. <strong>None covers what happens while results arrive.</strong></li>
+      </ul>
+      <ul class="kinds">
+        {kinds.map((k, i) => (
+          <li class:list={['sk-box', `sk-box--${k.tone}`, `sk-lean-${(i % 3) + 1}`]}><strong>{k.name}</strong><span>{k.sub}</span></li>
+        ))}
+      </ul>
+      <ul class="learnt" aria-label="What the learning came to">
+        {learnt.map((l) => <li><b>{l.value}</b>{l.label}</li>)}
+      </ul>
+      <aside class="said" aria-label="My brief, before the learning">
+        <p><span>Me, at the start</span>“Search bar is a simple yet a unique unit of web which can involve lots of states &amp; transitions. So many get it wrong &amp; agents mess up with perfection.”</p>
+        <img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+      </aside>
+    </section>
+
+    <section class="slide" aria-labelledby="s-race">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">04</span>
+        <div><p class="slide-kicker">Lesson · state</p><h2 id="s-race">The slow answer that wins</h2></div>
+      </header>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call</p>
+        <p class="call-q">You type “typography”. The answer for “typo” was slow and lands last. What’s on screen?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Results for “typography”</button>
+          <button class="call-opt" type="button" data-opt data-right>Results for “typo”</button>
+          <button class="call-skip" type="button" data-opt data-skip>Just show me</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="race">
+            <div class="sim-bar"><p>Same typing, same network.</p><button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button></div>
+            <div class="sim-stages"></div>
+            <div class="sim-extra"></div>
+            <p class="sim-fallback">Untuned: “typo” lands last and replaces the right results. Tuned: it’s dropped.</p>
+          </div>
+          <p class="call-answer">Without a guard, <strong>whichever answer lands last wins</strong>. The fix is one check: an answer is shown only if it belongs to the current query. Cancelling old requests saves the server; the guard keeps the screen right.</p>
+          <aside class="said" aria-label="What I assumed">
+            <p><span>What I assumed</span>“Always the latest query results is what I finally see on screen I guess.”</p>
+            <img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+          </aside>
+          <p class="rule-chip">Principle 1 · Every result knows its query</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-blink">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">05</span>
+        <div><p class="slide-kicker">Lesson · time</p><h2 id="s-blink">A spinner that flashes is worse than none</h2></div>
+      </header>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call</p>
+        <p class="call-q">Results take 200ms. The list dims after 150ms to say “loading”. What does the user see?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Nothing, it’s quick</button>
+          <button class="call-opt" type="button" data-opt>A clear loading state</button>
+          <button class="call-opt" type="button" data-opt data-right>A flicker</button>
+          <button class="call-skip" type="button" data-opt data-skip>Just show me</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="blink">
+            <div class="sim-bar">
+              <div class="sim-chips" role="group" aria-label="Server answers in"><span>Answers in</span><button type="button" data-latency="80" aria-pressed="false">80ms</button><button type="button" data-latency="200" aria-pressed="true">200ms</button><button type="button" data-latency="900" aria-pressed="false">900ms</button></div>
+              <button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button>
+            </div>
+            <div class="sim-stages"></div>
+            <p class="sim-fallback">At 200ms, the untuned list dims for 50ms: a flicker. The tuned one, once dimmed, stays dimmed 300ms.</p>
+          </div>
+          <p class="call-answer">A 50ms flicker, three times over. Wait 150ms before showing a wait, and <strong>once shown, keep it at least 300ms</strong>. Neither number depends on the server. They come from people, so a skill can ship them.</p>
+          <aside class="said" aria-label="My question">
+            <p><span>My question</span>“How do I know this time range in real requests? I’ll not know how long server would take right?”</p>
+            <img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+          </aside>
+          <p class="rule-chip">Principle 4 · People set the timing</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-highlight">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">06</span>
+        <div><p class="slide-kicker">Lesson · arrivals</p><h2 id="s-highlight">Enter opens what you chose</h2></div>
+      </header>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call</p>
+        <p class="call-q">You arrow down to “Designers team page”. Server results arrive. You press Enter. What opens?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Designers team page</button>
+          <button class="call-opt" type="button" data-opt data-right>Depends where the results land</button>
+          <button class="call-skip" type="button" data-opt data-skip>Just show me</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="highlight">
+            <div class="sim-bar"><p>Local rows first, the server’s a second later.</p><button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button></div>
+            <div class="sim-stages"></div>
+            <div class="sim-extra"></div>
+            <p class="sim-fallback">Untuned: results land on top, the highlight stays at row 2, and Enter opens something you never chose.</p>
+          </div>
+          <p class="call-answer">If the highlight is a row number and results land above, <strong>Enter silently opens something else</strong>. Keep the highlight by ID, and let new results arrive below, in their own section.</p>
+          <p class="rule-chip">Principle 2 · Identity, not position</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-bold">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">07</span>
+        <div><p class="slide-kicker">Lesson · layout</p><h2 id="s-bold">Bold moves things</h2></div>
+      </header>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call</p>
+        <p class="call-q">The matched letters are bold, as in most searches. Harmless?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Harmless</button>
+          <button class="call-opt" type="button" data-opt data-right>The row shifts as you type</button>
+          <button class="call-skip" type="button" data-opt data-skip>Just show me</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="emphasis">
+            <div class="sim-bar"><p>Measured live, as you watch.</p><button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button></div>
+            <div class="sim-stages"></div>
+            <p class="sim-fallback">Bold letters are wider, so every keystroke nudges the rest of the row. Colour costs no width.</p>
+          </div>
+          <p class="call-answer">Bold letters are wider, so <strong>every keystroke nudges the row</strong>. Italic does too. Mark the match with colour or a highlight. And nothing per keystroke should animate: the more often something happens, the less it should move.</p>
+          <aside class="said" aria-label="My guess">
+            <p><span>My guess</span>“I will not use bold if it adds some weight &amp; results in shift […] may be em.”</p>
+            <img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+          </aside>
+          <p class="rule-chip">Principle 4 · Frequency sets the motion</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-keys">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">08</span>
+        <div><p class="slide-kicker">Lesson · keys</p><h2 id="s-keys">Two keys nobody tests</h2></div>
+      </header>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call · 1 of 2</p>
+        <p class="call-q">Text typed, panel open. You press Escape once. What should happen?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Clear the text</button>
+          <button class="call-opt" type="button" data-opt data-right>Close the panel, keep the text</button>
+          <button class="call-opt" type="button" data-opt>Drop the highlight</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="escape">
+            <div class="sim-bar"><p>One Escape, both ways.</p><button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button></div>
+            <div class="sim-stages"></div>
+            <div class="sim-extra"></div>
+            <p class="sim-fallback">Untuned: one Escape closes and wipes your text. Tuned: it closes, and your text stays.</p>
+          </div>
+          <p class="call-answer"><strong>One press, one undo</strong>, smallest first: close, then clear. Never lose typed text on the way out. I added a step for the highlight; not wrong, just one press too many.</p>
+          <p class="rule-chip">Principle 5 · The user owns the input</p>
+        </div>
+      </div>
+      <div class="call" data-call>
+        <p class="call-kicker">Your call · 2 of 2</p>
+        <p class="call-q">Typing Japanese, you press Enter to confirm 東京. What should the search do?</p>
+        <div class="call-opts">
+          <button class="call-opt" type="button" data-opt>Open the first result</button>
+          <button class="call-opt" type="button" data-opt data-right>Nothing. That Enter was the keyboard’s</button>
+        </div>
+        <div class="call-reveal" data-reveal>
+          <span class="call-verdict" data-verdict></span>
+          <div class="sim" data-sim="ime">
+            <div class="sim-bar"><p>A Japanese input method, mid-word.</p><button class="sim-play" type="button" data-play><Fragment set:html={play} />Replay</button></div>
+            <div class="sim-stages"></div>
+            <div class="sim-extra"></div>
+            <p class="sim-fallback">Untuned: Enter opens “Tokyo office”. Tuned: Enter only confirms the characters.</p>
+          </div>
+          <p class="call-answer">While a Japanese, Chinese or Korean keyboard is composing, <strong>every key belongs to it</strong>. Safari even reports that Enter after composing ends, so the usual check misses it.</p>
+          <p class="rule-chip">Principle 5 · The user owns the input</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" aria-labelledby="s-principles">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">09</span>
+        <div><p class="slide-kicker">What it came to</p><h2 id="s-principles">Six principles under 45 rules</h2></div>
+      </header>
+      <ol class="principles">
+        {principles.map((p, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}><b>{i + 1}</b><strong>{p.title}</strong><span>{p.sub}</span></li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="slide" aria-labelledby="s-lab">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">10</span>
+        <div><p class="slide-kicker">The playground</p><h2 id="s-lab">A lab to feel the difference</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The same search twice, <strong>naive and tuned, side by side</strong>, on the same network. A dropdown, a ⌘K palette and a results page, from fast wifi down to slow 3G, with a button that fails the next request.</li>
+      </ul>
+      <figure class="shot-fig">
+        <a class="zoom" href={lab} rel="noopener" aria-label="Open the search lab">
+          <span class="shot-frame">
+            <img src={img('lab.webp')} width="1200" height="630" loading="lazy" decoding="async" alt="The search lab with the ⌘K palette open on both sides, the network set to Slow 3G. Left, Naive, what usually ships: results for “des” with bold matches, the lower rows fading. Right, Tuned, every rule from the research: a Jump to section of recent pages, a Results section below it, and a footer with the keys to move, open and close.">
+          </span>
+        </a>
+        <figcaption>Left, what usually ships. Right, every rule from the research.</figcaption>
+      </figure>
+      <p class="more-note"><a href={lab} rel="noopener">Try the <span class="nowrap">lab<Icon name="arrow-right" /></span></a></p>
+    </section>
+
+    <section class="slide" aria-labelledby="s-skill">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">11</span>
+        <div><p class="slide-kicker">The skill</p><h2 id="s-skill">Tune our search, in one prompt</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>Ask your agent to “tune our search”. It finds every search in the product, <strong>takes over the network in a real browser</strong> (slow, failing, out of order) and judges each frame.</li>
+        <li>You get a report with the evidence. <strong>Reply “go”</strong> and it makes the safe fixes; anything that changes content waits for you.</li>
+      </ul>
+      <StudioLoop
+        steps={[
+          { kicker: 'Find', label: 'Every search', sub: 'typeahead, palette, results page or picker', tone: '' },
+          { kicker: 'Audit', label: '12 checks, frame by frame', sub: 'slow, failing and out-of-order networks', tone: 'coral' },
+          { kicker: 'Your go', label: 'One word', sub: 'safe fixes made; questions wait for you', tone: 'blue' },
+          { kicker: 'Prove', label: 'Audit again', sub: 'the same checks, before and after', tone: 'teal' },
+        ]}
+        note="nothing in your code changes before your go"
+        alt="Four steps in a row. Find: every search in the product, typed as typeahead, palette, results page or picker. Audit, in coral: twelve checks judged frame by frame under slow, failing and out-of-order networks. Your go, in blue: one word, the safe fixes are made and questions wait for you. Prove, in teal: the same checks again, before and after. A handwritten note says nothing in your code changes before your go."
+        caption="It finds, you decide, it proves."
+      />
+      <figure class="shot-fig">
+        <button class="zoom" type="button" data-full-tall data-full={img('report-full.webp')} data-full-alt="The sample report from the skill, at full length." aria-label="View the sample report full size">
+          <span class="shot-frame">
+            <img src={img('report.webp')} width="1600" height="1564" loading="lazy" decoding="async" alt="The report the skill hands you, titled Search audit. Up top: reply go and the agent makes 9 safe fixes and 1 pick; 1 question waits, whether a second Escape should clear the text. Tiles count 1 Needs you, 2 My pick, 9 Safe fix, 0 Leave, 11 Passing. Below, a card per finding: the keyboard and screen reader contract, then nothing shrinks while typing, with two frames of the dropdown going from 156px to 56px tall as “desig” is typed, and the fix, a grow-only panel.">
+          </span>
+          <span class="zoom-icon zoom-icon--bottom rail-btn" aria-hidden="true"><Icon name="zoom-in" /></span>
+        </button>
+        <figcaption>A sample report: the plan up top, then a card per finding, with the frames that prove it.</figcaption>
+      </figure>
+    </section>
+
+    <section class="slide" aria-labelledby="s-tested">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">12</span>
+        <div><p class="slide-kicker">How it’s tested</p><h2 id="s-tested">Every check had to catch something first</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>A check is trusted only after it <strong>fails something broken and passes something right</strong>. The lab is both.</li>
+        <li>Then the real test: a fresh agent that had never seen our conversation, given only the skill and a scrubbed copy of the naive search. <strong>It fixed everything</strong>, and found a bug in the harness on the way.</li>
+      </ul>
+      <ul class="stats">
+        {stats.map((s, i) => (
+          <li class:list={['sk-box', `sk-box--${s.ink}`, `sk-lean-${(i % 3) + 1}`]}>
+            <b>{s.value}</b>
+            <strong>{s.label}</strong>
+            <span>{s.sub}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="slide" aria-labelledby="s-fixed">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">13</span>
+        <div><p class="slide-kicker">Back to the switcher</p><h2 id="s-fixed">Two bugs were one</h2></div>
+      </header>
+      <ul class="doodle-list slide-points">
+        <li>The panel was too tall for the space below its row, so it was <strong>pushed up against the screen’s edge</strong>. Filter, it shrinks, it no longer needs pushing, and it drops. The pointer is left outside, and a hover menu closes.</li>
+        <li>So the jump and the closing were one bug, and <strong>one rule fixed both: never shrink while open</strong>. The skill also kept focus in the search, fixed Escape, and turned off autocorrect.</li>
+      </ul>
+      <figure class="rec">
+        <span class="shot-frame"><video src={recordings.after.src} poster={recordings.after.poster} width="930" height="876" muted loop playsinline preload="none" data-inview-video aria-label={recordings.after.label}></video><span class="ba-tag ba-tag--after" aria-hidden="true">{recordings.after.tag}</span></span>
+        <figcaption>{recordings.after.caption}</figcaption>
+      </figure>
+      <aside class="said" aria-label="After testing it">
+        <p><span>Me, after testing it locally</span>“Works, next step.”</p>
+        <img src="/images/portraits/me.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+      </aside>
+    </section>
+
+    <section class="slide" aria-labelledby="s-lessons">
+      <header class="slide-head">
+        <span class="slide-num" aria-hidden="true">14</span>
+        <div><p class="slide-kicker">Misses &amp; lessons</p><h2 id="s-lessons">What I’d tell day-zero me</h2></div>
+      </header>
+      <ul class="lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <p class="lessons-miss"><span>Miss</span>{l.miss}</p>
+            <p class="lessons-learn"><span>Lesson</span>{l.lesson}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="next"><span>Next</span>My switcher is a picker, so it ran the layout and keyboard checks. The timing checks are proven on the lab; next is a server-backed search in a real product.</p>
+      <div class="reads sk-box sk-lean-2">
+        <p class="reads-title">Learnt from</p>
+        <ul>
+          {credits.map((c) => (
+            <li><a href={c.href} rel="noopener"><span>{c.source}</span>{c.title}</a><em>{c.note}</em></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <blockquote class="closer">Search is one box. Inside it: a state machine, a clock, a list that moves and a keyboard contract. Now tuning it is a prompt away.</blockquote>
+
+    <a class="deep-dive wobbly wobbly--2" href={skillUrl} rel="noopener">
+      <span class="deep-dive-body">
+        <span class="deep-dive-eyebrow"><Icon name="github" />The skill · open source</span>
+        <strong>Does your search jump, flicker or lie?</strong>
+        <span class="deep-dive-sub">Ask your agent to <code>tune-search</code>: an audit under real networks, a report you decide from, and fixes in your own code.</span>
+        <code class="install">{installCmd}</code>
+        <span class="deep-dive-go">Open it on GitHub<Icon name="arrow-right" /></span>
+      </span>
+    </a>
+    <div class="get-it">
+      <a class="get-link" href={lab} rel="noopener">Search lab <Icon name="external" class="doodle--thin" /></a>
+      <a class="get-link" href={sampleReport} rel="noopener">Sample report <Icon name="external" class="doodle--thin" /></a>
+    </div>
+  </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+    <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
+    <figure>
+      <img alt="" data-lightbox-img>
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+  </dialog>
+</WorkLayout>
+
+<script>
+  import '../../scripts/tune-search';
+</script>
+
+<style>
+  /* The deck styles shared with the other stories, plus this story's own pieces.
+     The questions and sims are in ../../styles/tune-search.css. */
+  :global(.prose:has(> .story)) { max-width: none; }
+  .story :global(.sk-fig) { margin: var(--space-3) 0 0; }
+
+  .slide { margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); }
+  .slide:first-child { margin-top: var(--space-4); }
+  .slide-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .slide-num { flex: none; font-family: var(--font-display); font-size: clamp(2.8rem, 6vw, 3.8rem); line-height: .85; color: var(--coral); }
+  .slide:nth-of-type(2n) .slide-num { color: var(--blue); }
+  .slide:nth-of-type(3n) .slide-num { color: var(--teal); }
+  .slide-kicker { margin: 0 0 .3rem !important; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .prose .slide-head h2 { margin: 0; }
+  .slide-points { max-width: 60ch; }
+  .slide-points li { font-size: 1.02rem; line-height: 1.55; }
+  .slide-points strong { color: var(--ink); font-weight: 500; }
+
+  .more-note { margin: 1rem 0 0 !important; max-width: none; text-align: right; }
+  .more-note a { font-family: var(--font-hand); font-size: 1.2rem; line-height: 1.25; color: var(--coral); text-decoration: none; }
+  .more-note .nowrap { white-space: nowrap; }
+
+  /* What I said at the time, from the journal: a bubble beside my portrait. */
+  .said { display: flex; align-items: flex-end; justify-content: flex-end; gap: .65rem; margin-top: 1.2rem; }
+  .said p { margin: 0 !important; max-width: min(34rem, 100%); padding: .6rem .85rem .7rem; font-size: .95rem; font-style: italic; line-height: 1.5; color: var(--ink-soft) !important; background: color-mix(in srgb, var(--teal) 10%, var(--paper-2)); border: 1.5px solid color-mix(in srgb, var(--teal) 45%, transparent); border-radius: 14px 14px 4px 14px; }
+  .said span { display: block; margin-bottom: .15rem; font-family: var(--font-mono); font-size: .6rem; font-style: normal; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+  .said img { flex: none; width: 2.4rem; height: 2.4rem; object-fit: cover; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--sand-2); }
+
+  /* The recordings of the real switcher: a frame, a tag, and a click to pause. */
+  .rec { margin: var(--space-3) auto 0; max-width: 34rem; }
+  .rec video { display: block; width: 100%; height: auto; border-radius: inherit; cursor: pointer; }
+  .rec figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  .ba-tag { position: absolute; top: -.9rem; left: 4%; padding: .1rem .6rem; font-family: var(--font-hand); font-size: 1.15rem; line-height: 1.2; color: #fff; background: var(--coral); border-radius: 6px 3px 7px 4px / 4px 7px 3px 6px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(-3deg); white-space: nowrap; }
+  .ba-tag--after { background: var(--teal); }
+
+  /* Slide 03: the family of searches, and what the learning came to. */
+  .kinds { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: var(--space-3) 0 0; padding: 0; }
+  @media (max-width: 719px) { .kinds { grid-template-columns: 1fr 1fr; } }
+  .kinds li { display: grid; gap: .3rem; align-content: start; padding: .85rem .9rem 1rem; }
+  .kinds strong { font-size: .98rem; font-weight: 500; color: var(--c); }
+  .kinds span { font-size: .8rem; line-height: 1.4; color: var(--ink-soft); }
+  .learnt { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem 1.6rem; margin: 1.4rem 0 0; padding: 0; font-size: .9rem; color: var(--ink-soft); }
+  .learnt b { margin-right: .35rem; font-family: var(--font-display); font-size: 1.7rem; font-weight: 400; line-height: 1; color: var(--ink); }
+
+  /* Slide 09: six principles, pinned up. */
+  .principles { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin: 0; padding: 0; }
+  @media (max-width: 719px) { .principles { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 479px) { .principles { grid-template-columns: 1fr; } }
+  .principles li { display: grid; gap: .3rem; align-content: start; padding: .85rem .95rem 1rem; }
+  .principles b { font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; line-height: 1; color: var(--coral); }
+  .principles li:nth-child(3n + 2) b { color: var(--blue); }
+  .principles li:nth-child(3n) b { color: var(--teal); }
+  .principles strong { font-size: .95rem; font-weight: 500; line-height: 1.3; color: var(--ink); }
+  .principles span { font-size: .8rem; line-height: 1.4; color: var(--ink-soft); }
+
+  /* Real renders. They keep their own colours in dark mode. */
+  .shot-fig { margin: var(--space-4) 0 0; max-width: none; }
+  .shot-frame { position: relative; display: block; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: #fff; box-shadow: 4px 4px 0 var(--shadow-ink); transform: rotate(-.4deg); }
+  .shot-frame img { display: block; width: 100%; height: auto; border-radius: inherit; }
+  .shot-fig figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
+  .zoom { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; text-align: inherit; cursor: zoom-in; }
+  a.zoom { cursor: pointer; }
+  .zoom .shot-frame { transition: transform .2s ease; }
+  .zoom:hover .shot-frame { transform: rotate(0deg) translateY(-2px); }
+  .zoom:focus-visible { outline: 2px solid var(--blue); outline-offset: 6px; border-radius: 10px; }
+  .zoom-icon { position: absolute; right: .7rem; }
+  .zoom-icon--bottom { bottom: .7rem; }
+  .zoom:hover .zoom-icon { background: var(--ink); color: var(--paper); }
+  .zoom-icon :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+
+  /* Slide 12: the numbers. */
+  .stats { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-block: var(--space-3) 0; padding: 0; }
+  @media (max-width: 559px) { .stats { grid-template-columns: 1fr; } }
+  .stats li { display: flex; flex-direction: column; gap: .15rem; padding: 1rem 1.05rem 1.1rem; }
+  .stats b { font-family: var(--font-display); font-size: 2.1rem; line-height: 1; letter-spacing: -.02em; color: var(--c); }
+  .stats strong { margin-top: .35rem; font-size: .9rem; font-weight: 500; color: var(--ink); }
+  .stats span { font-size: .78rem; line-height: 1.4; color: var(--ink-faint); }
+
+  /* Slide 14: lessons, next, and what I learnt from. */
+  .lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media (max-width: 559px) { .lessons { grid-template-columns: 1fr; } }
+  .lessons li { display: grid; gap: .55rem; align-content: start; padding: .9rem 1rem 1rem; }
+  .lessons p { margin: 0 !important; max-width: none; font-size: .9rem; line-height: 1.45; }
+  .lessons span { display: block; margin-bottom: .1rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+  .lessons-miss { color: var(--ink-faint) !important; }
+  .lessons-miss span { color: var(--coral); }
+  .lessons-learn { color: var(--ink) !important; font-weight: 500; }
+  .lessons-learn span { color: var(--teal); font-weight: 400; }
+  .next { margin: 1.4rem 0 0 !important; max-width: 60ch; font-size: .95rem !important; color: var(--ink-soft); }
+  .next span { display: block; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .reads { margin-top: var(--space-4); padding: 1rem 1.1rem 1.1rem; max-width: 44rem; }
+  .reads-title { margin: 0 0 .6rem !important; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .reads ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+  .reads li a { display: block; font-size: .95rem; line-height: 1.4; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+  .reads li a:hover { text-decoration-color: var(--ink); }
+  .reads li a span { display: block; font-size: .78rem; color: var(--ink-faint); text-decoration: none; }
+  .reads li em { display: block; font-size: .82rem; font-style: normal; color: var(--ink-soft); }
+
+  .closer { margin-top: var(--space-5); }
+
+  /* The end card: to the skill, in the deep-dive card's shape, as in fit-iphone-duo. */
+  .deep-dive { display: block; margin-top: var(--space-4); padding: 1.2rem; text-decoration: none; color: var(--ink); box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s ease, box-shadow .2s ease; }
+  .deep-dive:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+  .deep-dive-body { display: grid; gap: .55rem; padding: .3rem; }
+  .deep-dive-eyebrow { display: flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .deep-dive-eyebrow :global(.doodle) { color: var(--coral); width: 1.1rem; height: 1.1rem; }
+  .deep-dive strong { font-family: var(--font-display); font-size: clamp(1.5rem, 3.2vw, 2.1rem); font-weight: 400; line-height: 1.1; letter-spacing: -.02em; }
+  .deep-dive-sub { font-size: 1rem; color: var(--ink-soft); }
+  .install { justify-self: start; max-width: 100%; overflow-x: auto; padding: .35rem .7rem; font-size: .82rem; white-space: nowrap; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 8px; }
+  .deep-dive-go { display: inline-flex; align-items: center; gap: .35rem; margin-top: .2rem; font-weight: 500; color: var(--coral); }
+  .deep-dive-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .deep-dive:hover .deep-dive-go :global(.doodle) { transform: translateX(4px); }
+  .get-it { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem .8rem; margin-top: var(--space-3); }
+  .get-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .85rem; font-size: .88rem; font-weight: 500; color: var(--ink); text-decoration: none; border: 1.5px solid var(--line); border-radius: 999px; }
+  .get-link:hover { border-color: var(--ink); }
+  .get-link :global(.doodle) { width: .85rem; height: .85rem; }
+</style>
