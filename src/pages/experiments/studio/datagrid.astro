@@ -41,11 +41,12 @@ const stats = [
   { from: '2.4:1', to: '5.2:1', text: 'contrast for sort arrows and grips at rest.' },
 ];
 
+// Each lesson: a title and one short line, the crux in <strong>.
 const lessons = [
-  { title: 'Reuse beats invention', text: 'The detail panel, the filter band and the wide-table scroll all came from our own product. Each time, the answer already existed.' },
-  { title: 'Kind data hides bugs', text: 'Demo data made everything look finished. Put the worst case on screen from day one.' },
-  { title: 'Define “exact” so you can check it', text: '“It looks close” became “7 explained differences” once a script compared the two.' },
-  { title: 'Fewer controls, not more', text: '“Advanced” pulled toward adding controls. Every control that repeated another went.' },
+  { title: 'Design for the worst case first', text: 'Server and AI data rarely fit a calm UI. <strong>Plan every state.</strong>' },
+  { title: 'Calm reads as polished', text: '<strong>Fewer options</strong>, grouped by purpose.' },
+  { title: 'Motion like a breeze', text: '<strong>Never overdone.</strong> And a video explains it better than a screenshot.' },
+  { title: 'Not every wait is a loading state', text: 'Skeletons on first load. <strong>A refetch should feel instant.</strong>' },
 ];
 ---
 <StudioLayout
@@ -292,12 +293,12 @@ const lessons = [
       </ul>
     </UxSection>
 
-    <UxSection id="learned" num="10" kicker="What I learned" title="What I’d keep">
+    <UxSection id="learned" num="10" kicker="What I learned" title="What I’d tell day-zero me">
       <ul class="ux-lessons">
         {lessons.map((l, i) => (
           <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
             <h3>{l.title}</h3>
-            <p>{l.text}</p>
+            <p set:html={l.text} />
           </li>
         ))}
       </ul>

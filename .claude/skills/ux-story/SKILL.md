@@ -33,7 +33,7 @@ Never invent a metric, date, quote or outcome. Every number on the page must tra
 - **The process**: 4–6 steps, plus the one artefact that shows how I worked (a design board, a review page).
 - **Decisions**: 5–7 of them. Each one needs a tension ("where do filters live?"), a call, and a shot that proves it. A round that only polished something is a note, not a section.
 - **Measured**: two to four before → after numbers, if the work was audited.
-- **What I'd keep**: four lessons, a title and one sentence each.
+- **What I'd keep**: four lessons in the user's own words, each a short title plus one line (under ~12 words) with the crux in `<strong>`. No explaining: the sections above already did that.
 
 Share this outline with the user before building if the story's direction isn't obvious.
 
