@@ -1,0 +1,30 @@
+---
+/* Before and after, in one frame with a toggle. Both shots should be cropped
+   to the same framing and size (the shots script's `crop`). Without the
+   script, both show stacked with their labels. */
+import UxShot from './UxShot.astro';
+
+interface Shot { src: string; width: number; height: number; alt: string }
+interface Props {
+  before: Shot;
+  after: Shot;
+  caption?: string;
+  labels?: [string, string];
+  /** Which side shows first. */
+  start?: 'before' | 'after';
+}
+const { before, after, caption, labels = ['Before', 'After'], start = 'before' } = Astro.props;
+---
+<figure class="ux-compare" data-ux-compare data-start={start}>
+  <div class="ux-compare-bar">
+    <div class="ux-seg" role="group" aria-label="Compare">
+      <button type="button" data-ux-side="before" aria-pressed="false">{labels[0]}</button>
+      <button type="button" data-ux-side="after" aria-pressed="false">{labels[1]}</button>
+    </div>
+  </div>
+  <div class="ux-compare-stage">
+    <div class="ux-layer" data-ux-layer="before"><UxShot {...before} label={labels[0]} caption={undefined} /></div>
+    <div class="ux-layer" data-ux-layer="after"><UxShot {...after} label={labels[1]} caption={undefined} /></div>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

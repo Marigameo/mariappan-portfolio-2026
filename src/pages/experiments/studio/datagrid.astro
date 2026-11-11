@@ -1,0 +1,312 @@
+---
+/* The studio's datagrid story, told as a UX case study (the ux-story format,
+   .claude/skills/ux-story/): one decision per section, a real screenshot for
+   each, a few short notes. Source: the build journal in
+   side-builds/strivelabs-data-table/JOURNAL.md (26 rounds, 5 to 6 Nov 2026) and
+   its process/ snapshots. Media lives in public/images/experiments/datagrid/,
+   made with the skill's shots script. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import UxStory from '../../../components/ux/UxStory.astro';
+import UxSection from '../../../components/ux/UxSection.astro';
+import UxShot from '../../../components/ux/UxShot.astro';
+import UxCompare from '../../../components/ux/UxCompare.astro';
+import UxGallery from '../../../components/ux/UxGallery.astro';
+
+const img = (f: string) => `/images/experiments/datagrid/${f}`;
+
+const buckets = [
+  { kicker: 'Chat', title: 'Where work starts', text: 'Ask, attach, follow up.' },
+  { kicker: 'Artifacts', title: 'What the agent makes', text: 'Reports, blogs and the like.' },
+  { kicker: 'System of records', title: 'What everything runs on', text: 'Accounts, contacts, campaigns, tasks. Thousands of rows, many columns.', focus: true },
+];
+
+const steps = [
+  { b: 'Three directions.', t: 'Same data, three ways to manage it, for the team to play with.' },
+  { b: 'Outside bars.', t: 'Audits against design-engineering skills, measured with scripts, with a human in the loop for the final check.' },
+  { b: 'Prototype as spec.', t: 'Sixteen rounds of feedback on one live review page.' },
+  { b: 'The real component.', t: 'Built in React. The prototype became its acceptance test.' },
+  { b: 'A board for states.', t: 'Every state of the real grid on one page, to tune the in-betweens.' },
+];
+
+const directions = [
+  { src: img('dir-grid.webp'), width: 1228, height: 759, label: 'A · Grid', caption: 'Pinned, typed columns and a rule builder. The one we picked.', alt: 'Direction A, Grid, in dark mode: a saved-views menu, search, Refresh and Download CSV, then a table with Fit tier bars and score, Stage, Intent, a 30-day activity chart with orange reply marks, Contacts and Industry.' },
+  { src: img('dir-workbench.webp'), width: 1228, height: 759, label: 'B · Workbench', caption: 'Like Linear: saved views, filter chips, keyboard first.', alt: 'Direction B, Workbench: saved-view tabs with counts (All accounts 713, Best fit 85, Needs lookup 101, Engaged 98), an add-filter chip, Display, and a dense table with checkboxes, Fit, Stage, Intent, activity, Industry, Employees and Owner, with j and k keyboard hints in the footer.' },
+  { src: img('dir-explorer.webp'), width: 1228, height: 759, label: 'C · Explorer', caption: 'Like Vercel’s logs: facets in a rail, a preview panel.', alt: 'Direction C, Explorer: a Refine rail of facets with counts and Stage set to Replied, a query bar holding a “stage: Replied” token, a bar of 62 engaged accounts, a list of replied accounts, and Crest Capital open in a preview panel with its details and email activity.' },
+];
+
+const stats = [
+  { from: '35', to: '0', text: 'contrast failures, across 9 states in both themes.' },
+  { from: '133', to: '7', text: 'style differences from the audited prototype. All 7 explained.' },
+  { from: '2.4:1', to: '5.2:1', text: 'contrast for sort arrows and grips at rest.' },
+];
+
+const lessons = [
+  { title: 'Reuse beats invention', text: 'The detail panel, the filter band and the wide-table scroll all came from our own product. Each time, the answer already existed.' },
+  { title: 'Kind data hides bugs', text: 'Demo data made everything look finished. Put the worst case on screen from day one.' },
+  { title: 'Define “exact” so you can check it', text: '“It looks close” became “7 explained differences” once a script compared the two.' },
+  { title: 'Fewer controls, not more', text: '“Advanced” pulled toward adding controls. Every control that repeated another went.' },
+];
+---
+<StudioLayout
+  title="Designing the datagrid in Strive"
+  slug="datagrid"
+  description="A UX case study: designing one datagrid for Strive’s system of records. Configurable columns, filters that read like a sentence, data that can be anything, and motion that feels alive, in 26 rounds over two days."
+  ogDescription="One datagrid for Strive’s system of records: configurable, built for thousands of rows, clean and lively."
+  eyebrow="Strivelabs · Datagrid"
+  facts={[
+    { label: 'My part', value: 'Design and frontend, paired with Claude Code' },
+    { label: 'Built with', value: 'React · dnd-kit · Motion' },
+    { label: 'Timeline', value: '5 to 6 Nov 2026 · 26 rounds' },
+  ]}
+  keywords="UX case study, data grid, data table, design system, column reordering, drag and drop, filters, empty states, accessibility, contrast, motion design, design engineering"
+>
+  <Fragment slot="lede">Chat, artifacts and system of records are the big buckets we keep investing in at Strive. Records are the core, so I set out to design one list for all of them, <mark class="hl">clean, flexible and built for thousands of rows</mark>, so every record in the product gets the same polish.</Fragment>
+
+  <UxShot
+    slot="hero"
+    src={img('walkthrough.mp4')}
+    video={{ src: img('walkthrough.mp4'), poster: img('walkthrough-poster.webp') }}
+    width={1600}
+    height={900}
+    eager
+    alt="Screen recording of the new datagrid on the Accounts page. Rows scroll under a sticky header; the Industry column is resized and dragged to a new place; rows per page changes from 25 to 50 and the next page loads under a dimmed table; Industry and Country filters are added as chips until nothing matches; then the Columns menu hides a column, brings it back and reorders the list, and the table follows."
+    caption="A 42-second walkthrough: scroll, resize, reorder, page, filter and choose columns."
+  />
+
+  <UxStory>
+    <UxSection id="crux" num="01" kicker="The problem" title="Nail the list once">
+      <Fragment slot="call">Most of what we build lands in one of three big buckets, and system of records are the core. They ran on a data table built on shadcn/ui: functionally sound, but limited in features and not polished. So <strong>records needed one clean, polished list</strong>.</Fragment>
+      <ul class="ux-cards">
+        {buckets.map((b) => (
+          <li class:list={[b.focus && 'is-focus']}>
+            <p class="ux-kicker">{b.kicker}</p>
+            <h3>{b.title}</h3>
+            <p>{b.text}</p>
+          </li>
+        ))}
+      </ul>
+      <ul class="ux-notes">
+        <li><strong>Configurable.</strong>Choose what’s on screen, reorder, resize. Remembered for each reader.</li>
+        <li><strong>Built for thousands.</strong>The server pages, filters and sorts. Wide tables scroll under a pinned name.</li>
+        <li><strong>Clean and lively.</strong>Consistent spacing, and motion that feels alive, never busy.</li>
+        <li><strong>Solid in every state.</strong>Loading, empty, errors and the worst data a server can send.</li>
+      </ul>
+      <UxCompare
+        before={{ src: img('old-table.webp'), width: 1600, height: 1073, alt: 'Before: the shadcn/ui data table. A plain search box, a table with checkboxes and uppercase headers (Name, Email, Role, Department, Status), each with a sort arrow, five rows of users with green Active and grey Inactive badges, download and copy icons above the table, and Previous, Next and “Page 1 of 2” below.' }}
+        after={{ src: img('new-grid.webp'), width: 1600, height: 1073, alt: 'After: the datagrid on the Accounts page. A pill search, Filter and Columns buttons, a pinned Company column with logo tiles, names and domains, then Industry, Country, Employees, Revenue and Funding stage with drag handles, right-aligned numbers, quiet dashes for missing values, and a footer with the count, rows per page and pages.' }}
+        caption="Before: the shadcn/ui data table we had. After: the datagrid."
+      />
+    </UxSection>
+
+    <UxSection
+      id="process"
+      num="02"
+      kicker="The process"
+      title="Prototype, audit, then build"
+      notes={[
+        { b: 'The real component.', t: 'It renders from source with the product’s own libraries, and hot-reloads on every edit.' },
+        { b: 'Twelve frames.', t: 'Live pages, every state, worst-case data and every filter type.' },
+        { b: 'A state switcher.', t: 'One grid stepped through first load, refetching, empty, no match and error.' },
+      ]}
+    >
+      <Fragment slot="call">I designed it in code, benchmarking for a clean, polished feel: 26 rounds over two days, each logged in my own words. I made the calls; Claude Code proposed, built and checked. <strong>The last stretch ran on a board</strong> of every state of the real grid.</Fragment>
+      <ol class="ux-steps">
+        {steps.map((s) => <li><strong>{s.b}</strong><span>{s.t}</span></li>)}
+      </ol>
+      <UxShot
+        src={img('board.webp')}
+        width={1600}
+        height={1000}
+        alt="The DataGrid board: a sidebar listing Live frames (Accounts, Contacts, Row opens a panel), States (State switcher, First load, Slow server, Empty list, No match, Load error) and Data and config (Worst-case data, Every filter type, Minimal defaults). A top bar sets theme, width (Fill, 1280, 1024, 768) and server speed. The Accounts frame shows the real grid."
+        caption="A static page shows a state. A board shows what happens between states, which is where “smooth” lives."
+      />
+    </UxSection>
+
+    <UxSection
+      id="directions"
+      num="03"
+      kicker="Decision · direction"
+      title="One data set, three ways to manage it"
+      notes={[
+        { b: 'Grid: built for wide records.', t: 'Many columns, a pinned name and typed cells. The team liked it too, so we doubled down.' },
+        { b: 'Workbench: better for lists.', t: 'Good, but it suits lists more than records with a large number of columns.' },
+        { b: 'Explorer: not a natural fit.', t: 'Strive already has a primary sidebar, and not every record type has filters worth showing up front.' },
+      ]}
+    >
+      <Fragment slot="call">Before any polish, I explored wide: the same 713 accounts and 16 columns, in three patterns inspired by tables in tools like Linear and Vercel. The team played with each in one live page, and <strong>Grid won</strong>.</Fragment>
+      <UxGallery items={directions} />
+    </UxSection>
+
+    <UxSection
+      id="colour"
+      num="04"
+      kicker="Decision · colour"
+      title="Colour has to mean something"
+      notes={[
+        { b: 'A grammar, not a palette.', t: 'Ink and greys for all data. Colour only where it carries meaning.' },
+        { b: 'One colour, one job.', t: 'In the prototype, the brand orange meant exactly one thing: the account replied.' },
+        { b: 'Colour back as content.', t: 'Company logos brought colour back to the rows, as content rather than decoration.' },
+      ]}
+    >
+      <blockquote slot="quote" class="ux-quote">“It looks like AI slop, with the colour choices and stuff.”<cite>Me, round 6</cite></blockquote>
+      <Fragment slot="call">Each row ran five unrelated colour systems at once, and green and blue each meant two things. <strong>So I cut colour back to what it means.</strong></Fragment>
+      <UxCompare
+        before={{ src: img('colour-before.webp'), width: 1228, height: 747, alt: 'Before: green fit-score meters, blue activity bars, grey intent bars, pastel letter tiles and blue and green stage icons, plus Refresh and Download CSV buttons and a request line under the table.' }}
+        after={{ src: img('colour-after.webp'), width: 1228, height: 747, alt: 'After: the same table in ink and greys. Fit is small tier bars with a number, letter tiles are neutral, and orange appears only on Replied and Meeting booked stages and as reply dots on the activity bars.' }}
+        caption="Same rows, same data. Flip between them: the orange now marks one thing."
+      />
+    </UxSection>
+
+    <UxSection
+      id="columns"
+      num="05"
+      kicker="Decision · configurable"
+      title="Every column is yours to arrange"
+      notes={[
+        { b: 'A handle on every header.', t: 'Sixteen pixels in, with a gap before the resize edge, so a drag never turns into a resize.' },
+        { b: 'A click still sorts.', t: 'A press becomes a drag only after 4px.' },
+        { b: 'Move the column itself.', t: 'It lifts on a soft shadow, its neighbours slide aside, and it settles into place rather than snapping.' },
+        { b: 'Remembered.', t: 'Order, visibility and widths stay in the reader’s browser, with Reset to go back.' },
+      ]}
+    >
+      <Fragment slot="call">Records have more columns than any screen. So readers choose: <strong>show, hide, reorder and resize</strong>. Getting the drag to feel right took four rounds, then dnd-kit to run it.</Fragment>
+      <UxShot
+        src={img('columns-drag.mp4')}
+        video={{ src: img('columns-drag.mp4'), poster: img('columns-drag-poster.webp'), autoplay: true }}
+        width={1600}
+        height={900}
+        alt="Screen recording: the edge between Company and Industry is dragged to resize the column. Then Industry, and after it Country, is picked up by its handle and carried along the header as a whole column, cells and all, while the neighbouring columns slide aside to make room, and it settles into place."
+        caption="Move the thing itself, not a picture of it."
+      />
+      <UxShot
+        src={img('columns-menu.mp4')}
+        video={{ src: img('columns-menu.mp4'), poster: img('columns-menu-poster.webp'), autoplay: true }}
+        width={1600}
+        height={900}
+        alt="Screen recording: the Columns menu opens, “Columns · 10 of 14” with Company pinned. Industry is unticked and its column leaves the table, then comes back. The Country row is dragged by its handle above Employees, and the table’s columns reorder to match."
+        caption="Tick to show, drag to reorder. The table follows as you go."
+      />
+    </UxSection>
+
+    <UxSection
+      id="filters"
+      num="06"
+      kicker="Decision · filters"
+      title="Filters that read like a sentence"
+      notes={[
+        { b: 'Chips for quick rules.', t: 'Field, operator, value: “Industry is any of 3 selected”. Each part opens its own small editor.' },
+        { b: 'Condition sets for the rest.', t: 'Rules joined with “and” or “or”, for the questions one chip can’t ask.' },
+        { b: 'An editor per type.', t: 'Searchable checklists for 434 industries and 249 countries. Typed inputs for numbers and dates, including “between”.' },
+        { b: 'Borrowed from Tasks.', t: 'The warm band opens only while filters apply, as it does on Tasks.' },
+      ]}
+    >
+      <Fragment slot="call">Two kinds of filter, both supported: <strong>simple chips</strong>, one rule each, and <strong>condition sets</strong> that join rules with “and” or “or”. Where applied filters live took four tries before they settled in a warm band under the toolbar.</Fragment>
+      <UxShot
+        src={img('filters.mp4')}
+        video={{ src: img('filters.mp4'), poster: img('filters-poster.webp'), autoplay: true }}
+        width={1600}
+        height={900}
+        alt="Screen recording: Filter opens a list of fields. Industry is picked, its value list opens with a search box, and one industry is ticked; the chip appears in a warm band under the toolbar and nothing matches, so the no-match scene shows with Clear filters. Country is added the same way, with its own searchable list."
+        caption="Add a rule, pick its value, and the chip reads back what you asked for."
+      />
+      <UxShot
+        src={img('filter-chips.webp')}
+        width={2000}
+        height={386}
+        alt="The filter band under the toolbar: a chip reading “Industry · is any of · 3 selected ×” and another reading “Employees · between · 50 – 5,000 ×”, a dashed plus button to add one, and Clear on the right. The Filter button shows a count of 2, and Employees is sorted below."
+        caption="“Industry is any of 3 selected.” Three or more values read “3 selected”, since the field is already on the chip."
+      />
+    </UxSection>
+
+    <UxSection
+      id="worst-case"
+      num="07"
+      kicker="Decision · resilience"
+      title="Designed for the data we’ll actually get"
+      notes={[
+        { b: 'Real mess.', t: 'Arabic, Chinese and Vietnamese names, an emoji, a CSV newline, two companies called Atlas Cloud, 2.3M employees.' },
+        { b: 'Truncate, don’t wrap.', t: 'Long names end in an ellipsis, so every row keeps its height.' },
+        { b: 'Missing is quiet.', t: 'An empty value is a soft dash, and empty values sort to the end.' },
+      ]}
+    >
+      <Fragment slot="call">Data from the server can be anything. Demo data made everything look finished; <strong>worst-case data found three broken states in minutes</strong>, including a missing error state.</Fragment>
+      <UxShot
+        src={img('worst-case.webp')}
+        width={2000}
+        height={1125}
+        alt="The grid with worst-case data: a domain with no name, a very long subdomain cut with an ellipsis, two Atlas Cloud rows with different domains, a fox emoji in Fox and Friends, Vietnamese, Arabic and Chinese company names, one-letter names J and Jo, and Wiśniewska-Kowalczyk Industrial with 2,300,000 employees. Missing values are dashes."
+        caption="Twelve accounts built to break things. Every row keeps the same rhythm."
+      />
+    </UxSection>
+
+    <UxSection
+      id="states"
+      num="08"
+      kicker="Decision · states"
+      title="Every state has a face"
+      notes={[
+        { b: 'One pen.', t: 'Every scene runs through the same wobble filter, so a new drawing inherits the hand.' },
+        { b: 'Quiet motion.', t: 'Each draws itself in once, then keeps one small idle detail: a sparkle, a sway, a passing cloud.' },
+        { b: 'Rolled out.', t: 'About 20 empty states across Tasks, Library, Campaigns, the Inbox and more.' },
+      ]}
+    >
+      <Fragment slot="call">Empty, no match and couldn’t load each got a scene of our own: one warm ink, one beige fill. <strong>Drawn for the grid, then used across the product.</strong></Fragment>
+      <UxShot
+        src={img('states.mp4')}
+        video={{ src: img('states.mp4'), poster: img('states-poster.webp'), autoplay: true }}
+        width={1600}
+        height={914}
+        alt="Screen recording of the board’s state switcher stepping one grid through its states: rows, then refetching (the rows dim under a thin progress bar), empty (a buildings scene with Import accounts), no match, error (an unplugged cable with Try again), and first load (skeleton rows)."
+        caption="One grid, stepped through every state on the board."
+      />
+      <UxShot
+        src={img('empty-scenes.webp')}
+        width={2000}
+        height={817}
+        alt="Seven hand-drawn spot illustrations in dark ink with a beige fill: an open box (nothing here yet), a magnifier with a question mark (no match), an unplugged cable (couldn’t load), buildings (no companies yet), people (no people yet), documents (no files yet) and a checklist (no tasks yet)."
+        caption="Seven scenes, one for each kind of empty."
+      />
+    </UxSection>
+
+    <UxSection
+      id="measured"
+      num="09"
+      kicker="Craft · motion and type"
+      title="Motion where you touch it"
+      notes={[
+        { b: 'Filters.', t: 'The band opens on its height, chips rise in and glide aside when one leaves, and a chip’s text slides to its new width.' },
+        { b: 'Drag to rearrange.', t: 'The column lifts on a soft shadow, its neighbours slide aside over 200ms, and it settles into its slot on release.' },
+        { b: 'Drag to resize.', t: '200ms ease-out. The first version used a spring that took about 400ms to settle.' },
+        { b: 'Still where you read.', t: 'Sorting and paging dim the rows under a thin progress bar instead of moving them. Motion that delights on a rare screen drags on one you hit every minute.' },
+      ]}
+    >
+      <Fragment slot="call">I put the motion where hands meet the grid: filters, drag to rearrange and drag to resize. Then I audited everything against outside design-engineering bars, <strong>measured with scripts, with a human in the loop for the final check</strong>.</Fragment>
+      <ul class="ux-stats">
+        {stats.map((s) => (
+          <li>
+            <span class="ux-stat-num"><s>{s.from}</s><Icon name="arrow-right" />{s.to}</span>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <UxSection id="learned" num="10" kicker="What I learned" title="What I’d keep">
+      <ul class="ux-lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{l.title}</h3>
+            <p>{l.text}</p>
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <blockquote class="closer">Nail the list once, and every record in the product inherits it.</blockquote>
+  </UxStory>
+</StudioLayout>
+
+<style>
+  .closer { margin-top: var(--space-5); }
+</style>

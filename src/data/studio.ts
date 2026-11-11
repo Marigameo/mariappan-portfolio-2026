@@ -6,8 +6,9 @@
    To add one: push an entry here and write its page in
    src/pages/experiments/studio/<slug>.astro. The artboard shows `preview`: a
    short muted loop of the new UI (played on hover, or once in view on touch
-   screens), or a hand-drawn sketch (picked in experiments.astro) until a
-   recording exists. Keep loops ~8s and under ~1 MB, with a poster. */
+   screens), a still screenshot, or a hand-drawn sketch (picked in
+   experiments.astro) until a recording exists. Keep loops ~8s and under ~1 MB,
+   with a poster. */
 
 export interface StudioPiece {
   slug: string;
@@ -22,10 +23,28 @@ export interface StudioPiece {
   accent: 'coral' | 'blue' | 'teal' | 'violet';
   preview:
     | { kind: 'sketch'; sketch: 'kb-graph' | 'kb-props' | 'chat-mode'; alt: string }
-    | { kind: 'video'; src: string; poster: string; width: number; height: number; alt: string };
+    | { kind: 'video'; src: string; poster: string; width: number; height: number; alt: string }
+    | { kind: 'image'; src: string; width: number; height: number; alt: string };
 }
 
 export const studio: StudioPiece[] = [
+  {
+    slug: 'datagrid',
+    title: 'Designing the datagrid in Strive',
+    context: 'Strivelabs · Datagrid',
+    frame: 'Grid / Accounts',
+    hook: 'One list for every record in the product: configurable, built for thousands of rows, and calm.',
+    tags: ['UX case study', 'Data grid'],
+    accent: 'teal',
+    preview: {
+      kind: 'video',
+      src: '/images/experiments/datagrid/loop.mp4',
+      poster: '/images/experiments/datagrid/loop-poster.webp',
+      width: 960,
+      height: 540,
+      alt: 'The new datagrid on the Accounts page in Strive: a column edge is dragged to resize, then the Industry column is picked up by its handle and carried across the table as its neighbours slide aside.',
+    },
+  },
   {
     slug: 'iphone-duo-playground',
     title: 'Designing the iPhone Duo playground',

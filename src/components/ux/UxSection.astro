@@ -1,0 +1,31 @@
+---
+/* One section of a UX story: one decision. A number, a kicker, a headline,
+   the call in a line or two (the "call" slot), then the media (default slot),
+   then up to four short notes. Keep the call under ~40 words. An optional
+   "quote" slot (a blockquote.ux-quote) sits above the call. */
+interface Props {
+  id: string;
+  num: string;
+  kicker: string;
+  title: string;
+  notes?: { b: string; t: string }[];
+}
+const { id, num, kicker, title, notes } = Astro.props;
+---
+<section class="ux-sec" id={id} aria-labelledby={`${id}-t`}>
+  <header class="ux-sec-head">
+    <span class="ux-num" aria-hidden="true">{num}</span>
+    <div>
+      <p class="ux-kicker">{kicker}</p>
+      <h2 id={`${id}-t`}>{title}</h2>
+    </div>
+  </header>
+  <slot name="quote" />
+  {Astro.slots.has('call') && <p class="ux-call"><slot name="call" /></p>}
+  <slot />
+  {notes && notes.length > 0 && (
+    <ul class="ux-notes">
+      {notes.map((n) => <li><strong>{n.b}</strong>{n.t}</li>)}
+    </ul>
+  )}
+</section>

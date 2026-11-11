@@ -1,0 +1,45 @@
+---
+/* A real screenshot or screen recording in a UX story.
+
+   Images lazy-load (except `eager`, for the one above the fold), carry their
+   real width/height so nothing shifts, and open full size in the lightbox.
+   Recordings are muted loops with controls that never preload: the poster
+   (itself lazy, set by the script just before it scrolls into view) shows,
+   and the file loads on play. `autoplay` plays one only while it's on
+   screen, and never under reduced motion. A long walkthrough in the hero
+   should stay click-to-play. Every shot sits at the text column's width, so
+   the page keeps one measure; Enlarge (images and recordings) gives detail. */
+import Icon from '../Icon.astro';
+
+interface Props {
+  src: string;
+  width: number;
+  height: number;
+  /** What the shot shows and why it matters, not "screenshot of…". */
+  alt: string;
+  caption?: string;
+  /** Small mono label above the frame, e.g. "Before" or "Grid". */
+  label?: string;
+  eager?: boolean;
+  zoom?: boolean;
+  video?: { src: string; poster: string; autoplay?: boolean };
+  class?: string;
+}
+
+const { src, width, height, alt, caption, label, eager = false, video, class: cls } = Astro.props;
+const zoom = Astro.props.zoom ?? true;
+---
+<figure class:list={['ux-shot', cls]}>
+  {label && <span class="ux-label">{label}</span>}
+  <div class="ux-frame">
+    {video
+      ? <video src={video.src} poster={eager ? video.poster : undefined} data-poster={eager ? undefined : video.poster} width={width} height={height} controls muted loop playsinline preload="none" aria-label={alt} data-ux-autoplay={video.autoplay ? '' : undefined}></video>
+      : <img src={src} width={width} height={height} alt={alt} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" />}
+    {zoom && (
+      <button type="button" class:list={['ux-zoom', video && 'ux-zoom--corner']} aria-label={`Enlarge${label ? ` ${label}` : ''} ${video ? 'recording' : 'screenshot'}`} data-ux-zoom data-kind={video ? 'video' : 'image'} data-src={video ? video.src : src} data-poster={video?.poster} data-alt={alt} data-w={width} data-h={height} data-caption={caption ?? ''}>
+        <span class="ux-zoom-badge" aria-hidden="true"><Icon name="zoom-in" />Enlarge</span>
+      </button>
+    )}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

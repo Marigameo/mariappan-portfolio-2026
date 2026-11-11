@@ -1,0 +1,22 @@
+---
+/* The wrapper for a UX story (screenshot-led case study). Wrap the page's
+   sections in it, inside StudioLayout or WorkLayout. It brings the shared
+   styles, one lightbox for every zoomable shot, and the behaviour script.
+   See .claude/skills/ux-story/SKILL.md. */
+import Icon from '../Icon.astro';
+import '../../styles/ux-story.css';
+---
+<div class="ux-story">
+  <slot />
+</div>
+
+<dialog class="ux-lightbox" aria-label="Enlarged screenshot" data-ux-lightbox>
+  <button type="button" class="ux-lightbox-close" aria-label="Close" data-ux-lightbox-close><Icon name="close" /></button>
+  <img src="data:," alt="" decoding="async" />
+  <video controls muted loop playsinline preload="none" hidden></video>
+  <p data-ux-lightbox-cap hidden></p>
+</dialog>
+
+<script>
+  import '../../scripts/ux-story';
+</script>

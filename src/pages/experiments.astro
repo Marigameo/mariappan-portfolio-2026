@@ -74,7 +74,9 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
                   <span class="art-shot">
                     {p.preview.kind === 'sketch' && Sketch
                       ? <Sketch label={p.preview.alt} />
-                      : p.preview.kind === 'video' && <video src={p.preview.src} poster={p.preview.poster} width={p.preview.width} height={p.preview.height} muted loop playsinline preload="none" aria-label={p.preview.alt} data-art-video></video>}
+                      : p.preview.kind === 'video'
+                        ? <video src={p.preview.src} poster={p.preview.poster} width={p.preview.width} height={p.preview.height} muted loop playsinline preload="none" aria-label={p.preview.alt} data-art-video></video>
+                        : p.preview.kind === 'image' && <img src={p.preview.src} width={p.preview.width} height={p.preview.height} alt={p.preview.alt} loading="lazy" decoding="async" />}
                   </span>
                 </span>
                 <span class="art-body">
@@ -471,7 +473,8 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
   .art-link:focus-visible .art-board { outline: 2px solid var(--ink); outline-offset: 3px; }
   /* Every artboard shares the recordings' shape (1600 × 832), so a row lines up; a sketch slice-crops to it. */
   .art-shot { display: block; aspect-ratio: 25 / 13; overflow: hidden; border: 1.5px solid var(--border); border-radius: 8px; background: var(--paper-2); box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--ink) 35%, transparent); }
-  .art-shot :global(.sk), .art-shot video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .art-shot :global(.sk), .art-shot video, .art-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .art-shot img { object-position: left top; }
   .art-body { display: grid; gap: .35rem; margin-top: .45rem; }
   .art-title { font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.6rem); font-weight: 400; line-height: 1.15; letter-spacing: -.01em; }
   .art-hook { font-size: .95rem; line-height: 1.45; color: var(--ink-soft); }
