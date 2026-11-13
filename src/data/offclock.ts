@@ -1,4 +1,5 @@
-/* Thenga's day off: the About page's hobbies, one scrapbook board each.
+/* Thenga's day off: the About page's hobbies. On the page they're one row of
+   Thengas ("Off the clock"); each opens its scrapbook board in a panel.
    Rendered by src/pages/about.astro.
 
    To feature a photo: drop it in public/images/about/<hobby>/ and add it to that
@@ -23,6 +24,8 @@ export interface Pick {
 
 export interface Pastime {
   id: string;
+  /** One word under Thenga in the "Off the clock" row on the About page. */
+  short: string;
   hobby: Hobby;
   accent: 'coral' | 'blue' | 'teal' | 'violet';
   title: string;
@@ -39,7 +42,7 @@ export interface Pastime {
 
 export const pastimes: Pastime[] = [
   {
-    id: 'music', hobby: 'guitar', accent: 'coral',
+    id: 'music', short: 'Music', hobby: 'guitar', accent: 'coral',
     title: 'Music, mostly on six strings',
     text: "I'm into music and love to play guitar. Covers land on Instagram now and then.",
     doing: 'strumming along',
@@ -51,7 +54,7 @@ export const pastimes: Pastime[] = [
     ],
   },
   {
-    id: 'travel', hobby: 'backpack', accent: 'blue',
+    id: 'travel', short: 'Travel', hobby: 'backpack', accent: 'blue',
     title: 'Slow travel',
     text: 'Not the rush-to-destinations kind. I stay until a place sinks in — no plans, just vibes, people, culture, and a lot of photographs to carry home.',
     doing: 'off somewhere, no plans',
@@ -69,7 +72,7 @@ export const pastimes: Pastime[] = [
     ],
   },
   {
-    id: 'cooking', hobby: 'pot', accent: 'violet',
+    id: 'cooking', short: 'Cooking', hobby: 'pot', accent: 'violet',
     title: 'Cooking, almost every day',
     text: 'I love home-cooked food, so I cook most days — and keep trying new dishes.',
     doing: 'something’s on the stove',
@@ -83,7 +86,7 @@ export const pastimes: Pastime[] = [
     ],
   },
   {
-    id: 'poetry', hobby: 'pen', accent: 'teal',
+    id: 'poetry', short: 'Poetry', hobby: 'pen', accent: 'teal',
     title: 'Poetry, in Tamil',
     text: 'I pen down kavithai, mostly in Tamil.',
     doing: 'one more line…',
@@ -98,7 +101,7 @@ export const pastimes: Pastime[] = [
     ],
   },
   {
-    id: 'photos', hobby: 'camera', accent: 'coral',
+    id: 'photos', short: 'Photographs', hobby: 'camera', accent: 'coral',
     title: 'Photographs that get to live',
     text: 'I hate letting travel photographs die on my phone, so the keepers get curated here.',
     doing: 'hold still…',
