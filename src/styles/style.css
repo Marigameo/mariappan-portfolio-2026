@@ -700,6 +700,39 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .breadcrumb { font-size: .9rem; font-weight: 500; display: inline-flex; align-items: center; gap: .3rem; color: var(--ink-faint); text-decoration: none; }
 .breadcrumb:hover { color: var(--coral); }
 .breadcrumb .doodle { transform: scaleX(-1); }
+/* The way back sits apart from the title, as on the listing pages. */
+.page-hero .breadcrumb { margin-bottom: var(--space-4); }
+
+/* The side-column frame (posts, and stories that opt in): <main class="wrap
+   side-page"> keeps the 72rem frame of the home and listing pages, so the way
+   back and the title never jump sideways between pages. The header (title, lede,
+   facts) spans the frame; below it the reading column sits on the left at the
+   width the piece was written for (--read-w), and the side column on the right
+   (15rem, at the frame's edge) holds Thenga and "On this page" (PageToc), sticky
+   together as you read. Under 1024px it's the single centred column again. */
+.side-page { --read-w: 46rem; }
+.side-hero .lede { max-width: 72ch; }
+.side-hero .facts { grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+.side-body { display: grid; grid-template-columns: minmax(0, var(--read-w)) 15rem; justify-content: space-between; column-gap: var(--space-5); align-items: start; }
+.side-main { min-width: 0; }
+.side-col { position: sticky; top: 5.5rem; display: grid; gap: var(--space-3); transition: opacity .2s ease; }
+.side-col.is-covered { opacity: 0; pointer-events: none; }
+.side-col .toc { position: static; }
+.side-mascot { width: 8rem; margin-left: 1rem; }
+.side-mascot .mascot { display: block; width: 100%; }
+/* A .fig-wide piece (a playground, a sheet of boards) breaks out of the reading
+   column. Centred on it, it would reach past the frame on the left, so here it
+   starts at the column's edge and runs right, under the side column (which fades
+   while it passes; see PageToc). */
+@media (min-width: 1024px) {
+  main.side-page .fig-wide.fig-wide { margin-left: 0 !important; margin-right: auto !important; }
+}
+@media (max-width: 1023px) {
+  .side-page { width: min(100% - 2.5rem, 46rem); }
+  .side-body { grid-template-columns: minmax(0, 1fr); }
+  .side-col { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .side-col { transition: none; } }
 .prose { max-width: 66ch; }
 .prose p { font-size: 1.05rem; line-height: 1.7; }
 .prose h2 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin-top: var(--space-4); }
@@ -776,7 +809,8 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .facts div { border-top: 1px solid var(--line); padding-top: .6rem; }
 .facts dt { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .2rem; }
 .facts dd { margin: 0; color: var(--ink); }
-.facts a { white-space: nowrap; }
+/* A long link (an npm package) may break anywhere rather than run off a phone. */
+.facts dd { min-width: 0; overflow-wrap: anywhere; }
 
 /* "At a glance" on a project page: the problem, my part and what shipped, as a spec sheet
    (label left, content right) so a quick scan answers them before the slides. */

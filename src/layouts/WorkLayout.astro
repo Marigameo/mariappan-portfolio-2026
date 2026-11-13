@@ -1,10 +1,17 @@
 ---
 /* A project write-up: breadcrumb, title, lede, facts, the article, and a back link.
    Pages pass the facts as props, the lede in the "lede" slot, and the write-up as children.
-   An optional "glance" slot holds .at-glance-row blocks (problem, my part, shipped) under the facts. */
+   An optional "glance" slot holds .at-glance-row blocks (problem, my part, shipped) under the facts.
+   Laid out in the side-column frame of the posts (.side-page in style.css): the
+   header across the full frame, then the story at its usual 46rem on the left and,
+   beside it, Thenga (laptop for work, hammer for side builds) over "On this page"
+   (the slides), so nothing jumps sideways coming from the listing pages. */
 import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import Thenga from '../components/mascots/Thenga.astro';
+import PageToc from '../components/PageToc.astro';
 import { site } from '../data/site';
+import { projects } from '../data/work';
 
 interface Props {
   /** Browser/OG title, e.g. "Report builder | Work | Mariappan Subramanian" (suffix added here). */
@@ -34,6 +41,9 @@ interface Props {
 }
 
 const { title, description, ogDescription, heading, headingLang, headingNote, eyebrow, facts, link, schema } = Astro.props;
+// Thenga at work or tinkering, as on the Work page's tabs.
+const kind = projects.find((p) => Astro.url.pathname === `/work/${p.slug}/`)?.kind;
+const mascot = kind === 'side-builds' ? 'hammer' : 'laptop';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -48,38 +58,49 @@ const jsonLd = {
 };
 ---
 <BaseLayout title={`${title} | Work | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="work" jsonLd={jsonLd}>
-  <main id="main" class="wrap wrap--narrow">
-    <header class="page-hero">
-      <a class="breadcrumb" href="/work/"><Icon name="arrow-right" />All work</a>
-      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-      <h1 lang={headingLang}>{heading}{headingNote && <span class="title-note" lang="en">{headingNote}</span>}</h1>
-      <p class="lede"><slot name="lede" /></p>
-      <dl class="facts">
-        {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
-        <div><dt>Link</dt><dd><a href={link.href} rel="noopener">{link.label} <Icon name="external" class="doodle--thin" /></a></dd></div>
-      </dl>
+  <main id="main" class="wrap side-page">
+    <header class="page-hero side-hero">
+      <div class="hero-text">
+        <a class="breadcrumb" href="/work/"><Icon name="arrow-right" />All work</a>
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h1 lang={headingLang}>{heading}{headingNote && <span class="title-note" lang="en">{headingNote}</span>}</h1>
+        <p class="lede"><slot name="lede" /></p>
+        <dl class="facts">
+          {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+          <div><dt>Link</dt><dd><a href={link.href} rel="noopener">{link.label} <Icon name="external" class="doodle--thin" /></a></dd></div>
+        </dl>
+      </div>
     </header>
+    <div class="side-body">
+      <div class="side-main">
 
-    {Astro.slots.has('glance') && (
-      <section class="at-glance" aria-labelledby="at-glance-title">
-        <h2 id="at-glance-title" class="at-glance-title">At a glance</h2>
-        <slot name="glance" />
-      </section>
-    )}
+        {Astro.slots.has('glance') && (
+          <section class="at-glance" aria-labelledby="at-glance-title">
+            <h2 id="at-glance-title" class="at-glance-title">At a glance</h2>
+            <slot name="glance" />
+          </section>
+        )}
 
-    {Astro.slots.has('sketch') && (
-      <figure class="work-shot taped">
-        <slot name="sketch" />
-      </figure>
-    )}
+        {Astro.slots.has('sketch') && (
+          <figure class="work-shot taped">
+            <slot name="sketch" />
+          </figure>
+        )}
 
-    <article class="prose">
-      <slot />
-    </article>
+        <article class="prose">
+          <slot />
+        </article>
 
-    <p style="margin-top: var(--space-4)">
-      <a class="pill" href="/work/"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
-    </p>
+        <p style="margin-top: var(--space-4)">
+          <a class="pill" href="/work/"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
+        </p>
+      </div>
+      <aside class="side-col">
+        <div class="side-mascot" aria-hidden="true"><Thenga hobby={mascot} /></div>
+        <PageToc heads=".prose .slide h2[id], .prose > h2[id]" />
+      </aside>
+
+    </div>
   </main>
 </BaseLayout>
 

@@ -1,0 +1,86 @@
+---
+/* "On this page": the sticky list in the side column of a post or a story
+   (.side-page in style.css). It's built in the browser from the headings that
+   `heads` selects (they need ids): a post lists its h2s, a story its slides, each
+   with the slide's number. The heading being read is marked as you scroll. A
+   figure wide enough to run under the side column (a playground, a wide sheet)
+   fades the column (.side-col) while it passes. It sits in that column, which is
+   what stays in view as you scroll. Without JS, or with fewer than three headings, the
+   list stays hidden. */
+interface Props {
+  /** CSS selector for the headings to list, e.g. ".prose h2[id]". */
+  heads: string;
+}
+
+const { heads } = Astro.props;
+---
+<nav class="toc" aria-label="On this page" data-toc={heads} hidden>
+  <p class="toc-title">On this page</p>
+  <ol></ol>
+</nav>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-toc]').forEach((toc) => {
+    const heads = [...document.querySelectorAll<HTMLElement>(toc.dataset.toc ?? '')].filter((h) => h.id);
+    if (heads.length < 3) return;
+    const ol = toc.querySelector('ol')!;
+    const links = heads.map((h) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${h.id}`;
+      // A slide's number, when the heading sits in one.
+      const num = h.closest('.slide, .ux-sec')?.querySelector('.slide-num, .ux-num')?.textContent?.trim();
+      if (num) {
+        const n = document.createElement('span');
+        n.className = 'toc-num';
+        n.textContent = num;
+        a.append(n);
+      }
+      // The heading's own words, without the copy-link icon main.js adds.
+      a.append(([...h.childNodes].filter((c) => !(c instanceof Element && c.classList.contains('h-anchor'))).map((c) => c.textContent).join('') ?? '').trim());
+      li.append(a);
+      ol.append(li);
+      return a;
+    });
+    toc.hidden = false;
+
+    // Pieces of the page that reach under the list.
+    let wide: HTMLElement[] = [];
+    const measure = () => {
+      const box = toc.closest<HTMLElement>('.side-col') ?? toc;
+      const left = box.getBoundingClientRect().left - 8;
+      wide = [...document.querySelectorAll<HTMLElement>('main .prose *')].filter((e) => {
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && r.right > left && !box.contains(e);
+      }).filter((e, _, all) => !all.some((o) => o !== e && o.contains(e)));
+    };
+
+    const update = () => {
+      const y = innerHeight * 0.3;
+      let i = 0;
+      heads.forEach((h, j) => { if (h.getBoundingClientRect().top < y) i = j; });
+      links.forEach((a, j) => a.toggleAttribute('aria-current', j === i));
+      const box = toc.closest<HTMLElement>('.side-col') ?? toc;
+      const t = box.getBoundingClientRect();
+      box.classList.toggle('is-covered', wide.some((e) => { const r = e.getBoundingClientRect(); return r.top < t.bottom && r.bottom > t.top; }));
+    };
+
+    measure();
+    addEventListener('resize', () => { measure(); update(); });
+    addEventListener('load', () => { measure(); update(); }, { once: true });
+    addEventListener('scroll', update, { passive: true });
+    update();
+  });
+</script>
+
+<style>
+  .toc { padding-left: 1rem; border-left: 1.5px dashed var(--line); }
+  .toc-title { margin: 0 0 .6rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .toc :global(ol) { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+  .toc :global(a) { display: flex; gap: .45rem; font-size: .86rem; line-height: 1.35; color: var(--ink-soft); text-decoration: none; }
+  .toc :global(a:hover) { color: var(--ink); }
+  .toc :global(a[aria-current]) { color: var(--ink); font-weight: 600; }
+  .toc :global(a[aria-current]::before) { content: ""; position: absolute; margin: .5em 0 0 -1.35rem; width: .5rem; height: .5rem; border-radius: 50%; background: var(--coral); }
+  .toc :global(.toc-num) { flex: none; min-width: 1.3rem; font-family: var(--font-mono); font-size: .7rem; font-weight: 400; line-height: 1.9; color: var(--ink-faint); }
+  @media (max-width: 1023px) { .toc { display: none; } }
+</style>

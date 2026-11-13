@@ -1,9 +1,14 @@
 ---
 /* A long-form article hosted here rather than on Medium: breadcrumb back to all
    writing (/writing/), title, lede, facts, the piece, and a back link. Same bones as
-   WorkLayout, but it points at /writing/ and emits BlogPosting structured data. */
+   WorkLayout, but it points at /writing/ and emits BlogPosting structured data.
+   Laid out in the side-column frame (.side-page in style.css): the header across
+   the frame, then the article at its reading width on the left and, beside it,
+   Thenga writing over "On this page" (the h2s). */
 import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import Thenga from '../components/mascots/Thenga.astro';
+import PageToc from '../components/PageToc.astro';
 import { site } from '../data/site';
 import { spriteUrl } from '../lib/sprite';
 
@@ -44,22 +49,30 @@ const jsonLd = {
 };
 ---
 <BaseLayout title={`${title} | Writing | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="writing" jsonLd={jsonLd}>
-  <main id="main" class="wrap wrap--narrow">
-    <header class="page-hero">
-      <a class="breadcrumb" href="/writing/"><Icon name="arrow-right" />All writing</a>
-      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-      <h1>{heading}</h1>
-      <p class="lede"><slot name="lede" /></p>
-      <dl class="facts">
-        <div><dt>Published</dt><dd><time datetime={published}>{publishedLabel}</time></dd></div>
-        {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
-      </dl>
+  <main id="main" class="wrap side-page post-page">
+    <header class="page-hero side-hero">
+      <div class="hero-text">
+        <a class="breadcrumb" href="/writing/"><Icon name="arrow-right" />All writing</a>
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h1>{heading}</h1>
+        <p class="lede"><slot name="lede" /></p>
+        <dl class="facts">
+          <div><dt>Published</dt><dd><time datetime={published}>{publishedLabel}</time></dd></div>
+          {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+        </dl>
+      </div>
     </header>
 
-    <!-- data-anchors: main.js adds a copy-link icon to every h2/h3 with an id. -->
-    <article class="prose" data-anchors data-sprite={spriteUrl}>
-      <slot />
-    </article>
+    <div class="side-body">
+      <!-- data-anchors: main.js adds a copy-link icon to every h2/h3 with an id. -->
+      <article class="prose side-main" data-anchors data-sprite={spriteUrl}>
+        <slot />
+      </article>
+      <aside class="side-col">
+        <div class="side-mascot" aria-hidden="true"><Thenga hobby="pen" /></div>
+        <PageToc heads=".prose h2[id]" />
+      </aside>
+    </div>
 
     {elsewhere.length > 0 && (
       <aside class="elsewhere callout wobbly wobbly--2" aria-label="This piece elsewhere">
@@ -82,6 +95,10 @@ const jsonLd = {
 </BaseLayout>
 
 <style>
+  /* The article's reading width in the side-column frame. */
+  .post-page { --read-w: 66ch; }
+  .elsewhere { max-width: var(--read-w); }
+
   .elsewhere { margin-top: var(--space-4); padding: 1.2rem 1.3rem; }
   .elsewhere strong { display: block; font-size: 1.02rem; color: var(--ink); }
   .elsewhere-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .6rem !important; }

@@ -20,7 +20,7 @@ const { caption } = Astro.props;
 const first = SCENARIOS[0];
 const groups = [...new Set(SCENARIOS.map((s) => s.group))];
 ---
-<figure class="sk-fig acp-fig" id="playground" aria-label="Playground: the real agent-clarifier component in a small chat">
+<figure class="sk-fig acp-fig fig-wide" id="playground" aria-label="Playground: the real agent-clarifier component in a small chat">
   <div class="acp" data-acp data-scenarios={JSON.stringify(SCENARIOS)}>
     <div class="acp-bar">
       {groups.map((g, i) => (
