@@ -5,10 +5,15 @@
    the foot walks to the previous and next story in src/data/studio.ts, then
    shows the three rooms' doors (RoomDoors) so the rest of the place is a click away.
    Pages pass the lede in the "lede" slot, the opening figure in "hero", and the
-   deck as children. */
+   deck as children.
+   Laid out in the side-column frame of the posts (.side-page in style.css):
+   the header across the full frame, then the story at its usual 46rem on the left
+   and, beside it, the painter Thenga over "On this page" (the slides). */
 import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import RoomDoors from '../components/RoomDoors.astro';
+import Thenga from '../components/mascots/Thenga.astro';
+import PageToc from '../components/PageToc.astro';
 import { site } from '../data/site';
 import { studio, studioHref } from '../data/studio';
 
@@ -43,22 +48,33 @@ const jsonLd = {
 };
 ---
 <BaseLayout title={`${title} | Studio | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="experiments" jsonLd={jsonLd}>
-  <main id="main" class="wrap wrap--narrow">
-    <header class="page-hero">
-      <a class="breadcrumb" href="/experiments/#studio"><Icon name="arrow-right" />The studio</a>
-      <p class="eyebrow">{eyebrow}</p>
-      <h1>{piece.title}</h1>
-      <p class="lede"><slot name="lede" /></p>
-      <dl class="facts">
-        {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
-      </dl>
+  <main id="main" class="wrap side-page">
+    <header class="page-hero side-hero">
+      <div class="hero-text">
+        <a class="breadcrumb" href="/experiments/#studio"><Icon name="arrow-right" />The studio</a>
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{piece.title}</h1>
+        <p class="lede"><slot name="lede" /></p>
+        <dl class="facts">
+          {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+        </dl>
+      </div>
     </header>
 
-    {Astro.slots.has('hero') && <div class="studio-hero"><slot name="hero" /></div>}
+    <div class="side-body">
+      <div class="side-main">
+        {Astro.slots.has('hero') && <div class="studio-hero"><slot name="hero" /></div>}
 
-    <article class="prose">
-      <slot />
-    </article>
+        <article class="prose">
+          <slot />
+        </article>
+      </div>
+      <aside class="side-col">
+        <div class="side-mascot" aria-hidden="true"><Thenga hobby="brush" /></div>
+        <PageToc heads=".prose .slide h2[id], .prose .ux-sec h2[id]" />
+      </aside>
+
+    </div>
 
     <nav class="studio-walk" aria-label="More from the studio">
       {prev
@@ -70,8 +86,8 @@ const jsonLd = {
     </nav>
 
     <section class="studio-rooms" aria-labelledby="studio-rooms-t">
-      <p class="eyebrow" id="studio-rooms-t">Thenga’s studio + yard</p>
-      <RoomDoors label="Rooms in Thenga’s studio + yard" />
+      <p class="eyebrow" id="studio-rooms-t">More experiments</p>
+      <RoomDoors label="More experiments" />
     </section>
   </main>
 </BaseLayout>
@@ -86,4 +102,6 @@ const jsonLd = {
   .studio-step :global(.doodle) { flex: none; width: 1.1rem; height: 1.1rem; stroke-width: 2; color: var(--coral); }
   .studio-step:hover { color: var(--coral); }
   .studio-rooms { margin-top: var(--space-4); }
+  /* In the side-column frame the walk and the doors keep to the reading column. */
+  .side-page > :is(.studio-walk, .studio-rooms) { max-width: var(--read-w); }
 </style>

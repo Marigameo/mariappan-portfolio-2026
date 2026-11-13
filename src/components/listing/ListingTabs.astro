@@ -1,0 +1,38 @@
+---
+/* Filter tabs for a listing, each with its count. There's no "All": the first tab
+   is the default, usually the picks (pickTab below), so a page opens on the few
+   worth seeing and the categories hold the rest. Rows in the list named by `list`
+   carry data-cat="<id> …" (a pick also carries "picks"); picking a tab hides the
+   rest. The tab lives in the URL hash (/work/#side-builds), so a link can open the
+   page on a tab; no hash means the first. The script that runs it is in
+   ListingMore, which every listing has. Without JS every row shows. */
+import Icon from '../Icon.astro';
+
+interface Props {
+  list: string;                                   // id of the <ol> of rows
+  tabs: { id: string; label: string; count: number }[];
+  label?: string;
+}
+
+const { list, tabs, label = 'Filter' } = Astro.props;
+---
+<nav class="ltabs" aria-label={label} data-ltabs={list}>
+  {tabs.map((t, i) => (
+    <a class="ltab" href={`#${t.id}`} data-tab={t.id} aria-current={i === 0 ? 'true' : 'false'}>
+      {t.id === 'picks' && <Icon name="star" class="ltab-star" />}{t.label}<span>{t.count}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .ltabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: var(--space-3); }
+  /* Hand-drawn pills: slightly uneven corners, the same as the homepage's "See all". */
+  .ltab { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .95rem; font-size: .92rem; font-weight: 500; line-height: 1; color: var(--ink); text-decoration: none; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 1.5rem 1.1rem 1.4rem 1.2rem / 1.2rem 1.5rem 1.1rem 1.4rem; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .ltab span { font-family: var(--font-mono); font-size: .7rem; font-weight: 400; color: var(--ink-soft); }
+  .ltab:hover { color: var(--ink); border-color: var(--ink); }
+  .ltab[aria-current="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); box-shadow: 2px 2px 0 var(--shadow-ink); }
+  .ltab[aria-current="true"] span { color: color-mix(in srgb, var(--paper) 72%, transparent); }
+  .ltab:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+  .ltab :global(.ltab-star) { width: .9rem; height: .9rem; margin-right: -.15rem; color: var(--coral); }
+  .ltab[aria-current="true"] :global(.ltab-star) { color: var(--yellow); }
+</style>

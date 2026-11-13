@@ -2,7 +2,8 @@
 /* The studio's datagrid story, told as a UX case study (the ux-story format,
    .claude/skills/ux-story/): one decision per section, a real screenshot for
    each, a few short notes. Source: the build journal in
-   side-builds/strivelabs-data-table/JOURNAL.md (26 rounds, 5 to 6 Nov 2026) and
+   side-builds/strivelabs-data-table/JOURNAL.md (32 rounds: 5 to 6 Nov 2026, then
+   grouping and selection on 12 Nov) and
    its process/ snapshots. Media lives in public/images/experiments/datagrid/,
    made with the skill's shots script. */
 import StudioLayout from '../../../layouts/StudioLayout.astro';
@@ -52,15 +53,15 @@ const lessons = [
 <StudioLayout
   title="Designing the datagrid in Strive"
   slug="datagrid"
-  description="A UX case study: designing one datagrid for Strive’s system of records. Configurable columns, filters that read like a sentence, data that can be anything, and motion that feels alive, in 26 rounds over two days."
+  description="A UX case study: designing one datagrid for Strive’s system of records. Configurable columns, filters that read like a sentence, grouping and selection, data that can be anything, and motion that feels alive."
   ogDescription="One datagrid for Strive’s system of records: configurable, built for thousands of rows, clean and lively."
   eyebrow="Strivelabs · Datagrid"
   facts={[
     { label: 'My part', value: 'Design and frontend, paired with Claude Code' },
     { label: 'Built with', value: 'React · dnd-kit · Motion' },
-    { label: 'Timeline', value: '5 to 6 Nov 2026 · 26 rounds' },
+    { label: 'Timeline', value: '5 to 6 Nov 2026, then 12 Nov · 32 rounds' },
   ]}
-  keywords="UX case study, data grid, data table, design system, column reordering, drag and drop, filters, empty states, accessibility, contrast, motion design, design engineering"
+  keywords="UX case study, data grid, data table, design system, column reordering, drag and drop, filters, grouping, row selection, empty states, accessibility, contrast, motion design, design engineering"
 >
   <Fragment slot="lede">Chat, artifacts and system of records are the big buckets we keep investing in at Strive. Records are the core, so I set out to design one list for all of them, <mark class="hl">clean, flexible and built for thousands of rows</mark>, so every record in the product gets the same polish.</Fragment>
 
@@ -111,7 +112,7 @@ const lessons = [
         { b: 'A state switcher.', t: 'One grid stepped through first load, refetching, empty, no match and error.' },
       ]}
     >
-      <Fragment slot="call">I designed it in code, benchmarking for a clean, polished feel: 26 rounds over two days, each logged in my own words. I made the calls; Claude Code proposed, built and checked. <strong>The last stretch ran on a board</strong> of every state of the real grid.</Fragment>
+      <Fragment slot="call">I designed it in code, benchmarking for a clean, polished feel: 26 rounds over two days, then six more a week later, each logged in my own words. I made the calls; Claude Code proposed, built and checked. <strong>The last stretch ran on a board</strong> of every state of the real grid.</Fragment>
       <ol class="ux-steps">
         {steps.map((s) => <li><strong>{s.b}</strong><span>{s.t}</span></li>)}
       </ol>
@@ -271,8 +272,34 @@ const lessons = [
     </UxSection>
 
     <UxSection
-      id="measured"
+      id="groups"
       num="09"
+      kicker="Decision · grouping and selection"
+      title="Grow the grid, don’t add a pattern"
+      notes={[
+        { b: 'Groups that fold.', t: 'Rows gather under a topic row with its count, and each group collapses.' },
+        { b: 'Picking in place.', t: 'A pinned checkbox column. The selection bar takes the toolbar’s place at the same height.' },
+        { b: 'Paging without a total.', t: 'Ahrefs only says whether more rows exist, so the grid shows “Showing 1–10” with Previous and Next.' },
+        { b: 'Quieter headers.', t: 'With an info mark added, the sort arrow and grip now wait for hover or focus.' },
+      ]}
+    >
+      <Fragment slot="call">A week later, Answer Engine and SEO still ran on the old table: AEO Prompts groups by topic and picks rows for bulk actions. Rather than keep an exception, <strong>the grid learned to group and select</strong>.</Fragment>
+      <UxCompare
+        before={{ src: img('groups-before.webp'), width: 1308, height: 496, alt: 'Before: AEO Prompts on the old table. A search box and three icon buttons, then Prompt, Visibility, Sentiment and Position columns, an empty first column, and prompts grouped under AI marketing agents, Marketing analytics and Content operations, each with a “2 prompts” tag.' }}
+        after={{ src: img('groups-after.webp'), width: 1308, height: 496, alt: 'After: the same prompts on the datagrid. A checkbox column, headings with info marks, sort arrows and move grips, and collapsible group rows (AI marketing agents, Marketing analytics, Content operations) with a count of 2 beside each name. Visibility bars, Positive and Neutral tags and right-aligned positions.' }}
+        caption="Same prompts, old table and grid. The grid groups now, so AEO needs no exception."
+      />
+      <UxCompare
+        labels={['At rest', '2 selected']}
+        before={{ src: img('selection-rest.webp'), width: 1308, height: 252, alt: 'The grouped grid at rest: a search box and the group, filter and columns buttons in the toolbar, unticked checkboxes on every row.' }}
+        after={{ src: img('selection-bar.webp'), width: 1308, height: 252, alt: 'The same strip with rows picked: the toolbar is replaced by a bar reading “2 selected” with a close button, and Copy, Export CSV and a red-outlined Delete on the right. The header checkbox shows a dash, and the ticked row has a warm tint.' }}
+        caption="Pick a row and the toolbar becomes the selection bar. Nothing below it moves."
+      />
+    </UxSection>
+
+    <UxSection
+      id="measured"
+      num="10"
       kicker="Craft · motion and type"
       title="Motion where you touch it"
       notes={[
@@ -293,7 +320,7 @@ const lessons = [
       </ul>
     </UxSection>
 
-    <UxSection id="learned" num="10" kicker="What I learned" title="What I’d tell day-zero me">
+    <UxSection id="learned" num="11" kicker="What I learned" title="What I’d tell day-zero me">
       <ul class="ux-lessons">
         {lessons.map((l, i) => (
           <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>

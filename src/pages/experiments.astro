@@ -1,168 +1,114 @@
 ---
-/* Thenga's yard: the experiments heap. One shelf of small cards per category,
-   and a single "cracked open" panel (a <dialog>) that shows one experiment at a
-   time, with previous/next to walk the whole pile. Every experiment's notes are
-   rendered into the panel up front (hidden), so they are in the page for search
-   and need no templating. /experiments/#<id> opens one directly. Above the
-   shelves, "Stories from the yard" holds the highlights: wide cards that link to a
-   story of their own. All content comes from src/data/experiments.ts.
-   First of all, the studio: UI experiments as a gallery of artboards, each one a
-   preview of the new UI that opens its story (src/data/studio.ts). */
+/* Experiments: things I tried and learnt from. Three kinds, in one list:
+   - the studio: design and design-engineering case studies (src/data/studio.ts),
+     each opening its own story at /experiments/studio/<slug>/;
+   - side quests: apps, ventures and hacks shipped as experiments, on three shelves
+     (src/data/experiments.ts). A side quest has no page; its row opens the
+     "cracked open" panel (a <dialog>), with previous/next to walk the pile.
+     /experiments/#<id> opens one directly;
+   - skills: what I've learnt, written down for coding agents (src/data/skills.ts),
+     each a palm leaf whose name opens its SKILL.md on GitHub. The "skills" tab
+     brings in the palm-leaf bundle drawing, the install command and a thank-you.
+     /skills/ redirects here (astro.config.mjs); /skills/story/ tells how the
+     bundle came about.
+   Same listing pattern as /work/, /writing/ and /talks/ (src/components/listing/):
+   it opens on "Top picks" (`featured` in either data file).
+   Shipped work lives on /work/, not here. */
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ListingHead from '../components/listing/ListingHead.astro';
+import ListingTabs from '../components/listing/ListingTabs.astro';
+import ListingRow from '../components/listing/ListingRow.astro';
+import ListingMore from '../components/listing/ListingMore.astro';
+import { pickTab, withPick } from '../components/listing/picks';
 import Icon from '../components/Icon.astro';
 import Thenga from '../components/mascots/Thenga.astro';
-import CoconutHeap from '../components/mascots/CoconutHeap.astro';
-import DesignEcosystem from '../components/sketches/DesignEcosystem.astro';
-import PublicShare from '../components/sketches/PublicShare.astro';
-import ChatDiagrams from '../components/sketches/ChatDiagrams.astro';
-import DrawDiagrams from '../components/sketches/DrawDiagrams.astro';
 import KbGraph from '../components/sketches/kb/KbGraph.astro';
 import KbProps from '../components/sketches/kb/KbProps.astro';
 import ChatMode from '../components/sketches/chat/ChatMode.astro';
-import RoomDoors from '../components/RoomDoors.astro';
-import { rooms } from '../data/rooms';
-import { moods, shelves, experiments, experimentCount, highlights } from '../data/experiments';
+import { moods, shelves, experiments } from '../data/experiments';
 import { studio, studioHref } from '../data/studio';
+import OlaiBundle from '../components/sketches/skills/OlaiBundle.astro';
+import { skills, skillsRepo, installCmd, skillHref } from '../data/skills';
 import { site } from '../data/site';
 
-const description = 'Thenga’s studio + yard: UI redesigns told as stories (the before, the after and the lessons), plus a heap of apps, ventures and night hacks, each with what I found inside.';
+const description = 'Things Mariappan Subramanian tried: design case studies, skills for coding agents, and side quests (apps, ventures, night hacks) shipped as experiments.';
 const n = experiments.length;
-const sketches = { 'design-ecosystem': DesignEcosystem, 'public-share': PublicShare, 'chat-diagrams': ChatDiagrams, 'draw-diagrams': DrawDiagrams };
+const total = studio.length + skills.length + n;
+/* A skill's group is a tag on its row, with a colour of its own. */
+const skillTag = { craft: { label: 'Craft', accent: 'coral' }, use: { label: 'Use', accent: 'blue' }, write: { label: 'Writing', accent: 'violet' }, ship: { label: 'Shipping', accent: 'teal' } } as const;
 const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': ChatMode };
+/* Each coconut's colour: grew, cracked open, or went for the moon. */
+const moodAccent = { sprouted: 'teal', cracked: 'coral', moonshot: 'violet' } as const;
+const pickCount = studio.filter((p) => p.featured).length + experiments.filter((x) => x.featured).length;
+const tabs = [
+  pickTab(pickCount),
+  { id: 'studio', label: 'UX studio', count: studio.length },
+  { id: 'skills', label: 'Skills', count: skills.length },
+  ...shelves.map((s) => ({ id: s.id, label: s.name, count: s.items.length })),
+];
 ---
-<BaseLayout title={`Thenga’s studio + yard — experiments | ${site.name}`} description={description} current="experiments">
-  <main id="main" class="wrap yard">
-    <header class="yard-hero">
-      <div>
-        <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
-        <p class="eyebrow"><span><span>Thenga’s studio + yard</span> · <span>{studio.length} on the easel</span> · <span>{experimentCount} on the pile</span></span></p>
-        <h1>Every coconut’s a keeper.</h1>
-        <p class="lede">In the studio, I take apart screens I’ve redesigned and show what changed. Out in the yard, the experiments keep piling up: shipped apps, a pivot, college ventures and night hacks. Not all of them became palms, but every one cracked open with something inside. The things I learn get written down as <a href="/skills/">skills<Icon name="arrow-right" class="lede-arrow" /></a></p>
-      </div>
-      <div class="yard-heap">
-        <CoconutHeap items={experiments} />
-        <p class="yard-hint" aria-hidden="true">pick a coconut</p>
-      </div>
-    </header>
-
-    <!-- The three rooms, as doors: plain jump links until the script turns them into
-         tabs, so without JS every room simply shows, one after another. Once the
-         doors scroll away, a slim bar of the same rooms slides in under the header. -->
-    <RoomDoors mode="tabs" label="Rooms" />
-    <div class="rooms-mini" data-rooms-mini>
-      <div class="wrap rooms-mini-row">
-        {rooms.map((r) => <a class="room-tab" href={`#${r.id}`} data-room-jump={r.id}>{r.name}<span>{r.count}</span></a>)}
-      </div>
+<BaseLayout title={`Experiments | ${site.name}`} description={description} current="experiments">
+  <main id="main" class="wrap listing-page">
+    <ListingHead eyebrow={`Experiments · ${total} tries`} title="Things I tried" lede="Design case studies, skills for coding agents, and side quests I shipped as experiments.">
+      <Fragment slot="art">
+        <!-- The three coconut faces, rising left to right, each with its meaning on a
+             note that shows on hover, focus or tap. The studio tab swaps in the painter. -->
+        <span class="trio" data-tab-art="default" data-art-wide>
+          {Object.entries(moods).map(([key, m]) => (
+            <span class="trio-item m-hover-host">
+              <button type="button" class="trio-nut" aria-describedby={`mood-${key}`}>
+                <Thenga mood={key as keyof typeof moods} />
+                <span class="trio-label">{m.label}</span>
+              </button>
+              <span class="trio-note" id={`mood-${key}`} role="tooltip">{m.meaning}</span>
+            </span>
+          ))}
+        </span>
+        <span data-tab-art="studio" hidden><Thenga hobby="brush" /></span>
+        <!-- The skills tab: the palm-leaf bundle, and a pin to how it came about. -->
+        <div class="olai" data-tab-art="skills" data-art-wide hidden>
+          <OlaiBundle />
+          <a class="story-pin" href="/skills/story/">
+            <span class="pin-btn" aria-hidden="true"><Icon name="pin" /></span>
+            <span class="story-pin-hint"><Icon name="arrow-curly" class="story-pin-arrow" /><span class="hand">how the bundle came about</span></span>
+          </a>
+        </div>
+      </Fragment>
+    </ListingHead>
+    <ListingTabs list="experiment-list" tabs={tabs} label="Filter experiments" />
+    <div class="install" data-tab-art="skills" hidden>
+      <code>{installCmd}</code>
+      <a href={skillsRepo} rel="noopener">On GitHub<Icon name="external" /></a>
     </div>
 
-    <section class="room studio" id="studio" aria-labelledby="studio-title" data-room-panel>
-      <header class="studio-head">
-        <Thenga hobby="brush" class="studio-mascot" />
-        <div>
-          <h2 id="studio-title">The studio</h2>
-          <p>Screens I’ve redrawn: the before, the after, and the smudges in between.</p>
-        </div>
-      </header>
-      <ul class="arts">
-        {studio.map((p) => {
-          const Sketch = p.preview.kind === 'sketch' ? artSketches[p.preview.sketch] : null;
-          return (
-            <li class="art" style={`--accent: var(--${p.accent})`}>
-              <a class="art-link" href={studioHref(p)}>
-                <span class="art-frame"><span class="art-frame-icon" aria-hidden="true">#</span>{p.frame}</span>
-                <span class="art-board">
-                  <span class="art-shot">
-                    {p.preview.kind === 'sketch' && Sketch
-                      ? <Sketch label={p.preview.alt} />
-                      : p.preview.kind === 'video'
-                        ? <video src={p.preview.src} poster={p.preview.poster} width={p.preview.width} height={p.preview.height} muted loop playsinline preload="none" aria-label={p.preview.alt} data-art-video></video>
-                        : p.preview.kind === 'image' && <img src={p.preview.src} width={p.preview.width} height={p.preview.height} alt={p.preview.alt} loading="lazy" decoding="async" />}
-                  </span>
-                </span>
-                <span class="art-body">
-                  <strong class="art-title">{p.title}</strong>
-                  <span class="nut-context">{p.context}</span>
-                  {p.hook && <span class="art-hook">{p.hook}</span>}
-                  <span class="art-tags">{p.tags.map((t) => <span class="art-tag">{t}</span>)}</span>
-                </span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-
-    <section class="room picks" id="stories" aria-labelledby="highlights-title" data-room-panel>
-      <header class="shelf-head">
-        <p class="eyebrow">Highlights</p>
-        <h2 id="highlights-title">Stories from the yard</h2>
-        <p>Bigger than a redesign: features built end to end, told in full.</p>
-      </header>
-      <ul class="picks-list">
-        {highlights.map((h) => {
-          const Sketch = sketches[h.sketch];
-          return (
-            <li class="pick" style={`--accent: var(--${h.accent})`}>
-              <a class="pick-link" href={h.href}>
-                <span class="pick-shot taped"><Sketch /></span>
-                <span class="pick-body">
-                  <span class="pick-tags">{h.tags.join(' · ')}</span>
-                  <strong class="pick-title">{h.title}</strong>
-                  <span class="nut-context">{h.context}</span>
-                  <span class="pick-hook">{h.hook}</span>
-                  <span class="nut-go">Read the story<Icon name="arrow-right" /></span>
-                </span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </section>
-
-    <section class="room yard-room" id="yard" aria-labelledby="yard-title" data-room-panel>
-      <header class="room-head">
-        <h2 id="yard-title">The yard</h2>
-      </header>
-      <ul class="key" aria-label="What each coconut means">
-        {Object.entries(moods).map(([key, m]) => (
-          <li>
-            <Thenga mood={key as keyof typeof moods} />
-            <p><strong>{m.label}</strong>{m.meaning}</p>
-          </li>
-        ))}
-      </ul>
-      <nav class="yard-filter" aria-label="Shelves" data-yard-filter>
-        <a class="pill" href="#yard" data-shelf="all">All<span>{experimentCount}</span></a>
-        {shelves.map((s) => <a class="pill" href={`#${s.id}`} data-shelf={s.id}>{s.name}<span>{s.items.length}</span></a>)}
-      </nav>
-
-      {shelves.map((shelf) => (
-        <section class="patch" id={shelf.id} aria-labelledby={`${shelf.id}-title`} data-patch={shelf.id}>
-          <header class="patch-head">
-            <h3 id={`${shelf.id}-title`}>{shelf.name}</h3>
-            <p>{shelf.tagline}</p>
-          </header>
-          <ul class="rows">
-            {shelf.items.map((x) => (
-              <li class="row m-hover-host">
-                <Thenga mood={x.mood} label={moods[x.mood].label} class="row-mood" />
-                <div class="row-main">
-                  <h4><button type="button" class="nut-open" data-open={x.id} aria-haspopup="dialog">{x.name}</button></h4>
-                  <p class="row-hook">{x.hook}</p>
-                </div>
-                <p class="nut-context row-context">{x.context}</p>
-                <span class="nut-status">{x.status}</span>
-                <Icon name="arrow-right" class="row-go" />
-              </li>
-            ))}
-          </ul>
-        </section>
+    <ol class="listing" id="experiment-list">
+      {studio.map((p) => {
+        const Sketch = p.preview.kind === 'sketch' ? artSketches[p.preview.sketch] : null;
+        const topic = p.tags.filter((t) => t !== 'UX case study')[0];
+        return (
+          <ListingRow href={studioHref(p)} title={p.title} kicker={`UX studio · ${p.context}`} hook={p.hook} side={topic} cat={withPick('studio', p.featured)} accent={p.accent}>
+            {p.preview.kind === 'sketch' && Sketch
+              ? <Sketch slot="media" />
+              : p.preview.kind === 'video'
+                ? <video slot="media" src={p.preview.src} poster={p.preview.poster} width={p.preview.width} height={p.preview.height} muted loop playsinline preload="none" data-art-video></video>
+                : p.preview.kind === 'image' && <img slot="media" src={p.preview.src} width={p.preview.width} height={p.preview.height} alt="" loading="lazy" decoding="async" />}
+          </ListingRow>
+        );
+      })}
+      {skills.map((s, i) => (
+        <ListingRow href={skillHref(s)} external title={s.name} kicker={skillTag[s.group].label} hook={s.hook} cat="skills" accent={skillTag[s.group].accent}>
+          <span slot="media" class="leaf-shot"><span class="mini-leaf" style={`--tilt: ${i % 2 ? 3 : -3}deg`}></span></span>
+          {s.story && <a slot="actions" class="pill pill--soft" href={s.story} aria-label={`How I built ${s.name}`}>How I built it</a>}
+        </ListingRow>
       ))}
-    </section>
-
-    <p style="margin-top: var(--space-5)">
-      <a class="pill" href="/#work"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
-    </p>
+      {shelves.map((s) => s.items.map((x) => (
+        <ListingRow href={`#${x.id}`} title={x.name} kicker={x.context} hook={x.hook} side={x.status} cat={withPick(s.id, x.featured)} accent={moodAccent[x.mood]}>
+          <span slot="media" class="nut-shot"><Thenga mood={x.mood} /></span>
+        </ListingRow>
+      )))}
+    </ol>
+    <ListingMore list="experiment-list" />
+    <p class="thanks" data-tab-art="skills" hidden><span>Thanks</span>Emil Kowalski’s skills got me started on these, and <code>craft-component</code> leans on his and Jakub Krehel’s for its audits. Install those too.</p>
 
     <!-- The cracked-open panel. One article per experiment; the script shows one at a time. -->
     <dialog class="crack" id="crack" data-crack aria-labelledby={`${experiments[0].id}-t`}>
@@ -221,109 +167,6 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
 </BaseLayout>
 
 <script>
-  // ---- The rooms: studio, stories and yard, one at a time ----
-  // The bar's jump links become tabs; only the chosen room's panel shows. The hash
-  // picks the room: #studio, #stories (#highlights, its old name), #yard, a shelf
-  // id (the yard, filtered to that shelf) or an experiment id (the yard, with that
-  // experiment cracked open). The bar sticks under the site header, whose height
-  // changes when the nav wraps on phones, so it's measured.
-  const header = document.querySelector<HTMLElement>('.site-header');
-  const setHeaderH = () => document.documentElement.style.setProperty('--header-h', `${header?.offsetHeight ?? 64}px`);
-  setHeaderH();
-  addEventListener('resize', setHeaderH);
-
-  const bar = document.querySelector<HTMLElement>('[data-doors]');
-  const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-doors] [data-room]'));
-  const mini = document.querySelector<HTMLElement>('[data-rooms-mini]');
-  const jumps = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-room-jump]'));
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
-  const chips = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-yard-filter] [data-shelf]'));
-  const patches = Array.from(document.querySelectorAll<HTMLElement>('[data-patch]'));
-  let room = 'studio';
-
-  const selectRoom = (name: string, scroll = false) => {
-    room = name;
-    tabs.forEach((t) => {
-      const on = t.dataset.room === name;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-    });
-    panels.forEach((p) => { p.hidden = p.id !== name; });
-    jumps.forEach((j) => { if (j.dataset.roomJump) j.setAttribute('aria-current', String(j.dataset.roomJump === name)); });
-    // Switching from further down: back up to the doors, with the new room open below.
-    if (scroll && bar) {
-      const top = bar.getBoundingClientRect().top + scrollY - (header?.offsetHeight ?? 0) - 16;
-      if (scrollY > top) scrollTo({ top, behavior: 'instant' as ScrollBehavior });
-    }
-  };
-  const selectShelf = (id: string) => {
-    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.shelf === id)));
-    patches.forEach((p) => { p.hidden = id !== 'all' && p.dataset.patch !== id; });
-  };
-
-  if (bar && tabs.length) {
-    document.querySelector('main')?.classList.add('rooms-on');
-    tabs[0].parentElement!.setAttribute('role', 'tablist');
-    tabs.forEach((t, i) => {
-      t.setAttribute('role', 'tab');
-      t.id = `tab-${t.dataset.room}`;
-      t.setAttribute('aria-controls', t.dataset.room!);
-      t.addEventListener('click', (e) => {
-        e.preventDefault();
-        selectRoom(t.dataset.room!, true);
-        history.replaceState(null, '', `#${t.dataset.room}`);
-      });
-      t.addEventListener('keydown', (e) => {
-        const to = e.key === 'ArrowRight' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' ? (i - 1 + tabs.length) % tabs.length : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
-        if (to < 0) return;
-        e.preventDefault();
-        tabs[to].focus();
-        tabs[to].click();
-      });
-    });
-    panels.forEach((p) => { p.setAttribute('role', 'tabpanel'); p.setAttribute('aria-labelledby', `tab-${p.id}`); });
-    // The mini bar switches rooms too, then hands focus to that room's door so
-    // keyboard users land where the room starts.
-    jumps.forEach((j) => j.addEventListener('click', (e) => {
-      e.preventDefault();
-      const id = j.dataset.roomJump!;
-      selectRoom(id, true);
-      history.replaceState(null, '', `#${id}`);
-      tabs.find((t) => t.dataset.room === id)?.focus({ preventScroll: true });
-    }));
-    if (mini && 'IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => mini.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0), {
-        rootMargin: `-${header?.offsetHeight ?? 64}px 0px 0px 0px`,
-      }).observe(bar);
-    }
-    chips.forEach((c) => {
-      c.setAttribute('role', 'button');
-      c.addEventListener('click', (e) => {
-        e.preventDefault();
-        selectShelf(c.dataset.shelf!);
-        history.replaceState(null, '', `#${c.dataset.shelf === 'all' ? 'yard' : c.dataset.shelf}`);
-      });
-    });
-
-    // The browser jumps to the anchor before the other rooms are hidden, which
-    // shifts the page under it; so once the right room shows, land on it again.
-    const land = (id: string) => document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior });
-    const route = () => {
-      const h = decodeURIComponent(location.hash.slice(1));
-      if (h === 'studio' || h === 'stories' || h === 'yard') { selectRoom(h); return bar?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior }); }
-      if (h === 'highlights') { selectRoom('stories'); return bar?.scrollIntoView({ block: 'start', behavior: 'instant' as ScrollBehavior }); }
-      if (patches.some((p) => p.dataset.patch === h)) { selectShelf(h); selectRoom('yard'); return land(h); }
-      if (h && document.querySelector(`[data-open="${CSS.escape(h)}"]`)) return selectRoom('yard');
-      selectRoom(room);
-    };
-    selectShelf('all');
-    route();
-    addEventListener('hashchange', route);
-    // The browser makes its own jump to the anchor once the page has loaded,
-    // after ours; land once more so the doors, not the room, end up on top.
-    addEventListener('load', () => { if (location.hash) route(); }, { once: true });
-  }
-
   // ---- The cracked-open panel ----
   const dlg = document.querySelector<HTMLDialogElement>('[data-crack]');
   if (dlg && typeof dlg.showModal === 'function') {
@@ -332,6 +175,7 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
     const sheet = dlg.querySelector<HTMLElement>('.crack-sheet')!;
     let current = -1;
     let opener: HTMLElement | null = null;
+    let before = '';   // the hash (a tab) to put back when the panel closes
 
     const show = (i: number, focusStep?: string) => {
       items.forEach((a, j) => { a.hidden = j !== i; });
@@ -349,8 +193,7 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
       const i = ids.indexOf(id);
       if (i < 0) return;
       opener = from;
-      // Whichever coconut opened it (a row, or the heap up top), it lives in the yard.
-      if (tabs.length) selectRoom('yard');
+      if (!dlg.open) before = ids.includes(location.hash.slice(1)) ? '' : location.hash;
       show(i);
       if (!dlg.open) { dlg.showModal(); document.documentElement.classList.add('crack-lock'); }
     };
@@ -358,7 +201,7 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
     dlg.addEventListener('close', () => {
       document.documentElement.classList.remove('crack-lock');
       delete dlg.dataset.swapped;
-      history.replaceState(null, '', location.pathname + location.search + (tabs.length ? `#${room}` : ''));
+      history.replaceState(null, '', location.pathname + location.search + before);
       opener?.focus();
       opener = null;
     });
@@ -371,26 +214,13 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
       if (e.key === 'ArrowLeft') step(-1);
     });
 
-    document.querySelectorAll<HTMLElement | SVGElement>('[data-open]').forEach((el) => {
-      el.addEventListener('click', () => open(el.dataset.open!, el instanceof HTMLButtonElement ? el : null));
-    });
-
-    // The heap: a label that follows the coconut under the pointer.
-    const heap = document.querySelector<HTMLElement>('[data-heap]');
-    const tip = heap?.querySelector<HTMLElement>('[data-heap-tip]');
-    if (heap && tip) {
-      heap.querySelectorAll<SVGGElement>('[data-open]').forEach((nut) => {
-        nut.addEventListener('pointerenter', () => {
-          const h = heap.getBoundingClientRect();
-          const r = nut.getBoundingClientRect();
-          tip.textContent = nut.dataset.name ?? '';
-          tip.style.left = `${r.left + r.width / 2 - h.left}px`;
-          tip.style.top = `${r.top - h.top - 8}px`;
-          tip.hidden = false;
-        });
-        nut.addEventListener('pointerleave', () => { tip.hidden = true; });
+    // A side quest's row links to #<id>; open the panel in place instead.
+    document.querySelectorAll<HTMLAnchorElement>('#experiment-list .lrow-link[href^="#"]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        open(a.hash.slice(1), a);
       });
-    }
+    });
 
     const fromHash = () => {
       const id = decodeURIComponent(location.hash.slice(1));
@@ -400,18 +230,29 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
     fromHash();
   }
 
-  // The studio's artboards: each loop plays while its tile is hovered or focused.
+  // The coconut trio: a tap pins a note open (touch screens have no hover);
+  // a tap elsewhere or Escape puts it away.
+  const trio = [...document.querySelectorAll<HTMLElement>('.trio-item')];
+  trio.forEach((item) => item.querySelector('button')?.addEventListener('click', () => {
+    const open = !item.classList.contains('is-open');
+    trio.forEach((t) => t.classList.toggle('is-open', t === item && open));
+  }));
+  document.addEventListener('click', (e) => { if (!(e.target as Element).closest('.trio-item')) trio.forEach((t) => t.classList.remove('is-open')); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') trio.forEach((t) => t.classList.remove('is-open')); });
+
+  // The studio's previews: each loop plays while its row is hovered or focused.
   // On touch screens (no hover) it plays while the tile is in view instead. Under
   // reduced motion it never plays, and the poster stays.
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const canHover = matchMedia('(hover: hover)').matches;
     document.querySelectorAll<HTMLVideoElement>('[data-art-video]').forEach((video) => {
-      const link = video.closest<HTMLElement>('.art-link');
+      const row = video.closest<HTMLElement>('.lrow');
+      const link = row?.querySelector<HTMLElement>('.lrow-link');
       const play = () => { video.play().catch(() => {}); };
       const stop = () => { video.pause(); };
-      if (canHover && link) {
-        link.addEventListener('pointerenter', play);
-        link.addEventListener('pointerleave', stop);
+      if (canHover && row && link) {
+        row.addEventListener('pointerenter', play);
+        row.addEventListener('pointerleave', stop);
         link.addEventListener('focus', play);
         link.addEventListener('blur', stop);
       } else {
@@ -422,139 +263,89 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
 </script>
 
 <style>
-  .yard { padding-bottom: var(--space-5); }
-  .yard-hero { display: grid; grid-template-columns: 1fr minmax(18rem, 30rem); align-items: end; gap: 1rem 3rem; padding-top: var(--space-4); }
-  .yard-hero h1 { margin-top: .3rem; }
-  /* Long eyebrow: if it wraps, it wraps at a dot, never inside a phrase. */
-  .yard-hero .eyebrow { max-width: none; }
-  /* The way out to the skills page, at the end of the lede. */
-  .yard-hero .lede a { white-space: nowrap; }
-  .yard-hero .lede :global(.lede-arrow) { width: .9em; height: .9em; margin-left: .15em; vertical-align: -.1em; stroke-width: 2; }
-  .yard-hero .eyebrow > span > span { white-space: nowrap; }
-  .yard-heap { position: relative; }
-  .yard-hint { position: absolute; top: 2%; left: 4%; margin: 0; font-family: var(--font-hand); font-size: 1.3rem; color: var(--coral); transform: rotate(-5deg); }
+  /* The coconut trio in the header: three faces on a rising line, still until
+     hovered. Each name is underlined with dots, a hint there's a note behind it. */
+  .trio { --art-w: clamp(15rem, 24vw, 19rem); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: .5rem; line-height: normal; }
+  .trio-item { position: relative; }
+  .trio-item:nth-child(2) { transform: translateY(-.8rem); --m-delay: -1.35s; }
+  .trio-item:nth-child(3) { transform: translateY(-1.6rem); }
+  .trio-item:nth-child(1) { --m-delay: -1.3s; }
+  .trio-nut { display: grid; justify-items: center; gap: .1rem; width: 100%; padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer; }
+  .trio-nut:focus-visible { outline: 2px solid var(--coral); outline-offset: 4px; border-radius: 12px; }
+  .trio-label { font-family: var(--font-hand); font-size: 1.15rem; line-height: 1.1; white-space: nowrap; text-decoration: underline dotted color-mix(in srgb, var(--ink) 40%, transparent); text-underline-offset: 4px; }
+  /* The note: a scrap of paper pinned under its coconut, tilted a touch. The outer
+     two align to their edge so they never leave the page. */
+  .trio-note { position: absolute; z-index: 5; top: calc(100% + .5rem); left: 50%; width: 12.5rem; padding: .65rem .8rem; font-size: .86rem; line-height: 1.4; color: var(--ink-soft); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble); box-shadow: 3px 3px 0 var(--shadow-ink); opacity: 0; visibility: hidden; transform: translate(-50%, -4px) rotate(-1deg); transition: opacity .15s ease, transform .2s ease, visibility .15s; pointer-events: none; }
+  .trio-item:first-child .trio-note { left: 0; transform: translateY(-4px) rotate(-1deg); }
+  .trio-item:last-child .trio-note { left: auto; right: 0; transform: translateY(-4px) rotate(1deg); }
+  .trio-item:is(:hover, :focus-within, .is-open) .trio-note { opacity: 1; visibility: visible; transform: translate(-50%, 0) rotate(-1deg); }
+  .trio-item:first-child:is(:hover, :focus-within, .is-open) .trio-note { transform: rotate(-1deg); }
+  .trio-item:last-child:is(:hover, :focus-within, .is-open) .trio-note { transform: rotate(1deg); }
+  @media (max-width: 559px) {
+    .trio { --art-w: min(100%, 17rem); }
+    .trio-label { font-size: 1.05rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .trio-note { transition: none; } }
 
-  /* The doors sit under the hero. Once they scroll away, the mini bar slides in
-     under the site header with the same three rooms, so switching is always one
-     click away. The script measures the header (it wraps on phones) into --header-h. */
-  main :global(.doors--tabs) { margin-top: var(--space-4); scroll-margin-top: calc(var(--header-h, 4rem) + 1rem); }
-  .rooms-mini { position: fixed; top: var(--header-h, 4rem); left: 0; right: 0; z-index: 40; padding: .55rem 0; background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1.5px dashed var(--line); transform: translateY(-110%); opacity: 0; visibility: hidden; transition: transform .25s cubic-bezier(.2,.8,.2,1), opacity .2s ease, visibility 0s linear .25s; }
-  .rooms-mini.is-on { transform: none; opacity: 1; visibility: visible; transition: transform .25s cubic-bezier(.2,.8,.2,1), opacity .2s ease; }
-  .rooms-mini-row { display: flex; gap: .45rem; overflow-x: auto; scrollbar-width: none; }
-  .rooms-mini-row::-webkit-scrollbar { display: none; }
-  .room-tab { display: inline-flex; align-items: center; gap: .5rem; padding: .45rem .95rem; font-size: .92rem; font-weight: 500; white-space: nowrap; text-decoration: none; color: var(--ink-soft); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 999px; transition: color .15s ease, background .15s ease; }
-  .room-tab span { font-family: var(--font-mono); font-size: .7rem; font-weight: 400; color: var(--ink-faint); }
-  .room-tab:hover { color: var(--ink); }
-  .room-tab[aria-current="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
-  .room-tab[aria-current="true"] span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
-  .room-tab:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
-  /* One room at a time; a min-height so the footer doesn't jump up under a short room. */
-  .room { margin-top: var(--space-4); min-height: 50vh; scroll-margin-top: calc(var(--header-h, 4rem) + 4.5rem); }
-  .room-head h2 { margin: 0 0 .3rem; }
-  /* With the tabs on, the open door already names the room and says what's in it,
-     so each room's own heading is kept for screen readers only. Without JS every
-     room shows in turn, and the headings show with them. */
-  .rooms-on :is(.studio-head, .picks > .shelf-head, .room-head) { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  /* Row thumbnails: a studio preview fills its frame (a loop plays on hover); a
+     side quest's frame holds its coconut on a wash of the mood's colour, still
+     until the row is hovered. */
+  :global(.lrow-shot) video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; }
+  .nut-shot { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 14%, var(--paper-2)); }
+  .nut-shot :global(.mascot) { width: 62%; }
+  .nut-shot :global(.mascot--sprouted) { --m-delay: -1.3s; }
+  .nut-shot :global(.mascot--cracked) { --m-delay: -1.35s; }
+  :global(.lrow:not(:hover)) .nut-shot :global([class*="m-a-"]) { animation-name: none; }
 
-  /* The studio: a gallery of artboards. Each is a frame label, a board with a dot
-     grid (the canvas), the new UI pinned on it, and a title with paint-swatch tags. */
-  .studio-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.6rem; }
-  .studio-head h2 { margin: 0 0 .3rem; }
-  .studio-head p { margin: 0; }
-  .studio-head :global(.studio-mascot) { flex: none; width: 5.5rem; margin: -.6rem 0 -.4rem; }
-  .arts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr)); gap: 2.2rem 2rem; }
-  .art-link { display: flex; flex-direction: column; gap: .45rem; text-decoration: none; color: var(--ink); }
-  .art-link:hover { color: var(--ink); }
-  .art-link:focus-visible { outline: none; }
-  .art-frame { display: flex; align-items: center; gap: .35rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em; color: var(--ink-faint); }
-  .art-frame-icon { color: var(--accent); font-size: .8rem; }
-  .art-board { display: block; padding: 1.1rem; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background-color: var(--sand); background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 16%, transparent) 1px, transparent 1.4px); background-size: 14px 14px; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
-  .art-link:hover .art-board { transform: translateY(-3px) rotate(-.4deg); box-shadow: 5px 6px 0 var(--shadow-ink); }
-  .art-link:focus-visible .art-board { outline: 2px solid var(--ink); outline-offset: 3px; }
-  /* Every artboard shares the recordings' shape (1600 × 832), so a row lines up; a sketch slice-crops to it. */
-  .art-shot { display: block; aspect-ratio: 25 / 13; overflow: hidden; border: 1.5px solid var(--border); border-radius: 8px; background: var(--paper-2); box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--ink) 35%, transparent); }
-  .art-shot :global(.sk), .art-shot video, .art-shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
-  .art-shot img { object-position: left top; }
-  .art-body { display: grid; gap: .35rem; margin-top: .45rem; }
-  .art-title { font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.6rem); font-weight: 400; line-height: 1.15; letter-spacing: -.01em; }
-  .art-hook { font-size: .95rem; line-height: 1.45; color: var(--ink-soft); }
-  .art-tags { display: flex; flex-wrap: wrap; gap: .4rem .9rem; margin-top: .15rem; }
-  /* A tag is a dab of paint and a word. */
-  .art-tag { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--ink-soft); }
-  .art-tag::before { content: ""; width: .8rem; height: .65rem; background: var(--accent); border-radius: 60% 40% 55% 45% / 55% 60% 40% 45%; transform: rotate(-12deg); }
-  .art-tag:nth-child(2n)::before { border-radius: 45% 55% 40% 60% / 60% 45% 55% 40%; transform: rotate(18deg); opacity: .7; }
+  /* ---- The skills tab ---- */
+  .install { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin: 0 0 var(--space-3); }
+  .install[hidden], .thanks[hidden] { display: none; }
+  .install code { padding: .5rem .8rem; font-family: var(--font-mono); font-size: .82rem; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 8px; box-shadow: 2px 2px 0 var(--shadow-ink); max-width: 100%; overflow-wrap: anywhere; }
+  .install a { display: inline-flex; align-items: center; gap: .3rem; font-weight: 500; }
+  .install a :global(.doodle) { width: .9rem; height: .9rem; }
 
-  /* Stories from the yard: two-up cards, the drawing on top and the words below,
-     louder than the coconuts, straight to a story. A new story just adds a card;
-     one column on a phone. Each drawing shows whole, at its own 600 × 440. */
-  .picks { margin-top: var(--space-4); }
-  .picks .shelf-head .eyebrow { margin: 0 0 .3rem; }
-  .picks-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.8rem; }
-  .pick { display: flex; }
-  .pick-link { display: flex; flex-direction: column; gap: 1.1rem; width: 100%; padding: 1rem 1rem 1.2rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 14px 8px 16px 8px / 8px 16px 8px 14px; box-shadow: 4px 5px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
-  .pick-link:hover { color: var(--ink); transform: translateY(-3px); box-shadow: 6px 8px 0 var(--shadow-ink); }
-  .pick-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-  .pick-shot { display: block; aspect-ratio: 600 / 440; overflow: hidden; border: 1.5px solid var(--border); border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px; background: var(--paper); transform: rotate(-.8deg); transition: transform .25s ease; }
-  .pick:nth-child(2n) .pick-shot { transform: rotate(.6deg); }
-  .pick-link:hover .pick-shot { transform: rotate(0); }
-  .pick-shot :global(.sk) { display: block; width: 100%; height: 100%; }
-  .pick-body { display: flex; flex: 1; flex-direction: column; gap: .45rem; padding: 0 .3rem; }
-  .pick-tags { display: flex; align-items: center; gap: .5rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
-  .pick-tags::before { content: ""; width: 1.4rem; height: 2px; background: var(--accent); }
-  .pick-title { font-family: var(--font-display); font-size: clamp(1.4rem, 2.6vw, 1.75rem); font-weight: 400; line-height: 1.12; letter-spacing: -.015em; }
-  .pick-hook { font-size: .95rem; line-height: 1.45; color: var(--ink-soft); }
-  .pick .nut-go { margin-top: auto; padding-top: .3rem; color: var(--accent); }
-  @media (max-width: 719px) { .picks-list { grid-template-columns: 1fr; } }
-  .pick-link:hover .nut-go :global(.doodle) { transform: translateX(4px); }
+  /* The drawing, with the pin to the story of how this page came about. The pin
+     borrows the footer's pulsing .pin-btn, with a hand-written nudge. */
+  .olai { --art-w: clamp(17rem, 24vw, 20rem); position: relative; padding-bottom: 2.5rem; line-height: normal; }
+  .story-pin { position: absolute; bottom: 0; right: 0; display: flex; align-items: flex-start; gap: .1rem; color: var(--coral); text-decoration: none; }
+  .story-pin .pin-btn { width: 2.6rem; height: 2.6rem; flex: none; }
+  .story-pin .pin-btn :global(.doodle) { width: 1.3rem; height: 1.3rem; }
+  .story-pin:hover .pin-btn, .story-pin:focus-visible .pin-btn { background: var(--coral); color: var(--paper-2); transform: rotate(0) scale(1.08); }
+  .story-pin:hover .pin-btn::after { animation: none; opacity: 0; }
+  .story-pin:focus-visible { outline: none; }
+  .story-pin:focus-visible .pin-btn { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .story-pin-hint { display: flex; align-items: flex-start; white-space: nowrap; }
+  .story-pin-hint :global(.story-pin-arrow) { width: 2.3rem; height: 1.8rem; stroke-width: 2; transform: scaleX(-1) rotate(-20deg) translateY(.35rem); flex: none; }
+  .story-pin-hint .hand { font-size: 1.25rem; display: inline-block; transform: rotate(-5deg); margin-top: -.2rem; }
+  .story-pin:hover .hand { text-decoration: underline; text-underline-offset: .2em; }
 
-  /* The yard's key: the three kinds of coconut on one slim line, out of step. */
-  .key { list-style: none; margin: .6rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem 1.5rem; }
-  .key li { display: flex; align-items: center; gap: .6rem; }
-  .key li:nth-child(2) { --m-delay: -1s; }
-  .key li:nth-child(3) { --m-delay: -.5s; }
-  .key :global(.mascot) { flex: none; width: 2.8rem; }
-  .key p { margin: 0; max-width: none; font-size: .85rem; line-height: 1.35; color: var(--ink-soft); }
-  .key strong { display: block; font-family: var(--font-hand); font-size: 1.2rem; font-weight: 400; line-height: 1.1; color: var(--ink); }
+  /* A skill's name is a command, so it reads as one. */
+  :global(.lrow:has(.leaf-shot)) :global(.lrow-title) { font-family: var(--font-mono); font-size: clamp(1.05rem, 1.6vw, 1.2rem); font-weight: 500; letter-spacing: 0; }
 
-  .shelf-head { margin-bottom: 1.4rem; }
-  .shelf-head h2 { margin-bottom: .3rem; }
-  .shelf-head p { margin: 0; }
+  /* A skill's thumbnail: one palm leaf on a sand card, like the coconuts' frames.
+     The leaf: one palm leaf, tan with darker tips, two string holes and a
+     thread through one, tilted a little either way; it lies flat on hover. */
+  .leaf-shot { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, var(--paper-2)); }
+  .mini-leaf { --olai-a: #efd9a2; --olai-b: #dcbd7a; --olai-edge: #b48c4c; --olai-ink: #2e2210; position: relative; display: block; width: 62%; height: 26%; background: linear-gradient(90deg, var(--olai-edge), var(--olai-b) 10%, var(--olai-a) 26%, var(--olai-a) 74%, var(--olai-b) 90%, var(--olai-edge)); border: 1.5px solid var(--ink); border-radius: 22px 8px 22px 8px / 8px 22px 8px 22px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(var(--tilt, -3deg)); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .mini-leaf::before, .mini-leaf::after { content: ""; position: absolute; top: 50%; width: .3rem; height: .3rem; margin-top: -.15rem; border-radius: 50%; background: var(--olai-ink); opacity: .75; }
+  .mini-leaf::before { left: .55rem; } .mini-leaf::after { right: .55rem; box-shadow: 0 .25rem 0 -.05rem transparent; }
+  :global(.lrow:hover) .mini-leaf { transform: rotate(0) translateY(-2px); }
+  :global([data-theme="dark"]) .mini-leaf { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .mini-leaf { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; } }
 
-  /* Shelf filter: All, or one shelf at a time. */
-  .yard-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem; }
-  .yard-filter .pill { font-size: .88rem; padding: .4rem .8rem; gap: .5rem; }
-  .yard-filter .pill span { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-faint); }
-  .yard-filter .pill[aria-pressed="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
-  .yard-filter .pill[aria-pressed="true"] span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+  .thanks { margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); max-width: 60ch; font-size: .95rem; }
+  .thanks span { display: block; margin-bottom: .2rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .thanks code { font-family: var(--font-mono); font-size: .85em; }
 
-  /* A shelf: a ruled heading, then one row per experiment. No boxes: a row is a
-     coconut, a name with its one line, where it grew and its status. The name's
-     button stretches over the whole row, which tints on hover. */
-  .patch { margin-top: 2rem; scroll-margin-top: calc(var(--header-h, 4rem) + 4.5rem); }
-  .patch-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem 1rem; padding-bottom: .55rem; border-bottom: 1.5px solid var(--ink); }
-  .patch-head h3 { margin: 0; font-size: 1.3rem; }
-  .patch-head p { margin: 0; font-size: .9rem; color: var(--ink-faint); }
-  .rows { list-style: none; margin: 0; padding: 0; }
-  .row { position: relative; display: grid; grid-template-columns: 2.8rem minmax(0, 1fr) 11rem 6.5rem 1rem; grid-template-areas: "mood main ctx status go"; align-items: center; gap: .3rem 1.2rem; padding: .8rem .6rem; border-bottom: 1.5px dashed var(--line); border-radius: 8px; transition: background .15s ease; }
-  .row:hover, .row:focus-within { background: color-mix(in srgb, var(--sand) 70%, transparent); }
-  .row :global(.row-mood) { grid-area: mood; width: 2.8rem; margin: -.3rem 0; }
-  .row-main { grid-area: main; min-width: 0; }
-  .row h4 { margin: 0; font-size: 1.2rem; line-height: 1.2; }
-  .row-hook { margin: .15rem 0 0; max-width: none; font-size: .92rem; line-height: 1.45; color: var(--ink-soft); }
-  .row-context { grid-area: ctx; }
-  .row .nut-status { grid-area: status; justify-self: start; margin-left: 0; }
-  .row :global(.row-go) { grid-area: go; width: 1rem; height: 1rem; stroke-width: 2; color: var(--coral); transition: transform .2s ease; }
-  .row:hover :global(.row-go) { transform: translateX(4px); }
-  .row:has(.nut-open:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+  @media (max-width: 559px) {
+    .olai { --art-w: min(100%, 27rem); }
+    .story-pin { right: auto; left: 2%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mini-leaf { transition: none; } }
 
-  /* Shared bits: the stretched open button, the mono context line, the status pill, the "go" link. */
+  /* The panel's mono context line and status tag. */
   .nut-status { margin-left: auto; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); padding: .3rem .5rem; border: 1.5px dashed currentColor; border-radius: 999px; line-height: 1; white-space: nowrap; }
-  .nut-open { padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; text-align: left; color: var(--ink); }
-  .nut-open::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
-  .nut-open:focus-visible { outline: none; }
   .nut-context { margin: 0; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); max-width: none; }
-  .nut-go { margin-top: auto; padding-top: .5rem; display: inline-flex; align-items: center; gap: .3rem; font-size: .9rem; font-weight: 500; color: var(--coral); }
-  .nut-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
 
   /* ---- The cracked-open panel ---- */
   /* While the panel is open: no page scroll (keeping the scrollbar's gutter so the
@@ -611,19 +402,8 @@ const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': Cha
   @keyframes crack-dim { from { opacity: 0; } to { opacity: 1; } }
   @keyframes crack-swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-  @media (max-width: 767px) {
-    .yard-hero { grid-template-columns: 1fr; }
-    .yard-heap { width: min(26rem, 100%); justify-self: center; margin-top: .5rem; }
-    .key { grid-template-columns: 1fr; }
-    .pick-link { grid-template-columns: 1fr; }
-  }
-  /* Phones: the panel is a sheet that rises from the bottom edge. Rows put where it
-     grew and its status on a line under the name. */
+  /* Phones: the panel is a sheet that rises from the bottom edge. */
   @media (max-width: 639px) {
-    .row { grid-template-columns: 2.4rem auto minmax(0, 1fr); grid-template-areas: "mood main main" ". ctx status"; gap: .4rem .8rem; padding-inline: .3rem; }
-    .row :global(.row-mood) { width: 2.4rem; align-self: start; }
-    .row :global(.row-go) { display: none; }
-    .room-tab { padding: .4rem .75rem; font-size: .86rem; }
     .crack { width: 100vw; max-height: 90vh; margin: auto 0 0; }
     .crack-sheet { max-height: 90vh; padding: 1.2rem 1.1rem 1rem; border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 0 var(--shadow-ink); }
     .crack[open] { animation: crack-up .34s cubic-bezier(.2,.8,.2,1); }

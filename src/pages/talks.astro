@@ -1,0 +1,39 @@
+---
+/* All talks: every talk as a row. The title opens the recording when there is
+   one, otherwise the slides; the row's side carries both. Data: src/data/talks.ts. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ListingHead from '../components/listing/ListingHead.astro';
+import ListingRow from '../components/listing/ListingRow.astro';
+import ListingMore from '../components/listing/ListingMore.astro';
+import Icon from '../components/Icon.astro';
+import Thenga from '../components/mascots/Thenga.astro';
+import { talks } from '../data/talks';
+import { site } from '../data/site';
+
+const description = 'Talks by Mariappan Subramanian on streaming SSR, frontend tooling, monorepos and CSS, with recordings and slides.';
+const watch = (id: string) => `https://www.youtube.com/watch?v=${id}`;
+---
+<BaseLayout title={`Talks | ${site.name}`} description={description} current="talks">
+  <main id="main" class="wrap listing-page">
+    <ListingHead eyebrow={`On stage · ${talks.length} talks`} title="Talks" lede="Things I’ve said out loud, to rooms of frontend folks. Recordings and slides for each.">
+      <Thenga slot="art" hobby="mic" />
+    </ListingHead>
+    <ol class="listing" id="talk-list" style="--media-w: 11rem; --media-w-sm: 6.5rem">
+      {talks.map((t) => (
+        <ListingRow cat="talk" href={t.video ? watch(t.video) : t.slides} external title={t.title} kicker={`${t.venue} · ${t.city} · ${t.date}`} accent={t.accent} media="photo">
+          <img slot="media" src={t.image} alt="" width="640" height="360" loading="lazy" decoding="async">
+          <Fragment slot="actions">
+            {t.video && <span class="talk-tag"><Icon name="play" />Recording</span>}
+            <a class="pill pill--soft" href={t.slides} rel="noopener"><Icon name="slides" />Slides</a>
+          </Fragment>
+        </ListingRow>
+      ))}
+    </ol>
+    <ListingMore list="talk-list" />
+  </main>
+</BaseLayout>
+
+<style>
+  .talk-tag { display: inline-flex; align-items: center; gap: .35rem; font-size: .84rem; color: var(--ink-soft); white-space: nowrap; }
+  .talk-tag :global(.doodle) { width: .85rem; height: .85rem; stroke: none; fill: currentColor; color: var(--coral); }
+</style>

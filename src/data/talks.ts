@@ -1,4 +1,4 @@
-/* Talks: each one becomes a ticket stub on the homepage.
+/* Talks: each one becomes a ticket stub; the `featured` ones show on the homepage.
    `video` is a YouTube id (click-to-load); without it the thumbnail links to the slides. */
 export type Accent = 'coral' | 'blue' | 'teal' | 'violet';
 
@@ -13,11 +13,13 @@ export interface Talk {
   video?: string;
   accent: Accent;
   tilt: 1 | 2 | 3;
+  featured?: boolean; // one of the three on the homepage
 }
 
 export const talks: Talk[] = [
   {
     title: 'Streaming SSR simplified with Next.js',
+    featured: true,
     year: 2023,
     venue: 'React Nexus 2023',
     city: 'Bangalore',
@@ -30,6 +32,7 @@ export const talks: Talk[] = [
   },
   {
     title: 'State of frontend tooling',
+    featured: true,
     year: 2023,
     venue: 'Flipkart',
     city: 'Bangalore',
@@ -52,6 +55,7 @@ export const talks: Talk[] = [
   },
   {
     title: 'Monorepos at scale',
+    featured: true,
     year: 2023,
     venue: 'React Bangalore',
     city: 'Bangalore',

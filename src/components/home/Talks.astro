@@ -1,17 +1,13 @@
 ---
+/* Three talks as ticket stubs: the ones marked `featured` in src/data/talks.ts. */
+import HomeSection from './HomeSection.astro';
 import Ticket from './Ticket.astro';
 import { talks } from '../../data/talks';
+
+const picks = talks.filter((t) => t.featured);
 ---
-<section class="section section--sand has-wave before-wave" id="talks" aria-labelledby="talks-title">
-  <div class="wave wave--flip" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">On stage</p>
-      <h2 id="talks-title">Talks</h2>
-      <p>Things I've said out loud, on stage, to rooms of front-end folks. Keep the stub.</p>
-    </div>
-    <div class="grid grid--3 tickets">
-      {talks.map((t) => <Ticket {...t} />)}
-    </div>
+<HomeSection flip id="talks" tone="sand" eyebrow="On stage" title="Talks" more={{ href: '/talks/', label: 'See all talks' }}>
+  <div class="grid grid--3 tickets">
+    {picks.map((t) => <Ticket {...t} />)}
   </div>
-</section>
+</HomeSection>

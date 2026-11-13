@@ -1,12 +1,16 @@
 ---
-/* How the /skills/ page came about, told as a short deck: the spark, two rounds of
+/* How the skills (the Skills tab on /experiments/) came about, told as a short deck: the spark, two rounds of
    concepts turned down (collections, then new interactions), the rule that fixed it
    (a story over plain card groups, like Thenga's yard), the four stories, and the
    palm leaf redrawn closer to the real thing. Renders are real crops of the boards
-   in process/skills-page/, made with Claude as a pair. The pin on /skills/ links here. */
+   in process/skills-page/, made with Claude as a pair. The pin on that tab links here.
+   Laid out like the other stories, in the side-column frame (.side-page in
+   style.css): Thenga writing over "On this page" beside the deck. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import OlaiBundle from '../../components/sketches/skills/OlaiBundle.astro';
+import Thenga from '../../components/mascots/Thenga.astro';
+import PageToc from '../../components/PageToc.astro';
 import { site } from '../../data/site';
 
 const img = (f: string) => `/images/work/skills-page/${f}.webp`;
@@ -49,10 +53,10 @@ const jsonLd = {
   inLanguage: 'en',
 };
 ---
-<BaseLayout title={`From a pedalboard to a palm leaf | ${site.name}`} description={description} ogType="article" jsonLd={jsonLd}>
-  <main id="main" class="wrap wrap--narrow">
-    <header class="page-hero">
-      <a class="breadcrumb" href="/skills/"><Icon name="arrow-right" />The skills</a>
+<BaseLayout title={`From a pedalboard to a palm leaf | ${site.name}`} description={description} ogType="article" current="experiments" jsonLd={jsonLd}>
+  <main id="main" class="wrap side-page">
+    <header class="page-hero side-hero">
+      <a class="breadcrumb" href="/experiments/#skills"><Icon name="arrow-right" />The skills</a>
       <p class="eyebrow">Side build · This portfolio · Oct 2026</p>
       <h1>From a pedalboard to a palm leaf</h1>
       <p class="lede">Claude and I drew eleven concepts for one page. Ten were turned down, mostly for being too clever. Here’s how the palm leaf won, and <mark class="hl">what each round taught me</mark>.</p>
@@ -63,6 +67,8 @@ const jsonLd = {
       </dl>
     </header>
 
+    <div class="side-body">
+    <div class="side-main">
     <figure class="sk-fig story-hero">
       <OlaiBundle />
       <figcaption>Where it landed: one leaf per skill, and the agent writing the next one.</figcaption>
@@ -90,7 +96,7 @@ const jsonLd = {
           <ul class="doodle-list slide-points">
             <li>Pretty containers for skills. None of them said <strong>what a skill actually does</strong>.</li>
           </ul>
-          <ul class="sheet">
+          <ul class="sheet fig-wide">
             {rounds.one.map((r) => <li><button type="button" class="zoom" data-full={img(r.f)} aria-label={`View full size: ${r.name}`}><img src={img(r.f)} width={r.w} height={r.h} alt={r.alt} loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><span class="sheet-name">{r.name}<i>turned down</i></span></li>)}
           </ul>
           <p class="board-link"><a href={board('01')}>Open the round 01 board, as it was<Icon name="external" /></a></p>
@@ -105,7 +111,7 @@ const jsonLd = {
           <ul class="doodle-list slide-points">
             <li>Each one explained skills well. Each one was also <strong>a new widget to learn</strong>.</li>
           </ul>
-          <ul class="sheet">
+          <ul class="sheet fig-wide">
             {rounds.two.map((r) => <li><button type="button" class="zoom" data-full={img(r.f)} aria-label={`View full size: ${r.name}`}><img src={img(r.f)} width={r.w} height={r.h} alt={r.alt} loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><span class="sheet-name">{r.name}<i>turned down</i></span></li>)}
           </ul>
           <p class="board-link"><a href={board('02')}>Open the round 02 board and try it<Icon name="external" /></a></p>
@@ -121,7 +127,7 @@ const jsonLd = {
             <li>The experiments page is just a hero and groups of cards. <strong>The coconut carries the story</strong>, not the layout.</li>
             <li>So the brief became: same layout, new story.</li>
           </ul>
-          <figure class="rule-shot">
+          <figure class="rule-shot fig-wide">
             <img src={img('exp-hero')} width="1762" height="608" alt="The experiments page hero: “Every coconut’s a keeper.” next to a heap of coconut mascots." loading="lazy" decoding="async" />
             <figcaption>Thenga’s yard: plain cards, and a coconut doing the talking.</figcaption>
           </figure>
@@ -136,7 +142,7 @@ const jsonLd = {
             <li>All four said one thing: a skill is <strong>what I know, written down, so an agent can do it my way</strong>.</li>
             <li>Palm leaves said it best. Olai chuvadi is how Tamil knowledge was written down and tied into bundles, so the next person could carry on.</li>
           </ul>
-          <ul class="sheet">
+          <ul class="sheet fig-wide">
             {rounds.three.map((r) => <li class:list={[r.picked && 'is-picked']}><button type="button" class="zoom" data-full={img(r.f)} aria-label={`View full size: ${r.name}`}><img src={img(r.f)} width={r.w} height={r.h} alt={r.alt} loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><span class="sheet-name">{r.name}<i>{r.picked ? 'picked' : 'turned down'}</i></span></li>)}
           </ul>
           <p class="board-link"><a href={board('03')}>Open the round 03 board, all four stories<Icon name="external" /></a></p>
@@ -151,7 +157,7 @@ const jsonLd = {
             <li>I shared photos of real bundles. The redraw got <strong>thin stacked leaves, a red cord with a tassel, a lamp and marigolds</strong>.</li>
             <li>Then I asked for the agent, holding the ezhuthani, the iron stylus. The top leaf carries Thirukkural 391: learn it well, then live by it.</li>
           </ul>
-          <div class="before-after">
+          <div class="before-after fig-wide">
             <figure><button type="button" class="zoom" data-full={img('r3-art')} aria-label="View full size: the round 03 drawing"><img src={img('r3-art')} width="1213" height="750" alt="The round 03 drawing: palm leaves as outlines, a loose leaf above a stack, a small robot beside it." loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><figcaption>Round 03 · a sketch</figcaption></figure>
             <span class="ba-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
             <figure><button type="button" class="zoom" data-full={img('final-art')} aria-label="View full size: the final drawing"><img src={img('final-art')} width="1173" height="591" alt="The final drawing: a tan palm-leaf bundle tied with a red cord, the agent writing on the top leaf with a stylus." loading="lazy" decoding="async" /><span class="zoom-icon" aria-hidden="true"><Icon name="zoom-in" /></span></button><figcaption>Round 04 · closer to real</figcaption></figure>
@@ -175,9 +181,15 @@ const jsonLd = {
         </section>
 
         <blockquote class="closer">The metaphor tells the story. The page stays familiar.</blockquote>
-        <p class="back"><a class="pill" href="/skills/">See the skills<Icon name="arrow-right" /></a></p>
+        <p class="back"><a class="pill" href="/experiments/#skills">See the skills<Icon name="arrow-right" /></a></p>
       </div>
     </article>
+    </div>
+    <aside class="side-col">
+      <div class="side-mascot" aria-hidden="true"><Thenga hobby="pen" /></div>
+      <PageToc heads=".prose .slide h2[id]" />
+    </aside>
+    </div>
 
     <dialog class="lightbox" data-lightbox aria-label="Render, full size">
       <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>

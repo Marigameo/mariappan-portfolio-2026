@@ -1,13 +1,12 @@
-/* Thenga's yard: the heap where every experiment gets piled up, and every one
-   leaves something behind. Rendered by src/pages/experiments.astro (cards, the
-   heap in the header, and the "cracked open" panel) and counted on the home
-   card (src/components/home/Stash.astro).
+/* The side quests: apps, ventures and hacks shipped as experiments, and what
+   each one left behind. Listed on src/pages/experiments.astro as rows (one tab per
+   shelf), each opening the "cracked open" panel.
 
    To add one: push an entry onto the right shelf. Keep it scannable: a one-line
    `hook` for the card, then a few short `sections` of points for the panel,
    `found` for what I took away, and links or a screenshot if they still exist.
    `id` is the #hash that opens it directly, e.g. /experiments/#quickfix.
-   Experiments that grew into a story of their own go in `highlights` instead. */
+   Anything that shipped at scale goes on /work/ (src/data/work.ts) instead. */
 
 /** Thenga's poses: `hero` is the mascot itself, the rest are outcomes. */
 export type Mood = 'hero' | 'sprouted' | 'cracked' | 'moonshot';
@@ -29,60 +28,9 @@ export interface Experiment {
   shot?: { src: string; alt: string; w: number; h: number };
   /** A small aside in my own voice, shown in handwriting. */
   note?: string;
+  /** One of the "Top picks", the tab /experiments/ opens on. */
+  featured?: boolean;
 }
-
-/** A highlight: an experiment big enough to get a story of its own. Shown above
-    the shelves as a wide card that links straight to the story. `sketch` picks
-    the card drawing in src/pages/experiments.astro. */
-export interface Highlight {
-  href: string;
-  title: string;
-  /** Mono line under the title, e.g. "Strivelabs · 2024 → now". */
-  context: string;
-  hook: string;
-  tags: string[];
-  accent: 'coral' | 'blue' | 'teal' | 'violet';
-  sketch: 'design-ecosystem' | 'public-share' | 'chat-diagrams' | 'draw-diagrams';
-}
-
-export const highlights: Highlight[] = [
-  {
-    href: '/work/chat-diagrams/',
-    title: 'Diagrams in Strive chat',
-    context: 'Strivelabs · Sep 2026',
-    hook: 'Teaching the chat when to draw a diagram, and never to show a broken one.',
-    tags: ['UX for AI', 'Diagrams'],
-    accent: 'teal',
-    sketch: 'chat-diagrams',
-  },
-  {
-    href: '/work/draw-diagrams/',
-    title: 'A diagram skill, built for chat',
-    context: 'Open source · Oct 2026',
-    hook: 'Most Mermaid skills help an agent write a diagram. This one helps a chat know when to draw one.',
-    tags: ['Agent skills', 'Diagrams'],
-    accent: 'blue',
-    sketch: 'draw-diagrams',
-  },
-  {
-    href: '/work/public-share/',
-    title: 'Sharing artifacts in Strive',
-    context: 'Strivelabs · Oct 2026',
-    hook: 'A public link for the pages the agent writes, built on top of what already shipped.',
-    tags: ['Sharing', 'Security'],
-    accent: 'violet',
-    sketch: 'public-share',
-  },
-  {
-    href: '/work/design-ecosystem/',
-    title: 'Strive’s design ecosystem',
-    context: 'Strivelabs · 2024 → now',
-    hook: 'A design system nobody asked for: a theme on shadcn, two shared packages, Storybook, and a doc for people and coding agents.',
-    tags: ['Design systems', 'Agents'],
-    accent: 'coral',
-    sketch: 'design-ecosystem',
-  },
-];
 
 export interface Shelf {
   id: string;
@@ -106,6 +54,7 @@ export const shelves: Shelf[] = [
     items: [
       {
         id: 'zendesk-clickup',
+        featured: true,
         name: 'ClickUp for Zendesk',
         context: 'Strivelabs · micro SaaS',
         mood: 'sprouted',
@@ -154,6 +103,7 @@ export const shelves: Shelf[] = [
       },
       {
         id: 'mardi-ai',
+        featured: true,
         name: 'Mardi AI',
         context: 'Strivelabs · standalone product',
         mood: 'sprouted',
@@ -267,6 +217,7 @@ export const shelves: Shelf[] = [
       },
       {
         id: 'nutro',
+        featured: true,
         name: 'nutro-components',
         context: 'College, with a friend · npm',
         mood: 'moonshot',

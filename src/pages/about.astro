@@ -1,4 +1,9 @@
 ---
+/* About: the professional side up front. The journey (newest first) carries the
+   little wins as stickers on the stop they happened at; below it, "Off the clock"
+   is one row of Thengas, one per hobby. A sticker or a Thenga opens its photos
+   and words in a panel (one <dialog>, one item shown at a time; hobbies step
+   previous/next among themselves). /about/#<hobby id> or #win-<id> opens one. */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import Thenga from '../components/mascots/Thenga.astro';
@@ -9,7 +14,7 @@ import thumbs from '../data/thumbs.json';
 const thumb = (src: string) => (thumbs as Record<string, { sm: string; lqip: string }>)[src];
 import { site } from '../data/site';
 
-const description = 'Beyond the job title: guitar covers, slow travel, home cooking, Tamil poetry and photographs. The other sides of Mariappan Subramanian, plus the journey so far.';
+const description = 'Mariappan Subramanian: design engineer at Strivelabs. The journey so far, from Zoho to Freshworks to Strive, the little wins along the way, and what he does off the clock.';
 
 // The journey, newest first. `roles` with two entries renders as "A → B". Dates per LinkedIn.
 const journey = [
@@ -21,9 +26,11 @@ const journey = [
   { year: "'18", company: 'Zoho', logo: '/images/logos/zoho.svg', roles: ['Marketplace Apps Developer'], when: 'Dec 2018 – Feb 2019', note: 'Cut my teeth building marketplace extensions for LinkedIn, Wrike & GrooveHQ — in Zoho Deluge, of all things.', wobbly: '', tilt: 1 },
 ];
 
-// The wins worth a laptop sticker, newest first. `photos` fan out above the text.
+// The wins worth a laptop sticker, newest first. Each is a sticker on the journey
+// stop named by `stop` (a company); its photos and words open in the panel.
 const wins = [
   {
+    id: 'blogathon', stop: 'Freshworks', short: 'Blog-a-thon champion', year: '2022',
     icon: 'pen', accent: 'coral', when: 'Freshworks · 2022', title: 'Blog-a-thon champion',
     text: "Won Freshworks' Developer Platform Blog-a-thon with a post on localising marketplace apps with Crayons.",
     photos: [{ src: '/images/wins/blogathon-2022.jpg', alt: 'Winners poster for the Freshworks Developer Platform Blog-a-thon, naming Mariappan Subramanian as champion', w: 960, h: 960 }],
@@ -31,6 +38,7 @@ const wins = [
     wobbly: '', tilt: 1,
   },
   {
+    id: 'cliqtrix', stop: 'Zoho', short: 'Cliqtrix hacker ×2', year: "'18 & '19",
     icon: 'star', accent: 'blue', when: 'Zoho Cliq · 2018 & 2019', title: 'Two-time Cliqtrix hacker',
     text: "Honorable mention in '18 — the contest's very first year — then winner in '19.",
     photos: [
@@ -47,13 +55,18 @@ const wins = [
     wobbly: 'wobbly--2', tilt: 2,
   },
 ];
+const winsAt = (company: string) => wins.filter((w) => w.stop === company);
 ---
 <BaseLayout title={`About | ${site.name}`} description={description} ogType="profile" current="about">
   <main id="main">
     <header class="wrap page-hero">
       <p class="eyebrow">About</p>
       <h1>A story in progress, written between commits and coffee.</h1>
-      <p class="lede">By day I design and build interfaces for AI products at <a href={site.links.strivelabs}>Strivelabs</a>. Off the clock, it looks something like this. <span class="hand ink-coral">Currently compiling curiosity…</span></p>
+      <p class="lede">I design and build interfaces for AI products at <a href={site.links.strivelabs}>Strivelabs</a>. Six stops so far, from marketplace apps at Zoho to generative UI at Strive.</p>
+      <div class="hero-cta">
+        <a class="pill pill--solid hire" href={site.links.linkedin} rel="noopener"><Icon name="linkedin" />Hire me</a>
+        <p class="hire-note hand"><Icon name="arrow-curly" class="hire-arrow" />say hi on LinkedIn, I reply</p>
+      </div>
     </header>
 
     <section class="section section--sand has-wave before-wave" style="margin-top: var(--wave-h)" id="journey" aria-labelledby="journey-title">
@@ -63,6 +76,7 @@ const wins = [
           <p class="eyebrow">The journey so far</p>
           <h2 id="journey-title">Six stops, <mark class="hl">one very long commit log.</mark></h2>
           <p class="journey-note hand">newest first, like git log<Icon name="arrow-down" /></p>
+          <p class="journey-key hand"><span class="journey-key-dot" aria-hidden="true"><Icon name="star" /></span>the stickers are little wins, tap one</p>
         </div>
         <ol class="journey">
           {journey.map((j) => (
@@ -78,6 +92,16 @@ const wins = [
                   {j.roles.map((r, i) => (<>{i > 0 && <Icon name="arrow-right" class="stop-arrow" />}<span>{r}</span></>))}
                 </h3>
                 <p class="stop-note">{j.note}</p>
+                {winsAt(j.company.split(' ')[0]).length > 0 && (
+                  <div class="stop-wins">
+                    {winsAt(j.company.split(' ')[0]).map((w, i) => (
+                      <button type="button" class="sticker" style={`--accent: var(--${w.accent}); --tilt: ${i % 2 ? 2 : -3}deg`} data-sheet-open={`win-${w.id}`} aria-haspopup="dialog">
+                        <span class="sticker-icon" aria-hidden="true"><Icon name={w.icon} /></span>
+                        <span class="sticker-text"><small>Won · {w.year}</small>{w.short}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </article>
             </li>
           ))}
@@ -85,18 +109,60 @@ const wins = [
       </div>
     </section>
 
-    <section class="section section--paper has-wave" id="wins" aria-labelledby="wins-title">
+    <section class="section section--paper has-wave" id="off-the-clock" aria-labelledby="clock-title">
       <div class="wave wave--flip" aria-hidden="true"></div>
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow">Little wins</p>
-          <h2 id="wins-title">The bits I'd put on a laptop sticker.</h2>
+          <p class="eyebrow">Off the clock</p>
+          <h2 id="clock-title">Thenga’s day off.</h2>
+          <p>Five things I do when the laptop’s shut.</p>
+          <p class="clock-hint hand" aria-hidden="true">tap a coconut, there are photos inside<Icon name="arrow-curly" class="clock-arrow" /></p>
         </div>
-        <ul class="wins">
-          {wins.map((w) => (
-            <li class:list={['win', 'wobbly', w.wobbly, `tilt-${w.tilt}`]} style={`--accent: var(--${w.accent})`}>
+        <ul class="hobbies">
+          {pastimes.map((p, i) => (
+            <li>
+              <button type="button" class="hobby" style={`--accent: var(--${p.accent}); --m-delay: -${(i * 0.7).toFixed(1)}s`} data-sheet-open={p.id} aria-haspopup="dialog">
+                <span class="hobby-art">
+                  {p.picks[0] && <span class="hobby-peek" aria-hidden="true"><img src={thumb(p.picks[0].src)?.sm ?? p.picks[0].src} alt="" loading="lazy" decoding="async" /></span>}
+                  <span class="board-who">
+                    <Thenga hobby={p.hobby} />
+                    <span class="board-doing" aria-hidden="true">{p.doing}</span>
+                  </span>
+                </span>
+                <span class="hobby-name">{p.short}</span>
+                <span class="hobby-more">{p.picks.length} photos<Icon name="arrow-right" /></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- The panel: one item per win and per hobby, one shown at a time. -->
+    <!-- Without JS nothing would clear .is-developing, so show the photos straight away. -->
+    <noscript><style>.polaroid.is-developing img { opacity: 1; filter: none; } .polaroid-developing, .polaroid-photo::after { display: none; }</style></noscript>
+    <dialog class="sheet" data-sheet aria-labelledby={`win-${wins[0].id}-t`}>
+      <div class="sheet-body">
+        <button type="button" class="sheet-close rail-btn" data-sheet-close aria-label="Close"><Icon name="close" /></button>
+        {wins.map((w, i) => {
+          const prev = wins[(i - 1 + wins.length) % wins.length];
+          const next = wins[(i + 1) % wins.length];
+          // With two wins, previous and next are the same one: just "Next".
+          const both = wins.length > 2;
+          return (
+            <article class="sheet-item sheet-win" data-sheet-item={`win-${w.id}`} aria-labelledby={`win-${w.id}-t`} style={`--accent: var(--${w.accent})`} hidden>
+              <div class="win-body">
+                <span class="win-badge"><Icon name={w.icon} /></span>
+                <p class="win-when">{w.when}</p>
+                <h2 id={`win-${w.id}-t`}>{w.title}</h2>
+                <p>{w.text}</p>
+                <div class="cluster win-links">
+                  {w.links.map((l) => (
+                    <a class="pill pill--soft" href={l.href} rel="noopener">{l.label}<Icon name="external" /></a>
+                  ))}
+                </div>
+              </div>
               {w.photos.length > 1 ? (
-                /* Several photos: a full-width carousel, each shown whole over a blurred copy of itself. */
                 <div class="win-carousel" data-carousel role="group" aria-roledescription="carousel" aria-label={`${w.title} photos`}>
                   <div class="win-track" data-carousel-track>
                     {w.photos.map((p, i) => (
@@ -121,98 +187,81 @@ const wins = [
                   ))}
                 </div>
               )}
-              <div class="win-body">
-                <span class="win-badge"><Icon name={w.icon} /></span>
-                <p class="win-when">{w.when}</p>
-                <h3>{w.title}</h3>
-                <p>{w.text}</p>
-                <div class="cluster win-links">
-                  {w.links.map((l) => (
-                    <a class="pill pill--soft" href={l.href} rel="noopener">{l.label}<Icon name="external" /></a>
+              <footer class="sheet-nav">
+                {both && <button type="button" class="sheet-step" data-sheet-step="-1"><Icon name="arrow-right" style="transform:scaleX(-1)" /><span><small>Previous</small>{prev.short}</span></button>}
+                <button type="button" class="sheet-step sheet-step--next" data-sheet-step="1"><span><small>{both ? 'Next' : 'The other win'}</small>{next.short}</span><Icon name="arrow-right" /></button>
+              </footer>
+            </article>
+          );
+        })}
+        {pastimes.map((p, i) => {
+          const cta = p.more ?? (p.picks.length ? 'More on' : 'Meanwhile, it’s all on');
+          const prev = pastimes[(i - 1 + pastimes.length) % pastimes.length];
+          const next = pastimes[(i + 1) % pastimes.length];
+          return (
+            <article class="sheet-item board" data-sheet-item={p.id} aria-labelledby={`${p.id}-title`} style={`--accent: var(--${p.accent})`} hidden>
+              <div class="board-head">
+                <div class="board-who">
+                  <Thenga hobby={p.hobby} />
+                  <p class="board-doing" aria-hidden="true">{p.doing}</p>
+                </div>
+                <div class="board-main">
+                  <h2 id={`${p.id}-title`}>{p.title}</h2>
+                  <p>{p.text}</p>
+                  {p.picks.length === 0 && (p.link ? (
+                    <a class="ig-card ig-card--inline" href={p.link.href} rel="noopener">
+                      <Icon name="instagram" /><span>{cta}</span><strong>{p.link.label}</strong><Icon name="arrow-right" class="ig-go" />
+                    </a>
+                  ) : (
+                    <p class="board-aside">{p.aside}</p>
                   ))}
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-
-    <section class="section" id="into" aria-labelledby="into-title">
-      <div class="wrap">
-        <hr class="rule" style="margin-bottom: var(--space-5)">
-        <div class="dayoff-head">
-          <p class="eyebrow">Off the clock</p>
-          <h2 id="into-title">Thenga’s day off.</h2>
-        </div>
-        <!-- One board per pastime, from src/data/offclock.ts: Thenga and the words, then a reel of
-             picks big enough to enjoy in place (the rail script in main.js drives the arrows), and
-             an Instagram card for the rest. Tapping a pick still opens it in the lightbox below. -->
-        <!-- Without JS nothing would clear .is-developing, so show the photos straight away. -->
-        <noscript><style>.polaroid.is-developing img { opacity: 1; filter: none; } .polaroid-developing, .polaroid-photo::after { display: none; }</style></noscript>
-        <ol class="boards">
-          {pastimes.map((p, i) => {
-            const cta = p.more ?? (p.picks.length ? 'More on' : 'Meanwhile, it’s all on');
-            return (
-              <li class="board" id={p.id} style={`--accent: var(--${p.accent}); --m-delay: -${(i * 0.7).toFixed(1)}s`} aria-labelledby={`${p.id}-title`}>
-                <div class="board-head">
-                  <div class="board-who">
-                    <Thenga hobby={p.hobby} />
-                    <p class="board-doing" aria-hidden="true">{p.doing}</p>
+              {p.picks.length > 0 && (
+                <div class="reel" data-rail>
+                  <div class="rail-controls reel-controls">
+                    <button class="rail-btn" type="button" data-prev aria-label="Previous" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
+                    <span class="rail-progress" aria-hidden="true"><i data-thumb></i></span>
+                    <button class="rail-btn" type="button" data-next aria-label="Next" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
                   </div>
-                  <div class="board-main">
-                    <h3 id={`${p.id}-title`}>{p.title}</h3>
-                    <p>{p.text}</p>
-                    {p.picks.length === 0 && (p.link ? (
-                      <a class="ig-card ig-card--inline" href={p.link.href} rel="noopener">
-                        <Icon name="instagram" /><span>{cta}</span><strong>{p.link.label}</strong><Icon name="arrow-right" class="ig-go" />
-                      </a>
-                    ) : (
-                      <p class="board-aside">{p.aside}</p>
+                  <ul class="rail-track reel-track" id={`${p.id}-reel`} data-track aria-label={`${p.title}: a few picks`}>
+                    {p.picks.map((x) => (
+                      <li class="reel-item">
+                        <button class="polaroid is-developing" type="button" data-full={x.src} data-develop aria-label={`View full size: ${x.alt}`}>
+                          <span class="polaroid-photo" style={thumb(x.src) ? `background-image: url(${thumb(x.src).lqip})` : undefined}>
+                            <img src={thumb(x.src)?.sm ?? x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
+                            <span class="polaroid-developing" aria-hidden="true">developing…</span>
+                          </span>
+                          {x.caption && <span class="polaroid-caption" aria-hidden="true">{x.caption}</span>}
+                        </button>
+                      </li>
                     ))}
-                  </div>
+                    {p.link && (
+                      <li class="reel-item reel-item--cta">
+                        <a class="ig-card" href={p.link.href} rel="noopener">
+                          <Icon name="instagram" />
+                          <span>{cta}</span>
+                          <strong set:html={p.link.label.replaceAll('.', '.<wbr>')} />
+                          <Icon name="arrow-right" class="ig-go" />
+                        </a>
+                      </li>
+                    )}
+                    {!p.link && p.aside && (
+                      <li class="reel-item reel-item--cta"><p class="ig-card ig-card--note">{p.aside}</p></li>
+                    )}
+                  </ul>
                 </div>
-                {p.picks.length > 0 && (
-                  <div class="reel" data-rail>
-                    <div class="rail-controls reel-controls">
-                      <button class="rail-btn" type="button" data-prev aria-label="Previous" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
-                      <span class="rail-progress" aria-hidden="true"><i data-thumb></i></span>
-                      <button class="rail-btn" type="button" data-next aria-label="Next" aria-controls={`${p.id}-reel`}><Icon name="arrow-right" /></button>
-                    </div>
-                    <ul class="rail-track reel-track" id={`${p.id}-reel`} data-track aria-label={`${p.title}: a few picks`}>
-                      {p.picks.map((x) => (
-                        <li class="reel-item">
-                          <button class="polaroid is-developing" type="button" data-full={x.src} data-develop aria-label={`View full size: ${x.alt}`}>
-                            <span class="polaroid-photo" style={thumb(x.src) ? `background-image: url(${thumb(x.src).lqip})` : undefined}>
-                              <img src={thumb(x.src)?.sm ?? x.src} alt={x.alt} width={x.w} height={x.h} loading="lazy" decoding="async">
-                              <span class="polaroid-developing" aria-hidden="true">developing…</span>
-                            </span>
-                            {x.caption && <span class="polaroid-caption" aria-hidden="true">{x.caption}</span>}
-                          </button>
-                        </li>
-                      ))}
-                      {p.link && (
-                        <li class="reel-item reel-item--cta">
-                          <a class="ig-card" href={p.link.href} rel="noopener">
-                            <Icon name="instagram" />
-                            <span>{cta}</span>
-                            <strong set:html={p.link.label.replaceAll('.', '.<wbr>')} />
-                            <Icon name="arrow-right" class="ig-go" />
-                          </a>
-                        </li>
-                      )}
-                      {!p.link && p.aside && (
-                        <li class="reel-item reel-item--cta"><p class="ig-card ig-card--note">{p.aside}</p></li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ol>
+              )}
+              <footer class="sheet-nav">
+                <button type="button" class="sheet-step" data-sheet-step="-1"><Icon name="arrow-right" style="transform:scaleX(-1)" /><span><small>Previous</small>{prev.short}</span></button>
+                <span class="sheet-count">{i + 1} / {pastimes.length}</span>
+                <button type="button" class="sheet-step sheet-step--next" data-sheet-step="1"><span><small>Next</small>{next.short}</span><Icon name="arrow-right" /></button>
+              </footer>
+            </article>
+          );
+        })}
       </div>
-    </section>
+    </dialog>
 
     <dialog class="lightbox" data-lightbox aria-label="Photo">
       <button class="lightbox-close rail-btn" type="button" data-lightbox-close aria-label="Close"><Icon name="close" /></button>
@@ -223,3 +272,178 @@ const wins = [
     </dialog>
   </main>
 </BaseLayout>
+
+<script>
+  // The panel: a sticker or a Thenga opens its item; previous/next walk the items of
+  // the same kind (wins, or hobbies). The hash follows the open item, so a link can
+  // open one. The reels and carousels inside measure themselves on resize, and
+  // were hidden when they first did, so they get a nudge once their item shows.
+  const dlg = document.querySelector<HTMLDialogElement>('[data-sheet]');
+  if (dlg && typeof dlg.showModal === 'function') {
+    const items = [...dlg.querySelectorAll<HTMLElement>('[data-sheet-item]')];
+    const body = dlg.querySelector<HTMLElement>('.sheet-body')!;
+    const ids = items.map((a) => a.dataset.sheetItem!);
+    let current: HTMLElement | null = null;
+    let opener: HTMLElement | null = null;
+
+    const show = (id: string) => {
+      const item = items.find((a) => a.dataset.sheetItem === id);
+      if (!item) return false;
+      items.forEach((a) => { a.hidden = a !== item; });
+      current = item;
+      dlg.setAttribute('aria-labelledby', item.getAttribute('aria-labelledby') ?? '');
+      body.scrollTop = 0;
+      history.replaceState(null, '', `#${id}`);
+      requestAnimationFrame(() => dispatchEvent(new Event('resize')));
+      return true;
+    };
+    const open = (id: string, from: HTMLElement | null) => {
+      if (!show(id)) return;
+      opener = from;
+      if (!dlg.open) { dlg.showModal(); document.documentElement.classList.add('sheet-lock'); }
+    };
+    // Step among the items of the same kind: wins with wins, hobbies with hobbies.
+    const step = (by: number, focusDir: string) => {
+      if (!current) return;
+      const kind = current.classList.contains('sheet-win');
+      const group = items.filter((a) => a.classList.contains('sheet-win') === kind);
+      const next = group[(group.indexOf(current) + by + group.length) % group.length];
+      dlg.dataset.swapped = '';
+      show(next.dataset.sheetItem!);
+      next.querySelector<HTMLElement>(`[data-sheet-step="${focusDir}"]`)?.focus();
+    };
+
+    document.querySelectorAll<HTMLElement>('[data-sheet-open]').forEach((b) => b.addEventListener('click', () => open(b.dataset.sheetOpen!, b)));
+    dlg.querySelectorAll<HTMLElement>('[data-sheet-step]').forEach((b) => b.addEventListener('click', () => step(Number(b.dataset.sheetStep), b.dataset.sheetStep!)));
+    dlg.querySelectorAll('[data-sheet-close]').forEach((b) => b.addEventListener('click', () => dlg.close()));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('close', () => {
+      document.documentElement.classList.remove('sheet-lock');
+      delete dlg.dataset.swapped;
+      history.replaceState(null, '', location.pathname + location.search);
+      opener?.focus();
+      opener = null;
+    });
+
+    const fromHash = () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      if (ids.includes(id)) open(id, null);
+    };
+    addEventListener('hashchange', fromHash);
+    fromHash();
+  }
+</script>
+
+<style>
+  /* Hire me: the one loud button on the page, with a handwritten nudge. */
+  .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-top: 1.4rem; }
+  .hire { padding: .7rem 1.2rem; font-size: 1rem; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .hire :global(.doodle) { width: 1.05rem; height: 1.05rem; }
+  .hire-note { display: flex; align-items: center; gap: .3rem; margin: 0; font-size: 1.2rem; color: color-mix(in srgb, var(--coral) 82%, var(--ink)); transform: rotate(-2deg); }
+  .hire-note :global(.hire-arrow) { width: 2.2rem; height: 1.6rem; stroke-width: 2; transform: scaleX(-1) rotate(-10deg); flex: none; }
+
+  /* Spacing as on the homepage: every gap between sections is the same, the
+     wave sitting in the bottom padding of the section above it. */
+  .page-hero { padding-bottom: var(--space-4); }
+  #journey.before-wave { padding-top: var(--space-4); padding-bottom: calc(var(--space-4) + var(--wave-h)) !important; }
+  #off-the-clock.has-wave { padding-top: var(--space-4); padding-bottom: var(--space-4); }
+
+  /* The key to the stickers, under the journey's heading. */
+  .journey-key { display: flex; align-items: center; gap: .45rem; margin: .4rem 0 0; max-width: none; font-size: 1.15rem; color: var(--ink-soft); transform: rotate(-1deg); }
+  .journey-key-dot { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--yellow); border: 1.5px solid var(--border); }
+  .journey-key-dot :global(.doodle) { width: .85rem; height: .85rem; stroke-width: 2; color: var(--sticky-ink); }
+
+  /* A win, as a sticker stuck on its stop: a die-cut edge (a dashed line just
+     inside), the accent's wash, tilted. It lifts and straightens on hover. */
+  .stop-wins { display: flex; flex-wrap: wrap; gap: .6rem .8rem; margin-top: .35rem; }
+  .sticker { display: inline-flex; align-items: center; gap: .55rem; padding: .4rem .85rem .4rem .45rem; font: inherit; text-align: left; color: var(--ink); background: color-mix(in srgb, var(--accent) 16%, var(--paper-2)); border: 1.5px solid var(--border); border-radius: 999px; box-shadow: 2px 2px 0 var(--shadow-ink), inset 0 0 0 3px var(--paper-2), inset 0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); cursor: pointer; transform: rotate(var(--tilt, -2deg)); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease; }
+  .sticker:hover { transform: rotate(0) translateY(-2px); box-shadow: 3px 4px 0 var(--shadow-ink), inset 0 0 0 3px var(--paper-2), inset 0 0 0 4px color-mix(in srgb, var(--accent) 45%, transparent); }
+  .sticker:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+  .sticker-icon { flex: none; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: var(--accent); background: var(--paper-2); border: 1.5px solid var(--border); }
+  .sticker-icon :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; }
+  .sticker-text { display: grid; font-size: .9rem; font-weight: 600; line-height: 1.15; }
+  .sticker-text small { font-family: var(--font-mono); font-size: .6rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+
+  /* Off the clock: one row of Thengas, each on its tinted blob with what it's
+     up to, and the hobby's name underneath. */
+  .hobbies { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem 1.2rem; }
+  .hobby { display: grid; justify-items: center; gap: 1.5rem; width: 100%; padding: .4rem 0; font: inherit; color: var(--ink); background: none; border: 0; cursor: pointer; }
+  .hobby { position: relative; }
+  .hobby-art { position: relative; display: block; width: min(9.5rem, 100%); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+  .hobby .board-who { position: relative; z-index: 1; display: block; }
+  /* A photo peeks out from behind each blob, a hint that there are more inside;
+     it slides further out on hover. */
+  .hobby-peek { position: absolute; top: -.4rem; right: -.9rem; z-index: 0; width: 3.4rem; padding: .22rem .22rem .7rem; background: #fbf8f2; border: 1.5px solid var(--border); border-radius: 2px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(14deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .hobby-peek img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .hobby:hover .hobby-art, .hobby:focus-visible .hobby-art { transform: translateY(-4px) rotate(-2deg); }
+  .hobby:hover .hobby-peek, .hobby:focus-visible .hobby-peek { transform: translate(.7rem, -.5rem) rotate(20deg); }
+  .hobby-more { display: inline-flex; align-items: center; gap: .3rem; margin-top: -1.15rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+  .hobby-more :global(.doodle) { width: .85rem; height: .85rem; stroke-width: 2; color: var(--accent); transition: transform .2s ease; }
+  .hobby:hover .hobby-more :global(.doodle) { transform: translateX(3px); }
+  /* The nudge: a handwritten note and an arrow curling down to the row. */
+  .section-head { position: relative; }
+  .clock-hint { position: absolute; right: -16rem; bottom: -1.6rem; display: flex; align-items: flex-end; gap: .2rem; margin: 0; font-size: 1.25rem; color: color-mix(in srgb, var(--coral) 82%, var(--ink)); transform: rotate(-3deg); white-space: nowrap; }
+  .clock-hint :global(.clock-arrow) { width: 2.6rem; height: 2.2rem; stroke-width: 2; transform: rotate(70deg) translate(.6rem, -.2rem); flex: none; }
+  .hobby:focus-visible { outline: none; }
+  .hobby:focus-visible .hobby-name { outline: 2px solid var(--coral); outline-offset: 4px; border-radius: 4px; }
+  .hobby-name { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.1; text-decoration: underline dotted color-mix(in srgb, var(--ink) 35%, transparent); text-underline-offset: 6px; }
+  .hobby:hover .hobby-name { color: var(--accent); }
+  @media (max-width: 899px) { .hobbies { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 1199px) { .clock-hint { position: static; margin-top: .5rem; transform: rotate(-2deg); } }
+  @media (max-width: 479px) {
+    .hobbies { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.6rem .8rem; }
+    .hobbies li:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: 50%; }
+    .clock-hint { white-space: normal; font-size: 1.15rem; }
+    .hobby-peek { right: -.3rem; width: 3rem; }
+    .hobby-name { font-size: 1.15rem; }
+  }
+
+  /* ---- The panel ---- */
+  :global(html.sheet-lock) { overflow: hidden; scrollbar-gutter: stable; }
+  .sheet { padding: 0; border: 0; background: transparent; width: min(60rem, calc(100vw - 2rem)); max-width: none; max-height: calc(100vh - 3rem); overflow: visible; color: var(--ink); }
+  .sheet::backdrop { background: rgba(6, 6, 6, .62); }
+  .sheet[open] { animation: sheet-in .3s cubic-bezier(.2,.8,.2,1); }
+  .sheet-body { position: relative; max-height: calc(100vh - 3rem); overflow-y: auto; overflow-x: clip; overscroll-behavior: contain; padding: 1.5rem 1.6rem 1.1rem; background: var(--paper); border: 1.5px solid var(--border); border-radius: var(--radius-wobble); box-shadow: 6px 6px 0 var(--shadow-ink); }
+  .sheet-close { position: sticky; top: 0; float: right; margin: -.4rem -.5rem 0 .5rem; z-index: 3; }
+  .sheet-close :global(.doodle) { width: 1.1rem; height: 1.1rem; }
+  .sheet[data-swapped] .sheet-item:not([hidden]) { animation: sheet-swap .28s ease both; }
+  .sheet-item h2 { margin: 0; font-size: clamp(1.6rem, 3.4vw, 2.1rem); }
+
+  /* A win: the words beside its photos. */
+  .sheet-win { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); min-width: 0; gap: 1.4rem 2rem; align-items: center; }
+  .sheet-win .win-body > p:not(.win-when) { font-size: 1rem; }
+  .sheet-win .win-photos .win-shot, .sheet-win .win-track { aspect-ratio: 4 / 3; }
+  .sheet-win .sheet-nav { grid-column: 1 / -1; }
+  .sheet-win > * { min-width: 0; }
+  /* A hobby: the board as it was, Thenga a little smaller. */
+  .sheet-item.board .board-head { grid-template-columns: 8rem minmax(0, 1fr); gap: 1rem 1.8rem; padding-right: 2.5rem; }
+  .sheet-item.board .reel { --reel-h: 20rem; }
+
+  .sheet-nav { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-top: 1.2rem; padding-top: .9rem; border-top: 1.5px dashed var(--line); }
+  .sheet-step { display: inline-flex; align-items: center; gap: .5rem; min-width: 0; max-width: 45%; padding: .3rem .4rem; border: 0; background: none; color: var(--ink); font: inherit; cursor: pointer; }
+  .sheet-step--next { margin-left: auto; text-align: right; }
+  .sheet-step:only-child { max-width: 100%; }
+  .sheet-step span { display: grid; min-width: 0; font-size: .95rem; font-weight: 500; }
+  .sheet-step span, .sheet-step small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sheet-step small { font-family: var(--font-mono); font-size: .6rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .sheet-step :global(.doodle) { flex: none; width: 1.1rem; height: 1.1rem; stroke-width: 2; color: var(--coral); }
+  .sheet-step:hover { color: var(--coral); }
+  .sheet-count { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-soft); }
+
+  @keyframes sheet-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes sheet-swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes sheet-up { from { transform: translateY(40%); opacity: .4; } to { transform: none; opacity: 1; } }
+
+  /* Phones: the panel rises from the bottom edge; a win stacks, words first. */
+  @media (max-width: 719px) {
+    .sheet { width: 100vw; max-height: 92vh; margin: auto 0 0; }
+    .sheet-body { max-height: 92vh; padding: 1.2rem 1.1rem 1rem; border-bottom: 0; border-radius: 18px 18px 0 0; box-shadow: 0 -4px 0 var(--shadow-ink); }
+    .sheet[open] { animation: sheet-up .34s cubic-bezier(.2,.8,.2,1); }
+    .sheet-win { grid-template-columns: minmax(0, 1fr); }
+    .sheet-item.board .board-head { grid-template-columns: 1fr; padding-right: 0; }
+    .sheet-item.board .board-who { width: 7rem; justify-self: start; }
+    .sheet-item.board .reel { --reel-h: 17rem; }
+    .sheet-count { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sheet[open], .sheet[data-swapped] .sheet-item:not([hidden]) { animation: none; } .sticker, .hobby .board-who { transition: none; } }
+</style>

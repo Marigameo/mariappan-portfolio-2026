@@ -9,12 +9,28 @@
    guitar (strums, notes rise), camera (flash pops), pen (writes on a page),
    pot (stirs, steam rises), backpack (walking stick, a paper plane drifts by).
    brush is the studio's painter (Experiments page): a beret in place of the sprout
-   (one leaf pokes out), a palette in one hand, a brush that dabs a stroke of paint. */
+   (one leaf pokes out), a palette in one hand, a brush that dabs a stroke of paint.
+   On the listing pages Thenga is on the clock: mic (Talks: holds a mic, mouth
+   moving, sound rings off it), laptop (At work: types, a little </> floats up) and
+   hammer (Side builds: taps away, a gear in the other hand turns). */
 import type { Mood } from '../../data/experiments';
 import type { Hobby } from '../../data/offclock';
 
-interface Props { mood?: Mood; hobby?: Hobby; label?: string; class?: string }
+type Prop = Hobby | 'mic' | 'laptop' | 'hammer';
+interface Props { mood?: Mood; hobby?: Prop; label?: string; class?: string }
 const { mood = 'hero', hobby, label, class: cls } = Astro.props;
+
+/* An 8-tooth gear centred on 0,0, for the hammer's other hand. */
+const gear = (() => {
+  const pts: string[] = [];
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    for (const [da, r] of [[-0.2, 7.5], [-0.12, 11], [0.12, 11], [0.2, 7.5]] as const) {
+      pts.push(`${(Math.cos(a + da) * r).toFixed(1)} ${(Math.sin(a + da) * r).toFixed(1)}`);
+    }
+  }
+  return `M${pts.join('L')}Z`;
+})();
 ---
 <svg class:list={['mascot', `mascot--${mood}`, hobby && `mascot--${hobby}`, cls]} viewBox="0 0 160 160" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}>
   <ellipse cx="80" cy="148" rx="36" ry="5" class="m-shadow m-a-shadow" />
@@ -90,7 +106,7 @@ const { mood = 'hero', hobby, label, class: cls } = Astro.props;
         <!-- the coconut's own three "eyes" up top -->
         {hobby !== 'brush' && (<g><circle cx="74" cy="66" r="2.2" class="m-pore" /><circle cx="86" cy="66" r="2.2" class="m-pore" /><circle cx="80" cy="72" r="2.2" class="m-pore" /></g>)}
 
-        {mood === 'hero' && (<g><g class="m-a-blink"><circle cx="68" cy="96" r="3.4" class="m-dot" /><circle cx="92" cy="96" r="3.4" class="m-dot" /></g><path d="M73 106c4 4 10 4 14 0" class="m-line m-thin" /></g>)}
+        {mood === 'hero' && (<g><g class="m-a-blink"><circle cx="68" cy="96" r="3.4" class="m-dot" /><circle cx="92" cy="96" r="3.4" class="m-dot" /></g>{hobby === 'mic' ? <ellipse cx="80" cy="107" rx="4.5" ry="3.5" class="m-mouth m-a-talk" /> : <path d="M73 106c4 4 10 4 14 0" class="m-line m-thin" />}</g>)}
         {mood === 'sprouted' && (<g><path d="M63 97c2-4 8-4 10 0M87 97c2-4 8-4 10 0" class="m-line m-thin" /><path d="M71 104c4 7 14 7 18 0z" class="m-mouth" /></g>)}
         {mood === 'moonshot' && (<g><circle cx="67" cy="95" r="7" class="m-card" /><circle cx="93" cy="95" r="8.5" class="m-card" /><circle cx="69" cy="93" r="3" class="m-dot" /><circle cx="95" cy="92" r="3.4" class="m-dot" /><path d="M70 108c6 5 14 5 20 0z" class="m-mouth" /></g>)}
         <ellipse cx="60" cy="106" rx="4.5" ry="2.6" class="m-cheek" /><ellipse cx="100" cy="106" rx="4.5" ry="2.6" class="m-cheek" />
@@ -173,6 +189,42 @@ const { mood = 'hero', hobby, label, class: cls } = Astro.props;
             <path d="M127 99L145 63" class="m-brush" />
             <path d="M143 66l3-7 5 2.5-3 7z" class="m-ferrule" />
             <path d="M146 59c1-5 4-8 8-10 0 5-2 9-5 11.5z" class="m-tip" />
+          </g>
+        </g>
+      )}
+      {hobby === 'mic' && (
+        <g>
+          <!-- sound rings off the mic, a hand out to the room -->
+          <g class="m-a-sound"><path d="M120 50a14 14 0 0 1 10 10M122 42a22 22 0 0 1 16 16" class="m-line m-thin m-ray" /></g>
+          <g class="m-a-gesture"><path d="M38 102c-8-2-14-8-15-16" class="m-line" /><path d="M20 82l-3-5M24 80l1-6M28 82l3-5" class="m-line m-thin" /></g>
+          <path d="M122 102c6 0 10-4 11-10" class="m-line" />
+          <path d="M134 96L121 70" class="m-mic-handle" />
+          <path d="M126 79l-7 3.5" class="m-line m-thin" />
+          <circle cx="116" cy="64" r="8.5" class="m-mic" />
+          <path d="M110 61h12M108.5 65h15M110 69h12" class="m-line m-thin m-grill" />
+        </g>
+      )}
+      {hobby === 'laptop' && (
+        <g>
+          <!-- the lid, seen from behind, a leaf on it; a little </> floats up -->
+          <g class="m-a-code"><path d="M120 40l-6 5 6 5M126 52l5-14M137 40l6 5-6 5" class="m-line m-thin m-ray" /></g>
+          <rect x="49" y="111" width="62" height="29" rx="3.5" class="m-laptop" />
+          <path d="M42 140h76" class="m-line" />
+          <path d="M76 131c-1-7 4-12 11-12 0 7-4 12-11 12z" class="m-leaf" /><path d="M77 130l7-8" class="m-line m-thin" />
+          <g class="m-a-type-l"><path d="M38 102c2 8 6 14 12 17" class="m-line" /></g>
+          <g class="m-a-type-r"><path d="M122 102c-2 8-6 14-12 17" class="m-line" /></g>
+        </g>
+      )}
+      {hobby === 'hammer' && (
+        <g>
+          <!-- a gear held up in one hand, turning; the hammer taps in the other -->
+          <path d="M38 102c-8-2-12-8-12-16" class="m-line" />
+          <g transform="translate(24 72)"><g class="m-a-gear"><path d={gear} class="m-gear" /><circle r="3.2" class="m-card" /></g></g>
+          <g class="m-a-spark"><path d="M142 104l6 3M140 112l7 0M142 96l5-3" class="m-line m-thin m-ray" /></g>
+          <g class="m-a-tap">
+            <path d="M122 100c6-2 10-6 11-12" class="m-line" />
+            <path d="M131 92L143 64" class="m-brush" />
+            <path d="M134 61l17 7.5 3-6.5-17-7.5z" class="m-hammer" />
           </g>
         </g>
       )}

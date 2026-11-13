@@ -21,6 +21,8 @@ export interface StudioPiece {
   hook?: string;
   tags: string[];
   accent: 'coral' | 'blue' | 'teal' | 'violet';
+  /** One of the "Top picks", the tab /experiments/ opens on. */
+  featured?: boolean;
   preview:
     | { kind: 'sketch'; sketch: 'kb-graph' | 'kb-props' | 'chat-mode'; alt: string }
     | { kind: 'video'; src: string; poster: string; width: number; height: number; alt: string }
@@ -30,6 +32,7 @@ export interface StudioPiece {
 export const studio: StudioPiece[] = [
   {
     slug: 'datagrid',
+    featured: true,
     title: 'Designing the datagrid in Strive',
     context: 'Strivelabs · Datagrid',
     frame: 'Grid / Accounts',
@@ -47,6 +50,7 @@ export const studio: StudioPiece[] = [
   },
   {
     slug: 'iphone-duo-playground',
+    featured: true,
     title: 'Designing the iPhone Duo playground',
     context: 'Side build · iPhone Duo playground',
     frame: 'Duo / Open',
@@ -64,6 +68,7 @@ export const studio: StudioPiece[] = [
   },
   {
     slug: 'library',
+    featured: true,
     title: 'Designing the Library in Strive',
     context: 'Strivelabs · Library',
     frame: 'Library / Grid',

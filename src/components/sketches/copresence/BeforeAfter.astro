@@ -11,7 +11,7 @@ interface Props { id: string; shots: Shot[]; caption: string }
 const { id, shots, caption } = Astro.props;
 const B = '/images/work/co-presence/';
 ---
-<figure class="sk-fig ba-fig" data-ba>
+<figure class="sk-fig ba-fig fig-wide" data-ba>
   <div class="sk-sheet ba">
     <div class="ba-switch" role="group" aria-label="Show">
       {shots.map((s, i) => (

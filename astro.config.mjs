@@ -12,4 +12,6 @@ export default defineConfig({
   // Keep the authored HTML whitespace as-is. The .flow diagrams and inline SVG
   // sketches depend on it, and gzip already removes the cost.
   compressHTML: false,
+  // Skills moved into Experiments as a tab; old links land on it.
+  redirects: { '/skills/': '/experiments/#skills' },
 });

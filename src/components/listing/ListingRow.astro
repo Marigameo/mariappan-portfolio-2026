@@ -1,0 +1,98 @@
+---
+/* One row of a listing: a small taped thumbnail ("media" slot), a kicker, the title
+   (the link; it stretches over the whole row), an optional one-line hook, and a
+   side with a status line and the arrow. `media` sets the thumbnail's frame:
+   "sketch" (600×440, a work sketch), "photo" (16:9, a talk still) or "bare" (no
+   frame, e.g. a mini book). Extra links (a talk's Slides) go in the "actions"
+   slot and sit above the stretched link. `cat` is the space-separated tab ids the
+   row belongs to (see ListingTabs). */
+import Icon from '../Icon.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  titleLang?: string;
+  titleNote?: string;
+  kicker: string;
+  hook?: string;
+  side?: string;
+  cat?: string;
+  accent?: string;   // a colour token name: coral, blue, teal, violet
+  media?: 'sketch' | 'photo' | 'bare';
+  external?: boolean;
+}
+
+const { href, title, titleLang, titleNote, kicker, hook, side, cat = '', accent = 'coral', media = 'sketch', external = false } = Astro.props;
+---
+<li class="lrow" data-cat={cat} style={`--accent: var(--${accent})`}>
+  <figure class:list={['lrow-media', `lrow-media--${media}`, media !== 'bare' && 'taped']} aria-hidden="true">
+    {media === 'bare' ? <slot name="media" /> : <span class="lrow-shot"><slot name="media" /></span>}
+  </figure>
+  <div class="lrow-body">
+    <p class="lrow-kicker">{kicker}</p>
+    <h2 class="lrow-title" lang={titleLang}>
+      <a class="lrow-link" href={href} rel={external ? 'noopener' : undefined}>{title}{titleNote && <span class="lrow-note" lang="en">{titleNote}</span>}</a>
+    </h2>
+    {hook && <p class="lrow-hook">{hook}</p>}
+  </div>
+  <div class="lrow-side">
+    {side && <span class="lrow-status">{side}</span>}
+    <slot name="actions" />
+    <span class="lrow-go" aria-hidden="true"><Icon name={external ? 'external' : 'arrow-right'} /></span>
+  </div>
+</li>
+
+<style>
+  /* A row is quiet until hovered: then it lifts into a hand-drawn card. Rows are
+     parted by a dashed rule, like lines in a notebook. */
+  .lrow { --accent: var(--coral); position: relative; display: grid; grid-template-columns: var(--media-w, 9.5rem) minmax(0, 1fr) auto; align-items: center; gap: 1.6rem; padding: 1.15rem 1.25rem; border: 1.5px solid transparent; border-radius: var(--radius-wobble); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .25s cubic-bezier(.2,.8,.2,1); }
+  .lrow:nth-child(2n) { border-radius: var(--radius-wobble-2); }
+  .lrow[hidden] { display: none; }
+  /* The rule sits above every visible row that has a visible row before it. */
+  .lrow:not([hidden]) ~ .lrow::before { content: ""; position: absolute; left: 1.25rem; right: 1.25rem; top: -.45rem; border-top: 1.5px dashed var(--line); pointer-events: none; }
+  .lrow:hover { background: var(--paper-2); border-color: var(--border); box-shadow: 4px 4px 0 var(--shadow-ink); transform: translateY(-2px); }
+  .lrow:has(.lrow-link:focus-visible) { outline: 2px solid var(--coral); outline-offset: 3px; }
+
+  /* Thumbnail: taped on at a slight tilt, straightens on hover. */
+  .lrow-media { position: relative; margin: 0; transform: rotate(-1.2deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .lrow:nth-child(2n) .lrow-media { transform: rotate(1deg); }
+  .lrow:hover .lrow-media { transform: rotate(0); }
+  .lrow-media.taped::before { top: -.55rem; left: 22%; width: 3.6rem; height: 1rem; transform: rotate(-4deg); z-index: 1; }
+  .lrow:nth-child(2n) .lrow-media.taped::before { left: auto; right: 18%; transform: rotate(3deg); }
+  .lrow-shot { position: relative; display: block; overflow: hidden; aspect-ratio: 600 / 440; background: var(--sand); border: 1.5px solid var(--border); border-radius: 9px 5px 10px 6px / 6px 10px 5px 9px; box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .lrow-media--photo .lrow-shot { aspect-ratio: 16 / 9; }
+  .lrow-shot :global(.sk), .lrow-shot :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .lrow-media--bare { display: grid; place-items: center; transform: none; }
+  .lrow:nth-child(2n) .lrow-media--bare, .lrow:hover .lrow-media--bare { transform: none; }
+
+  .lrow-body { min-width: 0; }
+  .lrow-kicker { display: flex; align-items: center; gap: .6rem; margin: 0 0 .4rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .lrow-kicker::before { content: ""; width: 1.2rem; height: 1.5px; background: var(--accent); flex: none; }
+  .lrow-title { margin: 0; font-size: clamp(1.3rem, 2vw, 1.55rem); line-height: 1.15; }
+  .lrow-link { color: var(--ink); text-decoration: none; }
+  .lrow-link:hover { color: var(--ink); }
+  .lrow-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .lrow-link:focus-visible { outline: none; }
+  .lrow-note { margin-left: .5rem; font-family: var(--font-body); font-size: .84rem; letter-spacing: 0; color: var(--ink-soft); }
+  .lrow-hook { margin: .35rem 0 0; font-size: 1rem; color: var(--ink-soft); max-width: 62ch; }
+
+  .lrow-side { display: flex; align-items: center; justify-content: flex-end; gap: 1rem; }
+  .lrow-status { display: inline-flex; align-items: center; gap: .45rem; font-size: .84rem; color: var(--ink-soft); white-space: nowrap; }
+  .lrow-status::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--accent); flex: none; }
+  /* Extra links (Slides, Watch) sit above the stretched title link. */
+  .lrow-side :global(.pill) { position: relative; z-index: 1; padding: .45rem .8rem; font-size: .85rem; }
+  .lrow-go { flex: none; display: grid; place-items: center; width: 2.1rem; height: 2.1rem; color: var(--accent); border: 1.5px solid currentColor; border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transition: background .2s ease, color .2s ease; }
+  .lrow:hover .lrow-go { background: var(--accent); color: var(--paper-2); }
+  .lrow-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .lrow:hover .lrow-go :global(.doodle) { transform: translateX(3px); }
+
+  /* Narrow: thumbnail and text side by side, the status and arrow under the text. */
+  @media (max-width: 719px) {
+    .lrow { grid-template-columns: var(--media-w-sm, 6rem) minmax(0, 1fr); align-items: start; gap: .5rem 1.1rem; padding: 1rem .75rem; }
+    .lrow-side { grid-column: 2; justify-content: space-between; flex-wrap: wrap; gap: .6rem; margin-top: .4rem; }
+    .lrow-hook { font-size: .95rem; }
+    .lrow-status { white-space: normal; }
+    .lrow-go { width: 1.9rem; height: 1.9rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .lrow, .lrow-media { transition: none; } }
+</style>

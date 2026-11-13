@@ -1,0 +1,74 @@
+---
+/* A project on the homepage: thumbnail on top, then a one-line kicker, the title,
+   a one-line hook, and a foot with the status on the left and "Read the story" on
+   the right. Cards sit in a <ProjectGrid>. Put the thumbnail in the "sketch" slot
+   (an inline <svg class="sk"> from src/components/sketches/, or an <img>); the hook
+   goes in the default slot. */
+import Icon from '../Icon.astro';
+import type { Accent } from '../../data/talks';
+
+interface Props {
+  href: string;
+  accent: Accent;
+  title: string;
+  titleLang?: string;
+  titleNote?: string; // a quiet gloss beside a non-English title
+  kicker: string;     // e.g. "Strivelabs · Gen UI"
+  status?: string;    // e.g. "Live for all customers"
+}
+
+const { href, accent, title, titleLang, titleNote, kicker, status } = Astro.props;
+---
+<li class="pcard" style={`--accent: var(--${accent})`}>
+  <a class="pcard-link" href={href}>
+    <figure class="shot taped"><slot name="sketch" /></figure>
+    <div class="pcard-body">
+      <p class="pcard-kicker">{kicker}</p>
+      <h3 lang={titleLang}>{title}{titleNote && <span class="pcard-note" lang="en">{titleNote}</span>}</h3>
+      <p class="pcard-hook"><slot /></p>
+      <div class="pcard-foot">
+        {status && <span class="pcard-status">{status}</span>}
+        <span class="pcard-go"><span class="visually-hidden">Read the story</span><Icon name="arrow-right" /></span>
+      </div>
+    </div>
+  </a>
+</li>
+
+<style>
+  .pcard { --accent: var(--coral); display: flex; min-width: 0; }
+  .pcard-link { position: relative; display: flex; flex-direction: column; width: 100%; color: var(--ink); text-decoration: none; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: var(--radius-wobble); box-shadow: 4px 4px 0 var(--shadow-ink); transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease; }
+  .pcard:nth-child(2n) .pcard-link { border-radius: var(--radius-wobble-2); }
+  .pcard-link:hover { color: var(--ink); transform: translateY(-4px); box-shadow: 6px 8px 0 var(--shadow-ink); }
+
+  .pcard .shot { margin: 1.1rem 1.1rem 0; aspect-ratio: 600 / 440; }
+  .pcard:nth-child(2n) .shot { transform: rotate(1.2deg); }
+  .pcard:nth-child(2n) .shot.taped::before { left: auto; right: 14%; transform: rotate(3deg); }
+  .pcard-link:hover .shot { transform: rotate(0); }
+  .pcard-link:hover :global(.sk-lift) { transform: translateY(-4px); }
+
+  .pcard-body { flex: 1; display: flex; flex-direction: column; gap: .5rem; padding: 1.2rem 1.25rem 1.1rem; min-width: 0; }
+  .pcard-kicker { display: flex; align-items: center; gap: .6rem; margin: 0; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .pcard-kicker::before { content: ""; width: 1.2rem; height: 1.5px; background: var(--accent); flex: none; }
+  .pcard h3 { margin: 0; font-size: clamp(1.35rem, 2.2vw, 1.6rem); }
+  .pcard-note { margin-left: .5rem; font-family: var(--font-body); font-size: .84rem; font-weight: 400; letter-spacing: 0; color: var(--ink-soft); }
+  .pcard-hook { margin: 0; font-size: 1rem; color: var(--ink-soft); }
+  /* Foot: the status on the left, a round arrow on the right. The arrow never wraps
+     under a long status, so every card's foot is one row at every width. */
+  .pcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: auto; padding-top: .8rem; border-top: 1.5px dashed var(--line); }
+  .pcard-status { display: inline-flex; align-items: center; gap: .45rem; min-width: 0; font-size: .84rem; color: var(--ink-soft); }
+  .pcard-status::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--accent); flex: none; }
+  .pcard-go { margin-left: auto; flex: none; display: grid; place-items: center; width: 2.1rem; height: 2.1rem; color: var(--accent); border: 1.5px solid currentColor; border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%; transition: background .2s ease, color .2s ease; }
+  .pcard-link:hover .pcard-go { background: var(--accent); color: var(--paper-2); }
+  .pcard-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .pcard-link:hover .pcard-go :global(.doodle) { transform: translateX(4px); }
+
+  /* Two columns between 640 and 1099 (an open iPhone Duo is 951: three columns would
+     put the middle card on the fold). A third card there takes the whole row
+     (.home-grid), so it's laid out sideways. */
+  @media (min-width: 640px) and (max-width: 1099px) {
+    .pcard:nth-child(3):last-child .pcard-link { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+    .pcard:nth-child(3):last-child .shot { margin: 1.1rem 0 1.1rem 1.1rem; }
+    .pcard:nth-child(3):last-child .pcard-body { align-self: stretch; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pcard-link, .pcard .shot { transition: none; } }
+</style>

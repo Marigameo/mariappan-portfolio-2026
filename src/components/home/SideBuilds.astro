@@ -1,0 +1,24 @@
+---
+/* Side builds and open source: three picks, same cards as the work above. */
+import HomeSection from './HomeSection.astro';
+import ProjectCard from './ProjectCard.astro';
+import AgentClarifier from '../sketches/AgentClarifier.astro';
+import Thatpam from '../sketches/Thatpam.astro';
+import DforDoubts from '../sketches/DforDoubts.astro';
+---
+<HomeSection id="side-builds" eyebrow="Outside the day job" title="Side builds & open source" more={{ href: '/work/#side-builds', label: 'See all side builds' }}>
+  <ul class="home-grid">
+    <ProjectCard href="/work/agent-clarifier/" accent="coral" title="agent-clarifier" kicker="Open source · Agent UX" status="v0.2.1 on npm">
+      <AgentClarifier slot="sketch" />
+      The card that lets an agent ask before it acts. A weekend of learning design engineering on one component.
+    </ProjectCard>
+    <ProjectCard href="/work/thatpam/" accent="teal" title="தட்பம்" titleLang="ta" titleNote="thatpam" kicker="Side build · Teaching" status="Paused · the students went pro">
+      <Thatpam slot="sketch" />
+      Frontend, taught in Tamil, in tiny cohorts. All of it, from the pixels to the payments.
+    </ProjectCard>
+    <ProjectCard href="/work/dfordoubts/" accent="violet" title="DforDoubts" kicker="Side build · Full-stack" status="Live · now a registered company">
+      <DforDoubts slot="sketch" />
+      An e-learning marketplace for educators and learners, built solo from a one-line brief to payments.
+    </ProjectCard>
+  </ul>
+</HomeSection>

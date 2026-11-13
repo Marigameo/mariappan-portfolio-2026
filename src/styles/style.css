@@ -19,16 +19,19 @@
   --sand-2: #e4dcc2;                /* pressed: tags, chips */
   --ink: #060606;
   --ink-soft: rgba(6, 6, 6, .72);
-  --ink-faint: rgba(6, 6, 6, .5);
+  --ink-faint: rgba(6, 6, 6, .6);    /* small meta text: ≥ 5:1 on paper and sand */
   --line: rgba(6, 6, 6, .12);
-  --coral: #d9573f;                 /* accent for text */
+  --coral: #c4452e;                 /* accent for text: ≥ 4.5:1 on paper and white */
   --coral-soft: #fc9073;            /* accent for hover/decor */
   --yellow: #ffda3f;                /* highlighter, sticky notes */
   --hl: rgba(255, 218, 63, .55);
   --sticky-ink: #2a2610;
   --blue: #2f5bd8;
-  --teal: #1a9a86;
+  --teal: #127c6b;                  /* ≥ 4.5:1 on paper and white */
   --violet: #7856f0;
+  /* Accents as text on a drawing's sand paper and tinted chips (≥ 4.5:1 there);
+     the drawings (.sk-fig, .sk-box, .sk-sheet) use these in place of the above. */
+  --coral-sk: #aa3a25; --teal-sk: #0e6b5c; --violet-sk: #6a48e0;
   --land-1: #b9c98f;                /* footer hills */
   --land-2: #94aa6b;
   --land-3: #6f8a4f;
@@ -59,10 +62,11 @@
 [data-theme="dark"] {
   color-scheme: dark;
   --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
-  --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .5); --line: rgba(242, 237, 227, .14);
+  --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .58); --line: rgba(242, 237, 227, .14);
   --border: rgba(242, 237, 227, .55);
   --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
   --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+  --coral-sk: #ff9a7f; --teal-sk: #4fd0b8; --violet-sk: #b7a4ff;
   --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
   --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
   --star: rgba(242, 237, 227, .55);
@@ -72,10 +76,11 @@
   :root:not([data-theme="light"]) {
   color-scheme: dark;
     --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
-    --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .5); --line: rgba(242, 237, 227, .14);
+    --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .58); --line: rgba(242, 237, 227, .14);
     --border: rgba(242, 237, 227, .55);
     --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
     --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+    --coral-sk: #ff9a7f; --teal-sk: #4fd0b8; --violet-sk: #b7a4ff;
     --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
     --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
     --star: rgba(242, 237, 227, .55);
@@ -211,8 +216,8 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 
 /* ---------- 7. Hero + deck --------------------------------------------- */
 .hero { padding-block: var(--space-4) var(--space-5); display: grid; gap: var(--space-5); align-items: center; }
-@media (min-width: 840px) { .hero { grid-template-columns: 1.15fr .85fr; gap: var(--space-5); padding-block: var(--space-5) var(--space-6); min-height: calc(100vh - 8rem); } }
-.hero-kicker { font-family: var(--font-sub); font-weight: 300; font-size: 1.1rem; color: var(--ink-faint); margin: 0 0 .5rem; letter-spacing: -.01em; }
+@media (min-width: 840px) { .hero { grid-template-columns: 1.15fr .85fr; gap: var(--space-5); padding-block: var(--space-5) var(--space-4); } }
+.hero-kicker { font-family: var(--font-sub); font-weight: 400; font-size: 1.1rem; color: var(--ink-faint); margin: 0 0 .5rem; letter-spacing: -.01em; }
 .hero h1 { margin-bottom: 1rem; }
 .hero-role { margin: 0 0 1.25rem; }
 .hero-role .rotator { display: inline-grid; vertical-align: top; text-align: left; }
@@ -263,7 +268,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .peek-chrome i:nth-child(1) { background: var(--coral-soft); }
 .peek-chrome i:nth-child(2) { background: var(--yellow); }
 .peek-chrome i:nth-child(3) { background: var(--teal); }
-.peek-url { margin-left: .45rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; color: var(--ink-faint); }
+.peek-url { margin-left: .45rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em; color: var(--ink-faint); }
 .peek-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; }
 .peek-card .sk { width: 100%; aspect-ratio: 16 / 10; display: block; }
 .peek-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .65rem; font-size: .78rem; color: var(--ink-soft); }
@@ -271,7 +276,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 @media (hover: none), (max-width: 639px) { .peek-card { display: none; } }
 
 /* ---------- 8. Logo marquee -------------------------------------------- */
-.logos { padding-block: var(--space-3) var(--space-5); }
+.logos { padding-block: var(--space-3) calc(var(--space-4) + var(--wave-h)); }   /* the bottom holds the next band's wave */
+/* Homepage cards (projects, writing): one column, two from 640, three from 1100 (same breakpoints as .grid--3). */
+.home-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4) var(--space-3); }
+@media (min-width: 640px) { .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* In two columns, a third card takes the whole row rather than sitting alone. */
+@media (min-width: 640px) and (max-width: 1099px) { .home-grid > :nth-child(3):last-child { grid-column: 1 / -1; } }
 .logos-head { text-align: center; margin-bottom: 1.4rem; }
 .logos-head .eyebrow { justify-content: center; margin-bottom: .7rem; max-width: none; }
 .logos-head .eyebrow::before { display: none; }
@@ -438,7 +449,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .ticket-main { display: grid; grid-template-columns: 1fr 1.5rem; grid-template-rows: auto auto; gap: .7rem .55rem; padding: .7rem .55rem .95rem .7rem; }
 .ticket-main .video { grid-column: 1; grid-row: 1; }
 .ticket-main h3 { grid-column: 1; grid-row: 2; font-size: 1.2rem; margin: 0; padding: 0 2.8rem 0 .25rem; }
-.ticket-admit { grid-column: 2; grid-row: 1 / span 2; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-faint); border-left: 1.5px dashed var(--line); padding-left: .3rem; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.ticket-admit { grid-column: 2; grid-row: 1 / span 2; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); border-left: 1.5px dashed var(--line); padding-left: .3rem; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
 .ticket-stub { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: .75rem; row-gap: .3rem; padding: .85rem 1rem .9rem .9rem; border-top: 1.5px dashed var(--border); background: color-mix(in srgb, var(--accent) 11%, var(--paper-2)); }
 .ticket-stub::before, .ticket-stub::after { content: ""; position: absolute; top: -.72rem; width: 1.35rem; height: 1.35rem; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--border); }
 .ticket-stub::before { left: -.75rem; }
@@ -499,6 +510,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .shelf-label { position: absolute; left: 1.1rem; bottom: .25rem; margin: 0; display: inline-flex; align-items: center; gap: .35rem; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); padding: .3rem .55rem; border-radius: 4px 8px 4px 8px / 8px 4px 8px 4px; transform: rotate(-1.5deg); z-index: 2; max-width: none; }
 .shelf-label .doodle { width: .95rem; height: .95rem; }
 .rule { border: 0; height: 1px; background: var(--line); margin: 0; }
+
+/* ---------- Listing pages (/work/, /writing/, /talks/) -------------------------
+   One pattern for every list: ListingHead, ListingTabs, then an <ol class="listing">
+   of ListingRow (src/components/listing/). --media-w sets the thumbnail column. */
+.listing-page { padding-bottom: var(--space-4); }
+.listing { list-style: none; margin: 0 calc(-1 * 1.25rem); padding: 0; display: grid; gap: .9rem; }
+@media (max-width: 719px) { .listing { margin-inline: -.75rem; } }
 
 /* ---------- 12. About page -------------------------------------------------- */
 /* Thenga's day off: one board per pastime. On top, Thenga in its hobby pose on a
@@ -582,7 +600,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 
 /* Journey: a dashed spine on the left, a hand-lettered year stamp per stop, and
    a wobbly card to its right. Single column at every width so it stays scannable. */
-.journey-note { display: inline-flex; align-items: center; gap: .1rem; margin: .2rem 0 0; max-width: none; font-size: 1.2rem; color: var(--coral); transform: rotate(-1.5deg); }
+.journey-note { display: inline-flex; align-items: center; gap: .1rem; margin: .2rem 0 0; max-width: none; font-size: 1.2rem; color: color-mix(in srgb, var(--coral) 82%, var(--ink)); transform: rotate(-1.5deg); }
 .journey { list-style: none; margin: 0; padding: 0; position: relative; max-width: 46rem; }
 .journey::before { content: ""; position: absolute; left: 1.45rem; top: 1.5rem; bottom: 1.5rem; border-left: 2px dashed var(--ink-faint); opacity: .6; }
 .stop { position: relative; display: grid; grid-template-columns: 2.9rem 1fr; gap: 1rem; padding-bottom: var(--space-3); }
@@ -687,6 +705,39 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .breadcrumb { font-size: .9rem; font-weight: 500; display: inline-flex; align-items: center; gap: .3rem; color: var(--ink-faint); text-decoration: none; }
 .breadcrumb:hover { color: var(--coral); }
 .breadcrumb .doodle { transform: scaleX(-1); }
+/* The way back sits apart from the title, as on the listing pages. */
+.page-hero .breadcrumb { margin-bottom: var(--space-4); }
+
+/* The side-column frame (posts, and stories that opt in): <main class="wrap
+   side-page"> keeps the 72rem frame of the home and listing pages, so the way
+   back and the title never jump sideways between pages. The header (title, lede,
+   facts) spans the frame; below it the reading column sits on the left at the
+   width the piece was written for (--read-w), and the side column on the right
+   (15rem, at the frame's edge) holds Thenga and "On this page" (PageToc), sticky
+   together as you read. Under 1024px it's the single centred column again. */
+.side-page { --read-w: 46rem; }
+.side-hero .lede { max-width: 72ch; }
+.side-hero .facts { grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
+.side-body { display: grid; grid-template-columns: minmax(0, var(--read-w)) 15rem; justify-content: space-between; column-gap: var(--space-5); align-items: start; }
+.side-main { min-width: 0; }
+.side-col { position: sticky; top: 5.5rem; display: grid; gap: var(--space-3); transition: opacity .2s ease; }
+.side-col.is-covered { opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s .2s; }
+.side-col .toc { position: static; }
+.side-mascot { width: 8rem; margin-left: 1rem; }
+.side-mascot .mascot { display: block; width: 100%; }
+/* A .fig-wide piece (a playground, a sheet of boards) breaks out of the reading
+   column. Centred on it, it would reach past the frame on the left, so here it
+   starts at the column's edge and runs right, under the side column (which fades
+   while it passes; see PageToc). */
+@media (min-width: 1024px) {
+  main.side-page .fig-wide.fig-wide { margin-left: 0 !important; margin-right: auto !important; }
+}
+@media (max-width: 1023px) {
+  .side-page { width: min(100% - 2.5rem, 46rem); }
+  .side-body { grid-template-columns: minmax(0, 1fr); }
+  .side-col { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .side-col { transition: none; } }
 .prose { max-width: 66ch; }
 .prose p { font-size: 1.05rem; line-height: 1.7; }
 .prose h2 { font-size: clamp(1.7rem, 3vw, 2.2rem); margin-top: var(--space-4); }
@@ -763,7 +814,8 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .facts div { border-top: 1px solid var(--line); padding-top: .6rem; }
 .facts dt { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .2rem; }
 .facts dd { margin: 0; color: var(--ink); }
-.facts a { white-space: nowrap; }
+/* A long link (an npm package) may break anywhere rather than run off a phone. */
+.facts dd { min-width: 0; overflow-wrap: anywhere; }
 
 /* "At a glance" on a project page: the problem, my part and what shipped, as a spec sheet
    (label left, content right) so a quick scan answers them before the slides. */
@@ -800,7 +852,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
    three lights, the original snippet's label as the window title, and the code on
    a dark panel underneath. `--editor` adds a line-number gutter for the samples
    that are a file being read rather than a fragment being quoted. */
-.snippet { --snip-bg: #1b1e26; --snip-ink: #d7d3c8; --snip-faint: rgba(215, 211, 200, .45);
+.snippet { --snip-bg: #1b1e26; --snip-ink: #d7d3c8; --snip-faint: rgba(215, 211, 200, .62);
   margin: var(--space-3) 0; border: 1.5px solid var(--border); border-radius: 12px 7px 13px 7px / 7px 13px 7px 12px; background: var(--snip-bg); box-shadow: 4px 5px 0 var(--shadow-ink); overflow: hidden; }
 /* The title bar. The lights reuse the browser-peek palette so the two bits of
    fake chrome on this site look like they came from the same hand. */
@@ -821,7 +873,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .snippet--editor pre { padding-left: 0; }
 .snippet--editor code { counter-reset: snip-line; }
 .snippet--editor .line { position: relative; padding-left: 3.2rem; }
-.snippet--editor .line::before { counter-increment: snip-line; content: counter(snip-line); position: absolute; left: 0; width: 2.2rem; text-align: right; color: rgba(215, 211, 200, .3); font-variant-numeric: tabular-nums; }
+.snippet--editor .line::before { counter-increment: snip-line; content: counter(snip-line); position: absolute; left: 0; width: 2.2rem; text-align: right; color: rgba(215, 211, 200, .45); font-variant-numeric: tabular-nums; }
 /* The gutter rule sits behind the numbers and runs the full height of the block. */
 .snippet--editor pre { background: linear-gradient(90deg, rgba(255,255,255,.04) 0 2.7rem, transparent 2.7rem); }
 .snippet--editor .line { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -861,6 +913,16 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .sl-live figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
 /* The dashed sheet a diagram is drawn on. The padding is deliberately generous:
    at anything tighter the boxes inside crowd the outline. */
+/* Inside a drawing, accents used as text take the deeper shades (--coral-sk…),
+   which stay readable on the sand paper and the tinted chips. */
+:is(.sk-fig, .sk-box, .sk-sheet, .said) { --coral: var(--coral-sk); --teal: var(--teal-sk); --violet: var(--violet-sk); }
+/* In dark mode the accents turn light, so a badge that sets white text on one
+   (a screenshot's number, a before/after tag, a drawn button) takes the page's
+   dark instead. ":root … body" keeps this ahead of the badges' own scoped rules. */
+:root[data-theme="dark"] body :is(.shot-num, .ba-tag, .kp-bar-save, .ca-cta, .sis-label b) { color: var(--paper); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body :is(.shot-num, .ba-tag, .kp-bar-save, .ca-cta, .sis-label b) { color: var(--paper); }
+}
 .sk-sheet { padding: 2rem 1.9rem 2.1rem; border: 2px dashed var(--ink-faint); border-radius: var(--radius-wobble-3); background: color-mix(in srgb, var(--sand) 60%, transparent); }
 /* A figure that is already a list with its own rail reads as clutter inside a
    second frame, so the timelines keep the width and drop the sheet. */
@@ -943,6 +1005,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .mascot .m-ferrule { fill: #b7c0ca; stroke-width: 1.6; }
 .mascot .m-tip { fill: var(--coral-soft); }
 .mascot .m-paint { fill: none; stroke: var(--coral-soft); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 40; }
+.mascot :is(.m-mic, .m-laptop, .m-gear, .m-hammer) { stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.mascot .m-mic { fill: #b7c0ca; }
+.mascot .m-grill { stroke-width: 1.2; stroke-opacity: .6; }
+.mascot .m-mic-handle { fill: none; stroke: #3b3f4a; stroke-width: 6; stroke-linecap: round; }
+.mascot .m-laptop { fill: #b7c0ca; }
+.mascot .m-gear { fill: var(--yellow); }
+.mascot .m-hammer { fill: #8f9aa6; }
 
 /* Idle loops, one per mood, a few pixels each. Origins are in the 160×160
    viewBox. Set --m-delay (negative) on a wrapper to take a mascot out of step
@@ -983,6 +1052,22 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .mascot--backpack .m-a-plane { animation: m-plane 4s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
 .mascot--brush .m-a-dab { transform-origin: 122px 100px; animation: m-dab 2.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
 .mascot--brush .m-a-splat { animation: m-splat 2.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+/* On the clock (listing pages): talking into a mic, typing, tapping with a hammer. */
+.mascot--mic .m-a-talk { transform-origin: 80px 107px; animation: m-talk .9s ease-in-out infinite; }
+.mascot--mic .m-a-sound { animation: m-fade 1.1s ease-in-out infinite alternate; }
+.mascot--mic .m-a-gesture { transform-origin: 38px 102px; animation: m-gesture 3s ease-in-out infinite; }
+.mascot--laptop .m-a-type-l { animation: m-type .5s ease-in-out infinite alternate; }
+.mascot--laptop .m-a-type-r { animation: m-type .5s ease-in-out infinite alternate-reverse; }
+.mascot--laptop .m-a-code { animation: m-notes 3s ease-in-out infinite; }
+.mascot--hammer .m-a-tap { transform-origin: 122px 100px; animation: m-tap 1.4s ease-in-out infinite; }
+.mascot--hammer .m-a-spark { animation: m-spark 1.4s ease-out infinite; }
+.mascot--hammer .m-a-gear { transform-box: fill-box; transform-origin: center; animation: m-spin 6s linear infinite; }
+@keyframes m-talk { 0%, 100% { transform: scaleY(1); } 30% { transform: scaleY(.45); } 60% { transform: scaleY(1.15); } }
+@keyframes m-gesture { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-12deg); } }
+@keyframes m-type { from { transform: translateY(0); } to { transform: translateY(2px); } }
+@keyframes m-tap { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-18deg); } 55% { transform: rotate(4deg); } 65% { transform: rotate(0); } }
+@keyframes m-spark { 0%, 50% { opacity: 0; } 56% { opacity: 1; } 80%, 100% { opacity: 0; } }
+@keyframes m-spin { to { transform: rotate(360deg); } }
 @keyframes m-strum { 0%, 40%, 100% { transform: rotate(0); } 46%, 58%, 70% { transform: rotate(9deg); } 52%, 64% { transform: rotate(-3deg); } }
 @keyframes m-notes { 0% { transform: translateY(6px); opacity: 0; } 30%, 70% { opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
 @keyframes m-flash { 0%, 62%, 100% { opacity: 0; transform: scale(.6); } 66% { opacity: 1; transform: scale(1.1); } 76% { opacity: 0; transform: scale(1.2); } }
@@ -1008,14 +1093,14 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 @keyframes m-fade { from { opacity: .35; } to { opacity: 1; } }
 
 /* ---------- 15. Footer ------------------------------------------------------- */
-.site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink);
+.site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-4); color: var(--ink);
   /* Clip only sideways: the edge plants and grass bleed past the viewport and
      would add horizontal scroll. overflow-y stays visible so the wave crest,
      which sits above the footer's top edge, is not cut off. */
   overflow-x: clip; overflow-y: visible; }
 .site-footer .wave { --wave-fill: var(--sand); }
 .footer-inner { position: relative; z-index: 4; text-align: center; padding-bottom: clamp(14rem, 34vw, 22rem); }
-.footer-inner .eyebrow { justify-content: center; }
+.footer-inner .eyebrow { justify-content: center; max-width: none; }  /* p caps at 64ch, which pushed the centred label left */
 .footer-inner .eyebrow::before { display: none; }
 .footer-inner h2 { font-size: clamp(2.4rem, 6vw, 4.2rem); margin-bottom: .8rem; }
 .footer-inner .sub { margin: 0 auto 1.6rem; max-width: 34rem; color: var(--ink-soft); }
@@ -1110,7 +1195,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 /* "locate me" nudge, same voice as the hero's "that's me"; gone while the note is open */
 .pin-hint { position: absolute; left: calc(100% + .1rem); top: -1.1rem; display: flex; align-items: flex-start; gap: 0; pointer-events: none; color: var(--coral); white-space: nowrap; transition: opacity .25s ease; }
 .pin-hint-arrow { width: 2.5rem; height: 1.9rem; stroke-width: 2; transform: scaleX(-1) rotate(-20deg) translateY(.55rem); flex: none; }
-.pin-hint .hand { font-size: 1.1rem; display: inline-block; transform: rotate(-6deg); margin-top: -.15rem; }
+.pin-hint .hand { font-size: 1.2rem; display: inline-block; transform: rotate(-6deg); margin-top: -.15rem; }
 .pin.is-open .pin-hint { opacity: 0; }
 .pin-note { position: absolute; bottom: calc(100% + .75rem); left: 50%; width: max-content; max-width: min(15rem, 80vw); transform: translateX(-50%); animation: pin-pop .35s cubic-bezier(.2,.8,.2,1) both; }
 .pin-note .sticky { margin: 0; max-width: none; font-size: 1.08rem; line-height: 1.2; padding: .65rem .85rem .75rem; color: var(--sticky-ink); }
