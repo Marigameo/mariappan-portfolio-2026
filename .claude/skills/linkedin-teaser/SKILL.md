@@ -1,13 +1,13 @@
 ---
 name: linkedin-teaser
-description: Turn a published portfolio story (/work/<slug>/) and blog (/writing/<slug>/) into a LinkedIn launch, meaning a short, personal post plus a short, silent (~22-second) animated teaser reel (1080×1350 MP4) that shows the real product UI (screenshots and recorded footage, framed on the site's hand-drawn paper with notes in the story's colour coding). Use whenever the user asks for a LinkedIn post, a launch or announcement post, a teaser, reel or promo video for a project, or "something to share" once a story or blog is written. Usually runs right after share-my-work.
+description: Turn a published portfolio story (/work/<slug>/) and blog (/writing/<slug>/) into a LinkedIn launch, meaning a short, personal post (the user writes it: Claude shares what makes the story attractive, asks for their draft, then polishes the wording without taking over the voice) plus a short, silent (~22-second) animated teaser reel (1080×1350 MP4) that shows the real product UI (screenshots and recorded footage, framed on the site's hand-drawn paper with notes in the story's colour coding). Use whenever the user asks for a LinkedIn post, a launch or announcement post, a teaser, reel or promo video for a project, or "something to share" once a story or blog is written. Usually runs right after share-my-work.
 ---
 
 # LinkedIn teaser: the post and the reel
 
 Once a project has its story and blog (see the `share-my-work` skill), Mariappan announces them on LinkedIn with two things:
 
-1. **A short, personal post** that says why this one matters to them and points to the comments.
+1. **A short, personal post** that says why this one matters to them and points to the comments. **The user writes it, not Claude.** Posts that read as AI-written get poor engagement. So Claude coaches: it shares pointers on what makes the story attractive, waits for the user's own draft, and then polishes the wording so it still reads as human, humble and subtle. Never send a ready-made post unless the user asks for one.
 2. **A short, silent teaser reel** (~22–24s): the story's key highlights, shown on **the real product** (recorded footage and screenshots, animated with camera moves, rings and wipes) inside ink frames on the site's paper, with hand-drawn notes in the story's colours. It's a teaser, made to get people to read further, not a summary.
 
 **Real UI, not mocks.** Feedback on the earlier, fully drawn reels was: *"Can you put the actual product pages instead of just the mocks?"* It's UI work, so real pixels make the case. Drawings are kept only for ideas that have no screen. See [references/real-ui.md](references/real-ui.md).
@@ -42,7 +42,7 @@ Never invent a fact, number, date or quote. Everything in the post and the reel 
 
 The voice is personal, so send one message with the following and wait for a go:
 
-- **Post**: two or three full drafts (labelled A, B, C), each with a one-line rationale, plus your pick. Add the hashtags and the first-comment link block.
+- **Post**: no drafts. Share 4 to 6 short pointers on what makes this story attractive (see [references/post.md](references/post.md#the-workflow-the-user-writes-claude-polishes)), suggest the first-comment link block, and ask for the user's own draft. The polishing happens once the draft arrives, as its own round, and it doesn't block the reel.
 - **Reel**: a scene table with six rows (title, four highlights, end card): `time · tag · real UI source (footage / screenshot / existing video / drawn) · what's shown · the motion · handwritten note · colours`. Say which story slide each scene comes from and which slides you left out. Real UI is the default, so justify any drawn highlight in a few words ("no screen: it's the security model").
 - **Screens to approve**: list each product screen you plan to show, with where it comes from (a URL, a file in the repo, or a recording you need from the user). For a company or logged-in product, ask whether it's OK to show and whether a demo workspace exists. Ask for a screen recording if you can't reach it yourself.
 - Any open questions, such as the series link, how to credit people, or whether to tag anyone.
@@ -76,7 +76,7 @@ Skip this step only if the user says to go straight to files.
 
 ### 5. Hand over
 
-Write `<slug>-teaser/post.md` with three parts, as text ready to paste: the post body, the hashtags and the first-comment block. In your reply, give:
+Once the user has picked their polished version, write `<slug>-teaser/post.md` with three parts, as text ready to paste: the post body, the hashtags and the first-comment block. In your reply, give:
 
 - the paths to the MP4, the stills and `post.md`
 - the reel's length and its scene list
