@@ -1,5 +1,5 @@
 ---
-/* The three doors into Thenga's place: the studio, the stories and the yard.
+/* The doors into /experiments/: the UX studio and the side quests.
    Each is a card with its Thenga, the room's name and count, and one line.
    `tabs` (the Experiments page): the doors are the room tabs. They start as jump
    links (#studio…) and the page script makes them tabs and marks the open one.
@@ -37,7 +37,7 @@ const tabs = mode === 'tabs';
 
 <style>
   .doors { container-type: inline-size; }
-  .doors-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .doors-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 1rem; }
   .door { position: relative; display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); grid-template-areas: "thenga body" "thenga state"; align-items: center; gap: .2rem .9rem; padding: .9rem 1rem .85rem .8rem; text-decoration: none; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 12px 6px 14px 7px / 7px 14px 6px 12px; box-shadow: 3px 3px 0 var(--shadow-ink); transition: transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s ease, background .2s ease; }
   .door:nth-child(2) { border-radius: 7px 14px 6px 12px / 12px 6px 14px 7px; }
   .door:hover { color: var(--ink); transform: translateY(-3px) rotate(-.4deg); box-shadow: 5px 6px 0 var(--shadow-ink); }
@@ -62,7 +62,7 @@ const tabs = mode === 'tabs';
 
   /* Narrow spaces (phones, the story column): the doors stack as slim rows, all still in view. */
   @container (max-width: 52rem) {
-    .doors-row { grid-template-columns: 1fr; gap: .6rem; }
+    .doors-row { grid-auto-flow: row; gap: .6rem; }
     .door { grid-template-columns: 3rem minmax(0, 1fr) auto; grid-template-areas: "thenga body state"; padding: .6rem .8rem .6rem .6rem; }
     .door-name { font-size: 1.2rem; }
     .door-blurb { font-size: .8rem; }

@@ -57,7 +57,12 @@ const { list, page = 10 } = Astro.props;
       history.replaceState(null, '', id === 'all' ? location.pathname : `#${id}`);
       pick(id);
     }));
-    window.addEventListener('hashchange', () => pick(location.hash.slice(1)));
+    // Only a tab's hash (or none) switches tabs; other hashes (#<experiment>) are
+    // someone else's to handle.
+    window.addEventListener('hashchange', () => {
+      const id = location.hash.slice(1);
+      if (!id || id === 'all' || ids.includes(id)) pick(id);
+    });
 
     more.addEventListener('click', () => {
       const first = matching()[shown];

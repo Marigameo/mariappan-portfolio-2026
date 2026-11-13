@@ -1,9 +1,11 @@
 ---
 /* The top of a listing page (/work/, /writing/, /talks/): a way back home, an
    eyebrow, the title, one line of intro, and a mascot or drawing in the "art" slot
-   on the right. Supporting cast only: the list below is the page. For a mascot per
+   on the right. Supporting cast only: the list below is the page. Mascots hide
+   themselves from screen readers; anything interactive in the art stays reachable. For a mascot per
    tab, put several in the slot, each wrapped in data-tab-art="<tab id>" (one of
-   them "all"); ListingMore shows the one for the current tab. */
+   them "all"); ListingMore shows the one for the current tab. Art sets its width
+   with --art-w; mark a wide piece data-art-wide so phones put it under the text. */
 import Icon from '../Icon.astro';
 
 interface Props {
@@ -21,7 +23,7 @@ const { eyebrow, title, lede } = Astro.props;
     <h1>{title}</h1>
     <p class="lhead-lede">{lede}</p>
   </div>
-  <div class="lhead-art" aria-hidden="true"><slot name="art" /></div>
+  <div class="lhead-art"><slot name="art" /></div>
 </header>
 
 <style>
@@ -30,16 +32,23 @@ const { eyebrow, title, lede } = Astro.props;
   .lhead-text .eyebrow { margin-bottom: .6rem; }
   .lhead h1 { margin-bottom: .7rem; }
   .lhead-lede { margin: 0; font-size: 1.08rem; max-width: 52ch; }
-  .lhead-art { width: clamp(5.5rem, 12vw, 9rem); line-height: 0; }
-  .lhead-art :global(.mascot) { width: 100%; }
-  .lhead-art :global([data-tab-art]) { display: block; }
-  .lhead-art :global([data-tab-art][hidden]) { display: none; }
+  /* Each piece of art sets its own width with --art-w (and --art-w-sm on phones). */
+  .lhead-art { line-height: 0; }
+  .lhead-art > :global(*) { display: block; width: var(--art-w, clamp(5.5rem, 12vw, 9rem)); }
+  .lhead-art > :global([hidden]) { display: none; }
+  .lhead-art > :global(* .mascot) { width: 100%; }
   /* A new mascot pops in when its tab is picked. */
   .lhead-art :global([data-tab-art]:not([hidden])) { animation: lhead-pop .35s cubic-bezier(.2,.8,.2,1.2); }
   @keyframes lhead-pop { from { opacity: 0; transform: translateY(6px) scale(.92); } }
   @media (prefers-reduced-motion: reduce) { .lhead-art :global([data-tab-art]) { animation: none; } }
   @media (max-width: 559px) {
     .lhead { gap: .75rem; }
-    .lhead-art { width: 4.6rem; align-self: start; margin-top: 2.6rem; }
+    .lhead-art { align-self: start; margin-top: 2.6rem; }
+    .lhead-art > :global(*) { width: var(--art-w-sm, 4.6rem); }
+    /* Art marked data-art-wide (a row of mascots) won't fit beside the text: it
+       drops under it instead. */
+    :global(.lhead:has(> .lhead-art > [data-art-wide]:not([hidden]))) { grid-template-columns: 1fr; }
+    :global(.lhead-art:has(> [data-art-wide]:not([hidden]))) { margin-top: 1.4rem; }
+    .lhead-art > :global([data-art-wide]) { width: var(--art-w); }
   }
 </style>
