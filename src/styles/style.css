@@ -29,6 +29,9 @@
   --blue: #2f5bd8;
   --teal: #127c6b;                  /* ≥ 4.5:1 on paper and white */
   --violet: #7856f0;
+  /* Accents as text on a drawing's sand paper and tinted chips (≥ 4.5:1 there);
+     the drawings (.sk-fig, .sk-box, .sk-sheet) use these in place of the above. */
+  --coral-sk: #aa3a25; --teal-sk: #0e6b5c; --violet-sk: #6a48e0;
   --land-1: #b9c98f;                /* footer hills */
   --land-2: #94aa6b;
   --land-3: #6f8a4f;
@@ -63,6 +66,7 @@
   --border: rgba(242, 237, 227, .55);
   --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
   --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+  --coral-sk: #ff9a7f; --teal-sk: #4fd0b8; --violet-sk: #b7a4ff;
   --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
   --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
   --star: rgba(242, 237, 227, .55);
@@ -76,6 +80,7 @@
     --border: rgba(242, 237, 227, .55);
     --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
     --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
+    --coral-sk: #ff9a7f; --teal-sk: #4fd0b8; --violet-sk: #b7a4ff;
     --land-1: #3b5c47; --land-2: #2d4838; --land-3: #20362a; --water: #24445f;
     --shadow: 3px 3px 0 #07080b; --tape: rgba(244, 207, 77, .4); --logo-chip: #f2ede3;
     --star: rgba(242, 237, 227, .55);
@@ -716,7 +721,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .side-body { display: grid; grid-template-columns: minmax(0, var(--read-w)) 15rem; justify-content: space-between; column-gap: var(--space-5); align-items: start; }
 .side-main { min-width: 0; }
 .side-col { position: sticky; top: 5.5rem; display: grid; gap: var(--space-3); transition: opacity .2s ease; }
-.side-col.is-covered { opacity: 0; pointer-events: none; }
+.side-col.is-covered { opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s .2s; }
 .side-col .toc { position: static; }
 .side-mascot { width: 8rem; margin-left: 1rem; }
 .side-mascot .mascot { display: block; width: 100%; }
@@ -847,7 +852,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
    three lights, the original snippet's label as the window title, and the code on
    a dark panel underneath. `--editor` adds a line-number gutter for the samples
    that are a file being read rather than a fragment being quoted. */
-.snippet { --snip-bg: #1b1e26; --snip-ink: #d7d3c8; --snip-faint: rgba(215, 211, 200, .45);
+.snippet { --snip-bg: #1b1e26; --snip-ink: #d7d3c8; --snip-faint: rgba(215, 211, 200, .62);
   margin: var(--space-3) 0; border: 1.5px solid var(--border); border-radius: 12px 7px 13px 7px / 7px 13px 7px 12px; background: var(--snip-bg); box-shadow: 4px 5px 0 var(--shadow-ink); overflow: hidden; }
 /* The title bar. The lights reuse the browser-peek palette so the two bits of
    fake chrome on this site look like they came from the same hand. */
@@ -868,7 +873,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .snippet--editor pre { padding-left: 0; }
 .snippet--editor code { counter-reset: snip-line; }
 .snippet--editor .line { position: relative; padding-left: 3.2rem; }
-.snippet--editor .line::before { counter-increment: snip-line; content: counter(snip-line); position: absolute; left: 0; width: 2.2rem; text-align: right; color: rgba(215, 211, 200, .3); font-variant-numeric: tabular-nums; }
+.snippet--editor .line::before { counter-increment: snip-line; content: counter(snip-line); position: absolute; left: 0; width: 2.2rem; text-align: right; color: rgba(215, 211, 200, .45); font-variant-numeric: tabular-nums; }
 /* The gutter rule sits behind the numbers and runs the full height of the block. */
 .snippet--editor pre { background: linear-gradient(90deg, rgba(255,255,255,.04) 0 2.7rem, transparent 2.7rem); }
 .snippet--editor .line { white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -908,6 +913,16 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .sl-live figcaption { margin-top: 1rem; font-size: .9rem; color: var(--ink-faint); text-align: center; }
 /* The dashed sheet a diagram is drawn on. The padding is deliberately generous:
    at anything tighter the boxes inside crowd the outline. */
+/* Inside a drawing, accents used as text take the deeper shades (--coral-sk…),
+   which stay readable on the sand paper and the tinted chips. */
+:is(.sk-fig, .sk-box, .sk-sheet, .said) { --coral: var(--coral-sk); --teal: var(--teal-sk); --violet: var(--violet-sk); }
+/* In dark mode the accents turn light, so a badge that sets white text on one
+   (a screenshot's number, a before/after tag, a drawn button) takes the page's
+   dark instead. ":root … body" keeps this ahead of the badges' own scoped rules. */
+:root[data-theme="dark"] body :is(.shot-num, .ba-tag, .kp-bar-save, .ca-cta, .sis-label b) { color: var(--paper); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body :is(.shot-num, .ba-tag, .kp-bar-save, .ca-cta, .sis-label b) { color: var(--paper); }
+}
 .sk-sheet { padding: 2rem 1.9rem 2.1rem; border: 2px dashed var(--ink-faint); border-radius: var(--radius-wobble-3); background: color-mix(in srgb, var(--sand) 60%, transparent); }
 /* A figure that is already a list with its own rail reads as clutter inside a
    second frame, so the timelines keep the width and drop the sheet. */
