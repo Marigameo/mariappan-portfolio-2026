@@ -1,21 +1,27 @@
 ---
-/* Filter tabs for a listing: "All" plus one per category, each with its count.
-   Rows in the list named by `list` carry data-cat="<id> …"; picking a tab hides the
+/* Filter tabs for a listing, each with its count. There's no "All": the first tab
+   is the default, usually the picks (pickTab below), so a page opens on the few
+   worth seeing and the categories hold the rest. Rows in the list named by `list`
+   carry data-cat="<id> …" (a pick also carries "picks"); picking a tab hides the
    rest. The tab lives in the URL hash (/work/#side-builds), so a link can open the
-   page on a tab. The script that runs it is in ListingMore, which every listing has.
-   Without JS the tabs are plain links and every row shows. */
+   page on a tab; no hash means the first. The script that runs it is in
+   ListingMore, which every listing has. Without JS every row shows. */
+import Icon from '../Icon.astro';
+
 interface Props {
   list: string;                                   // id of the <ol> of rows
   tabs: { id: string; label: string; count: number }[];
-  total: number;
   label?: string;
 }
 
-const { list, tabs, total, label = 'Filter' } = Astro.props;
+const { list, tabs, label = 'Filter' } = Astro.props;
 ---
 <nav class="ltabs" aria-label={label} data-ltabs={list}>
-  <a class="ltab" href="#all" data-tab="all" aria-current="true">All<span>{total}</span></a>
-  {tabs.map((t) => <a class="ltab" href={`#${t.id}`} data-tab={t.id}>{t.label}<span>{t.count}</span></a>)}
+  {tabs.map((t, i) => (
+    <a class="ltab" href={`#${t.id}`} data-tab={t.id} aria-current={i === 0 ? 'true' : 'false'}>
+      {t.id === 'picks' && <Icon name="star" class="ltab-star" />}{t.label}<span>{t.count}</span>
+    </a>
+  ))}
 </nav>
 
 <style>
@@ -27,4 +33,6 @@ const { list, tabs, total, label = 'Filter' } = Astro.props;
   .ltab[aria-current="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); box-shadow: 2px 2px 0 var(--shadow-ink); }
   .ltab[aria-current="true"] span { color: color-mix(in srgb, var(--paper) 72%, transparent); }
   .ltab:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+  .ltab :global(.ltab-star) { width: .9rem; height: .9rem; margin-right: -.15rem; color: var(--coral); }
+  .ltab[aria-current="true"] :global(.ltab-star) { color: var(--yellow); }
 </style>

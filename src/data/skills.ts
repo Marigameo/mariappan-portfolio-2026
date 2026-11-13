@@ -1,4 +1,4 @@
-/* The palm-leaf bundle: my skills for coding agents, listed on /skills/. Each skill
+/* The palm-leaf bundle: my skills for coding agents, the Skills tab on /experiments/. Each skill
    is one leaf, grouped by the kind of work it helps with, and links to its SKILL.md
    in github.com/Marigameo/skills. Only published skills go here.
 

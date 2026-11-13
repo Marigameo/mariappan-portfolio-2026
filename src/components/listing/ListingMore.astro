@@ -1,8 +1,10 @@
 ---
 /* Goes right after a listing's <ol>. It runs every listing: rows show 10 at a time
    with a "Show more" button for the next 10, the tabs (ListingTabs, optional) narrow
-   the rows, and anything marked data-tab-art="<tab id>" (a mascot per tab, in
-   ListingHead's art slot) swaps in with its tab. Picking a tab starts again at 10.
+   the rows (the first tab is the default), and anything marked
+   data-tab-art="<tab id>" (a mascot per tab, in ListingHead's art slot) swaps in
+   with its tab; data-tab-art="default" stands in for tabs with none of their own.
+   Picking a tab starts again at 10. With no tabs every row is in play.
    Without JS every row shows and the button stays hidden. */
 interface Props {
   list: string;      // id of the <ol> of rows
@@ -28,10 +30,11 @@ const { list, page = 10 } = Astro.props;
     const ids = tabs.map((t) => t.dataset.tab);
     const arts = [...document.querySelectorAll<HTMLElement>('[data-tab-art]')];
     const left = more.querySelector('.lmore-left')!;
-    let filter = 'all';
+    const first = ids[0];
+    let filter: string | undefined = first;
     let shown = page;
 
-    const matching = () => rows.filter((r) => filter === 'all' || (r.dataset.cat ?? '').split(' ').includes(filter));
+    const matching = () => rows.filter((r) => !filter || (r.dataset.cat ?? '').split(' ').includes(filter));
 
     const render = () => {
       const match = new Set(matching().slice(0, shown));
@@ -41,20 +44,21 @@ const { list, page = 10 } = Astro.props;
       left.textContent = `${rest} left`;
     };
 
+    // An unknown or empty hash (or the old #all) opens the first tab.
     const pick = (id: string) => {
-      filter = ids.includes(id) ? id : 'all';
+      filter = ids.includes(id) ? id : first;
       shown = page;
       tabs.forEach((t) => t.setAttribute('aria-current', String(t.dataset.tab === filter)));
-      const art = arts.some((a) => a.dataset.tabArt === filter) ? filter : 'all';
+      const art = arts.some((a) => a.dataset.tabArt === filter) ? filter : 'default';
       arts.forEach((a) => { a.hidden = a.dataset.tabArt !== art; });
-      list.dataset.filter = filter;
+      list.dataset.filter = filter ?? '';
       render();
     };
 
     tabs.forEach((t) => t.addEventListener('click', (e) => {
       e.preventDefault();
-      const id = t.dataset.tab ?? 'all';
-      history.replaceState(null, '', id === 'all' ? location.pathname : `#${id}`);
+      const id = t.dataset.tab ?? '';
+      history.replaceState(null, '', id === first ? location.pathname : `#${id}`);
       pick(id);
     }));
     // Only a tab's hash (or none) switches tabs; other hashes (#<experiment>) are
@@ -65,11 +69,11 @@ const { list, page = 10 } = Astro.props;
     });
 
     more.addEventListener('click', () => {
-      const first = matching()[shown];
+      const next = matching()[shown];
       shown += page;
       render();
       // Carry focus to the first new row, so keyboard users land on what just appeared.
-      first?.querySelector<HTMLElement>('.lrow-link')?.focus({ preventScroll: true });
+      next?.querySelector<HTMLElement>('.lrow-link')?.focus({ preventScroll: true });
     });
 
     pick(location.hash.slice(1));

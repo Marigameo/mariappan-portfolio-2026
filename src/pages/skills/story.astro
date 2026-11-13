@@ -1,9 +1,9 @@
 ---
-/* How the /skills/ page came about, told as a short deck: the spark, two rounds of
+/* How the skills (the Skills tab on /experiments/) came about, told as a short deck: the spark, two rounds of
    concepts turned down (collections, then new interactions), the rule that fixed it
    (a story over plain card groups, like Thenga's yard), the four stories, and the
    palm leaf redrawn closer to the real thing. Renders are real crops of the boards
-   in process/skills-page/, made with Claude as a pair. The pin on /skills/ links here. */
+   in process/skills-page/, made with Claude as a pair. The pin on that tab links here. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import OlaiBundle from '../../components/sketches/skills/OlaiBundle.astro';
@@ -49,10 +49,10 @@ const jsonLd = {
   inLanguage: 'en',
 };
 ---
-<BaseLayout title={`From a pedalboard to a palm leaf | ${site.name}`} description={description} ogType="article" jsonLd={jsonLd}>
+<BaseLayout title={`From a pedalboard to a palm leaf | ${site.name}`} description={description} ogType="article" current="experiments" jsonLd={jsonLd}>
   <main id="main" class="wrap wrap--narrow">
     <header class="page-hero">
-      <a class="breadcrumb" href="/skills/"><Icon name="arrow-right" />The skills</a>
+      <a class="breadcrumb" href="/experiments/#skills"><Icon name="arrow-right" />The skills</a>
       <p class="eyebrow">Side build · This portfolio · Oct 2026</p>
       <h1>From a pedalboard to a palm leaf</h1>
       <p class="lede">Claude and I drew eleven concepts for one page. Ten were turned down, mostly for being too clever. Here’s how the palm leaf won, and <mark class="hl">what each round taught me</mark>.</p>
@@ -175,7 +175,7 @@ const jsonLd = {
         </section>
 
         <blockquote class="closer">The metaphor tells the story. The page stays familiar.</blockquote>
-        <p class="back"><a class="pill" href="/skills/">See the skills<Icon name="arrow-right" /></a></p>
+        <p class="back"><a class="pill" href="/experiments/#skills">See the skills<Icon name="arrow-right" /></a></p>
       </div>
     </article>
 

@@ -1,5 +1,6 @@
 ---
-/* All work: every story, as rows, with "At work" and "Side builds" tabs; Thenga
+/* All work: every story, as rows. It opens on "Top picks" (the homepage's picks),
+   with "At work" and "Side builds" tabs for the rest; Thenga
    changes with the tab (rocket, laptop, hammer). /work/#side-builds opens on the
    side builds. Data: src/data/work.ts. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -7,27 +8,28 @@ import ListingHead from '../../components/listing/ListingHead.astro';
 import ListingTabs from '../../components/listing/ListingTabs.astro';
 import ListingRow from '../../components/listing/ListingRow.astro';
 import ListingMore from '../../components/listing/ListingMore.astro';
+import { pickTab, withPick } from '../../components/listing/picks';
 import WorkThumb from '../../components/listing/WorkThumb.astro';
 import Thenga from '../../components/mascots/Thenga.astro';
 import { projects, workKinds } from '../../data/work';
 import { site } from '../../data/site';
 
 const description = 'Every work story by Mariappan Subramanian: products shipped at the companies he has worked with, and the open-source side builds he makes outside them.';
-const tabs = workKinds.map((k) => ({ ...k, count: projects.filter((p) => p.kind === k.id).length }));
+const tabs = [pickTab(projects.filter((p) => p.featured).length), ...workKinds.map((k) => ({ ...k, count: projects.filter((p) => p.kind === k.id).length }))];
 ---
 <BaseLayout title={`Work | ${site.name}`} description={description} current="work">
   <main id="main" class="wrap listing-page">
     <ListingHead eyebrow={`Work · ${projects.length} stories`} title="Things I’ve shipped" lede="Stories from the products I’ve built at work, and the side builds I make for fun.">
       <Fragment slot="art">
-        <span data-tab-art="all"><Thenga mood="moonshot" /></span>
+        <span data-tab-art="default"><Thenga mood="moonshot" /></span>
         <span data-tab-art="work" hidden><Thenga hobby="laptop" /></span>
         <span data-tab-art="side-builds" hidden><Thenga hobby="hammer" /></span>
       </Fragment>
     </ListingHead>
-    <ListingTabs list="work-list" tabs={tabs} total={projects.length} label="Filter work" />
+    <ListingTabs list="work-list" tabs={tabs} label="Filter work" />
     <ol class="listing" id="work-list">
       {projects.map((p) => (
-        <ListingRow href={`/work/${p.slug}/`} title={p.title} titleLang={p.titleLang} titleNote={p.titleNote} kicker={`${p.org} · ${p.when}`} hook={p.hook} side={p.status} cat={p.kind} accent={p.accent}>
+        <ListingRow href={`/work/${p.slug}/`} title={p.title} titleLang={p.titleLang} titleNote={p.titleNote} kicker={`${p.org} · ${p.when}`} hook={p.hook} side={p.status} cat={withPick(p.kind, p.featured)} accent={p.accent}>
           <WorkThumb slot="media" slug={p.slug} />
         </ListingRow>
       ))}

@@ -1,18 +1,25 @@
 ---
-/* Experiments: things I tried and learnt from. Two kinds, in one list:
+/* Experiments: things I tried and learnt from. Three kinds, in one list:
    - the studio: design and design-engineering case studies (src/data/studio.ts),
      each opening its own story at /experiments/studio/<slug>/;
    - side quests: apps, ventures and hacks shipped as experiments, on three shelves
      (src/data/experiments.ts). A side quest has no page; its row opens the
      "cracked open" panel (a <dialog>), with previous/next to walk the pile.
-     /experiments/#<id> opens one directly.
-   Same listing pattern as /work/, /writing/ and /talks/ (src/components/listing/).
+     /experiments/#<id> opens one directly;
+   - skills: what I've learnt, written down for coding agents (src/data/skills.ts),
+     each a palm leaf whose name opens its SKILL.md on GitHub. The "skills" tab
+     brings in the palm-leaf bundle drawing, the install command and a thank-you.
+     /skills/ redirects here (astro.config.mjs); /skills/story/ tells how the
+     bundle came about.
+   Same listing pattern as /work/, /writing/ and /talks/ (src/components/listing/):
+   it opens on "Top picks" (`featured` in either data file).
    Shipped work lives on /work/, not here. */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ListingHead from '../components/listing/ListingHead.astro';
 import ListingTabs from '../components/listing/ListingTabs.astro';
 import ListingRow from '../components/listing/ListingRow.astro';
 import ListingMore from '../components/listing/ListingMore.astro';
+import { pickTab, withPick } from '../components/listing/picks';
 import Icon from '../components/Icon.astro';
 import Thenga from '../components/mascots/Thenga.astro';
 import KbGraph from '../components/sketches/kb/KbGraph.astro';
@@ -20,26 +27,33 @@ import KbProps from '../components/sketches/kb/KbProps.astro';
 import ChatMode from '../components/sketches/chat/ChatMode.astro';
 import { moods, shelves, experiments } from '../data/experiments';
 import { studio, studioHref } from '../data/studio';
+import OlaiBundle from '../components/sketches/skills/OlaiBundle.astro';
+import { skills, skillsRepo, installCmd, skillHref } from '../data/skills';
 import { site } from '../data/site';
 
-const description = 'Things Mariappan Subramanian tried: design case studies, and side quests (apps, ventures, night hacks) shipped as experiments, with what each one taught him.';
+const description = 'Things Mariappan Subramanian tried: design case studies, skills for coding agents, and side quests (apps, ventures, night hacks) shipped as experiments.';
 const n = experiments.length;
-const total = studio.length + n;
+const total = studio.length + skills.length + n;
+/* A skill's group is a tag on its row, with a colour of its own. */
+const skillTag = { craft: { label: 'Craft', accent: 'coral' }, use: { label: 'Use', accent: 'blue' }, write: { label: 'Writing', accent: 'violet' }, ship: { label: 'Shipping', accent: 'teal' } } as const;
 const artSketches = { 'kb-graph': KbGraph, 'kb-props': KbProps, 'chat-mode': ChatMode };
 /* Each coconut's colour: grew, cracked open, or went for the moon. */
 const moodAccent = { sprouted: 'teal', cracked: 'coral', moonshot: 'violet' } as const;
+const pickCount = studio.filter((p) => p.featured).length + experiments.filter((x) => x.featured).length;
 const tabs = [
+  pickTab(pickCount),
   { id: 'studio', label: 'UX studio', count: studio.length },
+  { id: 'skills', label: 'Skills', count: skills.length },
   ...shelves.map((s) => ({ id: s.id, label: s.name, count: s.items.length })),
 ];
 ---
 <BaseLayout title={`Experiments | ${site.name}`} description={description} current="experiments">
   <main id="main" class="wrap listing-page">
-    <ListingHead eyebrow={`Experiments · ${total} tries`} title="Things I tried" lede="Design case studies, and side quests I shipped as experiments, with what each one taught me.">
+    <ListingHead eyebrow={`Experiments · ${total} tries`} title="Things I tried" lede="Design case studies, skills for coding agents, and side quests I shipped as experiments.">
       <Fragment slot="art">
         <!-- The three coconut faces, rising left to right, each with its meaning on a
              note that shows on hover, focus or tap. The studio tab swaps in the painter. -->
-        <span class="trio" data-tab-art="all" data-art-wide>
+        <span class="trio" data-tab-art="default" data-art-wide>
           {Object.entries(moods).map(([key, m]) => (
             <span class="trio-item m-hover-host">
               <button type="button" class="trio-nut" aria-describedby={`mood-${key}`}>
@@ -51,16 +65,28 @@ const tabs = [
           ))}
         </span>
         <span data-tab-art="studio" hidden><Thenga hobby="brush" /></span>
+        <!-- The skills tab: the palm-leaf bundle, and a pin to how it came about. -->
+        <div class="olai" data-tab-art="skills" data-art-wide hidden>
+          <OlaiBundle />
+          <a class="story-pin" href="/skills/story/">
+            <span class="pin-btn" aria-hidden="true"><Icon name="pin" /></span>
+            <span class="story-pin-hint"><Icon name="arrow-curly" class="story-pin-arrow" /><span class="hand">how the bundle came about</span></span>
+          </a>
+        </div>
       </Fragment>
     </ListingHead>
-    <ListingTabs list="experiment-list" tabs={tabs} total={total} label="Filter experiments" />
+    <ListingTabs list="experiment-list" tabs={tabs} label="Filter experiments" />
+    <div class="install" data-tab-art="skills" hidden>
+      <code>{installCmd}</code>
+      <a href={skillsRepo} rel="noopener">On GitHub<Icon name="external" /></a>
+    </div>
 
     <ol class="listing" id="experiment-list">
       {studio.map((p) => {
         const Sketch = p.preview.kind === 'sketch' ? artSketches[p.preview.sketch] : null;
         const topic = p.tags.filter((t) => t !== 'UX case study')[0];
         return (
-          <ListingRow href={studioHref(p)} title={p.title} kicker={`UX studio · ${p.context}`} hook={p.hook} side={topic} cat="studio" accent={p.accent}>
+          <ListingRow href={studioHref(p)} title={p.title} kicker={`UX studio · ${p.context}`} hook={p.hook} side={topic} cat={withPick('studio', p.featured)} accent={p.accent}>
             {p.preview.kind === 'sketch' && Sketch
               ? <Sketch slot="media" />
               : p.preview.kind === 'video'
@@ -69,13 +95,20 @@ const tabs = [
           </ListingRow>
         );
       })}
+      {skills.map((s, i) => (
+        <ListingRow href={skillHref(s)} external title={s.name} kicker={skillTag[s.group].label} hook={s.hook} cat="skills" accent={skillTag[s.group].accent}>
+          <span slot="media" class="leaf-shot"><span class="mini-leaf" style={`--tilt: ${i % 2 ? 3 : -3}deg`}></span></span>
+          {s.story && <a slot="actions" class="pill pill--soft" href={s.story} aria-label={`How I built ${s.name}`}>How I built it</a>}
+        </ListingRow>
+      ))}
       {shelves.map((s) => s.items.map((x) => (
-        <ListingRow href={`#${x.id}`} title={x.name} kicker={x.context} hook={x.hook} side={x.status} cat={s.id} accent={moodAccent[x.mood]}>
+        <ListingRow href={`#${x.id}`} title={x.name} kicker={x.context} hook={x.hook} side={x.status} cat={withPick(s.id, x.featured)} accent={moodAccent[x.mood]}>
           <span slot="media" class="nut-shot"><Thenga mood={x.mood} /></span>
         </ListingRow>
       )))}
     </ol>
     <ListingMore list="experiment-list" />
+    <p class="thanks" data-tab-art="skills" hidden><span>Thanks</span>Emil Kowalski’s skills got me started on these, and <code>craft-component</code> leans on his and Jakub Krehel’s for its audits. Install those too.</p>
 
     <!-- The cracked-open panel. One article per experiment; the script shows one at a time. -->
     <dialog class="crack" id="crack" data-crack aria-labelledby={`${experiments[0].id}-t`}>
@@ -263,6 +296,52 @@ const tabs = [
   .nut-shot :global(.mascot--sprouted) { --m-delay: -1.3s; }
   .nut-shot :global(.mascot--cracked) { --m-delay: -1.35s; }
   :global(.lrow:not(:hover)) .nut-shot :global([class*="m-a-"]) { animation-name: none; }
+
+  /* ---- The skills tab ---- */
+  .install { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin: 0 0 var(--space-3); }
+  .install[hidden], .thanks[hidden] { display: none; }
+  .install code { padding: .5rem .8rem; font-family: var(--font-mono); font-size: .82rem; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--ink); border-radius: 8px; box-shadow: 2px 2px 0 var(--shadow-ink); max-width: 100%; overflow-wrap: anywhere; }
+  .install a { display: inline-flex; align-items: center; gap: .3rem; font-weight: 500; }
+  .install a :global(.doodle) { width: .9rem; height: .9rem; }
+
+  /* The drawing, with the pin to the story of how this page came about. The pin
+     borrows the footer's pulsing .pin-btn, with a hand-written nudge. */
+  .olai { --art-w: clamp(17rem, 24vw, 20rem); position: relative; padding-bottom: 2.5rem; line-height: normal; }
+  .story-pin { position: absolute; bottom: 0; right: 0; display: flex; align-items: flex-start; gap: .1rem; color: var(--coral); text-decoration: none; }
+  .story-pin .pin-btn { width: 2.6rem; height: 2.6rem; flex: none; }
+  .story-pin .pin-btn :global(.doodle) { width: 1.3rem; height: 1.3rem; }
+  .story-pin:hover .pin-btn, .story-pin:focus-visible .pin-btn { background: var(--coral); color: var(--paper-2); transform: rotate(0) scale(1.08); }
+  .story-pin:hover .pin-btn::after { animation: none; opacity: 0; }
+  .story-pin:focus-visible { outline: none; }
+  .story-pin:focus-visible .pin-btn { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .story-pin-hint { display: flex; align-items: flex-start; white-space: nowrap; }
+  .story-pin-hint :global(.story-pin-arrow) { width: 2.3rem; height: 1.8rem; stroke-width: 2; transform: scaleX(-1) rotate(-20deg) translateY(.35rem); flex: none; }
+  .story-pin-hint .hand { font-size: 1.25rem; display: inline-block; transform: rotate(-5deg); margin-top: -.2rem; }
+  .story-pin:hover .hand { text-decoration: underline; text-underline-offset: .2em; }
+
+  /* A skill's name is a command, so it reads as one. */
+  :global(.lrow:has(.leaf-shot)) :global(.lrow-title) { font-family: var(--font-mono); font-size: clamp(1.05rem, 1.6vw, 1.2rem); font-weight: 500; letter-spacing: 0; }
+
+  /* A skill's thumbnail: one palm leaf on a sand card, like the coconuts' frames.
+     The leaf: one palm leaf, tan with darker tips, two string holes and a
+     thread through one, tilted a little either way; it lies flat on hover. */
+  .leaf-shot { position: absolute; inset: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, var(--paper-2)); }
+  .mini-leaf { --olai-a: #efd9a2; --olai-b: #dcbd7a; --olai-edge: #b48c4c; --olai-ink: #2e2210; position: relative; display: block; width: 62%; height: 26%; background: linear-gradient(90deg, var(--olai-edge), var(--olai-b) 10%, var(--olai-a) 26%, var(--olai-a) 74%, var(--olai-b) 90%, var(--olai-edge)); border: 1.5px solid var(--ink); border-radius: 22px 8px 22px 8px / 8px 22px 8px 22px; box-shadow: 2px 2px 0 var(--shadow-ink); transform: rotate(var(--tilt, -3deg)); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .mini-leaf::before, .mini-leaf::after { content: ""; position: absolute; top: 50%; width: .3rem; height: .3rem; margin-top: -.15rem; border-radius: 50%; background: var(--olai-ink); opacity: .75; }
+  .mini-leaf::before { left: .55rem; } .mini-leaf::after { right: .55rem; box-shadow: 0 .25rem 0 -.05rem transparent; }
+  :global(.lrow:hover) .mini-leaf { transform: rotate(0) translateY(-2px); }
+  :global([data-theme="dark"]) .mini-leaf { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme="light"])) .mini-leaf { --olai-a: #d2bb85; --olai-b: #bea063; --olai-edge: #94703a; } }
+
+  .thanks { margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1.5px dashed var(--line); max-width: 60ch; font-size: .95rem; }
+  .thanks span { display: block; margin-bottom: .2rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); }
+  .thanks code { font-family: var(--font-mono); font-size: .85em; }
+
+  @media (max-width: 559px) {
+    .olai { --art-w: min(100%, 27rem); }
+    .story-pin { right: auto; left: 2%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mini-leaf { transition: none; } }
 
   /* The panel's mono context line and status tag. */
   .nut-status { margin-left: auto; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); padding: .3rem .5rem; border: 1.5px dashed currentColor; border-radius: 999px; line-height: 1; white-space: nowrap; }

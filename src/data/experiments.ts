@@ -28,6 +28,8 @@ export interface Experiment {
   shot?: { src: string; alt: string; w: number; h: number };
   /** A small aside in my own voice, shown in handwriting. */
   note?: string;
+  /** One of the "Top picks", the tab /experiments/ opens on. */
+  featured?: boolean;
 }
 
 export interface Shelf {
@@ -52,6 +54,7 @@ export const shelves: Shelf[] = [
     items: [
       {
         id: 'zendesk-clickup',
+        featured: true,
         name: 'ClickUp for Zendesk',
         context: 'Strivelabs · micro SaaS',
         mood: 'sprouted',
@@ -100,6 +103,7 @@ export const shelves: Shelf[] = [
       },
       {
         id: 'mardi-ai',
+        featured: true,
         name: 'Mardi AI',
         context: 'Strivelabs · standalone product',
         mood: 'sprouted',
@@ -213,6 +217,7 @@ export const shelves: Shelf[] = [
       },
       {
         id: 'nutro',
+        featured: true,
         name: 'nutro-components',
         context: 'College, with a friend · npm',
         mood: 'moonshot',

@@ -4,7 +4,8 @@
    on the right. Supporting cast only: the list below is the page. Mascots hide
    themselves from screen readers; anything interactive in the art stays reachable. For a mascot per
    tab, put several in the slot, each wrapped in data-tab-art="<tab id>" (one of
-   them "all"); ListingMore shows the one for the current tab. Art sets its width
+   them "default"); ListingMore shows the one for the current tab. Anything in the
+   default slot (an install command, say) sits under the intro. Art sets its width
    with --art-w; mark a wide piece data-art-wide so phones put it under the text. */
 import Icon from '../Icon.astro';
 
@@ -22,6 +23,7 @@ const { eyebrow, title, lede } = Astro.props;
     <p class="eyebrow">{eyebrow}</p>
     <h1>{title}</h1>
     <p class="lhead-lede">{lede}</p>
+    <slot />
   </div>
   <div class="lhead-art"><slot name="art" /></div>
 </header>

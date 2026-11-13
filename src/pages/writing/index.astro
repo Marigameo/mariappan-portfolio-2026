@@ -1,12 +1,13 @@
 ---
-/* All writing: every piece as rows (newest first where dated), with a tab per
-   shelf. Each row's thumbnail is a little book in its shelf's colour, the same
+/* All writing: every piece as rows (newest first where dated). It opens on
+   "Top picks" (the books on the homepage shelf), with a tab per shelf for the rest. Each row's thumbnail is a little book in its shelf's colour, the same
    books as the homepage shelf. Data: allWriting in src/data/writing.ts. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ListingHead from '../../components/listing/ListingHead.astro';
 import ListingTabs from '../../components/listing/ListingTabs.astro';
 import ListingRow from '../../components/listing/ListingRow.astro';
 import ListingMore from '../../components/listing/ListingMore.astro';
+import { pickTab, withPick } from '../../components/listing/picks';
 import Icon from '../../components/Icon.astro';
 import Thenga from '../../components/mascots/Thenga.astro';
 import { shelves, allWriting } from '../../data/writing';
@@ -14,7 +15,7 @@ import { site } from '../../data/site';
 
 const description = 'Everything Mariappan Subramanian has written: long-form stories from the products he has built, and shorter notes on frontend, life and product.';
 const slug = (label: string) => label.toLowerCase();
-const tabs = shelves.map((s) => ({ id: slug(s.label), label: s.label, count: s.books.length }));
+const tabs = [pickTab(allWriting.filter((b) => b.featured).length), ...shelves.map((s) => ({ id: slug(s.label), label: s.label, count: s.books.length }))];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const month = (iso?: string) => (iso ? `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}` : '');
 const mixes = ['22%', '36%', '29%'];
@@ -24,13 +25,13 @@ const mixes = ['22%', '36%', '29%'];
     <ListingHead eyebrow={`The library · ${allWriting.length} pieces`} title="Writing" lede="Long-form stories from the work, and shorter notes on tech, life and product.">
       <Thenga slot="art" hobby="pen" />
     </ListingHead>
-    <ListingTabs list="writing-list" tabs={tabs} total={allWriting.length} label="Filter writing by shelf" />
+    <ListingTabs list="writing-list" tabs={tabs} label="Filter writing" />
     <ol class="listing" id="writing-list" style="--media-w: 4.2rem; --media-w-sm: 3.2rem">
       {allWriting.map((b, i) => {
         const onSite = b.href.startsWith('/');
         const side = [month(b.date), b.read ? `${b.read} read` : ''].filter(Boolean).join(' · ');
         return (
-          <ListingRow href={b.href} external={!onSite} title={b.title} kicker={`${b.shelf} · ${onSite ? 'On this site' : 'On Medium'}`} hook={b.dek} side={side} cat={slug(b.shelf)} accent={b.hue} media="bare">
+          <ListingRow href={b.href} external={!onSite} title={b.title} kicker={`${b.shelf} · ${onSite ? 'On this site' : 'On Medium'}`} hook={b.dek} side={side} cat={withPick(slug(b.shelf), b.featured)} accent={b.hue} media="bare">
             <span slot="media" class="mini-book" style={`--hue: var(--${b.hue}); --mix: ${mixes[i % mixes.length]}`}><Icon name={b.icon} /></span>
           </ListingRow>
         );
