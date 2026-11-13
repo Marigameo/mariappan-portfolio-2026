@@ -1,0 +1,84 @@
+---
+/* Goes right after a listing's <ol>. It runs every listing: rows show 10 at a time
+   with a "Show more" button for the next 10, the tabs (ListingTabs, optional) narrow
+   the rows, and anything marked data-tab-art="<tab id>" (a mascot per tab, in
+   ListingHead's art slot) swaps in with its tab. Picking a tab starts again at 10.
+   Without JS every row shows and the button stays hidden. */
+interface Props {
+  list: string;      // id of the <ol> of rows
+  page?: number;     // rows per batch
+}
+
+const { list, page = 10 } = Astro.props;
+---
+<div class="lmore-wrap">
+  <button class="lmore" type="button" data-lmore={list} data-page={page} hidden>
+    <span class="lmore-label">Show more</span><span class="lmore-left"></span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-lmore]').forEach((more) => {
+    const list = document.getElementById(more.dataset.lmore ?? '');
+    if (!list) return;
+    const page = Number(more.dataset.page) || 10;
+    const rows = [...list.querySelectorAll<HTMLElement>(':scope > [data-cat]')];
+    const nav = document.querySelector<HTMLElement>(`[data-ltabs="${list.id}"]`);
+    const tabs = nav ? [...nav.querySelectorAll<HTMLAnchorElement>('[data-tab]')] : [];
+    const ids = tabs.map((t) => t.dataset.tab);
+    const arts = [...document.querySelectorAll<HTMLElement>('[data-tab-art]')];
+    const left = more.querySelector('.lmore-left')!;
+    let filter = 'all';
+    let shown = page;
+
+    const matching = () => rows.filter((r) => filter === 'all' || (r.dataset.cat ?? '').split(' ').includes(filter));
+
+    const render = () => {
+      const match = new Set(matching().slice(0, shown));
+      rows.forEach((r) => { r.hidden = !match.has(r); });
+      const rest = matching().length - shown;
+      more.hidden = rest <= 0;
+      left.textContent = `${rest} left`;
+    };
+
+    const pick = (id: string) => {
+      filter = ids.includes(id) ? id : 'all';
+      shown = page;
+      tabs.forEach((t) => t.setAttribute('aria-current', String(t.dataset.tab === filter)));
+      const art = arts.some((a) => a.dataset.tabArt === filter) ? filter : 'all';
+      arts.forEach((a) => { a.hidden = a.dataset.tabArt !== art; });
+      list.dataset.filter = filter;
+      render();
+    };
+
+    tabs.forEach((t) => t.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = t.dataset.tab ?? 'all';
+      history.replaceState(null, '', id === 'all' ? location.pathname : `#${id}`);
+      pick(id);
+    }));
+    window.addEventListener('hashchange', () => pick(location.hash.slice(1)));
+
+    more.addEventListener('click', () => {
+      const first = matching()[shown];
+      shown += page;
+      render();
+      // Carry focus to the first new row, so keyboard users land on what just appeared.
+      first?.querySelector<HTMLElement>('.lrow-link')?.focus({ preventScroll: true });
+    });
+
+    pick(location.hash.slice(1));
+  });
+</script>
+
+<style>
+  .lmore-wrap { display: flex; justify-content: center; margin-top: var(--space-3); }
+  .lmore-wrap:has(.lmore[hidden]) { display: none; }
+  /* The homepage's "See all" pill, as a button. */
+  .lmore { display: inline-flex; align-items: center; gap: .7rem; padding: .7rem 1.2rem; font: inherit; font-size: .95rem; font-weight: 500; line-height: 1; color: var(--ink); background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 1.5rem 1.1rem 1.4rem 1.2rem / 1.2rem 1.5rem 1.1rem 1.4rem; box-shadow: 3px 3px 0 var(--shadow-ink); cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease; }
+  .lmore-left { font-family: var(--font-mono); font-size: .72rem; font-weight: 400; color: var(--ink-soft); }
+  .lmore:hover { color: var(--paper); background: var(--ink); border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow-ink); }
+  .lmore:hover .lmore-left { color: color-mix(in srgb, var(--paper) 72%, transparent); }
+  .lmore:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--shadow-ink); }
+  .lmore:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+</style>

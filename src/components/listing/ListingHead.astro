@@ -1,0 +1,45 @@
+---
+/* The top of a listing page (/work/, /writing/, /talks/): a way back home, an
+   eyebrow, the title, one line of intro, and a mascot or drawing in the "art" slot
+   on the right. Supporting cast only: the list below is the page. For a mascot per
+   tab, put several in the slot, each wrapped in data-tab-art="<tab id>" (one of
+   them "all"); ListingMore shows the one for the current tab. */
+import Icon from '../Icon.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lede: string;
+}
+
+const { eyebrow, title, lede } = Astro.props;
+---
+<header class="lhead">
+  <div class="lhead-text">
+    <a class="breadcrumb" href="/"><Icon name="arrow-right" />Home</a>
+    <p class="eyebrow">{eyebrow}</p>
+    <h1>{title}</h1>
+    <p class="lhead-lede">{lede}</p>
+  </div>
+  <div class="lhead-art" aria-hidden="true"><slot name="art" /></div>
+</header>
+
+<style>
+  .lhead { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1.5rem; padding-top: var(--space-4); margin-bottom: var(--space-4); }
+  .lhead-text .breadcrumb { margin-bottom: var(--space-4); }
+  .lhead-text .eyebrow { margin-bottom: .6rem; }
+  .lhead h1 { margin-bottom: .7rem; }
+  .lhead-lede { margin: 0; font-size: 1.08rem; max-width: 52ch; }
+  .lhead-art { width: clamp(5.5rem, 12vw, 9rem); line-height: 0; }
+  .lhead-art :global(.mascot) { width: 100%; }
+  .lhead-art :global([data-tab-art]) { display: block; }
+  .lhead-art :global([data-tab-art][hidden]) { display: none; }
+  /* A new mascot pops in when its tab is picked. */
+  .lhead-art :global([data-tab-art]:not([hidden])) { animation: lhead-pop .35s cubic-bezier(.2,.8,.2,1.2); }
+  @keyframes lhead-pop { from { opacity: 0; transform: translateY(6px) scale(.92); } }
+  @media (prefers-reduced-motion: reduce) { .lhead-art :global([data-tab-art]) { animation: none; } }
+  @media (max-width: 559px) {
+    .lhead { gap: .75rem; }
+    .lhead-art { width: 4.6rem; align-self: start; margin-top: 2.6rem; }
+  }
+</style>

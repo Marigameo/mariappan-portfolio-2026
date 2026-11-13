@@ -506,6 +506,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .shelf-label .doodle { width: .95rem; height: .95rem; }
 .rule { border: 0; height: 1px; background: var(--line); margin: 0; }
 
+/* ---------- Listing pages (/work/, /writing/, /talks/) -------------------------
+   One pattern for every list: ListingHead, ListingTabs, then an <ol class="listing">
+   of ListingRow (src/components/listing/). --media-w sets the thumbnail column. */
+.listing-page { padding-bottom: var(--space-4); }
+.listing { list-style: none; margin: 0 calc(-1 * 1.25rem); padding: 0; display: grid; gap: .9rem; }
+@media (max-width: 719px) { .listing { margin-inline: -.75rem; } }
+
 /* ---------- 12. About page -------------------------------------------------- */
 /* Thenga's day off: one board per pastime. On top, Thenga in its hobby pose on a
    tinted blob next to the words; below, a sideways reel of picks shown whole and
@@ -949,6 +956,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .mascot .m-ferrule { fill: #b7c0ca; stroke-width: 1.6; }
 .mascot .m-tip { fill: var(--coral-soft); }
 .mascot .m-paint { fill: none; stroke: var(--coral-soft); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 40; }
+.mascot :is(.m-mic, .m-laptop, .m-gear, .m-hammer) { stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.mascot .m-mic { fill: #b7c0ca; }
+.mascot .m-grill { stroke-width: 1.2; stroke-opacity: .6; }
+.mascot .m-mic-handle { fill: none; stroke: #3b3f4a; stroke-width: 6; stroke-linecap: round; }
+.mascot .m-laptop { fill: #b7c0ca; }
+.mascot .m-gear { fill: var(--yellow); }
+.mascot .m-hammer { fill: #8f9aa6; }
 
 /* Idle loops, one per mood, a few pixels each. Origins are in the 160×160
    viewBox. Set --m-delay (negative) on a wrapper to take a mascot out of step
@@ -989,6 +1003,22 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .mascot--backpack .m-a-plane { animation: m-plane 4s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
 .mascot--brush .m-a-dab { transform-origin: 122px 100px; animation: m-dab 2.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
 .mascot--brush .m-a-splat { animation: m-splat 2.6s ease-in-out infinite; animation-delay: var(--m-delay, 0s); }
+/* On the clock (listing pages): talking into a mic, typing, tapping with a hammer. */
+.mascot--mic .m-a-talk { transform-origin: 80px 107px; animation: m-talk .9s ease-in-out infinite; }
+.mascot--mic .m-a-sound { animation: m-fade 1.1s ease-in-out infinite alternate; }
+.mascot--mic .m-a-gesture { transform-origin: 38px 102px; animation: m-gesture 3s ease-in-out infinite; }
+.mascot--laptop .m-a-type-l { animation: m-type .5s ease-in-out infinite alternate; }
+.mascot--laptop .m-a-type-r { animation: m-type .5s ease-in-out infinite alternate-reverse; }
+.mascot--laptop .m-a-code { animation: m-notes 3s ease-in-out infinite; }
+.mascot--hammer .m-a-tap { transform-origin: 122px 100px; animation: m-tap 1.4s ease-in-out infinite; }
+.mascot--hammer .m-a-spark { animation: m-spark 1.4s ease-out infinite; }
+.mascot--hammer .m-a-gear { transform-box: fill-box; transform-origin: center; animation: m-spin 6s linear infinite; }
+@keyframes m-talk { 0%, 100% { transform: scaleY(1); } 30% { transform: scaleY(.45); } 60% { transform: scaleY(1.15); } }
+@keyframes m-gesture { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-12deg); } }
+@keyframes m-type { from { transform: translateY(0); } to { transform: translateY(2px); } }
+@keyframes m-tap { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-18deg); } 55% { transform: rotate(4deg); } 65% { transform: rotate(0); } }
+@keyframes m-spark { 0%, 50% { opacity: 0; } 56% { opacity: 1; } 80%, 100% { opacity: 0; } }
+@keyframes m-spin { to { transform: rotate(360deg); } }
 @keyframes m-strum { 0%, 40%, 100% { transform: rotate(0); } 46%, 58%, 70% { transform: rotate(9deg); } 52%, 64% { transform: rotate(-3deg); } }
 @keyframes m-notes { 0% { transform: translateY(6px); opacity: 0; } 30%, 70% { opacity: 1; } 100% { transform: translateY(-8px); opacity: 0; } }
 @keyframes m-flash { 0%, 62%, 100% { opacity: 0; transform: scale(.6); } 66% { opacity: 1; transform: scale(1.1); } 76% { opacity: 0; transform: scale(1.2); } }

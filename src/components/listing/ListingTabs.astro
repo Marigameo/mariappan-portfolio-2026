@@ -1,0 +1,30 @@
+---
+/* Filter tabs for a listing: "All" plus one per category, each with its count.
+   Rows in the list named by `list` carry data-cat="<id> …"; picking a tab hides the
+   rest. The tab lives in the URL hash (/work/#side-builds), so a link can open the
+   page on a tab. The script that runs it is in ListingMore, which every listing has.
+   Without JS the tabs are plain links and every row shows. */
+interface Props {
+  list: string;                                   // id of the <ol> of rows
+  tabs: { id: string; label: string; count: number }[];
+  total: number;
+  label?: string;
+}
+
+const { list, tabs, total, label = 'Filter' } = Astro.props;
+---
+<nav class="ltabs" aria-label={label} data-ltabs={list}>
+  <a class="ltab" href="#all" data-tab="all" aria-current="true">All<span>{total}</span></a>
+  {tabs.map((t) => <a class="ltab" href={`#${t.id}`} data-tab={t.id}>{t.label}<span>{t.count}</span></a>)}
+</nav>
+
+<style>
+  .ltabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: var(--space-3); }
+  /* Hand-drawn pills: slightly uneven corners, the same as the homepage's "See all". */
+  .ltab { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .95rem; font-size: .92rem; font-weight: 500; line-height: 1; color: var(--ink); text-decoration: none; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 1.5rem 1.1rem 1.4rem 1.2rem / 1.2rem 1.5rem 1.1rem 1.4rem; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .ltab span { font-family: var(--font-mono); font-size: .7rem; font-weight: 400; color: var(--ink-soft); }
+  .ltab:hover { color: var(--ink); border-color: var(--ink); }
+  .ltab[aria-current="true"] { color: var(--paper); background: var(--ink); border-color: var(--ink); box-shadow: 2px 2px 0 var(--shadow-ink); }
+  .ltab[aria-current="true"] span { color: color-mix(in srgb, var(--paper) 72%, transparent); }
+  .ltab:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+</style>

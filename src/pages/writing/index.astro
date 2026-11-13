@@ -1,0 +1,52 @@
+---
+/* All writing: every piece as rows (newest first where dated), with a tab per
+   shelf. Each row's thumbnail is a little book in its shelf's colour, the same
+   books as the homepage shelf. Data: allWriting in src/data/writing.ts. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ListingHead from '../../components/listing/ListingHead.astro';
+import ListingTabs from '../../components/listing/ListingTabs.astro';
+import ListingRow from '../../components/listing/ListingRow.astro';
+import ListingMore from '../../components/listing/ListingMore.astro';
+import Icon from '../../components/Icon.astro';
+import Thenga from '../../components/mascots/Thenga.astro';
+import { shelves, allWriting } from '../../data/writing';
+import { site } from '../../data/site';
+
+const description = 'Everything Mariappan Subramanian has written: long-form stories from the products he has built, and shorter notes on frontend, life and product.';
+const slug = (label: string) => label.toLowerCase();
+const tabs = shelves.map((s) => ({ id: slug(s.label), label: s.label, count: s.books.length }));
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const month = (iso?: string) => (iso ? `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}` : '');
+const mixes = ['22%', '36%', '29%'];
+---
+<BaseLayout title={`Writing | ${site.name}`} description={description} current="writing">
+  <main id="main" class="wrap listing-page">
+    <ListingHead eyebrow={`The library · ${allWriting.length} pieces`} title="Writing" lede="Long-form stories from the work, and shorter notes on tech, life and product.">
+      <Thenga slot="art" hobby="pen" />
+    </ListingHead>
+    <ListingTabs list="writing-list" tabs={tabs} total={allWriting.length} label="Filter writing by shelf" />
+    <ol class="listing" id="writing-list" style="--media-w: 4.2rem; --media-w-sm: 3.2rem">
+      {allWriting.map((b, i) => {
+        const onSite = b.href.startsWith('/');
+        const side = [month(b.date), b.read ? `${b.read} read` : ''].filter(Boolean).join(' · ');
+        return (
+          <ListingRow href={b.href} external={!onSite} title={b.title} kicker={`${b.shelf} · ${onSite ? 'On this site' : 'On Medium'}`} hook={b.dek} side={side} cat={slug(b.shelf)} accent={b.hue} media="bare">
+            <span slot="media" class="mini-book" style={`--hue: var(--${b.hue}); --mix: ${mixes[i % mixes.length]}`}><Icon name={b.icon} /></span>
+          </ListingRow>
+        );
+      })}
+    </ol>
+    <ListingMore list="writing-list" />
+  </main>
+</BaseLayout>
+
+<style>
+  /* A little book standing in for a thumbnail: the shelf's tint, a rounded spine
+     shading down its left edge, the shelf's icon on the cover. */
+  .mini-book { position: relative; display: grid; place-items: center; width: 2.9rem; height: 3.9rem; color: color-mix(in srgb, var(--hue) 85%, var(--ink)); background: linear-gradient(90deg, rgba(0,0,0,.08), rgba(0,0,0,0) 22%), color-mix(in srgb, var(--hue) var(--mix), var(--paper-2)); border: 1.5px solid var(--border); border-radius: 3px 7px 6px 3px / 3px 5px 7px 4px; box-shadow: 3px 3px 0 var(--shadow-ink); transform: rotate(-3deg); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+  .mini-book::before { content: ""; position: absolute; top: 3px; bottom: 3px; left: .38rem; border-left: 1.5px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+  .mini-book :global(.doodle) { width: 1.25rem; height: 1.25rem; stroke-width: 1.8; }
+  :global(.lrow:nth-child(2n)) .mini-book { transform: rotate(2.5deg); }
+  :global(.lrow:hover) .mini-book { transform: rotate(0) translateY(-2px); }
+  @media (max-width: 719px) { .mini-book { width: 2.5rem; height: 3.3rem; } }
+</style>

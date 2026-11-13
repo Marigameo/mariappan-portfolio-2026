@@ -1,0 +1,42 @@
+---
+/* The thumbnail for a work story, by slug: the same sketch (or screenshot) its
+   homepage card uses. Decorative in a list row; the row's title names the story. */
+import StriveChat from '../sketches/StriveChat.astro';
+import ReportBuilder from '../sketches/ReportBuilder.astro';
+import BrandKit from '../sketches/BrandKit.astro';
+import AgentUI from '../sketches/AgentUI.astro';
+import PublicShare from '../sketches/PublicShare.astro';
+import ChatDiagrams from '../sketches/ChatDiagrams.astro';
+import DesignEcosystem from '../sketches/DesignEcosystem.astro';
+import TuneSearch from '../sketches/TuneSearch.astro';
+import AgentClarifier from '../sketches/AgentClarifier.astro';
+import CoPresence from '../sketches/CoPresence.astro';
+import FitIphoneDuo from '../sketches/FitIphoneDuo.astro';
+import DrawDiagrams from '../sketches/DrawDiagrams.astro';
+import Thatpam from '../sketches/Thatpam.astro';
+import DforDoubts from '../sketches/DforDoubts.astro';
+
+interface Props { slug: string }
+const { slug } = Astro.props;
+
+const sketches: Record<string, any> = {
+  'strive-gen-ui-chat': StriveChat,
+  'report-builder': ReportBuilder,
+  'brand-kit': BrandKit,
+  'pluggable-agent-ui': AgentUI,
+  'public-share': PublicShare,
+  'chat-diagrams': ChatDiagrams,
+  'design-ecosystem': DesignEcosystem,
+  'tune-search': TuneSearch,
+  'agent-clarifier': AgentClarifier,
+  'co-presence': CoPresence,
+  'fit-iphone-duo': FitIphoneDuo,
+  'draw-diagrams': DrawDiagrams,
+  thatpam: Thatpam,
+  dfordoubts: DforDoubts,
+};
+const Sketch = sketches[slug];
+---
+{slug === 'freshworks-marketplace'
+  ? <img style="object-position: left top" src="/images/work/freshworks-marketplace/marketplace-home.webp" alt="" width="1800" height="890" loading="lazy" decoding="async">
+  : Sketch && <Sketch />}

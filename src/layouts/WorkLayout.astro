@@ -50,7 +50,7 @@ const jsonLd = {
 <BaseLayout title={`${title} | Work | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="work" jsonLd={jsonLd}>
   <main id="main" class="wrap wrap--narrow">
     <header class="page-hero">
-      <a class="breadcrumb" href="/#work"><Icon name="arrow-right" />All work</a>
+      <a class="breadcrumb" href="/work/"><Icon name="arrow-right" />All work</a>
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h1 lang={headingLang}>{heading}{headingNote && <span class="title-note" lang="en">{headingNote}</span>}</h1>
       <p class="lede"><slot name="lede" /></p>
@@ -78,7 +78,7 @@ const jsonLd = {
     </article>
 
     <p style="margin-top: var(--space-4)">
-      <a class="pill" href="/#work"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
+      <a class="pill" href="/work/"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all work</a>
     </p>
   </main>
 </BaseLayout>

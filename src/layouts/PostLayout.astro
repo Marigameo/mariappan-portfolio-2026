@@ -1,7 +1,7 @@
 ---
-/* A long-form article hosted here rather than on Medium: breadcrumb back to the
-   shelf, title, lede, facts, the piece, and a back link. Same bones as
-   WorkLayout, but it points at #writing and emits BlogPosting structured data. */
+/* A long-form article hosted here rather than on Medium: breadcrumb back to all
+   writing (/writing/), title, lede, facts, the piece, and a back link. Same bones as
+   WorkLayout, but it points at /writing/ and emits BlogPosting structured data. */
 import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
@@ -46,7 +46,7 @@ const jsonLd = {
 <BaseLayout title={`${title} | Writing | ${site.name}`} description={description} ogDescription={ogDescription} ogType="article" current="writing" jsonLd={jsonLd}>
   <main id="main" class="wrap wrap--narrow">
     <header class="page-hero">
-      <a class="breadcrumb" href="/#writing"><Icon name="arrow-right" />All writing</a>
+      <a class="breadcrumb" href="/writing/"><Icon name="arrow-right" />All writing</a>
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h1>{heading}</h1>
       <p class="lede"><slot name="lede" /></p>
@@ -76,7 +76,7 @@ const jsonLd = {
     )}
 
     <p style="margin-top: var(--space-4)">
-      <a class="pill" href="/#writing"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to the shelf</a>
+      <a class="pill" href="/writing/"><Icon name="arrow-right" style="transform:scaleX(-1)" />Back to all writing</a>
     </p>
   </main>
 </BaseLayout>
