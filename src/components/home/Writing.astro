@@ -1,33 +1,216 @@
 ---
-/* The library: a bookshelf. Each article is a book spine; click to read. Data in src/data/writing.ts. */
+/* The library: one shelf of spines grouped by theme, and the pulled book lying open
+   beside it. Only `featured` books (2–3 a theme) stand here; "All writing" has the rest.
+   Data in src/data/writing.ts: a book's `dek` and `read` fill the open pages.
+
+   Colour means theme: every spine in a group is a shade of its shelf's `hue`
+   (Tech blue, Life coral, Product teal), and the open book's kicker, ribbon and
+   "Read" take the hue of the book that's out. Shades only tell neighbours apart.
+
+   Pulling a book:
+   - Mouse: rest on a spine (~180 ms) and it slides out and opens. Sweeping across
+     spines on the way to "Read" doesn't change it; nothing resets on leave.
+     Clicking a spine goes straight to the piece.
+   - Touch: the first tap pulls the book out; a second tap opens the piece.
+   - Keyboard: focusing a spine opens it; Enter reads it.
+   Without JS the spines are plain links and the open book shows the first pick. */
+import HomeSection from './HomeSection.astro';
 import Icon from '../Icon.astro';
 import { shelves } from '../../data/writing';
-import { site } from '../../data/site';
+
+const picks = shelves
+  .map((s) => ({ ...s, books: s.books.filter((b) => b.featured) }))
+  .filter((s) => s.books.length);
+const source = (href: string) => (href.startsWith('/') ? 'On this site' : 'On Medium');
+const all = picks.flatMap((s) => s.books.map((b) => ({ ...b, shelf: s.label, deco: s.deco, hue: s.hue })));
+// How much of the theme's hue each spine takes, in shelf order: light, deep, mid, so
+// neighbours never match. The open book's ribbon uses the pulled book's value.
+const mixes = ['22%', '36%', '29%'];
+const mixOf = (b: { href: string }) => {
+  for (const s of picks) { const i = s.books.findIndex((x) => x.href === b.href); if (i >= 0) return mixes[i % mixes.length]; }
+  return mixes[0];
+};
+const open = all.find((b) => b.dek) ?? all[0];
 ---
-<section class="section section--paper has-wave" id="writing" aria-labelledby="writing-title">
-  <div class="wave" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="section-head section-head--row">
-      <div>
-        <p class="eyebrow">The library</p>
-        <h2 id="writing-title">Writing</h2>
-        <p>Pull a book off the shelf. Things that make sense only after coffee.</p>
-      </div>
-      <a class="pill" href={site.links.medium} rel="me noopener"><Icon name="medium" />Explore my library</a>
-    </div>
-    <div class="library">
-      {shelves.map((shelf) => (
-        <div class="shelf">
-          <div class="shelf-books">
-            {shelf.books.map((b) => (
-              <a class:list={['book', `book--${b.colour}`, b.lean && 'book--lean']} style={`--bh: ${b.bh}${b.bw ? `; --bw: ${b.bw}` : ''}`} href={b.href} rel="noopener" title={b.title} aria-label={b.title}><span>{b.spine}</span></a>
-            ))}
-            <i class="shelf-deco" aria-hidden="true"><Icon name={shelf.deco} /></i>
+<HomeSection id="writing" eyebrow="The library" title="Writing" more={{ href: '/writing/', label: 'See all writing' }}>
+  <div class="desk" data-desk>
+      <div class="desk-row">
+        {picks.map((s) => (
+          <div class="desk-group" role="group" aria-label={s.label} style={`--hue: var(--${s.hue})`}>
+            <div class="desk-books">
+              {s.books.map((b, i) => (
+                <a class:list={['book', i === 1 && 'is-leaning', b.href === open.href && 'is-out']} style={`--bh: ${b.bh}; --bw: ${b.bw ?? '2.8rem'}; --mix: ${mixes[i % mixes.length]}`} href={b.href} rel={b.href.startsWith('/') ? undefined : 'noopener'} aria-label={b.title}
+                  data-title={b.title} data-shelf={s.label} data-src={source(b.href)} data-hue={s.hue} data-dek={b.dek ?? ''} data-foot={b.read ? `${b.read} read` : source(b.href)} data-deco={s.deco}><span>{b.spine}</span><Icon name={s.icon} class="spine-mark" /></a>
+              ))}
+            </div>
+            <span class="desk-label" aria-hidden="true">{s.label}</span>
           </div>
-          <div class="plank" aria-hidden="true"></div>
-          <p class="shelf-label"><Icon name={shelf.icon} class={shelf.iconInk} />{shelf.label}</p>
-        </div>
-      ))}
-    </div>
+        ))}
+        <span class="desk-hint" aria-hidden="true"><span class="desk-hint-in"><Icon name="arrow-curly" class="desk-hint-arrow" /><span class="hand">pull one out</span></span></span>
+      </div>
+
+    <a class="spread" href={open.href} data-spread tabindex="-1" aria-hidden="true" style={`--hue: var(--${open.hue}); --ribbon-mix: ${mixOf(open)}`}>
+      <svg class="sp-ribbon" viewBox="0 0 16 56" aria-hidden="true" focusable="false"><path d="M1 0V54.5L8 46.5L15 54.5V0" /></svg>
+      <span class="page page--l">
+        <span class="sp-kicker"><b data-k>{open.shelf}</b> · <span data-s>{source(open.href)}</span></span>
+        <span class="sp-title" data-t>{open.title}</span>
+      </span>
+      <span class="page page--r">
+        <span class="sp-dek" data-d>{open.dek}</span>
+        {all.map((b) => b.deco).filter((d, i, a) => a.indexOf(d) === i).map((d) => (
+          <i class:list={['sp-deco', (!!open.dek || d !== open.deco) && 'is-hidden']} data-deco-of={d}><Icon name={d} /></i>
+        ))}
+        <span class="sp-foot"><span data-f>{open.read ? `${open.read} read` : source(open.href)}</span><span class="sp-go">Read<Icon name="arrow-right" /></span></span>
+      </span>
+    </a>
+    <div class="plank" aria-hidden="true"></div>
   </div>
-</section>
+</HomeSection>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-desk]').forEach((desk) => {
+    const spread = desk.querySelector<HTMLAnchorElement>('[data-spread]')!;
+    const k = spread.querySelector('[data-k]')!;
+    const src = spread.querySelector('[data-s]')!;
+    const t = spread.querySelector('[data-t]')!;
+    const d = spread.querySelector<HTMLElement>('[data-d]')!;
+    const f = spread.querySelector('[data-f]')!;
+    const decos = spread.querySelectorAll<HTMLElement>('[data-deco-of]');
+    const books = desk.querySelectorAll<HTMLAnchorElement>('.desk-books .book');
+    let timer = 0;
+    let pointer = 'mouse';
+
+    const show = (b: HTMLAnchorElement) => {
+      if (b.classList.contains('is-out')) return;
+      desk.classList.add('is-used'); // the margin note has done its job
+      books.forEach((x) => x.classList.toggle('is-out', x === b));
+      spread.classList.remove('is-turning');
+      void spread.offsetWidth;
+      spread.classList.add('is-turning');
+      spread.href = b.href;
+      spread.style.setProperty('--hue', `var(--${b.dataset.hue})`);
+      spread.style.setProperty('--ribbon-mix', b.style.getPropertyValue('--mix'));
+      k.textContent = b.dataset.shelf ?? '';
+      src.textContent = b.dataset.src ?? '';
+      t.textContent = b.dataset.title ?? '';
+      d.textContent = b.dataset.dek ?? '';
+      f.textContent = b.dataset.foot ?? '';
+      // No summary yet: the shelf's doodle keeps the page from looking blank.
+      decos.forEach((el) => el.classList.toggle('is-hidden', !!b.dataset.dek || el.dataset.decoOf !== b.dataset.deco));
+    };
+
+    books.forEach((b) => {
+      b.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        clearTimeout(timer);
+        timer = window.setTimeout(() => show(b), 180);
+      });
+      b.addEventListener('pointerleave', () => clearTimeout(timer));
+      b.addEventListener('pointerdown', (e) => { pointer = e.pointerType; });
+      b.addEventListener('focus', () => { if (b.matches(':focus-visible')) show(b); });
+      b.addEventListener('click', (e) => {
+        if (pointer !== 'mouse' && !b.classList.contains('is-out')) { e.preventDefault(); show(b); }
+        pointer = 'mouse';
+      });
+    });
+  });
+</script>
+
+<style>
+  /* One shelf for everything: the spines and the open book both stand on the same
+     plank, so their bottoms always line up. Theme names hang under the plank. */
+  .desk { display: grid; grid-template-columns: minmax(0, 1fr); align-items: end; padding-bottom: 1.9rem; }
+  .desk .plank { grid-column: 1 / -1; position: relative; z-index: 1; }
+  @media (min-width: 1100px) {
+    .desk { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); column-gap: var(--space-4); }
+    .desk .plank { grid-row: 2; }
+    .desk .spread { margin-right: 1rem; }
+  }
+  /* Under 1100 (side by side, the open book got too narrow to read): it moves under
+     the shelf at full width, clear of the theme names. */
+  @media (max-width: 1099px) { .desk .spread { grid-row: 3; margin-top: 3.2rem; min-height: 0; } .desk { padding-bottom: 0; } }
+  .desk-row { display: flex; align-items: flex-end; gap: 1.1rem; padding: 0 1rem; }
+  .desk-group { position: relative; display: flex; flex-direction: column; min-width: 0; }
+  .desk-books { display: flex; align-items: flex-end; gap: .25rem; }
+  /* Spines: a light tint of the theme's hue on the card colour, so the title reads in
+     plain ink and the colour says which theme it is (--paper-2 and --ink swap in dark
+     mode, so it's light-on-dark there). What makes them books rather than blocks:
+     a faint rounded shading across the spine, and the theme's icon at the foot like
+     a publisher's mark. Titles stay in the body sans: easiest to read set sideways. --mix keeps neighbours apart. */
+  .desk-books .book { --c: color-mix(in srgb, var(--hue) var(--mix), var(--paper-2)); flex: 0 1 auto; min-width: 1.9rem; padding: .8rem .3rem 1.9rem; color: var(--ink); font-family: var(--font-body); font-weight: 500; font-size: .84rem; letter-spacing: .01em;
+    background: linear-gradient(90deg, rgba(0,0,0,.035), rgba(255,255,255,.08) 22%, rgba(255,255,255,0) 50%, rgba(0,0,0,.025) 82%, rgba(0,0,0,.055)), var(--c);
+    box-shadow: none; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease; }
+  .desk-books .book:hover { color: var(--ink); transform: translateY(-.3rem); box-shadow: none; }
+  .desk-books .book::before, .desk-books .book::after { display: none; }
+  /* Hand-drawn edges: slightly uneven corners, a different set per book. */
+  .desk-books .book { border-radius: 5px 8px 4px 3px / 4px 6px 3px 5px; }
+  .desk-books .book:nth-child(2n) { border-radius: 7px 4px 5px 4px / 5px 7px 4px 3px; }
+  .desk-books .book:nth-child(3n) { border-radius: 4px 7px 3px 5px / 7px 4px 5px 4px; }
+  .desk-books .book :global(.spine-mark) { position: absolute; left: 50%; bottom: .6rem; width: .95rem; height: .95rem; transform: translateX(-50%); color: color-mix(in srgb, var(--hue) 85%, var(--ink)); stroke-width: 1.8; }
+  .desk-books .book.is-out { transform: translateY(-1.1rem); box-shadow: 0 18px 16px -12px rgba(0,0,0,.4); }
+  /* One book per theme (the middle one) leans on its right-hand neighbour, pivoting on
+     its right corner like a real book; the margin leaves room for the tilt. Pulled out, it stands up straight. */
+  .desk-books .book.is-leaning { --lean: 5deg; margin-right: calc(var(--bh) * .087 - .25rem); transform-origin: bottom right; transform: rotate(var(--lean)); }
+  .desk-books .book.is-leaning:hover { transform: rotate(var(--lean)) translateY(-.3rem); }
+  .desk-books .book.is-leaning.is-out { transform: translateY(-1.1rem); }
+  /* Theme names, hand-lettered under the plank like labels someone wrote on the shelf. */
+  .desk-label { position: absolute; left: 0; right: 0; bottom: -2.85rem; text-align: center; font-family: var(--font-hand); font-size: 1.25rem; font-weight: 700; line-height: 1; color: var(--hue); transform: rotate(-2deg); }
+  .desk-group:nth-child(2) .desk-label { transform: rotate(1.5deg); }
+  .desk-group:nth-child(3) .desk-label { transform: rotate(-1deg); }
+
+  /* "pull one out": a margin note in the hero's voice, under the end of the shelf,
+     its arrow curling back up at the books. Gone once a book has been pulled. */
+  .desk-hint { position: relative; z-index: 2; flex: none; width: 0; align-self: flex-end; }  /* above the plank, so the arrow tip can cross its edge */
+  .desk-hint-in { position: absolute; left: -2rem; top: -.35rem; display: flex; align-items: flex-start; color: var(--coral); white-space: nowrap; pointer-events: none; transition: opacity .4s ease; }
+  .desk-hint :global(.desk-hint-arrow) { width: 3rem; height: 2.3rem; flex: none; stroke-width: 2; transform: rotate(196deg) translateY(.2rem); }
+  .desk-hint .hand { margin: 1.05rem 0 0 .05rem; font-size: 1.3rem; transform: rotate(-4deg); }
+  .desk.is-used .desk-hint-in { opacity: 0; }
+  @media (min-width: 640px) { .desk { padding-bottom: 2.3rem; } }  /* room for the note */
+  @media (max-width: 639px) { .desk-hint { display: none; } }
+
+  /* The open book: two pages and a soft gutter. */
+  /* Page edges: two thin layers peeking out at the outer left and right edges (and
+     under the foot on phones), instead of a drop shadow. Each layer is a paper fill
+     over a slightly bigger outline, stacked with box-shadows. */
+  .spread { --pages: -3px 2px 0 0 var(--paper-2), 3px 2px 0 0 var(--paper-2), -3px 2px 0 1.5px var(--border), 3px 2px 0 1.5px var(--border), -6px 4px 0 0 var(--paper-2), 6px 4px 0 0 var(--paper-2), -6px 4px 0 1.5px var(--border), 6px 4px 0 1.5px var(--border); }
+  .spread { position: relative; display: grid; grid-template-columns: 1fr 1fr; min-height: 15rem; color: var(--ink); text-decoration: none; background: var(--paper-2); border: 1.5px solid var(--border); border-radius: 14px 7px 12px 9px / 9px 12px 7px 14px; box-shadow: var(--pages); transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+  .spread:hover { color: var(--ink); transform: translateY(-3px); }
+  .spread::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 2.4rem; transform: translateX(-50%); background: linear-gradient(90deg, transparent, rgba(0,0,0,.08) 45%, rgba(0,0,0,.13) 50%, rgba(0,0,0,.08) 55%, transparent); pointer-events: none; }
+  .page { position: relative; display: flex; flex-direction: column; gap: .7rem; padding: 1.4rem 1.5rem; min-width: 0; }
+  .page--l { border-right: 1.5px solid var(--line); }
+  .page--r { padding-right: 2.9rem; }  /* clear of the ribbon */
+  /* A bookmark ribbon in the pulled book's own spine colour, hanging over the top edge. */
+  .sp-ribbon { position: absolute; top: -.35rem; right: 1.1rem; z-index: 1; width: 1rem; height: 3.5rem; overflow: visible; }
+  .sp-ribbon path { fill: color-mix(in srgb, var(--hue) var(--ribbon-mix, 29%), var(--paper-2)); stroke: var(--border); stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: fill .3s ease; }
+  .sp-kicker b { font-weight: 600; color: var(--hue); }
+  .sp-kicker { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .sp-title { font-family: var(--font-display); font-size: clamp(1.3rem, 2.1vw, 1.6rem); line-height: 1.12; }
+  .sp-dek { font-size: 1rem; color: var(--ink-soft); }
+  .sp-dek:empty { display: none; }
+  .sp-deco { align-self: center; margin-block: auto; line-height: 0; color: var(--ink-faint); }
+  .sp-deco :global(.doodle) { width: 3.2rem; height: 3.2rem; stroke-width: 1.3; }
+  .sp-deco.is-hidden { display: none; }
+  .sp-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: .84rem; color: var(--ink-soft); }
+  .sp-go { display: inline-flex; align-items: center; gap: .3rem; font-size: .9rem; font-weight: 500; color: var(--hue); }
+  .sp-go :global(.doodle) { width: 1rem; height: 1rem; stroke-width: 2; transition: transform .2s ease; }
+  .spread:hover .sp-go :global(.doodle) { transform: translateX(4px); }
+  .spread.is-turning .page { animation: page-in .35s ease both; }
+  .spread.is-turning .page--r { animation-delay: .06s; }
+  @keyframes page-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+
+  /* Phones: slimmer spines so all nine fit on one plank; the open book becomes one page. */
+  @media (max-width: 639px) {
+    .desk-row { gap: .6rem; padding: 0 .4rem; }
+    .desk-books { gap: .2rem; }
+    .desk-books .book { --bw: 2.15rem !important; min-width: 1.75rem; font-size: .8rem; padding-inline: .2rem; }
+    .spread { grid-template-columns: 1fr; min-height: 0; }
+    .spread::before { display: none; }
+    .page--l { border-right: 0; padding-bottom: 0; }
+    .page--r { padding-top: .8rem; }
+    .sp-deco { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .desk-books .book, .spread { transition: none; }
+    .spread.is-turning .page { animation: none; }
+  }
+</style>

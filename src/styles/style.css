@@ -19,15 +19,15 @@
   --sand-2: #e4dcc2;                /* pressed: tags, chips */
   --ink: #060606;
   --ink-soft: rgba(6, 6, 6, .72);
-  --ink-faint: rgba(6, 6, 6, .5);
+  --ink-faint: rgba(6, 6, 6, .6);    /* small meta text: ≥ 5:1 on paper and sand */
   --line: rgba(6, 6, 6, .12);
-  --coral: #d9573f;                 /* accent for text */
+  --coral: #c4452e;                 /* accent for text: ≥ 4.5:1 on paper and white */
   --coral-soft: #fc9073;            /* accent for hover/decor */
   --yellow: #ffda3f;                /* highlighter, sticky notes */
   --hl: rgba(255, 218, 63, .55);
   --sticky-ink: #2a2610;
   --blue: #2f5bd8;
-  --teal: #1a9a86;
+  --teal: #127c6b;                  /* ≥ 4.5:1 on paper and white */
   --violet: #7856f0;
   --land-1: #b9c98f;                /* footer hills */
   --land-2: #94aa6b;
@@ -59,7 +59,7 @@
 [data-theme="dark"] {
   color-scheme: dark;
   --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
-  --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .5); --line: rgba(242, 237, 227, .14);
+  --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .58); --line: rgba(242, 237, 227, .14);
   --border: rgba(242, 237, 227, .55);
   --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
   --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
@@ -72,7 +72,7 @@
   :root:not([data-theme="light"]) {
   color-scheme: dark;
     --paper: #14161c; --paper-2: #1d2029; --sand: #1a2130; --sand-2: #2a3148;
-    --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .5); --line: rgba(242, 237, 227, .14);
+    --ink: #f2ede3; --ink-soft: rgba(242, 237, 227, .74); --ink-faint: rgba(242, 237, 227, .58); --line: rgba(242, 237, 227, .14);
     --border: rgba(242, 237, 227, .55);
     --coral: #ff9a7f; --coral-soft: #ff9a7f; --yellow: #f4cf4d; --hl: rgba(244, 207, 77, .28);
     --blue: #8fa9ff; --teal: #4fd0b8; --violet: #b7a4ff;
@@ -211,8 +211,8 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 
 /* ---------- 7. Hero + deck --------------------------------------------- */
 .hero { padding-block: var(--space-4) var(--space-5); display: grid; gap: var(--space-5); align-items: center; }
-@media (min-width: 840px) { .hero { grid-template-columns: 1.15fr .85fr; gap: var(--space-5); padding-block: var(--space-5) var(--space-6); min-height: calc(100vh - 8rem); } }
-.hero-kicker { font-family: var(--font-sub); font-weight: 300; font-size: 1.1rem; color: var(--ink-faint); margin: 0 0 .5rem; letter-spacing: -.01em; }
+@media (min-width: 840px) { .hero { grid-template-columns: 1.15fr .85fr; gap: var(--space-5); padding-block: var(--space-5) var(--space-4); } }
+.hero-kicker { font-family: var(--font-sub); font-weight: 400; font-size: 1.1rem; color: var(--ink-faint); margin: 0 0 .5rem; letter-spacing: -.01em; }
 .hero h1 { margin-bottom: 1rem; }
 .hero-role { margin: 0 0 1.25rem; }
 .hero-role .rotator { display: inline-grid; vertical-align: top; text-align: left; }
@@ -263,7 +263,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .peek-chrome i:nth-child(1) { background: var(--coral-soft); }
 .peek-chrome i:nth-child(2) { background: var(--yellow); }
 .peek-chrome i:nth-child(3) { background: var(--teal); }
-.peek-url { margin-left: .45rem; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .06em; color: var(--ink-faint); }
+.peek-url { margin-left: .45rem; font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em; color: var(--ink-faint); }
 .peek-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; }
 .peek-card .sk { width: 100%; aspect-ratio: 16 / 10; display: block; }
 .peek-foot { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .45rem .65rem; font-size: .78rem; color: var(--ink-soft); }
@@ -271,7 +271,13 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 @media (hover: none), (max-width: 639px) { .peek-card { display: none; } }
 
 /* ---------- 8. Logo marquee -------------------------------------------- */
-.logos { padding-block: var(--space-3) var(--space-5); }
+.logos { padding-block: var(--space-3) calc(var(--space-4) + var(--wave-h)); }   /* the bottom holds the next band's wave */
+/* Homepage cards (projects, writing): one column, two from 640, three from 1100 (same breakpoints as .grid--3). */
+.home-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4) var(--space-3); }
+@media (min-width: 640px) { .home-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .home-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* In two columns, a third card takes the whole row rather than sitting alone. */
+@media (min-width: 640px) and (max-width: 1099px) { .home-grid > :nth-child(3):last-child { grid-column: 1 / -1; } }
 .logos-head { text-align: center; margin-bottom: 1.4rem; }
 .logos-head .eyebrow { justify-content: center; margin-bottom: .7rem; max-width: none; }
 .logos-head .eyebrow::before { display: none; }
@@ -438,7 +444,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 .ticket-main { display: grid; grid-template-columns: 1fr 1.5rem; grid-template-rows: auto auto; gap: .7rem .55rem; padding: .7rem .55rem .95rem .7rem; }
 .ticket-main .video { grid-column: 1; grid-row: 1; }
 .ticket-main h3 { grid-column: 1; grid-row: 2; font-size: 1.2rem; margin: 0; padding: 0 2.8rem 0 .25rem; }
-.ticket-admit { grid-column: 2; grid-row: 1 / span 2; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-faint); border-left: 1.5px dashed var(--line); padding-left: .3rem; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.ticket-admit { grid-column: 2; grid-row: 1 / span 2; writing-mode: vertical-rl; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); border-left: 1.5px dashed var(--line); padding-left: .3rem; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
 .ticket-stub { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: .75rem; row-gap: .3rem; padding: .85rem 1rem .9rem .9rem; border-top: 1.5px dashed var(--border); background: color-mix(in srgb, var(--accent) 11%, var(--paper-2)); }
 .ticket-stub::before, .ticket-stub::after { content: ""; position: absolute; top: -.72rem; width: 1.35rem; height: 1.35rem; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--border); }
 .ticket-stub::before { left: -.75rem; }
@@ -1008,14 +1014,14 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 @keyframes m-fade { from { opacity: .35; } to { opacity: 1; } }
 
 /* ---------- 15. Footer ------------------------------------------------------- */
-.site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-5); color: var(--ink);
+.site-footer { position: relative; background: var(--sand); margin-top: var(--wave-h); padding-top: var(--space-4); color: var(--ink);
   /* Clip only sideways: the edge plants and grass bleed past the viewport and
      would add horizontal scroll. overflow-y stays visible so the wave crest,
      which sits above the footer's top edge, is not cut off. */
   overflow-x: clip; overflow-y: visible; }
 .site-footer .wave { --wave-fill: var(--sand); }
 .footer-inner { position: relative; z-index: 4; text-align: center; padding-bottom: clamp(14rem, 34vw, 22rem); }
-.footer-inner .eyebrow { justify-content: center; }
+.footer-inner .eyebrow { justify-content: center; max-width: none; }  /* p caps at 64ch, which pushed the centred label left */
 .footer-inner .eyebrow::before { display: none; }
 .footer-inner h2 { font-size: clamp(2.4rem, 6vw, 4.2rem); margin-bottom: .8rem; }
 .footer-inner .sub { margin: 0 auto 1.6rem; max-width: 34rem; color: var(--ink-soft); }
@@ -1110,7 +1116,7 @@ mark.hl, .hl { background: linear-gradient(104deg, transparent .5%, var(--hl) 2.
 /* "locate me" nudge, same voice as the hero's "that's me"; gone while the note is open */
 .pin-hint { position: absolute; left: calc(100% + .1rem); top: -1.1rem; display: flex; align-items: flex-start; gap: 0; pointer-events: none; color: var(--coral); white-space: nowrap; transition: opacity .25s ease; }
 .pin-hint-arrow { width: 2.5rem; height: 1.9rem; stroke-width: 2; transform: scaleX(-1) rotate(-20deg) translateY(.55rem); flex: none; }
-.pin-hint .hand { font-size: 1.1rem; display: inline-block; transform: rotate(-6deg); margin-top: -.15rem; }
+.pin-hint .hand { font-size: 1.2rem; display: inline-block; transform: rotate(-6deg); margin-top: -.15rem; }
 .pin.is-open .pin-hint { opacity: 0; }
 .pin-note { position: absolute; bottom: calc(100% + .75rem); left: 50%; width: max-content; max-width: min(15rem, 80vw); transform: translateX(-50%); animation: pin-pop .35s cubic-bezier(.2,.8,.2,1) both; }
 .pin-note .sticky { margin: 0; max-width: none; font-size: 1.08rem; line-height: 1.2; padding: .65rem .85rem .75rem; color: var(--sticky-ink); }
