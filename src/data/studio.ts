@@ -31,6 +31,23 @@ export interface StudioPiece {
 
 export const studio: StudioPiece[] = [
   {
+    slug: 'image-generation',
+    title: 'Designing the image generation wait in Strive',
+    context: 'Strivelabs · Image generation',
+    frame: 'Chat / Generating',
+    hook: 'A wait the model can’t measure, told by the Strive mark drawing itself.',
+    tags: ['Motion', 'UX case study'],
+    accent: 'violet',
+    preview: {
+      kind: 'video',
+      src: '/images/experiments/image-generation/loop.mp4',
+      poster: '/images/experiments/image-generation/loop-poster.webp',
+      width: 960,
+      height: 540,
+      alt: 'From the live Strive chat: particles lay the Strive mark down in its orange and magenta gradient as the percent climbs from 41% to 59%, the finished mark rests at 93%, then it goes out of focus as the generated launch creative comes into focus.',
+    },
+  },
+  {
     slug: 'datagrid',
     featured: true,
     title: 'Designing the datagrid in Strive',

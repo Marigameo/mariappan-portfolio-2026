@@ -1,0 +1,168 @@
+---
+/* The Brand wait, live on the page (engine: src/scripts/brand-wait.ts).
+   mode="run": simulated generations, one prompt after another, on a button.
+   mode="scrub": a range input drives the estimate, to show the stroke order.
+   Both are sized to the text column, capped at `max` px, and keep a fixed
+   height, so nothing below moves when the image takes its own shape. */
+import Icon from '../Icon.astro';
+
+interface Props {
+  mode?: 'run' | 'scrub';
+  /** The stage's largest side, in px. */
+  max?: number;
+  caption?: string;
+  /** Start value for the scrubber, 0 to 100. */
+  value?: number;
+}
+const { mode = 'run', max = 440, caption, value = 55 } = Astro.props;
+const label = mode === 'run'
+  ? 'A simulated image generation. Particles in the Strive gradient lay the Strive mark down, dim at first and brighter as the estimate climbs; when the image is ready the mark goes out of focus as the image comes into focus.'
+  : 'The Strive mark at the estimate set by the slider below: the first hook is laid down by 40%, the bar by 70%, and the second hook by 100%.';
+---
+<figure class:list={['bw', `bw--${mode}`]} data-bw={mode} data-max={max} style={`--bw-max:${max}px`}>
+  <div class="bw-frame">
+    <div class="bw-well" data-bw-well>
+      <div class="bw-stage" data-bw-stage role="img" aria-label={label}>
+        <div class="bw-field" data-bw-field>
+          <canvas class="bw-soft" data-bw-soft aria-hidden="true"></canvas>
+          <canvas class="bw-main" data-bw-main aria-hidden="true"></canvas>
+        </div>
+        {mode === 'run' && <img class="bw-img" data-bw-img alt="" decoding="async" />}
+        <span class="bw-chip" data-bw-chip aria-hidden="true"><i></i><span data-bw-pct>0%</span></span>
+        {mode === 'run' && (
+          <a class="bw-dl" data-bw-dl href="#" download aria-label="Download the image">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" /></svg>
+          </a>
+        )}
+      </div>
+    </div>
+
+    {mode === 'run'
+      ? (
+        <div class="bw-bar">
+          <p class="bw-meta">
+            <span class="bw-prompt" data-bw-prompt>“Dunes at golden hour”</span>
+            <span class="bw-status" data-bw-status>generating · 0.0s</span>
+          </p>
+          <button type="button" class="bw-go" data-bw-go><Icon name="sparkles" />Generate again</button>
+          <p class="sr-only" aria-live="polite" data-bw-live></p>
+        </div>
+      )
+      : (
+        <div class="bw-scrub">
+          <label class="bw-range-label" for="bw-range">Estimate</label>
+          <input id="bw-range" class="bw-range" data-bw-range type="range" min="0" max="100" step="1" value={value} />
+          <ol class="bw-legs" aria-hidden="true">
+            <li style="--w:40"><b>First hook</b><span>0 → 40%</span></li>
+            <li style="--w:30"><b>Bar</b><span>40 → 70%</span></li>
+            <li style="--w:30"><b>Second hook</b><span>70 → 100%</span></li>
+          </ol>
+        </div>
+      )}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  import { mountBrandWait } from '../../scripts/brand-wait';
+  mountBrandWait();
+</script>
+
+<style>
+  .bw { margin: 0; max-width: none; }
+  .bw-frame {
+    --bw-ground: #fcfbf9;
+    --bw-edge: rgba(6, 6, 6, .08);
+    --bw-chip: rgba(255, 255, 255, .92);
+    position: relative;
+    padding: clamp(.75rem, 3vw, 1.4rem);
+    border: 1.5px solid var(--border);
+    border-radius: 10px 5px 12px 6px / 6px 12px 5px 10px;
+    background: var(--paper-2);
+    box-shadow: 4px 4px 0 var(--shadow-ink);
+  }
+  :global([data-theme='dark']) .bw-frame { --bw-ground: #16181e; --bw-edge: rgba(242, 237, 227, .1); --bw-chip: rgba(36, 38, 46, .92); }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .bw-frame { --bw-ground: #16181e; --bw-edge: rgba(242, 237, 227, .1); --bw-chip: rgba(36, 38, 46, .92); }
+  }
+
+  /* The well keeps the square’s height, so the page never moves under the reader;
+     the stage reshapes about its centre, as the mark goes out of focus. */
+  .bw-well { display: flex; justify-content: center; align-items: center; height: var(--bw-s, min(var(--bw-max), 80vw)); }
+  .bw-stage {
+    position: relative; overflow: hidden; isolation: isolate;
+    width: var(--bw-s, 100%); height: var(--bw-s, 100%);
+    border: 1px solid var(--bw-edge); border-radius: 14px;
+    background: var(--bw-ground);
+    touch-action: pan-y; cursor: crosshair;
+  }
+  .bw-stage.is-moving { transition: width .6s cubic-bezier(.2, .7, .2, 1), height .6s cubic-bezier(.2, .7, .2, 1); }
+  .bw-field { position: absolute; left: 50%; top: 50%; width: var(--bw-s); height: var(--bw-s); transform: translate(-50%, -50%); will-change: filter, opacity; }
+  .bw-field canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; margin: 0; border: 0; border-radius: 0; }
+  .bw-soft { opacity: .34; }
+  :global([data-theme='dark']) .bw-soft { opacity: .5; }
+  @media (prefers-color-scheme: dark) { :global(:root:not([data-theme='light'])) .bw-soft { opacity: .5; } }
+  .bw-stage .bw-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; margin: 0; border: 0; border-radius: 0; opacity: 0; }
+
+  .bw-chip {
+    position: absolute; left: 50%; bottom: 5.5%; z-index: 2;
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .22rem .6rem .22rem .5rem;
+    font-family: var(--font-mono); font-size: .7rem; font-variant-numeric: tabular-nums; color: var(--ink);
+    background: var(--bw-chip); border: 1px solid var(--bw-edge); border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+    transform: translateX(-50%);
+    transition: opacity .3s ease, transform .3s ease;
+    pointer-events: none;
+  }
+  .bw-chip i { width: 6px; height: 6px; border-radius: 50%; background: #f97316; }
+  .bw-chip.is-hidden { opacity: 0 !important; transform: translate(-50%, 4px); }
+
+  .bw-dl {
+    position: absolute; top: .6rem; right: .6rem; z-index: 3;
+    display: grid; place-items: center; width: 2.1rem; height: 2.1rem;
+    border-radius: 50%; color: #111; background: rgba(255, 255, 255, .9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    visibility: hidden; opacity: 0; transform: scale(.9);
+    transition: opacity .25s ease, transform .25s ease, visibility 0s .25s;
+  }
+  .bw-dl svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .is-done .bw-dl { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+  .bw-dl:hover { background: #fff; }
+  .bw-dl:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .bw-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1rem; max-width: var(--bw-max); margin: 1rem auto 0; }
+  .bw-meta { display: grid; gap: .1rem; margin: 0 !important; min-width: 0; }
+  .bw-prompt { font-size: .98rem; color: var(--ink); }
+  .bw-status { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .06em; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+  .bw-go {
+    display: inline-flex; align-items: center; gap: .45rem;
+    padding: .5rem .95rem; font: inherit; font-size: .9rem; color: var(--ink);
+    background: var(--paper); border: 1.5px solid var(--border); border-radius: 999px;
+    box-shadow: 2px 2px 0 var(--shadow-ink); cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .bw-go :global(.doodle) { width: 1rem; height: 1rem; color: var(--coral); }
+  .bw-go:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--shadow-ink); }
+  .bw-go:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--shadow-ink); }
+  .bw-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .bw-scrub { display: grid; gap: .45rem; max-width: var(--bw-max); margin: 1.1rem auto 0; }
+  .bw-range-label { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .bw-range { width: 100%; margin: 0; accent-color: #f34d13; cursor: pointer; }
+  .bw-legs { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .bw-legs li { flex: var(--w) 1 0; min-width: 0; margin: 0; padding-top: .45rem; border-top: 3px solid; font-size: .8rem; line-height: 1.3; color: var(--ink-soft); }
+  .bw-legs li:nth-child(1) { border-color: #f34d13; }
+  .bw-legs li:nth-child(2) { border-color: #f6a509; }
+  .bw-legs li:nth-child(3) { border-color: #b4238f; }
+  .bw-legs b { display: block; font-weight: 500; color: var(--ink); }
+  .bw-legs span { font-family: var(--font-mono); font-size: .66rem; color: var(--ink-faint); }
+
+  .bw figcaption { margin-top: .9rem; font-size: .9rem; line-height: 1.45; color: var(--ink-faint); text-align: center; text-wrap: balance; }
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bw-stage.is-moving { transition: none; }
+    .bw-go, .bw-chip, .bw-dl { transition: none; }
+  }
+</style>

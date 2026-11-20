@@ -1,0 +1,220 @@
+---
+/* The studio's image-generation story, told as a UX case study (the ux-story
+   format, .claude/skills/ux-story/), with two live demos instead of a hero
+   video: the Brand wait runs on the page (src/components/studio/BrandWait.astro,
+   engine in src/scripts/brand-wait.ts). Source: the build journal in
+   side-builds/strivelabs-image-gen-loading/JOURNAL.md (rounds 0 to 9, all on
+   16 Nov 2026) and its process/ snapshots. Media lives in
+   public/images/experiments/image-generation/: filmstrips composed from the
+   journal's contact sheets, plus two plain shots. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import UxStory from '../../../components/ux/UxStory.astro';
+import UxSection from '../../../components/ux/UxSection.astro';
+import UxShot from '../../../components/ux/UxShot.astro';
+import UxCompare from '../../../components/ux/UxCompare.astro';
+import BrandWait from '../../../components/studio/BrandWait.astro';
+
+const img = (f: string) => `/images/experiments/image-generation/${f}`;
+
+const steps = [
+  { b: 'Feasibility first.', t: 'Read the chat code: a placeholder can cover the whole wait, on the client alone.' },
+  { b: 'Five dot canvases.', t: 'One shimmer and one progress cue each, and no status copy.' },
+  { b: 'The brand idea.', t: 'My turn away from the brief: the Strive mark, gathered by particles.' },
+  { b: 'Four tuning rounds.', t: 'A solid mark, dim to bright, a focus hand-over, a warm glow.' },
+  { b: 'Library, then chat.', t: 'One shared component with a Storybook story, wired into the chat.' },
+];
+
+const stats = [
+  { from: '1', to: '0', text: 'blank frames at the hand-over, across 84 frames sampled around the swap.' },
+  { from: '6', to: '1', text: 'options on the board, and the one we shipped. The rest stay as the record.' },
+  { num: '13', text: 'Storybook variants, from a slow network and a long wait to no image and reduced motion.' },
+];
+
+// Each lesson: a title and one short line, the crux in <strong>.
+const lessons = [
+  { title: 'A long wait is room to play', text: 'Don’t leave people staring. <strong>Let it feel like an image being made.</strong>' },
+  { title: 'Unknown shape, generic form', text: 'Don’t guess the shape. <strong>Spend the gap on the brand.</strong>' },
+  { title: 'Engaging, never distracting', text: '<strong>Don’t overdo it.</strong> It has to gel with the chat around it.' },
+  { title: 'Special has to serve', text: '<strong>The details are the point</strong>: the wait, honest numbers, play only on hover.' },
+];
+---
+<StudioLayout
+  title="Designing the image generation wait in Strive"
+  slug="image-generation"
+  description="A UX case study with a live playground: the wait for a generated image in Strive, where the Strive mark draws itself in particles and then goes out of focus as the image comes into focus."
+  ogDescription="The wait for a generated image in Strive: the mark draws itself, then goes out of focus as your image comes into focus. Try it on the page."
+  eyebrow="Strivelabs · Image generation"
+  facts={[
+    { label: 'My part', value: 'UX and motion, paired with Claude Code' },
+    { label: 'Built with', value: 'Canvas 2D · React · Storybook' },
+    { label: 'Timeline', value: '16 Nov 2026 · 10 rounds' },
+  ]}
+  keywords="UX case study, image generation, loading animation, progress indicator, motion design, particles, canvas, brand identity, perceived performance, generative AI, design engineering"
+>
+  <Fragment slot="lede">Generating an image takes 5 to 60 seconds, and the model reports no progress. I wanted that wait to feel like Strive: creative, yet balanced. So the mark draws itself while you wait, then <mark class="hl">goes out of focus as your image comes into focus</mark>.</Fragment>
+
+  <BrandWait
+    slot="hero"
+    caption="Live, not a recording. Move over it to push the particles, click to hide the percent, and generate again for a new shape."
+  />
+
+  <UxStory>
+    <UxSection
+      id="problem"
+      num="01"
+      kicker="The problem"
+      title="A grey square, then a pop"
+      notes={[
+        { b: 'No progress to show.', t: 'The model reports none, so any progress is an estimate from elapsed time.' },
+        { b: 'No shape to hold.', t: 'The chat doesn’t know the image’s shape until it arrives.' },
+        { b: 'Up to a minute.', t: 'The motion has to hold up for 60 seconds without wearing thin.' },
+        { b: 'No flicker.', t: 'The image should arrive progressively, never all at once.' },
+      ]}
+    >
+      <Fragment slot="call">Image generation had just landed in the chat, and it worked. The wait was a line of status text, a grey square, then the image all at once. <strong>For up to a minute, the wait is the experience.</strong></Fragment>
+      <UxShot
+        src={img('today.webp')}
+        width={1248}
+        height={471}
+        alt="Four frames of the old behaviour: at 4.0s only the text “generate_image…”; at 8.2s an empty grey square while the file downloads; at 8.3s and 9.0s a dusk landscape, there all at once."
+        caption="Where it started: status text, a grey square, then the whole image in one frame."
+      />
+    </UxSection>
+
+    <UxSection id="process" num="02" kicker="The process" title="A board before a pick">
+      <Fragment slot="call">I designed it in code, on a board where every option plays the same simulated generation. Ten rounds, each logged in my own words. I made the calls; Claude Code proposed, built and checked. <strong>The board made changing my mind cheap.</strong></Fragment>
+      <ol class="ux-steps">
+        {steps.map((s) => <li><strong>{s.b}</strong><span>{s.t}</span></li>)}
+      </ol>
+      <UxShot
+        src={img('board.webp')}
+        width={760}
+        height={737}
+        alt="The image generation board at 5.6s: a toolbar for wait, image, shape, network, outcome, motion and theme, then dot-canvas options at 45% (a rising level, scattered patches, a settling mesh, a circle spreading from the centre, rows drawn top to bottom) beside Today, which still shows only “generate_image…”."
+        caption="Five ways to read progress in dots: a level, density, order, reach and lines. Honest, but anonymous."
+      />
+    </UxSection>
+
+    <UxSection
+      id="brand"
+      num="03"
+      kicker="Decision · identity"
+      title="Break my own brief"
+      notes={[
+        { b: 'In the brand’s colours.', t: 'Particles take the logo’s gradient, over a soft, blurred copy of the mark.' },
+        { b: 'Something to play with.', t: 'The pointer pushes particles aside. A click sends a ring through them.' },
+        { b: 'A percent, but optional.', t: 'A small chip counts up, and a click on the surface hides it.' },
+        { b: 'Shape held back.', t: 'The box stays square, and takes the image’s shape only as it opens.' },
+      ]}
+    >
+      <blockquote slot="quote" class="ux-quote">“I want to somehow innovate and show something peculiar and unusual. It should be creative and polished.”<cite>Me, round 2</cite></blockquote>
+      <Fragment slot="call">I’d asked for a shimmering dot canvas with no status copy. The dots were honest, but they could have been anyone’s. <strong>So I broke my own brief</strong>: the Strive mark, gathered by particles in its own gradient.</Fragment>
+      <UxShot
+        src={img('brand-play.webp')}
+        width={1156}
+        height={410}
+        alt="Three dark frames of the first Brand pass: at 6.0s particles in magenta, orange and amber gather into the Strive mark over its blurred copy, with a 47% chip; at 8.6s the pointer has pushed a hole through the first hook; at 9.7s the chip has faded after a click."
+        caption="Push it and it parts. Click it and the percent steps aside."
+      />
+    </UxSection>
+
+    <UxSection
+      id="stroke"
+      num="04"
+      kicker="Decision · progress"
+      title="A brush stroke as the progress bar"
+      notes={[
+        { b: 'Stroke order.', t: 'The first hook by 40%, the bar by 70%, then the second hook. A percent is a place on the mark.' },
+        { b: 'Dim to bright.', t: 'The mark starts at about 28% strength and climbs, but never to full.' },
+        { b: 'Never finishes alone.', t: 'The estimate slows near the end. Only the image arriving completes it.' },
+      ]}
+    >
+      <Fragment slot="call">Built from dots, the mark looked off: bright specks and white gaps. So a particle is a dot only in flight. <strong>Once it lands, it opens a window onto the real artwork</strong>, laid down in the order you’d draw it.</Fragment>
+      <BrandWait mode="scrub" max={380} value={55} caption="Drag the estimate. Particles land in stroke order, and peel away again if you drag back." />
+      <UxCompare
+        labels={['Dots', 'Surface']}
+        before={{ src: img('dots.webp'), width: 1160, height: 376, alt: 'The first pass at 41%, 57% and 79%: the mark is made of separate bright dots in the logo’s gradient, with the background showing between them.' }}
+        after={{ src: img('solid.webp'), width: 1160, height: 376, alt: 'The shipped build at 41%, 61% and 77%: the first hook is a solid surface by 41%, the bar is filling from the left at 61%, and at 77% the second hook is being laid down below a solid bar.' }}
+        caption="The same moments, two builds. Landed dots widen until they meet, so the mark reads as one surface."
+      />
+    </UxSection>
+
+    <UxSection
+      id="focus"
+      num="05"
+      kicker="Decision · the ending"
+      title="Let the image be the payoff"
+      notes={[
+        { b: 'Out of focus.', t: 'The mark blurs into its soft copy and fades over 0.8s.' },
+        { b: 'Into focus.', t: 'The image fades in blurred and slightly enlarged, then sharpens and settles over 1.5s.' },
+        { b: 'A warm glow.', t: 'A soft orange light gathers with the mark: a tint, not a colour.' },
+        { b: 'A cost I kept.', t: 'Finishing the mark adds 1 to 2 seconds before the image. Worth it.' },
+      ]}
+    >
+      <Fragment slot="call">A complete, full-brightness logo felt like the natural climax. Then the image cut in, and that was the jerk. So the mark tops out at three-quarters, finishes, rests 0.3s, and <strong>goes out of focus as the image comes into focus</strong>.</Fragment>
+      <UxShot
+        src={img('ending.webp')}
+        width={1576}
+        height={338}
+        alt="Five frames from 8.4s to 11.3s: particles finish the second hook at 92%; the whole mark rests at 100% in a soft orange glow; the box takes the image’s wide shape as the mark blurs over a soft purple image; the dusk landscape is still blurred; then it is sharp."
+        caption="One plane goes out of focus as the other comes in."
+      />
+    </UxSection>
+
+    <UxSection
+      id="chat"
+      num="06"
+      kicker="Decision · into the product"
+      title="One wait across two streams"
+      notes={[
+        { b: 'One shared component.', t: 'GeneratedImage, in our UI library, with a Storybook story for each case.' },
+        { b: 'Picks up mid-flight.', t: 'The image block takes the wait’s start time and puts every particle where it would be by now.' },
+        { b: 'History stays still.', t: 'A reloaded chat skips the wait and simply fades the image in.' },
+        { b: 'Download, at last.', t: 'Every generated image gets a download action.' },
+      ]}
+    >
+      <Fragment slot="call">A generated image spans two streams: the tool call, then the image block. Nothing in between stands for the image. So a placeholder waits at the foot of the chat and <strong>hands its particles to the image block mid-flight</strong>.</Fragment>
+      <UxShot
+        src={img('live.mp4')}
+        video={{ src: img('live.mp4'), poster: img('live-poster.webp'), autoplay: true }}
+        width={1400}
+        height={1038}
+        alt="Screen recording of the live Strive chat. The prompt “Generate a image creative for my new campaign, AI-powered sales intelligence product launch” is sent. Once the agent calls the image tool, a dotted placeholder opens under its trace, and particles lay the Strive mark down while the percent climbs from 14% to 87%, with the pointer pushing through them. The mark finishes, goes out of focus, and the launch creative, “From insight to action.”, comes into focus with a download button in its corner."
+        caption="The live chat, with the idle stretches cut: half a minute of the agent planning before it calls the tool, and ten seconds of a slow estimate."
+      />
+      <UxCompare
+        labels={['First pass', 'Shipped']}
+        before={{ src: img('handover-before.webp'), width: 814, height: 296, alt: 'The first hand-over: at 5.6s the image block’s box is a small square in the corner with a tiny mark; at 5.9s and 6.8s the box is full size but the mark stays small in the middle.' }}
+        after={{ src: img('handover-after.webp'), width: 814, height: 296, alt: 'The shipped hand-over: the placeholder at 5.8s and the image block at 6.6s and 7.4s show the mark at the same size and place, finishing from 45% to 99%.' }}
+        caption="The first pass sized the mark to a box that didn’t exist yet. Now the swap can’t be seen."
+      />
+      <ul class="ux-stats">
+        {stats.map((s) => (
+          <li>
+            <span class="ux-stat-num">{s.num ?? <><s>{s.from}</s><Icon name="arrow-right" />{s.to}</>}</span>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <UxSection id="learned" num="07" kicker="What I learned" title="What I’d tell day-zero me">
+      <ul class="ux-lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{l.title}</h3>
+            <p set:html={l.text} />
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <blockquote class="closer">The mark keeps you company. The image is the payoff.</blockquote>
+  </UxStory>
+</StudioLayout>
+
+<style>
+  .closer { margin-top: var(--space-5); }
+  .ux-stats { margin-top: var(--space-3); }
+</style>
