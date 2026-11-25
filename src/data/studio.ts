@@ -40,11 +40,12 @@ export const studio: StudioPiece[] = [
     tags: ['UX case study', 'Dashboards'],
     accent: 'blue',
     preview: {
-      kind: 'image',
-      src: '/images/experiments/command-center/hero.webp',
-      width: 2000,
-      height: 986,
-      alt: 'The outreach command center in Strive: a Contacts by stage strip with Hot spotlit in a light orange wash, a pipeline bar, and new contacts each week as stacked bars.',
+      kind: 'video',
+      src: '/images/experiments/command-center/loop.mp4',
+      poster: '/images/experiments/command-center/loop-poster.webp',
+      width: 960,
+      height: 540,
+      alt: 'From the film: the outreach command center in Strive floats on warm paper under the headline “One strip leads”, then the view pushes into the Contacts by stage strip as the headline becomes “Hot stands out, quietly”, and AEO follows on the same kit.',
     },
   },
   {
