@@ -31,6 +31,24 @@ export interface StudioPiece {
 
 export const studio: StudioPiece[] = [
   {
+    slug: 'platform-polish',
+    featured: true,
+    title: 'Standardising the UX in Strive',
+    context: 'Strivelabs · Platform',
+    frame: 'Blogs / Details',
+    hook: 'Many ways to do one thing, cut to one polished pattern per bucket, so anyone can build at pace.',
+    tags: ['UX case study', 'Design system'],
+    accent: 'coral',
+    preview: {
+      kind: 'video',
+      src: '/images/experiments/platform-polish/loop.mp4',
+      poster: '/images/experiments/platform-polish/loop-poster.webp',
+      width: 960,
+      height: 540,
+      alt: 'From the product film: Campaigns in Strive floats on warm paper under the headline “Every record on one grid”, then the view pushes into the filter chip and the Columns menu as the headline becomes “Your filters, your columns”, and a campaign opens with its details beside the list.',
+    },
+  },
+  {
     slug: 'image-generation',
     title: 'Designing the image generation wait in Strive',
     context: 'Strivelabs · Image generation',

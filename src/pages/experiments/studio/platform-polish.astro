@@ -1,0 +1,379 @@
+---
+/* The studio's platform story, told as a UX case study (the ux-story format,
+   .claude/skills/ux-story/): one decision per section, a real screenshot for
+   each, a few short notes. Framing from Mari's own draft (25 Nov 2026): four
+   buckets, many ways to do one thing, one way per bucket. Sources:
+   side-builds/strivelabs-platform-ux/JOURNAL.md (Part A, lists and detail
+   pages, 7 to 9 Nov 2026, PR #2605; Part B, Visibility, 12 Nov) and its
+   process/ snapshots, plus Mari's current-product screenshots (25 Nov 2026,
+   Desktop/product-demo) for the "after" shots and the hero film. Media lives in
+   public/images/experiments/platform-polish/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import UxStory from '../../../components/ux/UxStory.astro';
+import UxSection from '../../../components/ux/UxSection.astro';
+import UxShot from '../../../components/ux/UxShot.astro';
+import UxCompare from '../../../components/ux/UxCompare.astro';
+import UxGallery from '../../../components/ux/UxGallery.astro';
+
+const img = (f: string) => `/images/experiments/platform-polish/${f}`;
+
+const drift = [
+  { src: img('drift-reports.webp'), width: 1600, height: 914, label: 'Reports', caption: 'A list, with a create form on top.', alt: 'The old Reports page: a large “Create a report” form with a title field, a prompt box and suggestion chips, then an “Active reports” list with All, Built-in and Custom filters.' },
+  { src: img('drift-skills.webp'), width: 1600, height: 914, label: 'Skills', caption: 'A grid of cards, with its own filters.', alt: 'The old Skills page: a Filters box with a search, a source picker and a sort control, then a three-column grid of skill cards, each with a name, a status pill, a two-line description and a slug.' },
+  { src: img('drift-routine.webp'), width: 1600, height: 914, label: 'Routine', caption: 'Details on a narrow page of their own.', alt: 'The old routine detail page, Weekly Traffic Comparison: an “All routines” back link, then a narrow centred card with an icon, title, description and Active pill, and a second card listing alert logic, sources, runs and where it delivers.' },
+];
+
+const plan = [
+  { src: img('plan-records.webp'), width: 1400, height: 851, label: 'System of records', caption: 'The DataGrid, for any record.', alt: 'Campaigns today: a Status filter chip under the search, the Columns menu open with Campaign pinned and four of five columns ticked, and rows with status, setup progress, owner and date.' },
+  { src: img('plan-listings.webp'), width: 1400, height: 851, label: 'Listings', caption: 'One list, with groups.', alt: 'Library today in its grid view: All files and Yours tabs, then tiles of uploaded files such as a robot avatar, an illustration, charts, a flow diagram and a PDF.' },
+  { src: img('plan-settings.webp'), width: 1400, height: 726, label: 'Settings', caption: 'Every control, in clear groups.', alt: 'Settings today: a side menu grouped into Account, Organisation and Billing, and Apps & Extensions with All, Connected and Marketplace tabs above cards for Ahrefs, Apify, Google Ads, Google Analytics and more, each marked Connected.' },
+];
+
+const steps = [
+  { b: 'Audit.', t: 'Find similar things that look different.' },
+  { b: 'Pick one way.', t: 'One standard pattern per job.' },
+  { b: 'Keep it only if it earns it.', t: 'It adds meaning or makes the job easier.' },
+  { b: 'Polish it.', t: 'Then make that one pattern look finished.' },
+];
+
+const searchOptions = [
+  { kicker: 'Tried', title: 'In the tab band', text: 'Looked congested.' },
+  { kicker: 'Turned down', title: 'Pill tabs', text: 'Linear was inspiration, not a copy.' },
+  { kicker: 'Tried', title: 'A strip of its own', text: 'Still felt heavy.' },
+  { kicker: 'Picked', title: 'In the page header', text: 'Beside the primary action. The band stays calm.', focus: true },
+];
+
+const blogOptions = [
+  { src: img('blog-opt-a.webp'), width: 1200, height: 1006, label: 'A · One card', caption: 'Everything in one card.', alt: 'Option A for the blog panel: a Blog tag and “Waiting for approval” status, then one card holding the title and link, keywords, a six-point outline and an activity list of refreshes and an outline, each with its status and time.' },
+  { src: img('blog-opt-b.webp'), width: 1200, height: 1006, label: 'B · Header and tabs', caption: 'Activity hides behind a tab.', alt: 'Option B: the title and link in a header with the status on the right, then Overview and Activity tabs, with keywords and the outline under Overview.' },
+  { src: img('blog-opt-c.webp'), width: 1200, height: 1006, label: 'C · Needs you first', caption: 'A banner for what’s waiting.', alt: 'Option C: a beige banner reading “A refresh is ready for your review, finished 2 hours ago” with a Review button, then the title, keywords, a collapsed outline and a history timeline.' },
+];
+
+const beige = [
+  { src: img('beige-toolbar-real.webp'), width: 1600, height: 416, label: 'The toolbar band', caption: 'Search and filters on beige.', alt: 'The Campaigns toolbar on a beige band: a search, a white tray with a “Status is any of Active, Draft” chip, and the Columns menu open over the first rows.' },
+  { src: img('beige-header-real.webp'), width: 1600, height: 175, label: 'A detail header', caption: 'Title and actions on beige.', alt: 'The beige header of the Competitor Analysis skill: the title, an Installed pill, a two-line description, view toggles, Copy and Add to chat.' },
+];
+
+const worst = [
+  { src: img('worst-routines.webp'), width: 1152, height: 404, label: 'Routines · worst case', caption: 'Long names, URLs, French, Arabic.', alt: 'Routines with worst-case data: a very long title cut with an ellipsis, a URL used as a name, a one-letter name, a long French title and an Arabic one, with schedules in plain words such as “Every 5 minutes”.' },
+  { src: img('worst-campaigns-640.webp'), width: 592, height: 290, label: 'Campaigns · 640px', caption: 'A 2,000-character brief, on one line.', alt: 'Campaigns at 640px wide: a search and a columns button, then rows with a long name and a 2,000-character brief cut to one line each, a one-letter name and a long German word, with Active, Paused and Done statuses.' },
+];
+
+const stats = [
+  { from: '36', to: '5', text: 'font sizes.' },
+  { from: '2.8:1', to: '5.3:1', text: 'contrast for grey text.' },
+  { from: '5', to: '1', text: 'ways of writing a grey.' },
+  { from: '12', to: '0', text: 'worst-case issues.' },
+];
+
+const colours = [
+  { kicker: 'You', title: 'Orange', text: 'Your brand or domain.', focus: true },
+  { kicker: 'Competitors', title: 'A hue each', text: 'Never orange, never grey.' },
+  { kicker: 'Heat and ranks', title: 'Teal steps', text: 'For heat and rankings.' },
+];
+
+// Each lesson: a title and one short line, the crux in <strong>.
+const lessons = [
+  { title: 'Every experiment leaves a pattern', text: 'Audit now and then, and <strong>cut back on purpose</strong>.' },
+  { title: 'Keep it only if it earns it', text: '<strong>Meaning first</strong>, then polish.' },
+  { title: 'Design for whoever builds next', text: 'An agent or dev should find <strong>one way to do it</strong>.' },
+  { title: 'Fix the shared piece', text: 'Change it once, and <strong>every page moves with it</strong>.' },
+];
+---
+<StudioLayout
+  title="Standardising the UX in Strive"
+  slug="platform-polish"
+  description="A UX case study: cutting Strive’s many ways of doing one thing down to one standard pattern per bucket. The DataGrid for records, one list for everything else, detail pages in one card, beige as the quiet accent, and audits for the worst case."
+  ogDescription="Many ways to do one thing, cut to one polished pattern per bucket, so any agent or dev can build at pace."
+  eyebrow="Strivelabs · Platform"
+  facts={[
+    { label: 'My part', value: 'Audited the product, benchmarked patterns from popular tools, tried them out on a board' },
+    { label: 'Built with', value: 'Designed in code, with Claude Code' },
+    { label: 'Timeline', value: 'Nov 2026' },
+  ]}
+  keywords="UX case study, design system, consistency, design patterns, data grid, list table, detail pages, side panel, empty states, worst-case data, typography audit, colour system, design engineering"
+>
+  <Fragment slot="lede">At Strive, we run experiments led by different stakeholders at different times. Each of us builds from 0 to x, so I’m not the only one who touches the UX. Over time, that left us with several tables, listings and detail views. This was my attempt to standardise <mark class="hl">one way of doing each thing</mark>: a meaningful pattern our agents and devs can grab on to.</Fragment>
+
+  <UxShot
+    slot="hero"
+    src={img('demo.mp4')}
+    video={{ src: img('demo.mp4'), poster: img('demo-poster.webp') }}
+    width={1920}
+    height={1080}
+    eager
+    alt="A 47-second product film on warm paper. After a title card, “Standardising the UX in Strive”, each scene shows a screenshot of Strive as a floating window under a short headline: Home, “Four buckets, one way each”; Tasks, “One list for everything else”; Reports, “Same rows, same rhythm”; Library, “Files as a list or a grid”; Campaigns, “Every record on one grid”, then a push into the filter chip and the Columns menu; a campaign with its side panel, “Details open beside the list”; the blog panel, “What needs you comes first”, with a push into the review banner; a routine in the side panel; a skill as one card; a marketing database file as one card; a report the agent wrote; and Settings, “Every control, in clear groups”. It closes on “Fewer patterns, each with a meaning”."
+    caption="The product after the redesign, in under a minute."
+  />
+
+  <UxStory>
+    <UxSection
+      id="crux"
+      num="01"
+      kicker="The problem"
+      title="Many ways to do one thing"
+    >
+      <Fragment slot="call">Every experiment left a pattern behind, even with a solid component package. <strong>Anyone starting a new page had to pick a version.</strong></Fragment>
+      <UxGallery items={drift} />
+    </UxSection>
+
+    <UxSection
+      id="plan"
+      num="02"
+      kicker="The plan"
+      title="One way of doing each thing"
+    >
+      <Fragment slot="call">Almost anything we add lands in one of four buckets, so each gets <strong>one standard pattern</strong>. Chat and artifacts stay as they are.</Fragment>
+      <UxGallery items={plan} />
+      <ol class="ux-steps ux-steps--after-cards">
+        {steps.map((s) => <li><strong>{s.b}</strong><span>{s.t}</span></li>)}
+      </ol>
+    </UxSection>
+
+    <UxSection
+      id="records"
+      num="03"
+      kicker="Decision · system of records"
+      title="Every record on the DataGrid"
+      notes={[
+        { b: 'Tabs became filters.', t: 'And records use the full width.' },
+        { b: 'The cost.', t: 'No row delete yet; the grid has no row actions.' },
+      ]}
+    >
+      <Fragment slot="call">Campaigns and Blogs moved to the DataGrid, <strong>the one grid every record now fits</strong>. Its design is <a href="/experiments/studio/datagrid/">a story of its own</a>.</Fragment>
+      <UxCompare
+        before={{ src: img('campaigns-before.webp'), width: 2000, height: 1216, alt: 'Before: Campaigns in production. A narrow card with All campaigns 4 and Yours 3 tabs, a bare search line, and a plain table of four draft campaigns with Status, Created by and Last updated, with a lot of empty page around it.' }}
+        after={{ src: img('campaigns-after.webp'), width: 2000, height: 1216, alt: 'After: Campaigns today on the DataGrid at full width. A search, a “Status is any of Active, Draft” filter chip, the Columns menu open (5 of 6, Campaign pinned), and rows with status, setup progress, owner and date, with “7 of 9 campaigns” and rows per page in the footer.' }}
+        caption="Campaigns, before and today."
+      />
+    </UxSection>
+
+    <UxSection
+      id="listings"
+      num="04"
+      kicker="Decision · listings"
+      title="One list for everything else"
+      notes={[
+        { b: 'Cards became rows.', t: 'Skills and Routines match Library.' },
+        { b: 'One rhythm.', t: '56px rows, one hover, one set of icons.' },
+      ]}
+    >
+      <Fragment slot="call">Six pages had six lists. <strong>Now they share one.</strong></Fragment>
+      <UxCompare
+        before={{ src: img('reports-before.webp'), width: 2000, height: 1216, alt: 'Before: Reports in production. A large “Create a report” form with suggestion chips, a title field and a prompt box fills the top, and the list of active reports starts below it, with All, Built-in and Custom as small pills.' }}
+        after={{ src: img('reports-after.webp'), width: 2000, height: 1216, alt: 'After: Reports today. A search and New report in the header, All 17, Built-in 4 and Custom 13 tabs on a beige band, and divided rows of reports, each with an icon, name, type and last run.' }}
+        caption="Reports, before and today: the list comes first."
+      />
+    </UxSection>
+
+    <UxSection
+      id="toolbar"
+      num="05"
+      kicker="Decision · toolbar"
+      title="Search goes up to the header"
+    >
+      <Fragment slot="call">The search looked like it was hanging under the tabs. <strong>It found a home in the page header.</strong></Fragment>
+      <ul class="ux-cards" style="--cols: 2">
+        {searchOptions.map((o) => (
+          <li class:list={[o.focus && 'is-focus']}>
+            <p class="ux-kicker">{o.kicker}</p>
+            <h3>{o.title}</h3>
+            <p>{o.text}</p>
+          </li>
+        ))}
+      </ul>
+      <UxCompare
+        before={{ src: img('tasks-before.webp'), width: 2000, height: 625, alt: 'Before: Tasks in production. The All tasks and Assigned to me tabs, then a search on a row of its own under them, with filter and sort icons at the far right, above the first rows of tasks.' }}
+        after={{ src: img('tasks-after.webp'), width: 2000, height: 625, alt: 'After: Tasks today. The search sits in the page header beside New task, and the beige band holds only the tabs and the filter and sort buttons, so the rows start higher.' }}
+        caption="Tasks, before and today."
+      />
+    </UxSection>
+
+    <UxSection
+      id="details"
+      num="06"
+      kicker="Decision · detail pages"
+      title="Fewer boxes, more reading"
+      notes={[
+        { b: 'Reads like a document.', t: 'No scrolling boxes inside boxes.' },
+        { b: 'One primary.', t: 'The rest sits behind icons and a menu.' },
+      ]}
+    >
+      <Fragment slot="call">Boxes inside boxes never felt like reading. So I gave it a clean slate and a rich-text feel. <strong>One pattern for every file and content view.</strong></Fragment>
+      <UxCompare
+        before={{ src: img('skill-before-real.webp'), width: 2000, height: 1216, alt: 'Before: a skill page in production, Ad Transparency Analysis. An “All skills” back link, a card with the title, an Installed pill, Add to chat and a three-line description, then a second card with the file name, Rendered and Raw buttons and the skill’s text.' }}
+        after={{ src: img('skill-after-real.webp'), width: 2000, height: 1216, alt: 'After: a skill page today, Competitor Analysis. One card with a beige header: the title, an Installed pill, a two-line description, view and code toggles, a Copy split button and Add to chat. The skill’s text, with Quick Start and Skill Contract, sits on white below.' }}
+        caption="A skill, before and today."
+      />
+      <UxCompare
+        before={{ src: img('kb-before.webp'), width: 2000, height: 1216, alt: 'Before: a marketing database file, Design Page. The header with its title, description and Refresh from website sits in a card of its own, and the colours, type settings and live preview sit in a second, separate card below.' }}
+        after={{ src: img('kb-after.webp'), width: 2000, height: 1216, alt: 'After: the same Design Page today. The title, description and Refresh from website sit in a beige header, and the colours, type settings and live preview continue in the same card below it.' }}
+        caption="A marketing database file, before and today."
+      />
+    </UxSection>
+
+    <UxSection
+      id="routine"
+      num="07"
+      kicker="Decision · routines"
+      title="One panel to create, edit and view"
+    >
+      <Fragment slot="call">Chat already used a side panel to create and edit. The saved routine got a page with the same details. <strong>Now create, edit and view share one panel.</strong></Fragment>
+      <UxShot
+        src={img('routine-before.mp4')}
+        video={{ src: img('routine-before.mp4'), poster: img('routine-before-poster.webp'), autoplay: true }}
+        width={1600}
+        height={988}
+        alt="Screen recording of Routines in production before the change: Weekly Traffic Comparison is clicked, a separate narrow page opens with its details in two cards, then “All routines” goes back to the list."
+        caption="Before: leave the list, then come back."
+      />
+      <UxShot
+        src={img('routine-after.webp')}
+        width={2000}
+        height={1172}
+        alt="Routines today: the list on the left with Daily AEO Citations selected in beige, and its details in the side panel on the right: a Routine tag and Active, the title, alert logic, sources, runs daily at 9:00 AM, delivery to the Strivelabs inbox, Slack and email with an Edit link, and Run now and Open in chat in the footer."
+        caption="Today: it opens beside the list, as in chat."
+      />
+    </UxSection>
+
+    <UxSection
+      id="panel"
+      num="08"
+      kicker="Decision · side panel"
+      title="What needs you comes first"
+      notes={[
+        { b: 'A, with C’s banner.', t: 'One card, plus a banner when something waits.' },
+      ]}
+    >
+      <Fragment slot="call">Blog details was a plain list of facts. <strong>Now what needs your attention comes first.</strong></Fragment>
+      <UxCompare
+        before={{ src: img('blog-panel-before.webp'), width: 1600, height: 1448, alt: 'Before: the blog details panel. No title, the outline as plain numbered text, a raw URL, then two grey boxes, Refresh history and Outline history, each with its own black button and full dates and times.' }}
+        after={{ src: img('blog-panel-after.webp'), width: 1582, height: 1410, alt: 'After: the blog details panel today. A banner reads “An outline is ready for your review, finished 1 month ago” with a Review button; then a Blog tag and “Waiting for approval”; then one card with the title “win loss analysis, product marketing competitor insights”, “Not yet published”, two keyword pills and the activity. Refresh now and Generate outline sit in the footer.' }}
+        caption="Blog details, before and today."
+      />
+      <UxGallery items={blogOptions} />
+    </UxSection>
+
+    <UxSection
+      id="modals"
+      num="09"
+      kicker="Decision · modals"
+      title="Modals borrow the list"
+      notes={[
+        { b: 'Same header, same rows.', t: 'Beige header, filters beside the search.' },
+        { b: 'A footer that counts.', t: '“1 of 5 selected”, “Add 1 to chat”.' },
+      ]}
+    >
+      <Fragment slot="call">Every modal had its own look. <strong>Now they all borrow the list.</strong></Fragment>
+      <UxCompare
+        before={{ src: img('modal-library-before.webp'), width: 1480, height: 1380, alt: 'Before: the Add from library modal. A plain white header, a full-width search, and files with their upload date and a round check on the right; the footer reads “1 selected” with Cancel and Add to chat.' }}
+        after={{ src: img('modal-library-after.webp'), width: 1480, height: 1380, alt: 'After: the Add from library modal today. A beige header with “Attach files already in your workspace”, a search with All and Yours beside it, rows with a checkbox, thumbnail, name, size and date, the picked row in beige, and a footer reading “1 of 5 selected” with Cancel and “Add 1 to chat”.' }}
+        caption="Add from library, before and today."
+      />
+      <UxCompare
+        before={{ src: img('modal-skills-before.webp'), width: 1700, height: 1440, alt: 'Before: the Skills modal. A white header, a heavy outlined search with Manage skills, tabs with counts on a row of their own, then a two-column grid of skill cards, each with a name, a two-line description and a plus.' }}
+        after={{ src: img('modal-skills-after.webp'), width: 1700, height: 1440, alt: 'After: the Skills modal today. A beige header with “Add a skill to steer this chat, or open one to read it first” and Manage skills, a search with All, My skills, Installed and Strive beside it, and a single list of skills, each with an icon, name, one-line description and a plus.' }}
+        caption="Skills, before and today."
+      />
+    </UxSection>
+
+    <UxSection
+      id="beige"
+      num="10"
+      kicker="Decision · colour"
+      title="Beige does the quiet work"
+      notes={[
+        { b: 'One warm accent.', t: 'Bands, hover, selection and headers.' },
+      ]}
+    >
+      <Fragment slot="call">Beige carries the structure, subtle and without noise. <strong>It marks where things are, never what they mean.</strong></Fragment>
+      <UxCompare
+        labels={['Before · a blue ring', 'Today · beige']}
+        before={{ src: img('select-before.webp'), width: 820, height: 420, alt: 'Before: Tasks with the first row selected by a bright blue outline, a colour used nowhere else in the product.' }}
+        after={{ src: img('beige-selected-real.webp'), width: 820, height: 420, alt: 'Today: Routines with Daily AEO Citations selected by a light beige fill and a thin beige ring.' }}
+        caption="A selected row. Blue meant nothing anywhere else."
+      />
+      <UxGallery items={beige} />
+    </UxSection>
+
+    <UxSection
+      id="worst-case"
+      num="11"
+      kicker="Craft · audits"
+      title="Solid when real data flows in"
+      notes={[
+        { b: 'What broke.', t: 'Avatars, raw cron strings, Arabic, emoji, “1 Bytes”.' },
+        { b: 'Type.', t: 'Neutral greys, picked live on a preview switch.' },
+      ]}
+    >
+      <Fragment slot="call">Polish alone wasn’t the goal. <strong>Nothing should break when real data flows in.</strong> A board ran every surface through the worst data, widths and themes.</Fragment>
+      <UxShot
+        src={img('worst-board-dark.webp')}
+        width={1152}
+        height={516}
+        alt="The break-ui board in dark mode on Chats with worst-case data: a long German title, a script tag shown as plain text, a fox emoji in an owner name, Arabic and Chinese names, and the board’s switcher at the bottom for data (Demo data, Worst case, Empty, One, 1,000 rows), width (Page, 640, 320) and theme."
+        caption="The break-ui board."
+      />
+      <UxGallery items={worst} />
+      <ul class="ux-stats" style="--cols: 2">
+        {stats.map((s) => (
+          <li>
+            <span class="ux-stat-num"><s>{s.from}</s><Icon name="arrow-right" />{s.to}</span>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <UxSection
+      id="visibility"
+      num="12"
+      kicker="Decision · Visibility"
+      title="A pattern for every dashboard"
+      notes={[
+        { b: 'A lead isn’t good news.', t: 'A competitor’s lead is ink, not green.' },
+        { b: 'Fix the shared piece.', t: 'The command center moved with it.' },
+      ]}
+    >
+      <Fragment slot="call">AEO moved up into the sidebar, and SEO Audit followed. <strong>One pattern for every dashboard we add next.</strong></Fragment>
+      <ul class="ux-cards">
+        {colours.map((c) => (
+          <li class:list={[c.focus && 'is-focus']}>
+            <p class="ux-kicker">{c.kicker}</p>
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </li>
+        ))}
+      </ul>
+      <UxCompare
+        before={{ src: img('seo-colour-before.webp'), width: 1320, height: 905, alt: 'Before: the first SEO restyle. The traffic chart pairs an orange line with an indigo one, and the country donut uses a different hue per country: orange, indigo, blue, pink, grey and orange again.' }}
+        after={{ src: img('seo-colour-after.webp'), width: 1320, height: 905, alt: 'After: the same page. The traffic chart uses two orange steps for your two metrics, and the country donut is in teal steps from dark to light.' }}
+        caption="Same data. Orange means you."
+      />
+      <UxCompare
+        before={{ src: img('first-run-before.webp'), width: 1440, height: 640, alt: 'Before: SEO Audit before the first run, a bordered profile card listing domain, brand, about, competitors and location, with a Run audit button floating below it.' }}
+        after={{ src: img('first-run-after.webp'), width: 1440, height: 640, alt: 'After: one frame titled “Your first audit”, split by a hairline. Left: a chart illustration, “See where strivelabs.ai stands in search”, what the audit covers and Run audit. Right: the business profile it runs against.' }}
+        caption="Before the first run: one frame, not two cards."
+      />
+    </UxSection>
+
+    <UxSection id="learned" num="13" kicker="What I learned" title="What I’d tell day-zero me">
+      <ul class="ux-lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{l.title}</h3>
+            <p set:html={l.text} />
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <blockquote class="closer">Fewer patterns, each with a meaning, and the next page is polished before anyone designs it.</blockquote>
+  </UxStory>
+</StudioLayout>
+
+<style>
+  .closer { margin-top: var(--space-5); }
+  .ux-steps--after-cards { margin-top: var(--space-4); }
+</style>
