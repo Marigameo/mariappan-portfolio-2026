@@ -31,6 +31,23 @@ export interface StudioPiece {
 
 export const studio: StudioPiece[] = [
   {
+    slug: 'command-center',
+    featured: true,
+    title: 'Designing command centers in Strive',
+    context: 'Strivelabs · Command centers',
+    frame: 'Outreach / Command center',
+    hook: 'Moving AEO and SEO into the sidebar was easy. One pattern for every dashboard was the real job.',
+    tags: ['UX case study', 'Dashboards'],
+    accent: 'blue',
+    preview: {
+      kind: 'image',
+      src: '/images/experiments/command-center/hero.webp',
+      width: 2000,
+      height: 986,
+      alt: 'The outreach command center in Strive: a Contacts by stage strip with Hot spotlit in a light orange wash, a pipeline bar, and new contacts each week as stacked bars.',
+    },
+  },
+  {
     slug: 'platform-polish',
     featured: true,
     title: 'Standardising the UX in Strive',

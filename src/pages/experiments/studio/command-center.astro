@@ -1,0 +1,331 @@
+---
+/* The command center story, told as a UX case study (the ux-story format,
+   .claude/skills/ux-story/): one decision per section, a real screenshot for
+   each, a few short notes. Framing from Mari's crux (25 Nov 2026): the ask was
+   a Visibility layer in the sidebar; moving AEO and SEO out of Reports was
+   easy, but after standardising the platform, the job became one pattern for
+   every dashboard, aligned with artifacts and reports, with richer charts.
+   Sources: side-builds/strivelabs-command-center/JOURNAL.md (rounds 0 to 11,
+   10 Nov 2026) and its process/ snapshots, plus the Visibility "after" shots
+   from side-builds/strivelabs-platform-ux/process/02-visibility-aeo-seo/
+   (12 Nov 2026). Media lives in public/images/experiments/command-center/. */
+import StudioLayout from '../../../layouts/StudioLayout.astro';
+import UxStory from '../../../components/ux/UxStory.astro';
+import UxSection from '../../../components/ux/UxSection.astro';
+import UxShot from '../../../components/ux/UxShot.astro';
+import UxCompare from '../../../components/ux/UxCompare.astro';
+import UxGallery from '../../../components/ux/UxGallery.astro';
+
+const img = (f: string) => `/images/experiments/command-center/${f}`;
+
+const drift = [
+  { src: '/images/experiments/platform-polish/reports-after.webp', width: 2000, height: 1216, label: 'Lists · standardised', caption: 'One pattern, the week before.', alt: 'Reports today: a search and New report in the header, All, Built-in and Custom tabs on a beige band, and divided rows of reports, each with an icon, name, type and last run.' },
+  { src: img('aeo-before.webp'), width: 1600, height: 973, label: 'AEO', caption: 'A Filters card, framed KPI tiles.', alt: 'AEO before the redesign: no visible page title, a separate Filters card with model, competitor, location and date pickers and Export all, segment tabs below it, then four KPI tiles each in its own frame, with sparklines and a red-to-green sentiment bar.' },
+  { src: img('cc-drift.webp'), width: 1440, height: 875, label: 'Command center', caption: 'Five framed tiles, equal charts.', alt: 'The outreach command center as first shipped: five stage tiles in separate frames (Untouched 860, Contacted 888, Hot 598, Engaged 97, Opportunity 35), then Stage distribution and Stage by country as two equal chart cards in five bright colours.' },
+];
+
+const good = [
+  { kicker: 'Same family', title: 'One frame', text: 'Header, tabs and cards, as on every other page.' },
+  { kicker: 'Richer', title: 'Charts that answer', text: 'A chart earns its place with a question.', focus: true },
+  { kicker: 'Honest', title: 'Every state', text: 'Empty, early, failing and refetching.' },
+];
+
+const steps = [
+  { b: 'Audit the first one.', t: 'The outreach command center, card by card.' },
+  { b: 'Try it on a board.', t: 'The real page over fake data, one frame per state.' },
+  { b: 'Pull out a kit.', t: 'A card, a KPI strip and a section.' },
+  { b: 'Move the rest on.', t: 'AEO, then SEO Audit.' },
+];
+
+const colours = [
+  { kicker: 'Orange', title: 'Where to look', text: 'Hot here. On AEO and SEO, it’s you.', focus: true },
+  { kicker: 'Tints', title: 'Nothing yet', text: 'Stages nothing has happened to.' },
+  { kicker: 'One hue in steps', title: 'An order', text: 'Fit tiers, ranks and heat.' },
+];
+
+const hotOptions = [
+  { kicker: 'Picked', title: 'A wash and a rule', text: 'A 7% orange wash and a 2px line.', focus: true },
+  { kicker: 'Picked', title: 'Contrast', text: 'The other figures step back.' },
+  { kicker: 'Kept', title: 'A pulse', text: 'One dot, off under reduced motion.' },
+  { kicker: 'Dropped', title: 'A count-up', text: 'It replays on every visit.' },
+];
+
+const family = [
+  { src: img('cc-family.webp'), width: 1440, height: 875, label: 'Command center', caption: 'Where outreach stands.', alt: 'The command center on the kit: the page header with campaign and country pickers and New campaign, the Contacts by stage strip with Hot spotlit, and New contacts each week.' },
+  { src: img('aeo-after.webp'), width: 1440, height: 875, label: 'AEO', caption: 'How AI answers name you.', alt: 'AEO on the kit: the Answer Engine Optimization header with Export all, tabs beside a Filter button and the date range, an At a glance strip of four KPIs, and the Visibility trend with Strivelabs in orange.' },
+  { src: img('seo-after.webp'), width: 1440, height: 875, label: 'SEO Audit', caption: 'Where you stand in search.', alt: 'SEO Audit on the kit: the header with domain, market, competitors and audit date, Configure and Re-run audit, an At a glance strip of four KPIs, tabs, and a traffic chart in two orange steps.' },
+];
+
+const reasons = [
+  { src: img('why-pending.webp'), width: 1440, height: 875, label: 'First check pending', caption: 'It says when.', alt: 'AEO waiting on its first check: “Running prompts 0/4” in the header, the KPI strip marked “Waiting on the first check”, and the Visibility card reading “Your first check runs Sun, 15 Nov.”' },
+  { src: img('why-failed.webp'), width: 1440, height: 875, label: 'Reads failed', caption: 'It names what failed.', alt: 'AEO with every read failing: an unplugged-cable illustration in each card, “Couldn’t load your visibility figures.” in place of the KPI cells, “Couldn’t load the visibility trend.” below, each with Try again.' },
+];
+
+// Each lesson: a title and one short line, the crux in <strong>.
+const lessons = [
+  { title: 'Pattern before page', text: 'A new entity should <strong>land on a pattern</strong>, not invent one.' },
+  { title: 'Check the data first', text: 'Design what the backend <strong>can serve today</strong>.' },
+  { title: 'Empty is a state', text: 'Keep every section, and <strong>say why it’s empty</strong>.' },
+  { title: 'Colour means one thing', text: '<strong>Orange is where to look</strong>, on every dashboard.' },
+];
+---
+<StudioLayout
+  title="Designing command centers in Strive"
+  slug="command-center"
+  description="A UX case study: one standard pattern for every built-in dashboard in Strive. Starting from the outreach command center, then AEO and SEO Audit under Visibility, aligned with the platform’s lists, artifacts and reports, with richer charts, colour that means one thing and empty states that say why."
+  ogDescription="Moving AEO and SEO into the sidebar was easy. Giving every dashboard one pattern was the real job."
+  eyebrow="Strivelabs · Command centers"
+  facts={[
+    { label: 'My part', value: 'Audited the first command center, tried options on a dev board, set the pattern' },
+    { label: 'Built with', value: 'Designed in code, with Claude Code' },
+    { label: 'Timeline', value: 'Nov 2026' },
+  ]}
+  keywords="UX case study, dashboard design, command center, KPI strip, data visualisation, chart colours, empty states, error states, design system, consistency, AEO, SEO, design engineering"
+>
+  <Fragment slot="lede">The ask was a Visibility layer in our sidebar: AEO and SEO dashboards as an offering of their own, not a page inside Reports. Moving them out was easy. But I had just standardised the UX across Strive, so this became about <mark class="hl">one pattern for every dashboard</mark>.</Fragment>
+
+  <UxShot
+    slot="hero"
+    src={img('hero.webp')}
+    width={2000}
+    height={986}
+    eager
+    alt="The outreach command center today: the Command center header with All campaigns and All countries pickers and New campaign; a Contacts by stage strip reading Untouched 860, Contacted 888, Hot 598, Engaged 97 and Opportunity 35, with Hot in a light orange wash under an orange rule and a pipeline bar below; then New contacts each week as stacked bars over twelve weeks."
+    caption="The outreach command center, the first page on the pattern."
+  />
+
+  <UxStory>
+    <UxSection
+      id="crux"
+      num="01"
+      kicker="The problem"
+      title="Moving out was the easy part"
+    >
+      <Fragment slot="call">Lists had just got <a href="/experiments/studio/platform-polish/">one way of doing things</a>. Dashboards hadn’t: AEO and the new command center each had a look of their own. <strong>A third one-off would undo that work.</strong></Fragment>
+      <UxGallery items={drift} />
+    </UxSection>
+
+    <UxSection
+      id="plan"
+      num="02"
+      kicker="The plan"
+      title="A richer bucket, in the same family"
+    >
+      <Fragment slot="call">Dashboards are richer than our SoR grids and lists. Our <a href="/work/strive-gen-ui-chat/">artifacts</a> and <a href="/work/report-builder/">reports</a> already follow <a href="/work/design-ecosystem/">our design system</a>, so <strong>align with them, and add richer charts where they earn it</strong>.</Fragment>
+      <ul class="ux-cards">
+        {good.map((c) => (
+          <li class:list={[c.focus && 'is-focus']}>
+            <p class="ux-kicker">{c.kicker}</p>
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </li>
+        ))}
+      </ul>
+      <ol class="ux-steps ux-steps--after-cards">
+        {steps.map((s) => <li><strong>{s.b}</strong><span>{s.t}</span></li>)}
+      </ol>
+      <UxShot
+        src={img('board.webp')}
+        width={1440}
+        height={455}
+        alt="The command center dev board: a frame list on the left (Live, then states such as Loading, No campaigns, Counts failed, Campaigns failed, Finding contacts and Early days), switches along the top for theme, width, server speed and app shell, and the real page rendered in the middle."
+        caption="The dev board: every state of the real page, side by side."
+      />
+    </UxSection>
+
+    <UxSection
+      id="hierarchy"
+      num="03"
+      kicker="Decision · hierarchy"
+      title="A command center, not a report"
+      notes={[
+        { b: 'One strip.', t: 'Five framed tiles became one, with a pipeline bar under it.' },
+        { b: 'Cut the repeats.', t: 'Stage distribution drew the KPIs again, so it went.' },
+        { b: 'A list, not 100% bars.', t: 'Countries read better as rows, and a row narrows the page.' },
+        { b: 'One takeaway.', t: '“Best fit replies 3.2× as often as Fair.”' },
+      ]}
+    >
+      <Fragment slot="call">The first build read as a report: every card the same size and weight, and the KPIs drawn twice. <strong>Now one stage strip leads, and each card below answers one question.</strong></Fragment>
+      <UxCompare
+        labels={['As shipped', 'Today']}
+        before={{ src: img('cc-before.webp'), width: 1440, height: 1512, alt: 'The command center as first shipped: five framed stage tiles, Stage distribution and Stage by country as equal chart cards, Contacts added each week beside a Fit by stage table, then the Campaigns list. Bright purple Untouched is the loudest colour on the page.' }}
+        after={{ src: img('cc-after.webp'), width: 1440, height: 1512, alt: 'The command center today: one Contacts by stage strip with Hot spotlit and a pipeline bar, New contacts each week at full width in softer tints, a Countries list with reached meters and reply rates beside Reply rate by fit in three steps of blue, then the Campaigns list.' }}
+        caption="The command center, as shipped and today."
+      />
+    </UxSection>
+
+    <UxSection
+      id="data"
+      num="04"
+      kicker="Decision · data first"
+      title="Check the data before the design"
+    >
+      <blockquote slot="quote" class="ux-quote">“It’s fine if it looks like a dashboard today.”<cite>Me, round 3</cite></blockquote>
+      <Fragment slot="call">An action-first “Needs you” list looked right. The backend could count every row, but nothing marked a reply as handled, so the list would only grow. <strong>So I parked it until the reply agent lands.</strong></Fragment>
+      <UxShot
+        src={img('needs-you.webp')}
+        width={1360}
+        height={320}
+        alt="The Needs you experiment: four rows, each with an icon and a button. “35 people replied interested” with Open replies, “233 best-fit contacts haven’t been emailed” with Review, “Q4 reactivation is still a draft” with Finish setup, and “Luxury groups, Middle East is paused” with Resume."
+        caption="Parked, not dropped: the “Needs you” experiment."
+      />
+    </UxSection>
+
+    <UxSection
+      id="colour"
+      num="05"
+      kicker="Decision · colour"
+      title="Colour means one thing"
+      notes={[
+        { b: 'Carried across.', t: 'The same rules now run AEO and SEO.' },
+      ]}
+    >
+      <Fragment slot="call">I asked why every fit tier wore the same blue. Tiers are ordered, so <strong>steps of one blue show the order</strong>, and a hue each would clash: orange already meant Hot.</Fragment>
+      <ul class="ux-cards">
+        {colours.map((c) => (
+          <li class:list={[c.focus && 'is-focus']}>
+            <p class="ux-kicker">{c.kicker}</p>
+            <h3>{c.title}</h3>
+            <p>{c.text}</p>
+          </li>
+        ))}
+      </ul>
+      <UxShot
+        src={img('fit-shades.webp')}
+        width={660}
+        height={292}
+        alt="Reply rate by fit: Best, Good and Fair as bars in three steps of one blue, darkest for Best, with a tooltip whose dot matches its bar."
+        caption="Best darkest. One measure, one hue."
+      />
+    </UxSection>
+
+    <UxSection
+      id="emphasis"
+      num="06"
+      kicker="Decision · emphasis"
+      title="Hot stands out, without a filled box"
+      notes={[
+        { b: 'Still open.', t: 'Hot as its own card is the cleaner idea. Not for now.' },
+      ]}
+    >
+      <Fragment slot="call">The reference mock filled Hot’s whole box in orange. It caught the eye, but it shouted. <strong>A wash, a rule, quieter neighbours and one pulse</strong> do the same job.</Fragment>
+      <ul class="ux-cards" style="--cols: 2">
+        {hotOptions.map((o) => (
+          <li class:list={[o.focus && 'is-focus']}>
+            <p class="ux-kicker">{o.kicker}</p>
+            <h3>{o.title}</h3>
+            <p>{o.text}</p>
+          </li>
+        ))}
+      </ul>
+      <UxCompare
+        before={{ src: img('hot-before.webp'), width: 1440, height: 240, alt: 'Before: the Contacts by stage strip with five figures at the same weight, Hot 598 no different from the rest.' }}
+        after={{ src: img('hot-after.webp'), width: 1440, height: 240, alt: 'After: the same strip with Hot 598 in a light orange wash under an orange rule, and the other four figures in a softer grey.' }}
+        caption="With no Hot contacts, nothing is spotlit."
+      />
+    </UxSection>
+
+    <UxSection
+      id="empty"
+      num="07"
+      kicker="Decision · empty states"
+      title="Empty, but every section stays"
+      notes={[
+        { b: 'In a card.', t: 'Dead ends sit in a card, as in Reports and Tasks.' },
+      ]}
+    >
+      <Fragment slot="call">The empty page was folded into one “Getting started” card. I wanted people to <strong>see what the page will hold, even with nothing in it</strong>.</Fragment>
+      <UxCompare
+        labels={['Tried · one card', 'Kept · every section']}
+        before={{ src: img('empty-tried.webp'), width: 1440, height: 1047, alt: 'Tried: while contacts are still being found, the page collapses into one Getting started card with a magnifier illustration, “Finding people at 70 accounts”, and the Campaigns list below.' }}
+        after={{ src: img('empty-kept.webp'), width: 1440, height: 1047, alt: 'Kept: the same state with every section in place. The stage strip at zero with “None yet”, and New contacts each week, Countries and Reply rate by fit each with its own illustration and a line on what will fill it, then the Campaigns list.' }}
+        caption="Finding contacts: the page’s shape, before its numbers."
+      />
+    </UxSection>
+
+    <UxSection
+      id="kit"
+      num="08"
+      kicker="Decision · the kit"
+      title="From one page to a kit"
+      notes={[
+        { b: 'A real header.', t: 'AEO’s title was for screen readers only.' },
+        { b: 'Filters in the header.', t: 'The Filters card is gone; every filter stays.' },
+        { b: 'At a glance.', t: 'Four framed KPI tiles became one strip.' },
+        { b: 'A generic name.', t: 'Visibility holds AEO, and SEO Audit followed.' },
+      ]}
+    >
+      <Fragment slot="call">AEO and the command center should look alike, and so should every dashboard after them. <strong>Their pieces became one small kit</strong>: a card, a KPI strip and a section.</Fragment>
+      <UxCompare
+        before={{ src: img('aeo-before.webp'), width: 1600, height: 973, alt: 'Before: AEO with only a breadcrumb for a title, a separate Filters card, segment tabs, and four KPI tiles in separate frames with a red-to-green sentiment bar.' }}
+        after={{ src: img('aeo-after.webp'), width: 1440, height: 875, alt: 'After: AEO on the kit, with the Answer Engine Optimization title and Export all as the primary button, tabs beside one Filter button and the date range, and an At a glance strip with the sentiment meter filled from zero.' }}
+        caption="AEO, before and on the kit."
+      />
+      <UxGallery items={family} />
+    </UxSection>
+
+    <UxSection
+      id="why"
+      num="09"
+      kicker="Decision · dead ends"
+      title="Empty states that say why"
+      notes={[
+        { b: 'No fake zeros.', t: 'A failed read never shows 0%.' },
+        { b: 'Refetching.', t: 'The last figures stay on screen, dimmed.' },
+      ]}
+    >
+      <Fragment slot="call">Every empty AEO card said “Not enough data”, whatever the reason. <strong>Now it gives one of four reasons, said once per page</strong>, and every failure has Try again.</Fragment>
+      <UxCompare
+        labels={['First pass · every card repeats', 'Today · said once']}
+        before={{ src: img('why-before.webp'), width: 1440, height: 1180, alt: 'First pass with no prompts tracked: every card repeats the full sentence “No prompts tracked yet. Add the questions your buyers ask AI assistants…” and its own Add prompts button.' }}
+        after={{ src: img('why-after.webp'), width: 1440, height: 1180, alt: 'Today with no prompts tracked: the first card explains it once with Add prompts, and the rest say briefly what they wait on, such as “Share of voice fills in after the first check.”' }}
+        caption="No prompts yet: said once, with the next step."
+      />
+      <UxGallery items={reasons} />
+    </UxSection>
+
+    <UxSection
+      id="platform"
+      num="10"
+      kicker="Decision · one platform"
+      title="Filters and tables speak Strive"
+      notes={[
+        { b: 'One primary.', t: 'Export all is the only action, so it leads.' },
+        { b: 'Sub-rows stay.', t: 'The table keeps its grouping, in the grid’s toolbar.' },
+        { b: 'Still two chip styles.', t: 'Tasks’ and the grid’s. Worth one pass.' },
+      ]}
+    >
+      <Fragment slot="call">AEO still had too many separate filters, and a table with its own builder. <strong>Same filters, icons and chips as the rest of Strive.</strong></Fragment>
+      <UxCompare
+        labels={['Before · four pickers', 'Today · one Filter']}
+        before={{ src: img('filters-before.webp'), width: 1386, height: 182, alt: 'Before: four separate pickers in a row, All models, All competitors, All locations and Last 30 days.' }}
+        after={{ src: img('filters-after.webp'), width: 1360, height: 212, alt: 'Today: the AEO header with tabs, one Filter button with a dot and the date range, and a “Model · ChatGPT” chip with Clear filters on a beige band.' }}
+        caption="Filters in one menu, as in Tasks."
+      />
+      <UxCompare
+        labels={['Before · its own builder', 'Today · the grid’s chips']}
+        before={{ src: img('table-before.webp'), width: 2000, height: 446, alt: 'Before: the Prompts table with a labelled Search, and a Filters popover with a “Where / Topic / is / Select…” builder, Add Filter and Clear All Filters.' }}
+        after={{ src: img('table-after.webp'), width: 1318, height: 328, alt: 'Today: the Prompts table on a beige toolbar band with a pill search, round filter, group and sort buttons, a “Topic is Marketing analytics” chip, faint sort marks in the header, and the Marketing analytics group with two prompts.' }}
+        caption="The Prompts table, in the grid’s toolbar."
+      />
+    </UxSection>
+
+    <UxSection id="learned" num="11" kicker="What I learned" title="What I’d tell day-zero me">
+      <ul class="ux-lessons">
+        {lessons.map((l, i) => (
+          <li class:list={['sk-box', `sk-lean-${(i % 3) + 1}`]}>
+            <h3>{l.title}</h3>
+            <p set:html={l.text} />
+          </li>
+        ))}
+      </ul>
+    </UxSection>
+
+    <blockquote class="closer">SEO didn’t get a redesign of its own. It got the kit, and that’s the point.</blockquote>
+  </UxStory>
+</StudioLayout>
+
+<style>
+  .closer { margin-top: var(--space-5); }
+  .ux-steps--after-cards { margin-top: var(--space-4); }
+</style>
